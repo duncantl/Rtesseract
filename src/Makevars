@@ -1,0 +1,2 @@
+PKG_CPPFLAGS=-I${HOME}/local/incldue
+PKG_LIBS=-L${HOME}/local/lib -ltesseract -llept

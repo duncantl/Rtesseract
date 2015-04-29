@@ -1,0 +1,3 @@
+useDynLib(Rtesseract)
+export(ocr)
+export(PageIteratorLevel)
