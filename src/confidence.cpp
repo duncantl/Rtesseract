@@ -11,11 +11,14 @@ SEXP
 R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 {
   SEXP ans = R_NilValue; 
-  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
   int i;
 
   tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  api->Init(NULL, "eng");
+  if(api->Init(NULL, "eng")) {
+     PROBLEM "could not intialize tesseract engine."	      
+     ERROR;
+  }
+  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
   api->SetImage(image);
 
   SEXP r_optNames = GET_NAMES(r_vars);
@@ -71,7 +74,7 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 
 extern "C"
 SEXP
-R_ocr_alternatives(SEXP filename, SEXP r_vars)
+R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
 {
   SEXP ans = R_NilValue; 
   Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
@@ -88,9 +91,9 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars)
   api->Recognize(0);
 
   tesseract::ResultIterator* ri = api->GetIterator();
-  tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
-#if 1
+#if 0
   do {
     i = 1;
     const char* symbol = ri->GetUTF8Text(level);
@@ -143,21 +146,23 @@ SEXP
 getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 {
       tesseract::ChoiceIterator ci_r(*ri);
-      int nels = 1;
-      while(ci_r.Next()) nels++;         
+      int nels = 2;
+      while(ci_r.Next()) 
+        nels++;         
 
- printf("# els %d\n", nels);
+
+      // printf("# els %d\n", nels);
       
       SEXP ans, names;
       PROTECT(ans = NEW_NUMERIC(nels));
       PROTECT(names = NEW_CHARACTER(nels));
       
       int i = 0;
-      SET_STRING_ELT(names, i, Rf_mkChar(word));
-      REAL(ans)[i] = conf;
+      SET_STRING_ELT(names, 0, Rf_mkChar(word));
+      REAL(ans)[0] = conf;
 
       tesseract::ChoiceIterator ci(*ri);
-      for(int i = 1; i < nels; i++) {
+      for(i = 1; i < nels ; i++, ci.Next()) {
 	const char* choice = ci.GetUTF8Text();
 	conf = ci.Confidence();
 	if(choice)

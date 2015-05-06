@@ -5,3 +5,6 @@ Version: 0.1-0
 Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
 License: Apache License
+SystemRequirements: tesseract_3.0.3 release candidate or higher
+      https://code.google.com/p/tesseract-ocr/
+      tesseract requires leptonica.
