@@ -3,6 +3,9 @@
 
 #include <Rdefines.h>
 
+
+SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf);
+
 extern "C"
 SEXP
 R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
@@ -15,19 +18,15 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
   api->Init(NULL, "eng");
   api->SetImage(image);
 
- Rf_PrintValue(r_vars);
-
- Rf_PrintValue(r_level);
-
   SEXP r_optNames = GET_NAMES(r_vars);
-  for(i = 0; i < Rf_length(r_vars); i++) {
+  for(i = 0; i < Rf_length(r_vars); i++) 
       api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
-  }
+
 
   api->Recognize(0);
   tesseract::ResultIterator* ri = api->GetIterator();
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
-  if (ri != 0) {
+  if(ri != 0) {
 
     int n = 1, i;
     while(ri->Next(level))   n++;
@@ -57,5 +56,145 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
     UNPROTECT(2);
   }
 
+  pixDestroy(&image);
+
  return(ans);
 }
+
+
+
+
+
+/*
+  Get the alternative predictions for each symbol.
+ */
+
+extern "C"
+SEXP
+R_ocr_alternatives(SEXP filename, SEXP r_vars)
+{
+  SEXP ans = R_NilValue; 
+  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
+  int i;
+
+  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+  api->Init(NULL, "eng");
+  api->SetImage(image);
+
+  SEXP r_optNames = GET_NAMES(r_vars);
+  for(i = 0; i < Rf_length(r_vars); i++) 
+      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+
+  api->Recognize(0);
+
+  tesseract::ResultIterator* ri = api->GetIterator();
+  tesseract::PageIteratorLevel level = tesseract::RIL_SYMBOL;
+
+#if 1
+  do {
+    i = 1;
+    const char* symbol = ri->GetUTF8Text(level);
+    float conf = ri->Confidence(level);
+    if(symbol != 0) {
+      printf("%d \n", i); i++;
+      //      tesseract::ChoiceIterator ci(*ri);
+      /*
+      do {
+	if (indent) printf("\t\t ");
+	printf("\t- ");
+	const char* choice = ci.GetUTF8Text();
+	printf("%s conf: %f\n", choice, ci.Confidence());
+	indent = true;
+      } while(ci.Next());
+      */
+      delete[] symbol;
+    }
+  } while(ri->Next(level));
+
+#else
+
+    int n = 1;
+    while(ri->Next(level))
+        n++;
+
+    ri = api->GetIterator();
+    SEXP names;
+    PROTECT(names = NEW_CHARACTER(n));
+    PROTECT(ans = NEW_LIST(n));
+    i = 0;
+    do {
+      const char* word = ri->GetUTF8Text(level);
+      float conf = ri->Confidence(level);
+      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_VECTOR_ELT(ans, i, getAlternatives(ri, word, conf));
+      delete[] word;
+      i++;
+    } while (ri->Next(level));
+
+    SET_NAMES(ans, names);
+    UNPROTECT(2);
+
+#endif
+
+ return(ans);
+}
+
+SEXP
+getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
+{
+      tesseract::ChoiceIterator ci_r(*ri);
+      int nels = 1;
+      while(ci_r.Next()) nels++;         
+
+ printf("# els %d\n", nels);
+      
+      SEXP ans, names;
+      PROTECT(ans = NEW_NUMERIC(nels));
+      PROTECT(names = NEW_CHARACTER(nels));
+      
+      int i = 0;
+      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      REAL(ans)[i] = conf;
+
+      tesseract::ChoiceIterator ci(*ri);
+      for(int i = 1; i < nels; i++) {
+	const char* choice = ci.GetUTF8Text();
+	conf = ci.Confidence();
+	if(choice)
+	  SET_STRING_ELT(names, i, Rf_mkChar(choice));
+	REAL(ans)[i] = conf;
+      }
+
+      SET_NAMES(ans, names);
+      UNPROTECT(2);
+
+      return(ans);
+}
+
+
+
+/*
+#if 0
+  i = 0;
+  if(ri != 0) {
+    int j;
+    do {
+      const char* symbol = ri->GetUTF8Text(tesseract::RIL_SYMBOL);
+      if(symbol) {
+	i++;
+	tesseract::ChoiceIterator ci(*ri);
+	j = 0;
+#if 1
+	do {
+	  j++;
+	} while(ci.Next());
+#endif
+	printf("%s %d\n", symbol, j);
+	delete[] symbol;
+      }
+    } while(ri->Next(level));
+  }
+  return(ScalarInteger(i));
+#endif
+
+ */

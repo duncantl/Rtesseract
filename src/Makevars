@@ -1,2 +1,3 @@
-PKG_CPPFLAGS=-I${HOME}/local/incldue
+CXXFLAGS=-g
+PKG_CPPFLAGS=-I${HOME}/local/include -g
 PKG_LIBS=-L${HOME}/local/lib -ltesseract -llept
