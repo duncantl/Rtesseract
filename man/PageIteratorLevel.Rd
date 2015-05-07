@@ -1,6 +1,5 @@
 \name{PageIteratorLevel}
 \alias{PageIteratorLevel}
-\docType{data}
 \title{R version of the enumerated constants for the PageIteratorLevel in the tesseract library}
 \description{
  This vector corresponds to a collection of enumerated constants in the tesseract C++ library.
