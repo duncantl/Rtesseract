@@ -154,6 +154,71 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 
 
 
+extern "C"
+SEXP
+R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
+{
+  SEXP ans = R_NilValue; 
+  int i;
+
+  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+  if(api->Init(NULL, "eng")) {
+     PROBLEM "could not intialize tesseract engine."	      
+     ERROR;
+  }
+  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
+  api->SetImage(image);
+
+  SEXP r_optNames = GET_NAMES(r_vars);
+  for(i = 0; i < Rf_length(r_vars); i++) 
+      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+
+
+  api->Recognize(0);
+  tesseract::ResultIterator* ri = api->GetIterator();
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
+  if(ri != 0) {
+
+    int n = 1, i;
+    while(ri->Next(level))   n++;
+
+    ri = api->GetIterator();
+    SEXP names, tmp;
+    PROTECT(names = NEW_CHARACTER(n));
+    PROTECT(ans = NEW_LIST(n));
+    i = 0;
+    int x1, y1, x2, y2;
+    do {
+      const char* word = ri->GetUTF8Text(level);
+      float conf = ri->Confidence(level);
+
+      ri->BoundingBox(level, &x1, &y1, &x2, &y2);
+      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_VECTOR_ELT(ans, i, tmp = NEW_NUMERIC(5));
+      REAL(tmp)[0] = conf;
+      REAL(tmp)[1] = x1;
+      REAL(tmp)[2] = y1;
+      REAL(tmp)[3] = x2;
+      REAL(tmp)[4] = y2;
+
+      SET_NAMES(tmp, r_names);
+
+      delete[] word;
+      i++;
+
+    } while (ri->Next(level));
+
+    SET_NAMES(ans, names);
+    UNPROTECT(2);
+  }
+
+  pixDestroy(&image);
+
+ return(ans);
+}
+
+
+
 /*
 #if 0
   i = 0;
@@ -179,3 +244,7 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 #endif
 
  */
+
+
+
+

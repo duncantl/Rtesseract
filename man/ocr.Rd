@@ -39,10 +39,18 @@ Duncan Temple Lang
 % \seealso{}
 
 \examples{
+# 
+ f = system.file("images", "OCRSample.tiff", package = "Rtesseract")
+ o = ocr(f, "word")
+ names(o)
+ summary(o)
+
+ ans = ocr(f, "word", boundingBox = TRUE)
+
  f = system.file("images", "IMG_1234.jpg", package = "Rtesseract")
  o = ocr(f, "symbol", opts = c("tessedit_char_whitelist" = "0123456789."))
 
- f = system.file("images", "IMG_1234.jpg", package = "Rtesseract")
  ans = ocr(f, "word", alternatives = TRUE, "tessedit_char_whitelist" = "0123456789.")
 
+ ans = ocr(f, "word", boundingBox = TRUE, "tessedit_char_whitelist" = "0123456789.")
 }

@@ -3,3 +3,7 @@ export(ocr)
 export(PageIteratorLevel)
 
 export(tesseractVersion)
+
+exportClass("TessBaseAPI")
+export(tesseract)
+
