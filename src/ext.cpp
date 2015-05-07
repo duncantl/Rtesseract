@@ -264,7 +264,7 @@ R_ResultIterator_GetUTF8Text(SEXP r_it, SEXP r_level)
 
 extern "C"
 SEXP
-R_tesseract_GetInitiLanguagesAsString(SEXP r_api)
+R_tesseract_GetInitLanguagesAsString(SEXP r_api)
 {
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
   return(ScalarString(mkChar(api->GetInitLanguagesAsString())));

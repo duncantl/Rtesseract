@@ -77,19 +77,28 @@ setMethod("lapply", "ResultIterator", lapply.ResultIterator)
 BoundingBox = 
 function(ri, level = 3L)
 {
+  if(!is(ri, "ResultIterator"))
+    stop("need a result iterator")
+
   .Call("R_ResultIterator_BoundingBox", ri, as.integer(level))
 }
 
 Confidence = 
 function(ri, level = 3L)
 {
+  if(!is(ri, "ResultIterator"))
+    stop("need a result iterator")
+
   .Call("R_ResultIterator_Confidence", ri, as.integer(level))
 }
 
 GetText = GetUTF8Text = 
 function(ri, level = 3L)
 {
-  .Call("R_ResultIterator_GetUTFText", ri, as.integer(level))
+  if(!is(ri, "ResultIterator"))
+    stop("need a result iterator")
+
+  .Call("R_ResultIterator_GetUTF8Text", ri, as.integer(level))
 }
 
 
@@ -104,4 +113,26 @@ SetRectangle =
 function(api, ..., dims = sapply(list(...), as.integer))
 {
   .Call("R_tesseract_SetRectangle", api, dims)
+}
+
+SetSourceResolution =
+function(api, ppi)
+{
+  .Call("R_tesseract_SetSourceResolution", api, as.integer(ppi))
+}
+
+ReadConfigFile = 
+function(api, files)
+{
+   ff = path.expand(files)
+   if(!all(ok <- file.exists(f)))
+      stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
+
+   .Call("R_tesseract_ReadConfigFile", api, ff)
+}
+
+GetInitLanguages = 
+function(api)
+{
+  .Call("R_tesseract_GetInitLanguagesAsString", api)
 }

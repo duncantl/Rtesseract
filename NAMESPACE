@@ -15,3 +15,6 @@ exportMethods(lapply)
 export(GetIterator, SetImage, Recognize, Init, setVariables, pixRead)
 
 export(GetText, Confidence, BoundingBox)
+
+export(SetRectangle, Clear)
+export(GetInitLanguages, ReadConfigFile, SetSourceResolution)
