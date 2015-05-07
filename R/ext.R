@@ -91,3 +91,17 @@ function(ri, level = 3L)
 {
   .Call("R_ResultIterator_GetUTFText", ri, as.integer(level))
 }
+
+
+Clear = 
+function(api)
+{
+  .Call("R_tesseract_Clear", api)
+}
+
+
+SetRectangle = 
+function(api, ..., dims = sapply(list(...), as.integer))
+{
+  .Call("R_tesseract_SetRectangle", api, dims)
+}

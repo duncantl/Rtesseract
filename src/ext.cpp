@@ -253,5 +253,69 @@ R_ResultIterator_GetUTF8Text(SEXP r_it, SEXP r_level)
    tesseract::ResultIterator *ri = GET_REF(r_it, tesseract::ResultIterator);
    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
-   return(ScalarString(mkChar(ri->GetUTF8Text(level))));
+   const char * val = ri->GetUTF8Text(level);
+   SEXP ans = ScalarString(mkChar(val));
+   delete[] val;
+
+   return(ans);
 }
+
+
+
+extern "C"
+SEXP
+R_tesseract_GetInitiLanguagesAsString(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  return(ScalarString(mkChar(api->GetInitLanguagesAsString())));
+}
+
+
+
+extern "C"
+SEXP
+R_tesseract_ReadConfigFile(SEXP r_api, SEXP r_filename)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  for(int i = 0; i < Rf_length(r_filename); i++)
+    api->ReadConfigFile(CHAR(STRING_ELT(r_filename, i)));
+
+  return(R_NilValue);
+}
+
+
+extern "C"
+SEXP
+R_tesseract_SetSourceResolution(SEXP r_api, SEXP r_ppi)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  api->SetSourceResolution(INTEGER(r_ppi)[0]);
+
+  return(R_NilValue);
+}
+
+
+extern "C"
+SEXP
+R_tesseract_SetRectangle(SEXP r_api, SEXP r_dims)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  int *d = INTEGER(r_dims);
+  api->SetRectangle(d[0], d[1], d[2], d[3]);
+
+  return(R_NilValue);
+}
+
+
+
+extern "C"
+SEXP
+R_tesseract_Clear(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  api->Clear();
+
+  return(R_NilValue);
+}
+
+
