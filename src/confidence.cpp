@@ -35,6 +35,7 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
     while(ri->Next(level))   n++;
     //    printf("num words %d\n", n);
 
+    delete ri; // XXX check
 
     //    api->Recognize(0);
     ri = api->GetIterator();
@@ -45,15 +46,14 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
     do {
       const char* word = ri->GetUTF8Text(level);
       float conf = ri->Confidence(level);
-      //      int x1, y1, x2, y2;
-      //      ri->BoundingBox(level, &x1, &y1, &x2, &y2);
-      //      printf("word: '%s';  \tconf: %.2f; BoundingBox: %d,%d,%d,%d;\n",
-      //	   word, conf, x1, y1, x2, y2);
+
       SET_STRING_ELT(names, i, Rf_mkChar(word));
       REAL(ans)[i] = conf;
       delete[] word;
       i++;
     } while (ri->Next(level));
+
+    delete ri; // XXX check
 
     SET_NAMES(ans, names);
     UNPROTECT(2);

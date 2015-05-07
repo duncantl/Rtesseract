@@ -1,9 +1,17 @@
-useDynLib(Rtesseract)
+useDynLib(Rtesseract, R_ResultIterator_Confidence)
 export(ocr)
 export(PageIteratorLevel)
 
 export(tesseractVersion)
 
 exportClass("TessBaseAPI")
+exportClasses("Pix", "ResultIterator")
 export(tesseract)
 
+
+export(lapply)
+exportMethods(lapply)
+
+export(GetIterator, SetImage, Recognize, Init, setVariables, pixRead)
+
+export(GetText, Confidence, BoundingBox)
