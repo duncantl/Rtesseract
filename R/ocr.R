@@ -1,8 +1,8 @@
 PageIteratorLevel = c(block = 0L, para = 1L, textline = 2L, word = 3L, symbol = 4L)
 
 ocr = 
-function(img, alternatives = FALSE, opts = sapply(list(...), as, "character"), 
-         level = PageIteratorLevel["word"], ...)
+function(img, level = PageIteratorLevel["word"], alternatives = FALSE,
+         opts = sapply(list(...), as, "character"), ...)
 {
    img = path.expand(as.character(img))
    if(!file.exists(img))
@@ -15,8 +15,13 @@ function(img, alternatives = FALSE, opts = sapply(list(...), as, "character"),
         stop("no match for ", tmp)
     }
 
+   opts = as(opts, "character")
+
+   if(alternatives)
+      opts["save_blob_choices"] = "T"
+
    sym = if(as.logical(alternatives)) "R_ocr_alternatives" else "R_ocr"
-   .Call(sym, img, as(opts, "character"), as.integer(level))
+   .Call(sym, img, opts, as.integer(level))
 }
 
 #ocr("IMG_1234.jpg", opts = c("tessedit_char_whitelist" = "0123456789."))

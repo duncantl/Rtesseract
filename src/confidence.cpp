@@ -93,29 +93,6 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
   tesseract::ResultIterator* ri = api->GetIterator();
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
-#if 0
-  do {
-    i = 1;
-    const char* symbol = ri->GetUTF8Text(level);
-    float conf = ri->Confidence(level);
-    if(symbol != 0) {
-      printf("%d \n", i); i++;
-      //      tesseract::ChoiceIterator ci(*ri);
-      /*
-      do {
-	if (indent) printf("\t\t ");
-	printf("\t- ");
-	const char* choice = ci.GetUTF8Text();
-	printf("%s conf: %f\n", choice, ci.Confidence());
-	indent = true;
-      } while(ci.Next());
-      */
-      delete[] symbol;
-    }
-  } while(ri->Next(level));
-
-#else
-
     int n = 1;
     while(ri->Next(level))
         n++;
@@ -136,8 +113,6 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
 
     SET_NAMES(ans, names);
     UNPROTECT(2);
-
-#endif
 
  return(ans);
 }
@@ -168,6 +143,7 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 	if(choice)
 	  SET_STRING_ELT(names, i, Rf_mkChar(choice));
 	REAL(ans)[i] = conf;
+	//	delete [] choice;
       }
 
       SET_NAMES(ans, names);

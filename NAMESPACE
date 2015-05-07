@@ -1,3 +1,5 @@
 useDynLib(Rtesseract)
 export(ocr)
 export(PageIteratorLevel)
+
+export(tesseractVersion)
