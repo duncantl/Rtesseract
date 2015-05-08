@@ -1,19 +1,24 @@
 ocr() function using the API-level functions.
 
-[Done] SetVariable and GetVariable.
-     tests/vars.R
-     different types.
-
-Get components
-
 [Done] Plot the image and the components and 
 *  show the confidence level for each 
    See tests/plot.R
 
+  Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
 Get alternatives via R interface to API, not the R_alternatives routine.
 
-capabilities  - at configure time.
-  e.g. image formats leptonica understands.
+Get components - leptonica objects Boxa and Pixa
+
+error rates and confusion matrix when know the actual values.
+
+
+[Done] SetVariable and GetVariable.
+     tests/vars.R
+     different types.
 
 [Basic] configuration
+
+[Done] capabilities  - at configure time.
+  e.g. image formats leptonica understands.
+   leptonicaImageFormats()

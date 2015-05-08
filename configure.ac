@@ -22,9 +22,49 @@ TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
 
 fi
 
+
+AC_PROG_CXX
+
+
+PNG_FILES="NA"
+JPG_FILES="NA"
+TIFF_FILES="NA"
+
+echo "Compiling readImage"
+$CXX -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
+
+if test "$?" = "0" ; then
+  echo "testing leptonica can read different image formats"
+  ./readImage inst/images/IMG_1236.jpg
+  JPG_FILES="FALSE"
+  if test $? ; then
+    echo "jpg support"
+    JPG_FILES="TRUE"
+  fi
+  ./readImage inst/images/OCRSample.tiff
+  TIFF_FILES="FALSE"
+  if test $? ; then
+    echo "tiff support"
+    TIFF_FILES="TRUE"
+  fi
+  ./readImage inst/images/DifferentFonts.png
+  PNG_FILES="FALSE"
+  if test $? ; then
+    echo "png support"
+    PNG_FILES="TRUE"
+  fi
+fi
+
+
+
 AC_SUBST(LEPT_LIBS)
 AC_SUBST(LEPT_CFLAGS)
 AC_SUBST(TESS_CFLAGS)
 AC_SUBST(TESS_LIBS)
 
-AC_OUTPUT(src/Makevars)
+
+AC_SUBST(PNG_FILES)
+AC_SUBST(JPG_FILES)
+AC_SUBST(TIFF_FILES)
+
+AC_OUTPUT(src/Makevars R/imageCapabilities.R)

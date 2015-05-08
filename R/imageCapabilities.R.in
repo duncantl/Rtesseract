@@ -1,0 +1,7 @@
+imageFormats = c(png = @PNG_FILES@, tiff = @TIFF_FILES@, jpg = @JPG_FILES@)
+
+leptonicaImageFormats =
+function ()   
+{
+  imageFormats
+}
