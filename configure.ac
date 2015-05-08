@@ -23,6 +23,8 @@ TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
 fi
 
 
+dnl probably should use the one from R's configuration
+dnl  CXX=`R CMD config  CXX`
 AC_PROG_CXX
 
 
