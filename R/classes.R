@@ -18,6 +18,16 @@ setAs("numeric", "PageIteratorLevel",
            new("PageIteratorLevel", PageIteratorLevel[i])
        })
 
+setAs("character", "PageIteratorLevel",
+       function(from) {
+           i = match(from, names(PageIteratorLevel))
+           if(is.na(i))
+               stop("Not a valid PageIteratorLevel value")
+
+           new("PageIteratorLevel", PageIteratorLevel[i])
+       })
+
+
 #setValidity("PageIteratorLevel"
 
 
