@@ -28,4 +28,7 @@ export(GetDatapath, GetSourceYResolution, GetInputName)
 export(PrintVariables)
 
 exportClass(PageIteratorLevel)
+
 exportMethods(coerce)
+exportMethods(plot)
+
