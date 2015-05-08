@@ -58,12 +58,33 @@ R_TessBaseAPI_SetVariables(SEXP r_api, SEXP r_vars)
       ERROR;
   }
 
-  SEXP r_optNames = GET_NAMES(r_vars);
+  SEXP r_optNames = GET_NAMES(r_vars), ans;
   int i;
-  for(i = 0; i < Rf_length(r_vars); i++) 
-      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+  PROTECT(ans = NEW_LOGICAL(Rf_length(r_vars)));
+  for(i = 0; i < Rf_length(r_vars); i++)  {
+//      Rprintf("set var: %s = %s\n", CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+      LOGICAL(ans)[i] = api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+  }
+  SET_NAMES(ans, r_optNames);
+  UNPROTECT(1);
 
-  return( ScalarInteger( i ));
+  return( ans );
+}
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_End(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  api->End();
+
+  return(R_NilValue);
 }
 
 
@@ -86,6 +107,25 @@ R_TessBaseAPI_SetImage(SEXP r_api, SEXP r_img)
 
   return(R_NilValue);
 }
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_SetImage_raw(SEXP r_api, SEXP r_img, SEXP r_dims, SEXP r_bytes_per_pixel, SEXP r_bytes_per_line)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+ 
+  unsigned char *img = (unsigned char *) RAW(r_img);
+  api->SetImage(img, INTEGER(r_dims)[0], INTEGER(r_dims)[1], INTEGER(r_bytes_per_pixel)[0], INTEGER(r_bytes_per_line)[0]);
+
+  return(R_NilValue);
+}
+
+
 
 extern "C"
 SEXP
@@ -319,3 +359,116 @@ R_tesseract_Clear(SEXP r_api)
 }
 
 
+#if 1
+#include <tesseract/strngs.h>
+#include <R_ext/Arith.h>
+
+SEXP
+getVariable(tesseract::TessBaseAPI * api, const char *varname, int type)
+{
+    int i;
+    double d;
+    bool b;
+    
+    STRING str;
+
+#if 0
+ Rprintf("var: %s\n", varname);
+ bool ok = api->GetBoolVariable(varname, &b);
+ Rprintf("%d %d\n", (int)ok, (int) b);
+
+// api->GetVariableAsString(varname, &str);
+//    return(ScalarString( mkChar(str.c_str() ) ));
+#endif
+
+    if(api->GetIntVariable(varname, &i))
+        return(ScalarInteger(i));
+    if(api->GetDoubleVariable(varname, &d))
+        return(ScalarReal(d));
+    if(api->GetBoolVariable(varname, &b))
+        return(ScalarLogical(b));
+    if(api->GetVariableAsString(varname, &str))
+        return(ScalarString( mkChar(str.c_str() ) ) );
+    
+    return(R_NilValue);
+}
+
+extern "C"
+SEXP
+R_tesseract_GetVariable(SEXP r_api, SEXP r_var, SEXP r_type)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+
+  int n = Rf_length(r_var);
+  SEXP ans;
+  PROTECT(ans = NEW_LIST(n));
+  for(int i = 0; i < n; i++) 
+      SET_VECTOR_ELT(ans, i, getVariable(api, CHAR(STRING_ELT(r_var, i)), INTEGER(r_type)[i]));
+
+  SET_NAMES(ans, r_var);
+  UNPROTECT(1);
+
+  return(ans);
+}
+
+#endif
+
+
+
+extern "C"
+SEXP
+R_tesseract_IsValidWord(SEXP r_api, SEXP r_words)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    SEXP ans;
+    int n = Rf_length(r_words);
+    PROTECT(ans = NEW_LOGICAL(n));
+    for(int i = 0; i < n; i ++)
+        LOGICAL(ans)[i] = api->IsValidWord(CHAR(STRING_ELT(r_words, i)));
+
+    SET_NAMES(ans, r_words);
+    UNPROTECT(1);
+    return(ans);
+}
+
+extern "C"
+SEXP
+R_tesseract_GetInputName(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    const char * w = api->GetInputName() ;
+    return(ScalarString( w ? mkChar( w ) : NA_STRING  ) );
+}
+
+
+extern "C"
+SEXP
+R_tesseract_GetDatapath(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    return(ScalarString( mkChar( api->GetDatapath() ) ) );
+}
+
+extern "C"
+SEXP
+R_tesseract_GetSourceYResolution(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    return(ScalarInteger( api->GetSourceYResolution() ) );
+}
+
+
+extern "C"
+SEXP
+R_tesseract_PrintVariables(SEXP r_api, SEXP r_filename)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    FILE *f = fopen(CHAR(STRING_ELT(r_filename, 0)), "w");
+    if(!f) {
+        PROBLEM "cannot write to temporary file %s", CHAR(STRING_ELT(r_filename, 0))
+            ERROR;
+    }
+    api->PrintVariables(f);
+    fclose(f);
+    return(R_NilValue);
+}

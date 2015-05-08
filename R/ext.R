@@ -1,7 +1,15 @@
 tesseract =
-function(...)
+function(..., init = TRUE)
 {
-  .Call("R_TessBaseAPI_new")
+  api = .Call("R_TessBaseAPI_new")
+
+  if(init)
+     Init(api)
+  
+  if(nargs() > 0)
+     SetVariables(api, ...)  
+  
+  api
 }
 
 Init = 
@@ -10,9 +18,18 @@ function(api, lang = "eng")
   .Call("R_TessBaseAPI_Init", api, as.character(lang))
 }
 
-setVariables =
+End =
+function(api)
+{
+  .Call("R_TessBaseAPI_End", api)
+}
+
+SetVariables =
 function(api, ..., .vars = sapply(list(...), as, "character"))
 {
+  .vars[ .vars == "FALSE" ] = "F"
+  .vars[ .vars == "TRUE" ] = "T"  
+    
   .Call("R_TessBaseAPI_SetVariables", api, as(.vars, "character"))
 }
 
@@ -29,7 +46,11 @@ function(filename, ...)
 SetImage = 
 function(api, pix)
 {
+  if(is.character(pix))
+     pix = pixRead(pix)
+  
   .Call("R_TessBaseAPI_SetImage", api, pix)
+  pix
 }
 
 Recognize =
@@ -49,7 +70,7 @@ function(api)
 lapply.ResultIterator =
 function(X, FUN, level, ...) 
 {
-#   level = as("level", "PageIteratorLevel")
+   level = as(level, "PageIteratorLevel")
    if(is.function(FUN)) {
       e = substitute(foo(ri, level), 
                           list(foo = FUN, ri = X, level = level))
@@ -135,4 +156,78 @@ GetInitLanguages =
 function(api)
 {
   .Call("R_tesseract_GetInitLanguagesAsString", api)
+}
+
+
+VarTypes = c("i" = 1L, "int" = 1L, "integer" = 1L,
+             "d" = 2L, "double" = 2L, "numeric" = 2L,
+             "l" = 3L, "bool" = 3L, "logical" = 3L,
+             "s" = 4L, "string" = 4L, "character" = 4L)
+
+GetVariables =
+function(api, var, type = NA)
+{
+  if(missing(var))
+     return(PrintVariables(api))
+
+if(FALSE) {  
+  if(length(type) != length(var))
+      type = rep(type, length = var)
+
+  if(is.character(type)) {
+     i =  pmatch(type, names(VarTypes))
+     type = i
+  }
+}
+  
+  .Call("R_tesseract_GetVariable", api, as.character(var), rep(0L, length(var)))
+}
+
+
+IsValidWord =
+function(api, word)
+{
+   .Call("R_tesseract_IsValidWord", api, as.character(word))
+}
+
+
+GetInputName =
+function(api)
+{
+  .Call("R_tesseract_GetInputName", api)
+}
+
+
+GetDatapath =
+function(api)
+{
+  .Call("R_tesseract_GetDatapath", api)
+}
+
+GetSourceYResolution =
+function(api)
+{
+  .Call("R_tesseract_GetSourceYResolution", api)
+}
+
+
+PrintVariables =
+function(api, file = tempfile())
+{
+  m = missing(file)
+  if(m)
+     on.exit(unlink(file))
+  
+  .Call("R_tesseract_PrintVariables", api, as.character(file))
+
+  if(m) 
+    readVars(file)
+  
+}
+
+readVars =
+function(f)
+{
+  d = read.table(f, sep = "\t", stringsAsFactors = FALSE)
+  structure(d[,2], names = d[,1])
 }

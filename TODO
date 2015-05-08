@@ -1,0 +1,19 @@
+ocr() function using the API-level functions.
+
+[Done] SetVariable and GetVariable.
+     tests/vars.R
+     different types.
+
+Get alternatives via R interface to API, not the R_alternatives routine.
+
+Get components
+
+Plot the image and the components and
+the confidences for each 
+   See tests/plot.R
+
+
+configuration
+
+capabilities  - at configure time.
+  e.g. image formats leptonica understands.

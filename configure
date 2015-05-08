@@ -1694,7 +1694,7 @@ fi
 
 
 
-echo "$PKG_CONFIG"
+if ! test "$PKG_CONFIG" = "" ; then
 
 LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
 
@@ -1707,6 +1707,8 @@ LEPT_LIBS=`$PKG_CONFIG --libs lept`
 
 TESS_CFLAGS=`${PKG_CONFIG} --cflags tesseract`
 TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
+
+fi
 
 
 

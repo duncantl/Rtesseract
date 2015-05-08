@@ -1,5 +1,3 @@
-PageIteratorLevel = c(block = 0L, para = 1L, textline = 2L, word = 3L, symbol = 4L)
-
 ocr = 
 function(img, level = PageIteratorLevel["word"], 
          alternatives = FALSE, boundingBox = FALSE,

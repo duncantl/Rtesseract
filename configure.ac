@@ -6,7 +6,7 @@ AC_INIT(src/ext.cpp)
 
 AC_PATH_PROG(PKG_CONFIG, pkg-config, [echo "Cannot find pkg-config"])
 
-echo "$PKG_CONFIG"
+if ! test "$PKG_CONFIG" = "" ; then
 
 LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
 
@@ -19,6 +19,8 @@ LEPT_LIBS=`$PKG_CONFIG --libs lept`
 
 TESS_CFLAGS=`${PKG_CONFIG} --cflags tesseract`
 TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
+
+fi
 
 AC_SUBST(LEPT_LIBS)
 AC_SUBST(LEPT_CFLAGS)

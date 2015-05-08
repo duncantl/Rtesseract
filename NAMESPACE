@@ -12,9 +12,20 @@ export(tesseract)
 export(lapply)
 exportMethods(lapply)
 
-export(GetIterator, SetImage, Recognize, Init, setVariables, pixRead)
+export(GetIterator, SetImage, Recognize, Init, End, SetVariables, pixRead)
 
 export(GetText, Confidence, BoundingBox)
 
 export(SetRectangle, Clear)
 export(GetInitLanguages, ReadConfigFile, SetSourceResolution)
+
+export(GetVariables)
+
+export(IsValidWord)
+
+export(GetDatapath, GetSourceYResolution, GetInputName)
+
+export(PrintVariables)
+
+exportClass(PageIteratorLevel)
+exportMethods(coerce)
