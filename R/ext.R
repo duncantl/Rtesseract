@@ -46,8 +46,10 @@ function(filename, ...)
 SetImage = 
 function(api, pix)
 {
-  if(is.character(pix))
+  if(is.character(pix)) {
+     SetInputName(api, pix)
      pix = pixRead(pix)
+  }
   
   .Call("R_TessBaseAPI_SetImage", api, pix)
   pix
@@ -230,4 +232,42 @@ function(f)
 {
   d = read.table(f, sep = "\t", stringsAsFactors = FALSE)
   structure(d[,2], names = d[,1])
+}
+
+
+SetInputName =
+function(api, name)
+{
+  .Call("R_tesseract_SetInputName", api, as.character(name))
+}
+
+
+
+setMethod("plot", "TessBaseAPI",
+          function(x, y, level = "word", ...) {
+              plot.OCR(api, level = level, ...)
+          })
+
+
+plot.OCR =
+function(api, level = "word",
+         ri = GetIterator(api),
+         filename = GetInputName(api),
+         img = readPNG(filename),
+         bbox = lapply(ri, BoundingBox, level), ...)
+{
+    m = do.call(rbind, bbox)
+    xr = range(m[, 1], m[,3])
+    yr = range(m[, 2], m[,4])
+
+    r = nrow(img)
+    c = ncol(img)
+    
+    plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)    
+    rasterImage(img, 0, 0, c, r)
+    rect(m[,1], r - m[,2], m[,3], r - m[,4], border = "red")
+    
+    rect(min(m[,1]), r - min(m[,2]), max(m[,3]), r - max(m[,4]), border = "green")
+
+    NULL
 }

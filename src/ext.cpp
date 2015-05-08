@@ -440,6 +440,15 @@ R_tesseract_GetInputName(SEXP r_api)
     return(ScalarString( w ? mkChar( w ) : NA_STRING  ) );
 }
 
+extern "C"
+SEXP
+R_tesseract_SetInputName(SEXP r_api, SEXP r_name)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    api->SetInputName(CHAR( STRING_ELT(r_name, 0) )) ;
+    return(R_NilValue);
+}
+
 
 extern "C"
 SEXP

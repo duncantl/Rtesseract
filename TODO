@@ -4,16 +4,16 @@ ocr() function using the API-level functions.
      tests/vars.R
      different types.
 
-Get alternatives via R interface to API, not the R_alternatives routine.
-
 Get components
 
-Plot the image and the components and
-the confidences for each 
+[Done] Plot the image and the components and 
+*  show the confidence level for each 
    See tests/plot.R
 
 
-configuration
+Get alternatives via R interface to API, not the R_alternatives routine.
 
 capabilities  - at configure time.
   e.g. image formats leptonica understands.
+
+[Basic] configuration

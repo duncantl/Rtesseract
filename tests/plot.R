@@ -1,23 +1,43 @@
+#
+# 
+#
+#
+
+
 library(Rtesseract)
+library(png)
+
+f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 
 api = tesseract()
-f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 pix = SetImage(api, f)
-
 Recognize(api)
+
+par(mfrow = c(1, 2))
+plot(api, main = "Words")
+plot(api, level = "symbol", main = "Individual Characters")
+
+if(FALSE) {
+
 ri = GetIterator(api)
-bbox = lapply(ri, BoundingBox, 3L)
+bbox = lapply(ri, BoundingBox, "symbol")
 
 m = do.call(rbind, bbox)
-xr = range(m[, 1] + m[,3])
-yr = range(m[, 2] + m[,4])
+xr = range(m[, 1], m[,3])
+yr = range(m[, 2], m[,4])
 
-plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, max(xr)), ylim = c(0, max(yr)))
+plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, ncol(img)), ylim = c(0, nrow(img)))
 
-library(png)
+
 img = readPNG(f)
-rasterImage(img, 0, 0, max(xr), max(yr))
 
-rect(m[,1], max(yr) - m[,2], m[,3], max(yr) - m[,4], border = "red")
+#rect(0, 0, ncol(img), nrow(img), col = "yellow")
+
+rasterImage(img, 0, 0, ncol(img), nrow(img))
+
+
+rect(m[,1], nrow(img) - m[,2], m[,3], nrow(img) - m[,4], border = "red")
+
 
 rect(min(xr), max(yr), max(xr), min(yr), border = "green")
+}
