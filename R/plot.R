@@ -29,3 +29,26 @@ function(api, level = "word",
 
     NULL
 }
+
+
+plot.ConfusionMatrix =
+function(x, y, col = rgb(seq(1, 0, length = max(x)), 1, 1), xlab = "Actual", ylab = "Predicted", ...)
+{
+  image(x, col = col, axes = FALSE, ..., xlab = xlab, ylab = ylab)
+  box()
+  u = par()$usr
+  d = (u[2] - u[1])/nrow(tt)
+  axis(1, seq(u[1] + d/2, by = d, length = nrow(tt)), rownames(tt))
+
+  d = (u[4] - u[3])/ncol(tt)
+  axis(2, seq(u[3] + d/2, by = d, length = ncol(tt)), colnames(tt))  
+}
+
+plot.BoundingBox =
+function(box, img, ...)
+{
+  pos = box
+  k = i[ pos[2]:pos[4],  pos[1]:pos[3], ]
+  plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), ...)
+  rasterImage(k, 0, 0, ncol(k), nrow(k))
+}
