@@ -32,3 +32,6 @@ exportClass(PageIteratorLevel)
 exportMethods(coerce)
 exportMethods(plot)
 
+export(leptonicaImageFormats)
+
+export(compareWord, collapse, compareWords)

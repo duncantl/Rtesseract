@@ -43,7 +43,7 @@ Duncan Temple Lang
  f = system.file("images", "OCRSample.tiff", package = "Rtesseract")
  o = ocr(f, "word")
  names(o)
- summary(o)
+ summary(o)  # confidence levels
 
  ans = ocr(f, "word", boundingBox = TRUE)
 

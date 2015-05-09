@@ -6,11 +6,17 @@ ocr() function using the API-level functions.
 
   Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
-Get alternatives via R interface to API, not the R_alternatives routine.
-
-Get components - leptonica objects Boxa and Pixa
+When find an error, get the subset of the image for that bounding box and 
+then see if we can cluster them.
 
 error rates and confusion matrix when know the actual values.
+
+
+Get alternatives via R interface to API, not the R_alternatives routine.
+
+
+[low] Get components - leptonica objects Boxa and Pixa
+
 
 
 [Done] SetVariable and GetVariable.
