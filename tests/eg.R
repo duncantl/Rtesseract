@@ -30,5 +30,7 @@ identical(conf, conf1)
 
 bbox = lapply(ri, BoundingBox, 3L)
 
+alts = lapply(ri, getAlternatives, "symbol")
+
 
 

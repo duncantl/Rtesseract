@@ -481,3 +481,46 @@ R_tesseract_PrintVariables(SEXP r_api, SEXP r_filename)
     fclose(f);
     return(R_NilValue);
 }
+
+
+
+
+SEXP
+getAlts(tesseract::ResultIterator *ri)
+{
+      tesseract::ChoiceIterator ci_r(*ri);
+      int nels = 1;
+      while(ci_r.Next()) 
+        nels++;         
+
+      SEXP ans, names;
+      PROTECT(ans = NEW_NUMERIC(nels));
+      PROTECT(names = NEW_CHARACTER(nels));
+
+      tesseract::ChoiceIterator ci(*ri);
+      double conf;
+      for(int i = 0; i < nels ; i++, ci.Next()) {
+	const char* choice = ci.GetUTF8Text();
+	conf = ci.Confidence();
+	if(choice) {
+	  SET_STRING_ELT(names, i, Rf_mkChar(choice));
+//          delete [] choice;
+        }
+	REAL(ans)[i] = conf;
+      }
+
+      SET_NAMES(ans, names);
+      UNPROTECT(2);
+
+      return(ans);
+}
+
+extern "C"
+SEXP
+R_getAlternatives(SEXP r_api, SEXP r_level)
+{
+    tesseract::ResultIterator * ri = GET_REF(r_api, tesseract::ResultIterator );
+
+    return(getAlts(ri));
+}
+

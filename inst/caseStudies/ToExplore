@@ -2,6 +2,8 @@ The "font" is an old one.  So tesseract probably needs to be trained to recogniz
 
 Change the contrast by removing the background grey level, i.e. setting it to 0.
 
-Chose the best image format when taking the picture (HD?)
+Chose the best image format when taking the picture. 
 
 Look at misclassification rates as we move horizontally across the page.
+
+For those that are misclassified, look at the alternatives.

@@ -8,14 +8,19 @@ ocr() function using the API-level functions.
 
 When find an error, get the subset of the image for that bounding box and 
 then see if we can cluster them.
+  See inst/caseStudies
 
-error rates and confusion matrix when know the actual values.
+  Can do this from the bounding box information and reading the image using one of the  R packages.
 
-
-Get alternatives via R interface to API, not the R_alternatives routine.
-
+[ok] error rates and confusion matrix when know the actual values.
 
 [low] Get components - leptonica objects Boxa and Pixa
+
+
+[Done] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
+
+
+
 
 
 

@@ -38,3 +38,6 @@ export(compareWord, collapse, compareWords)
 
 S3method(plot, ConfusionMatrix)
 export(plot.BoundingBox)
+
+export(getAlternatives)
+

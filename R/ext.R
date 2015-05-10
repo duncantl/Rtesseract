@@ -246,3 +246,9 @@ function(api, name)
 
 
 
+
+getAlternatives =
+function(ri, ...)
+{
+    .Call("R_getAlternatives", ri)
+}

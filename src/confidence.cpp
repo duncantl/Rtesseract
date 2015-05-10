@@ -125,9 +125,6 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
       while(ci_r.Next()) 
         nels++;         
 
-
-      // printf("# els %d\n", nels);
-      
       SEXP ans, names;
       PROTECT(ans = NEW_NUMERIC(nels));
       PROTECT(names = NEW_CHARACTER(nels));
