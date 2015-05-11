@@ -29,7 +29,7 @@ plot(api, level = "symbol", img = i, border = "grey")
 #bbox = lapply(ri, BoundingBox, level = "symbol")
 
 bbox = ocr(img, "symbol", boundingBox = TRUE, opts = c("tessedit_char_whitelist" = "0123456789."))
-m = do.call(rbind, bbox[ miss$bboxIndex ])[, -1]  # get rid of confidence.
+m = do.call(rbind, bbox[ miss$symbolIndex ])[, -1]  # get rid of confidence.
 rect(m[,1], nrow(i) - m[,2], m[,3], nrow(i) - m[,4], border = "red")
 
 

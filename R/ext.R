@@ -66,11 +66,21 @@ function(api)
 
 
 GetIterator =
-function(api)
+function(api, recognize = TRUE)
 {
-   .Call("R_TessBaseAPI_GetIterator", api)
+   ans = .Call("R_TessBaseAPI_GetIterator", api)
+   if(is.null(ans)) {
+       if(recognize) {
+           Recognize(api)
+           return(GetIterator(api))
+       } else {
+         e = simpleError("Did you call Recognize()")
+         class(e) = c("TesseractRecognizeNotCalled", class(e))
+         stop(e)
+       }
+   }
+   ans
 }
-
 
 lapply.ResultIterator =
 function(X, FUN, level, ...) 
@@ -96,6 +106,16 @@ if(!isGeneric("lapply"))
                 standardGeneric("lapply"))
 
 setMethod("lapply", "ResultIterator", lapply.ResultIterator)
+
+setMethod("lapply", "TesseractBaseAPI",
+           function(X, FUN, level = "word", ...) {
+               lapply(as(X, "ResultIterator"), FUN, level, ...)
+           })
+
+setAs("TesseractBaseAPI", "ResultIterator",
+        function(from)
+            GetIterator(from))
+    
 
 
 

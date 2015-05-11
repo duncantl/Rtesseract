@@ -189,6 +189,11 @@ R_TessBaseAPI_GetIterator(SEXP r_api)
       ERROR;
   }
   tesseract::ResultIterator* ri = api->GetIterator();
+  if(!ri) {
+      return(R_NilValue);
+      PROBLEM "ResultIterator is NULL. Did you call Recognize" 
+      ERROR;
+  }
   return(createRef(ri, "ResultIterator", R_freeResultIterator));
 }
 
@@ -204,7 +209,7 @@ R_ResultIterator_lapply(SEXP r_it, SEXP r_level, SEXP r_fun)
    int n = 1, i;
 
    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
-
+printf("Level %d\n", (int) level);
    while(ri->Next(level)) n++;
 
    SEXP names, ans, el;

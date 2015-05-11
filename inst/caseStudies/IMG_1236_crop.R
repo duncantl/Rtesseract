@@ -63,7 +63,7 @@ plot(api, level = "symbol", img = i, border = "grey")
 
  # Add the bounding boxes for the misclassified characters.
 bbox = ocr(img, "symbol", boundingBox = TRUE, opts = c("tessedit_char_whitelist" = "0123456789."))
-m = do.call(rbind, bbox[ miss$bboxIndex ])[, -1]  # get rid of confidence.
+m = do.call(rbind, bbox[ miss$symbolIndex ])[, -1]  # get rid of confidence.
 rect(m[,1], nrow(i) - m[,2], m[,3], nrow(i) - m[,4], border = "red")
 
 
@@ -71,19 +71,19 @@ rect(m[,1], nrow(i) - m[,2], m[,3], nrow(i) - m[,4], border = "red")
 
 # Let's look at the sub-image corresponding to the first misclassified digit.
 
-pos = bbox[[ miss$bboxIndex[1] ]][-1]
+pos = bbox[[ miss$symbolIndex[1] ]][-1]
 k = i[ pos[2]:pos[4],  pos[1]:pos[3], ]
 plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)))
 rasterImage(k, 0, 0, ncol(k), nrow(k))
-# Code now in plot.BoundingBox
+# Code now in plotSubImage
 
 
 # Now show all the misclassified digits.
 
 par(mfrow = c(12, 12), mar = c(0, 0, 0, 0))
-invisible(lapply(bbox[ miss$bboxIndex ],
+invisible(lapply(bbox[ miss$symbolIndex ],
                   function(box)
-                      plot.BoundingBox(box[-1], i, axes = FALSE)))
+                      plotSubImage(box[-1], i, axes = FALSE)))
 
 
 

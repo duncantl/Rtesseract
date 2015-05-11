@@ -33,6 +33,10 @@ Duncan Temple Lang
 \code{\link{SetImage}}
 }
 \examples{
+ f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+ pix = pixRead(f)
+ api = tesseract(pix)
+ lapply(api, Confidence, "textline")
 }
 \keyword{programming}
 \keyword{IO}

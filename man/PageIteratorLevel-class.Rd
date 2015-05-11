@@ -40,7 +40,7 @@ Class \code{"\linkS4class{data.frameRowLabels}"}, by class "integer", distance 2
 	 }
 }
 \references{
-
+Tesseract documentatation - \url{http://zdenop.github.io/tesseract-doc/namespacetesseract.html#aa26c22b65cc9765a0e747120f4287fd7}
 }
 \author{
 Duncan Temple Lang

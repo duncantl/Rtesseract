@@ -73,7 +73,7 @@ function(ocr, truth)
                   z[[i]][ tmp$position[w] ]
               })
 
-  tmp$bboxIndex = unlist(zz)
+  tmp$symbolIndex = unlist(zz)
 
   rownames(tmp) = NULL
   

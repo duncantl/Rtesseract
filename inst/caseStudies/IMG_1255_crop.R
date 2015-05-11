@@ -38,24 +38,24 @@ plot(api, level = "symbol", img = i, border = "grey")
 
  # Add the bounding boxes for the misclassified characters.
 bbox = ocr(img, "symbol", boundingBox = TRUE, opts = c("tessedit_char_whitelist" = "0123456789."))
-m = do.call(rbind, bbox[ miss$bboxIndex ])[, -1]  # get rid of confidence.
+m = do.call(rbind, bbox[ miss$symbolIndex ])[, -1]  # get rid of confidence.
 rect(m[,1], nrow(i) - m[,2], m[,3], nrow(i) - m[,4], border = "red")
 
 
 conf = sapply(bbox, `[`, 1)
 plot(density(conf))
-lines(density(conf[miss$bboxIndex]), col = "red")
-lines(density(conf[-miss$bboxIndex]), col = "green")
+lines(density(conf[miss$symbolIndex]), col = "red")
+lines(density(conf[-miss$symbolIndex]), col = "green")
 
 alts = ocr(img, "symbol", alternatives = TRUE, opts = c("tessedit_char_whitelist" = "0123456789."))
 table(sapply(alts, length))
   # so 3 have alternatives.
-table(sapply(alts[miss$bboxIndex], length))
+table(sapply(alts[miss$symbolIndex], length))
  # And these three are in the misclassified ones.
 
 i = which(sapply(alts, length) > 2)
 alts[i]
-miss[ miss$bboxIndex %in% i, ]
+miss[ miss$symbolIndex %in% i, ]
 
 
 

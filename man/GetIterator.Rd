@@ -9,11 +9,23 @@
  and use functions to query the results of current result.
 }
 \usage{
-GetIterator(api)
+GetIterator(api, recognize = TRUE)
 }
 \arguments{
   \item{api}{the \code{TesseractBaseAPI} ojbect created by a call to
     \code{\link{tesseract}}}
+  \item{recognize}{a logical value. If \code{TRUE}, we ensure
+    \code{\link{Recognize}} is called to process the image.
+    If \code{FALSE}, the function raises an error if
+    \code{\link{Recognize}}
+     has not been called. The class of the error is
+     \code{TesseractRecognizeNotCalled},
+     which can be caught using \code{\link[base]{tryCatch}}.
+     However, it is more convenient to just force the call to
+     \code{\link{Recognize}}
+     in this situation via \code{recognize = TRUE}.
+     }
+  }
 }
 
 \details{

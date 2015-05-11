@@ -1,6 +1,7 @@
 \name{lapply}
 \alias{lapply}
 \alias{lapply,ResultIterator-method}
+\alias{lapply,TesseractBaseAPI-method}
 \title{Method for Iterating over a ResultIterator}
 \description{
   This function allows us to loop over the results
@@ -30,8 +31,6 @@ lapply(X, FUN, ...) # level = "word",
     mapping the concept of a term to a number to be used in the C++ code.}
   \item{\dots}{additional arguments}
 }
-\details{
-}
 \value{
  A list with an element corresponding to each result in the OCR iterator.
 }
@@ -60,5 +59,5 @@ Duncan Temple Lang
  sym = getNativeSymbolInfo("r_getConfidence")
  conf = lapply(ri, sym$address, "word")
 }
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{programming}
+\keyword{iteration}

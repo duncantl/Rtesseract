@@ -1,8 +1,8 @@
-\name{plot.BoundingBox}
-\alias{plot.BoundingBox}
+\name{plotSubImage}
+\alias{plotSubImage}
 \title{Plot function for a Bounding Box}
 \description{
-  The \code{plot.BoundingBox} function
+  The \code{plotSubImage} function
   takes a bounding box 
   and an image and displays the subset of the image
   specified by the bounding box.
@@ -17,7 +17,7 @@
   for examining the region of the image in R.
 }
 \usage{
-plot.BoundingBox(box, img, ...)
+plotSubImage(box, img, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -29,20 +29,31 @@ plot.BoundingBox(box, img, ...)
   \item{\dots}{additional arguments passed to the inherited \code{plot} methods.}
 }
 \value{
-}
-\references{
+  The purpose of this function is the side-effect of plotting the sub-image
+  The result is \code{NULL}. 
 }
 \author{
 Duncan Temple Lang
 }
 
 \seealso{
-  \code{\link{BoundingBox}}
+ \code{\link{BoundingBox}}
 }
 \examples{
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+pix = pixRead(f)
+api = tesseract(pix)
+Recognize(api)
+bbox = lapply(api, BoundingBox, "textline")
 
+if(require("png")) {
+  img = readPNG(f)
+  par(mfrow = c(3, 3))
+  invisible(lapply(bbox, plotSubImage, img))
+  invisible(lapply(bbox, plotSubImage, img, axes = FALSE, xlab = "", ylab = ""))
+}
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{graphics}
+\keyword{IO}

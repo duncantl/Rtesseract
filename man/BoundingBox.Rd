@@ -49,6 +49,13 @@ Duncan Temple Lang
 \seealso{
 \code{\link{GetIterator}}
 }
-\examples{}
+\examples{
+ f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+ api = tesseract(f)
+ Recognize(api)
+ boxes = lapply(api, BoundingBox, "word")
+ names(boxes)
+ boxes
+}
 \keyword{IO}
 

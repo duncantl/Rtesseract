@@ -44,7 +44,7 @@ function(x, y, col = rgb(seq(1, 0, length = max(x)), 1, 1), xlab = "Actual", yla
   axis(2, seq(u[3] + d/2, by = d, length = ncol(x)), colnames(x))  
 }
 
-plot.BoundingBox =
+plotSubImage = # plot.BoundingBox =
 function(box, img, ...)
 {
   pos = box

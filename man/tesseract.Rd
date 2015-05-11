@@ -16,6 +16,7 @@
 \alias{End}
 \alias{Clear}
 \alias{plot,TesseractBaseAPI-method}
+\alias{coerce,TesseractBaseAPI,ResultIterator-method}
 %\alias{SetVariables}
 
 \title{Top-level Tesseract OCR API Functions and Classes}
@@ -74,9 +75,12 @@ End(api)
 }
 
 \value{
-
+The different functions return very different objects.
 }
 \references{
+  Tesseract \url{https://code.google.com/p/tesseract-ocr/},
+  specifically
+  \url{http://zdenop.github.io/tesseract-doc/classtesseract_1_1_tess_base_a_p_i.html}
 }
 \author{
 Duncan Temple Lang
@@ -88,6 +92,17 @@ Duncan Temple Lang
 }
 
 \examples{
+ f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+ api = tesseract(f)
+ GetInputName(api)
+ Recognize(api)
+ ri = GetIterator(api)
+ bbox = lapply(ri, BoundingBox, "word")
+
+ if(require("png")) {
+    i = readPNG(f)
+    plot(api, level = "symbol", img = i, border = "red")
+ }
 }
 
 \keyword{IO }
