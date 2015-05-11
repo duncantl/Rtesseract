@@ -19,7 +19,7 @@ then see if we can cluster them.
 
 [Done] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
 
-
+[Done] When Recognize() not called, don't seg fault in lapply().
 
 
 
