@@ -1,10 +1,13 @@
 useDynLib(Rtesseract, R_ResultIterator_Confidence)
+
+import(methods)
+
 export(ocr)
 export(PageIteratorLevel)
 
 export(tesseractVersion)
 
-exportClass("TessBaseAPI")
+exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
 export(tesseract)
 
@@ -34,10 +37,10 @@ exportMethods(plot)
 
 export(leptonicaImageFormats)
 
-export(compareWord, collapse, compareWords)
+export(compareWord, compareWords) # collapse
 
 S3method(plot, ConfusionMatrix)
 export(plot.BoundingBox)
 
-export(getAlternatives)
+export(GetAlternatives)
 

@@ -1,4 +1,4 @@
-setMethod("plot", "TessBaseAPI",
+setMethod("plot", "TesseractBaseAPI",
           function(x, y, level = "word", ...) {
               plot.OCR(api, level = level, ...)
           })
@@ -37,18 +37,18 @@ function(x, y, col = rgb(seq(1, 0, length = max(x)), 1, 1), xlab = "Actual", yla
   image(x, col = col, axes = FALSE, ..., xlab = xlab, ylab = ylab)
   box()
   u = par()$usr
-  d = (u[2] - u[1])/nrow(tt)
-  axis(1, seq(u[1] + d/2, by = d, length = nrow(tt)), rownames(tt))
+  d = (u[2] - u[1])/nrow(x)
+  axis(1, seq(u[1] + d/2, by = d, length = nrow(x)), rownames(x))
 
-  d = (u[4] - u[3])/ncol(tt)
-  axis(2, seq(u[3] + d/2, by = d, length = ncol(tt)), colnames(tt))  
+  d = (u[4] - u[3])/ncol(x)
+  axis(2, seq(u[3] + d/2, by = d, length = ncol(x)), colnames(x))  
 }
 
 plot.BoundingBox =
 function(box, img, ...)
 {
   pos = box
-  k = i[ pos[2]:pos[4],  pos[1]:pos[3], ]
+  k = img[ pos[2]:pos[4],  pos[1]:pos[3], ]
   plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), ...)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
 }

@@ -1,5 +1,5 @@
 setClass("TesseractRef", representation(ref = "externalptr"))
-setClass("TessBaseAPI", contains = "TesseractRef")
+setClass("TesseractBaseAPI", contains = "TesseractRef")
 setClass("ResultIterator", contains = "TesseractRef")
 
 setClass("Pix", contains = "TesseractRef")

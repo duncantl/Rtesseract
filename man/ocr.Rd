@@ -6,7 +6,8 @@ This is the primary high-level function for performing OCR on a document.
 }
 \usage{
 ocr(img, level = PageIteratorLevel["word"], alternatives = FALSE,
-         opts = sapply(list(...), as, "character"), ...)
+    boundingBox = FALSE,
+    opts = sapply(list(...), as, "character"), ...)
 }
 \arguments{
   \item{img}{the file name of the image to be processed}
@@ -14,7 +15,12 @@ ocr(img, level = PageIteratorLevel["word"], alternatives = FALSE,
   \item{opts}{a character vector of \code{name = value} pairs specifying tesseract variables and values.}
   \item{\dots}{\code{name = value} pairs for specifying tesseract options individually rather than in a character vector via \code{opts}.}
   \item{level}{an integer value specifying what level/unit to return the results for, e.g.,
-      paragraph, word, character. This can also be a character string giving the name of an element in \code{PageIteratorLevel}}
+      paragraph, word, character. This can also be a character string
+      giving the name of an element in \code{PageIteratorLevel}}
+  \item{boundingBox}{a logical value indicating whether the bounding
+    boxes of the recognized items are returned. Currently, only one of 
+    \code{alternatives} or \code{boundingBox} can be \code{TRUE}
+    (and both can be \code{FALSE}).}
 }
 \value{
 
@@ -54,3 +60,5 @@ Duncan Temple Lang
 
  ans = ocr(f, "word", boundingBox = TRUE, "tessedit_char_whitelist" = "0123456789.")
 }
+\keyword{IO}
+

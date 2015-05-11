@@ -18,7 +18,7 @@ SEXP
 R_TessBaseAPI_new()
 {
   tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  return(createRef(api, "TessBaseAPI", R_freeAPI));
+  return(createRef(api, "TesseractBaseAPI", R_freeAPI));
 }
 
 void

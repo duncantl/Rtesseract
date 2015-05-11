@@ -138,6 +138,10 @@ function(api)
 SetRectangle = 
 function(api, ..., dims = sapply(list(...), as.integer))
 {
+  dims = as.integer(dims)
+  if(length(dims) < 4)
+    stop("incorrect number of dimensions for rectangle")
+  
   .Call("R_tesseract_SetRectangle", api, dims)
 }
 
@@ -151,7 +155,7 @@ ReadConfigFile =
 function(api, files)
 {
    ff = path.expand(files)
-   if(!all(ok <- file.exists(f)))
+   if(!all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
    .Call("R_tesseract_ReadConfigFile", api, ff)
@@ -170,10 +174,10 @@ VarTypes = c("i" = 1L, "int" = 1L, "integer" = 1L,
              "s" = 4L, "string" = 4L, "character" = 4L)
 
 GetVariables =
-function(api, var, type = NA)
+function(api, var)  # , type = NA
 {
   if(missing(var))
-     return(PrintVariables(api))
+     return(GetVariables(api, names(PrintVariables(api))))
 
 if(FALSE) {  
   if(length(type) != length(var))
@@ -247,7 +251,7 @@ function(api, name)
 
 
 
-getAlternatives =
+GetAlternatives =
 function(ri, ...)
 {
     .Call("R_getAlternatives", ri)

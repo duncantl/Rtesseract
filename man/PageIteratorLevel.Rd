@@ -4,7 +4,6 @@
 \description{
  This vector corresponds to a collection of enumerated constants in the tesseract C++ library.
 }
-\usage{data("PageIteratorLevel")}
 \format{
   The format is:
  Named int [1:5] 0 1 2 3 4

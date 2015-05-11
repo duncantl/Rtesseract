@@ -28,9 +28,12 @@ conf = lapply(ri, sym$address, 3L)
 conf1 = lapply(ri, Confidence, 3L)
 identical(conf, conf1)
 
+#sapply doesn't work as dispatch to lapply() is not done.
+#conf2 = sapply(ri, Confidence, 3L)
+
 bbox = lapply(ri, BoundingBox, 3L)
 
-alts = lapply(ri, getAlternatives, "symbol")
+alts = lapply(ri, GetAlternatives, "symbol")
 
 
 
