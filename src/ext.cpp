@@ -209,7 +209,7 @@ R_ResultIterator_lapply(SEXP r_it, SEXP r_level, SEXP r_fun)
    int n = 1, i;
 
    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
-printf("Level %d\n", (int) level);
+
    while(ri->Next(level)) n++;
 
    SEXP names, ans, el;

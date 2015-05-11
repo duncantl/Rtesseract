@@ -25,7 +25,6 @@ GetIterator(api, recognize = TRUE)
      \code{\link{Recognize}}
      in this situation via \code{recognize = TRUE}.
      }
-  }
 }
 
 \details{
