@@ -22,10 +22,54 @@ TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
 
 fi
 
-
 dnl probably should use the one from R's configuration
 dnl  CXX=`R CMD config  CXX`
 AC_PROG_CXX
+
+
+CXXFLAGS="$TESS_CFLAGS"
+AC_LANG(C++)
+
+AC_TRY_COMPILE(
+ [ 
+   #include <tesseract/baseapi.h> 
+   #include <leptonica/allheaders.h>
+ ],
+ [
+    tesseract::TessBaseAPI api;
+    api.GetInputName();
+ ],
+ [DEFS="$DEFS -DHAS_GETINPUT_NAME=1"],
+ [echo "No GetInputName() method for the TessBaseAPI"]
+ )
+
+
+AC_TRY_COMPILE(
+ [ 
+    #include <tesseract/baseapi.h> 
+    #include <leptonica/allheaders.h>
+ ],
+ [
+    tesseract::TessBaseAPI * api;
+    api->GetDatapath();
+ ],
+ [DEFS="$DEFS -DHAS_GETDATAPATH=1"],
+ [echo "No GetDatapath() method for the TessBaseAPI"]
+ )
+
+AC_TRY_COMPILE(
+ [ #include <tesseract/baseapi.h> 
+ ],
+ [
+    tesseract::TessBaseAPI * api;
+    api->GetSourceYResolution();
+ ],
+ [DEFS="$DEFS -DHAS_GETSOURCEYRESOLUTION=1"],
+ [echo "No GetSourceYResolution() method for the TessBaseAPI"]
+ )
+
+
+
 
 
 PNG_FILES="NA"

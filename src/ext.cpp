@@ -393,7 +393,7 @@ getVariable(tesseract::TessBaseAPI * api, const char *varname, int type)
     if(api->GetBoolVariable(varname, &b))
         return(ScalarLogical(b));
     if(api->GetVariableAsString(varname, &str))
-        return(ScalarString( mkChar(str.c_str() ) ) );
+        return(ScalarString( mkChar(str.string/* was c_str*/() ) ) );
     
     return(R_NilValue);
 }
@@ -441,7 +441,13 @@ SEXP
 R_tesseract_GetInputName(SEXP r_api)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
-    const char * w = api->GetInputName() ;
+    const char * w = NULL;
+#ifdef HAS_GETINPUT_NAME
+    w = api->GetInputName() ;
+#else
+    PROBLEM "accessing the name of the original document not supported in this version of tesseract"
+        WARN;
+#endif
     return(ScalarString( w ? mkChar( w ) : NA_STRING  ) );
 }
 
@@ -460,7 +466,14 @@ SEXP
 R_tesseract_GetDatapath(SEXP r_api)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+#ifdef HAS_GETDATAPATH
     return(ScalarString( mkChar( api->GetDatapath() ) ) );
+#else
+    PROBLEM "accessing the name of the original document not supported in this version of tesseract"
+        WARN;
+    return(R_NilValue);
+#endif
+
 }
 
 extern "C"
@@ -468,7 +481,13 @@ SEXP
 R_tesseract_GetSourceYResolution(SEXP r_api)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+#ifdef HAS_GETSOURCEYRESOLUTION
     return(ScalarInteger( api->GetSourceYResolution() ) );
+#else
+    PROBLEM "GetSourceYResolution not support in this version of the tesseract API"
+        WARN;
+    return(R_NilValue);
+#endif
 }
 
 
