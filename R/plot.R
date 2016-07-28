@@ -1,6 +1,6 @@
 setMethod("plot", "TesseractBaseAPI",
           function(x, y, level = "word", ...) {
-              plot.OCR(api, level = level, ...)
+              plot.OCR(x, level = level, ...)
           })
 
 
