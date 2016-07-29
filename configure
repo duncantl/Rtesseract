@@ -2304,6 +2304,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
 CXXFLAGS="$TESS_CFLAGS"
+echo "$TESS_CFLAGS"
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2315,8 +2316,7 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-   #include <tesseract/baseapi.h>
-   #include <leptonica/allheaders.h>
+   #include <baseapi.h>
 
 int
 main ()
@@ -2341,8 +2341,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-    #include <tesseract/baseapi.h>
-    #include <leptonica/allheaders.h>
+    #include <baseapi.h>
 
 int
 main ()
@@ -2365,7 +2364,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
- #include <tesseract/baseapi.h>
+ #include <baseapi.h>
 
 int
 main ()

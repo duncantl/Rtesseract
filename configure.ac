@@ -28,12 +28,12 @@ AC_PROG_CXX
 
 
 CXXFLAGS="$TESS_CFLAGS"
+echo "$TESS_CFLAGS"
 AC_LANG(C++)
 
 AC_TRY_COMPILE(
  [ 
-   #include <tesseract/baseapi.h> 
-   #include <leptonica/allheaders.h>
+   #include <baseapi.h> 
  ],
  [
     tesseract::TessBaseAPI api;
@@ -46,8 +46,7 @@ AC_TRY_COMPILE(
 
 AC_TRY_COMPILE(
  [ 
-    #include <tesseract/baseapi.h> 
-    #include <leptonica/allheaders.h>
+    #include <baseapi.h> 
  ],
  [
     tesseract::TessBaseAPI * api;
@@ -58,7 +57,7 @@ AC_TRY_COMPILE(
  )
 
 AC_TRY_COMPILE(
- [ #include <tesseract/baseapi.h> 
+ [ #include <baseapi.h> 
  ],
  [
     tesseract::TessBaseAPI * api;
