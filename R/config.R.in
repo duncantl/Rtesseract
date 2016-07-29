@@ -1,0 +1,4 @@
+# ?? Add flags, includes, libs ???
+configInfo =
+     list(tesseractVersion = "@TESSERACT_VERSION@",
+          leptonicaVersion = "@LEPTONICA_VERSION@")

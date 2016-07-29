@@ -112,4 +112,10 @@ AC_SUBST(PNG_FILES)
 AC_SUBST(JPG_FILES)
 AC_SUBST(TIFF_FILES)
 
-AC_OUTPUT(src/Makevars R/imageCapabilities.R)
+TESSERACT_VERSION=`$PKG_CONFIG --modversion tesseract`
+LEPTONICA_VERSION=`$PKG_CONFIG --modversion lept`
+
+AC_SUBST(TESSERACT_VERSION)
+AC_SUBST(LEPTONICA_VERSION)
+
+AC_OUTPUT(src/Makevars R/imageCapabilities.R R/config.R)

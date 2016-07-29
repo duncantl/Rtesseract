@@ -584,6 +584,8 @@ PACKAGE_URL=
 ac_unique_file="src/ext.cpp"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
+LEPTONICA_VERSION
+TESSERACT_VERSION
 TIFF_FILES
 JPG_FILES
 PNG_FILES
@@ -2430,7 +2432,13 @@ fi
 
 
 
-ac_config_files="$ac_config_files src/Makevars R/imageCapabilities.R"
+TESSERACT_VERSION=`$PKG_CONFIG --modversion tesseract`
+LEPTONICA_VERSION=`$PKG_CONFIG --modversion lept`
+
+
+
+
+ac_config_files="$ac_config_files src/Makevars R/imageCapabilities.R R/config.R"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3139,6 +3147,7 @@ do
   case $ac_config_target in
     "src/Makevars") CONFIG_FILES="$CONFIG_FILES src/Makevars" ;;
     "R/imageCapabilities.R") CONFIG_FILES="$CONFIG_FILES R/imageCapabilities.R" ;;
+    "R/config.R") CONFIG_FILES="$CONFIG_FILES R/config.R" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
