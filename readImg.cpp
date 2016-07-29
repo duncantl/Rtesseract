@@ -1,5 +1,5 @@
-#include <tesseract/baseapi.h>
-#include <leptonica/allheaders.h>
+#include <baseapi.h>
+#include <allheaders.h>
 
 int
 main(int argc, char *argv[])

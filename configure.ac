@@ -80,21 +80,21 @@ $CXX -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
 
 if test "$?" = "0" ; then
   echo "testing leptonica can read different image formats"
-  ./readImage inst/images/IMG_1236.jpg
   JPG_FILES="FALSE"
-  if test $? ; then
+  ./readImage inst/images/IMG_1236.jpg
+  if test $? -eq 0 ; then
     echo "jpg support"
     JPG_FILES="TRUE"
   fi
-  ./readImage inst/images/OCRSample.tiff
   TIFF_FILES="FALSE"
-  if test $? ; then
+  ./readImage inst/images/OCRSample.tiff
+  if test $? -eq 0 ; then
     echo "tiff support"
     TIFF_FILES="TRUE"
   fi
-  ./readImage inst/images/DifferentFonts.png
   PNG_FILES="FALSE"
-  if test $? ; then
+  ./readImage inst/images/DifferentFonts.png
+  if test $? -eq 0 ; then
     echo "png support"
     PNG_FILES="TRUE"
   fi
