@@ -2435,6 +2435,9 @@ fi
 TESSERACT_VERSION=`$PKG_CONFIG --modversion tesseract`
 LEPTONICA_VERSION=`$PKG_CONFIG --modversion lept`
 
+echo "Tesseract version: $TESSERACT_VERSION"
+echo "Leptonica version: $LEPTONICA_VERSION"
+
 
 
 

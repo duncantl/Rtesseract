@@ -1,0 +1,7 @@
+0.2-0
+
+	* coerce tesseract API object to iterator as necessary
+
+	* works with tesseract 3.05dev
+
+	* improved configuration
