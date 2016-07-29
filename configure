@@ -593,6 +593,7 @@ TESS_LIBS
 TESS_CFLAGS
 LEPT_CFLAGS
 LEPT_LIBS
+CPPDEFS
 OBJEXT
 EXEEXT
 ac_ct_CXX
@@ -2332,7 +2333,7 @@ main ()
 }
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
-  DEFS="$DEFS -DHAS_GETINPUT_NAME=1"
+  CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"
 else
   echo "No GetInputName() method for the TessBaseAPI"
 
@@ -2357,7 +2358,7 @@ main ()
 }
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
-  DEFS="$DEFS -DHAS_GETDATAPATH=1"
+  CPPDEFS="$CPPDEFS -DHAS_GETDATAPATH=1"
 else
   echo "No GetDatapath() method for the TessBaseAPI"
 
@@ -2380,7 +2381,7 @@ main ()
 }
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"; then :
-  DEFS="$DEFS -DHAS_GETSOURCEYRESOLUTION=1"
+  CPPDEFS="$CPPDEFS -DHAS_GETSOURCEYRESOLUTION=1"
 else
   echo "No GetSourceYResolution() method for the TessBaseAPI"
 
@@ -2419,6 +2420,7 @@ if test "$?" = "0" ; then
     PNG_FILES="TRUE"
   fi
 fi
+
 
 
 

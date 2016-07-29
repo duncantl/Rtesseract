@@ -1,4 +1,21 @@
+? Other methods form the baseapi.h ?
+
+GetAlternatives
+  Only returns one
+  Segfaults.
+
+compareWords() warns about different lengths. Something wrong. See MarkLundy/ocr.R
+
+PrintVariables scan() problem.
+    Error during wrapup: line 376 did not have 3 elements
+    Yet
+       tt = readLines(f)
+       els = strsplit(tt, "\t")
+       sapply(els, length)
+cropToBoxes = TRUE in plot.OCR - get it to work.
+
 ocr() function using the API-level functions.
+   i.e. implement not in C but in R code to assemble the different pieces.
 
 [Done] Plot the image and the components and 
 *  show the confidence level for each 
@@ -17,11 +34,11 @@ then see if we can cluster them.
 [low] Get components - leptonica objects Boxa and Pixa
 
 
-[Done] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
+[Check] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
+   Is this in the ocr() routine? e.g. ocr(, alternatives = TRUE)
+
 
 [Done] When Recognize() not called, don't seg fault in lapply().
-
-
 
 
 [Done] SetVariable and GetVariable.

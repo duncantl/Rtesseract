@@ -39,7 +39,7 @@ AC_TRY_COMPILE(
     tesseract::TessBaseAPI api;
     api.GetInputName();
  ],
- [DEFS="$DEFS -DHAS_GETINPUT_NAME=1"],
+ [CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],
  [echo "No GetInputName() method for the TessBaseAPI"]
  )
 
@@ -52,7 +52,7 @@ AC_TRY_COMPILE(
     tesseract::TessBaseAPI * api;
     api->GetDatapath();
  ],
- [DEFS="$DEFS -DHAS_GETDATAPATH=1"],
+ [CPPDEFS="$CPPDEFS -DHAS_GETDATAPATH=1"],
  [echo "No GetDatapath() method for the TessBaseAPI"]
  )
 
@@ -63,7 +63,7 @@ AC_TRY_COMPILE(
     tesseract::TessBaseAPI * api;
     api->GetSourceYResolution();
  ],
- [DEFS="$DEFS -DHAS_GETSOURCEYRESOLUTION=1"],
+ [CPPDEFS="$CPPDEFS -DHAS_GETSOURCEYRESOLUTION=1"],
  [echo "No GetSourceYResolution() method for the TessBaseAPI"]
  )
 
@@ -101,6 +101,7 @@ if test "$?" = "0" ; then
 fi
 
 
+AC_SUBST(CPPDEFS)
 
 AC_SUBST(LEPT_LIBS)
 AC_SUBST(LEPT_CFLAGS)
