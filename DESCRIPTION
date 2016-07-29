@@ -6,7 +6,7 @@ Description: This provides a flexible Optical Character Recognition (OCR)
   the results and possible errors in the recognition.
   We can do data analysis on the errors, if we know the truth, and 
   explore how we may improve the recognition.
-Version: 0.1-0
+Version: 0.2-0
 Author: Duncan Temple Lang
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
 License: Apache License
