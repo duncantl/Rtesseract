@@ -1,3 +1,7 @@
 .git
 readImage
 src/Makevars$
+.o$
+.so$
+Makevars-$
+
