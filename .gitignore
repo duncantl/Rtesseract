@@ -1,2 +1,6 @@
 R/imageCapabilities.R
 check.cc
+readImage
+readImage.dSYM
+Makevars-
+

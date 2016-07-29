@@ -5,3 +5,7 @@ src/Makevars$
 .so$
 Makevars-$
 check.cc
+readImage$
+readImage.dSYM$
+Makevars-$
+
