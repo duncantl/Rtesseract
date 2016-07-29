@@ -8,7 +8,7 @@ plot.OCR =
 function(api, level = "word",
          ri = GetIterator(api),
          filename = GetInputName(api),
-         img = readPNG(filename),
+         img = readImage(filename),
          bbox = lapply(ri, BoundingBox, level),
          border = "red",
          outer.border = "green",
@@ -21,8 +21,9 @@ function(api, level = "word",
     r = nrow(img)
     c = ncol(img)
     
-    plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)    
-    rasterImage(img, 0, 0, c, r)
+    plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)
+    if(!is.null(img))
+       rasterImage(img, 0, 0, c, r)
     rect(m[,1], r - m[,2], m[,3], r - m[,4], border = border)
     
     rect(min(m[,1]), r - min(m[,2]), max(m[,3]), r - max(m[,4]), border = outer.border)

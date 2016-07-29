@@ -113,27 +113,40 @@ setMethod("lapply", "TesseractBaseAPI",
            })
 
 setAs("TesseractBaseAPI", "ResultIterator",
-        function(from)
-            GetIterator(from))
+        function(from) {
+              # Do we need to ensure Recognize() has been called ?
+            GetIterator(from)
+        })
+      
     
 
 
-
+BoundingBoxes =
+function(ri, level = 3L)
+{
+   m = lapply(as(ri, "ResultIterator"), BoundingBox, level = level)
+   ans = do.call(rbind, m)
+   colnames(ans) = c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")
+   ans
+}
 
 BoundingBox = 
 function(ri, level = 3L)
 {
-  if(!is(ri, "ResultIterator"))
-    stop("need a result iterator")
+  ri = as(ri, "ResultIterator")
+#  if(!is(ri, "ResultIterator"))
+#    stop("need a result iterator")
 
+  #!!! Put names on these.
   .Call("R_ResultIterator_BoundingBox", ri, as.integer(level))
 }
 
 Confidence = 
 function(ri, level = 3L)
 {
-  if(!is(ri, "ResultIterator"))
-    stop("need a result iterator")
+  ri = as(ri, "ResultIterator")    
+#  if(!is(ri, "ResultIterator"))
+#    stop("need a result iterator")
 
   .Call("R_ResultIterator_Confidence", ri, as.integer(level))
 }
@@ -141,8 +154,9 @@ function(ri, level = 3L)
 GetText = GetUTF8Text = 
 function(ri, level = 3L)
 {
-  if(!is(ri, "ResultIterator"))
-    stop("need a result iterator")
+   ri = as(ri, "ResultIterator")
+#  if(!is(ri, "ResultIterator"))
+#    stop("need a result iterator")
 
   .Call("R_ResultIterator_GetUTF8Text", ri, as.integer(level))
 }
