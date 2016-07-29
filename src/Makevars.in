@@ -1,3 +1,5 @@
 PKG_CXXFLAGS=@LEPT_CFLAGS@  @TESS_CFLAGS@
 #PKG_CPPFLAGS=-I${HOME}/local/include -g
-PKG_LIBS=@LEPT_LIBS@  @TESS_LIBS@
+PKG_LIBS=@LEPT_LIBS@  @TESS_LIBS@ 
+
+##   -Wl,-rpath,$(HOME)/installed/lib
