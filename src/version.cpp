@@ -1,4 +1,4 @@
-#include <tesseract/baseapi.h>
+#include <baseapi.h>
 #include <Rdefines.h>
 
 extern "C"

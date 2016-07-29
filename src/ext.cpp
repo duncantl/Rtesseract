@@ -1,7 +1,7 @@
-#include <tesseract/baseapi.h>
+#include <baseapi.h>
 #include <Rdefines.h>
 
-#include <leptonica/allheaders.h>
+#include <allheaders.h>
 
 void R_pixDestroy(SEXP obj);
 
@@ -440,9 +440,9 @@ extern "C"
 SEXP
 R_tesseract_GetInputName(SEXP r_api)
 {
-    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
     const char * w = NULL;
 #ifdef HAS_GETINPUT_NAME
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
     w = api->GetInputName() ;
 #else
     PROBLEM "accessing the name of the original document not supported in this version of tesseract"
@@ -465,8 +465,8 @@ extern "C"
 SEXP
 R_tesseract_GetDatapath(SEXP r_api)
 {
-    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
 #ifdef HAS_GETDATAPATH
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
     return(ScalarString( mkChar( api->GetDatapath() ) ) );
 #else
     PROBLEM "accessing the name of the original document not supported in this version of tesseract"
@@ -480,8 +480,8 @@ extern "C"
 SEXP
 R_tesseract_GetSourceYResolution(SEXP r_api)
 {
-    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
 #ifdef HAS_GETSOURCEYRESOLUTION
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
     return(ScalarInteger( api->GetSourceYResolution() ) );
 #else
     PROBLEM "GetSourceYResolution not support in this version of the tesseract API"
