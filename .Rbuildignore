@@ -4,4 +4,4 @@ src/Makevars$
 .o$
 .so$
 Makevars-$
-
+check.cc
