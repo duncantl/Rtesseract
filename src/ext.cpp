@@ -365,7 +365,7 @@ R_tesseract_Clear(SEXP r_api)
 
 
 #if 1
-#include <tesseract/strngs.h>
+#include <strngs.h>
 #include <R_ext/Arith.h>
 
 SEXP
