@@ -20,6 +20,11 @@ function(api, level = "word",
     else
        m = bbox
 
+         # put the y's going from bottom to top, unlike their originals which are top to bottom.
+    r = nrow(img)    
+    m[,2] = r - m[,2]
+    m[,4] = r - m[,4]    
+
 # The body of the if and the else could and should be consolidated to move the rasterImage, rect, rect calls after
 # the computations, as it used to be. But this involves both using the y values reoriented to bottom to top.
     if(cropToBoxes) {
@@ -30,10 +35,9 @@ function(api, level = "word",
           margin = c(1 - margin, 1 + margin)
        
     
-         # put the y's going from bottom to top, unlike their originals which are top to bottom.    
+
        orig = dim(img)
-       m[,2] = orig[1] - m[,2]
-       m[,4] = orig[1] - m[,4]
+
     
        
        mx = c(min(m[,1]), max(m[,3]))*margin
@@ -41,31 +45,34 @@ function(api, level = "word",
     
        img = img[ sort(orig[1] - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
     
-       plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
-    
-       
-       if(!is.null(img) && !is.na(img))
-          rasterImage(img, mx[1], my[1], mx[2], my[2])
-       
-        # Draw the bounding boxes for the detected elements.
-       rect(m[,1],  m[,2], m[,3],  m[,4], border = border)
-    
-        # And now the outer containing rectangle enclosing all the bounding boxes
-       rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)    
+
     
     } else {  # show whole image
-       r = nrow(img)
-       c = ncol(img)
+
+
+       mx = c(0, ncol(img))
+       my = c(0, r)
+#       plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)
        
-       plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)
-       
-       if(!is.null(img) && !is.na(img))
-          rasterImage(img, 0, 0, c, r)
+#       if(!is.null(img) && !is.na(img))
+#          rasterImage(img, 0, 0, c, r)
         # Draw the bounding boxes for the detected elements.
-       rect(m[,1], r - m[,2], m[,3], r - m[,4], border = border)
+#       rect(m[,1], r - m[,2], m[,3], r - m[,4], border = border)
         # And now the outer containing rectangle enclosing all the bounding boxes
-       rect(min(m[,1]), r - min(m[,2]), max(m[,3]), r - max(m[,4]), border = outer.border)
     }
+
+    plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
+    
+       
+    if(!is.null(img) && !is.na(img))
+        rasterImage(img, mx[1], my[1], mx[2], my[2])    
+
+        # Draw the bounding boxes for the detected elements.
+    rect(m[,1],  m[,2], m[,3],  m[,4], border = border)
+    
+        # And now the outer containing rectangle enclosing all the bounding boxes
+    rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
+# was    rect(min(m[,1]), r - min(m[,2]), max(m[,3]), r - max(m[,4]), border = outer.border)    
     
     NULL
 }
