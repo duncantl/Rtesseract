@@ -255,7 +255,7 @@ function(api)
 
 
 PrintVariables =
-function(api, file = tempfile())
+function(api = tesseract(), asDataFrame = FALSE, file = tempfile())
 {
   m = missing(file)
   if(m)
@@ -264,15 +264,18 @@ function(api, file = tempfile())
   .Call("R_tesseract_PrintVariables", api, as.character(file))
 
   if(m) 
-    readVars(file)
+    readVars(file, asDataFrame)
   
 }
 
 readVars =
-function(f)
+function(f, asDataFrame = FALSE)
 {
-  d = read.table(f, sep = "\t", stringsAsFactors = FALSE)
-  structure(d[,2], names = d[,1])
+  d = read.table(f, sep = "\t", stringsAsFactors = FALSE, quote = '', comment = '')
+  if(asDataFrame)
+     structure(d, names = c("optionName", "value", "info"))
+  else
+     structure(d[,2], names = d[,1])
 }
 
 
@@ -288,5 +291,5 @@ function(api, name)
 GetAlternatives =
 function(ri, ...)
 {
-    .Call("R_getAlternatives", ri)
+    .Call("R_getAlternatives", as(ri, "ResultIterator"))
 }

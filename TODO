@@ -3,15 +3,13 @@
 GetAlternatives
   Only returns one
   Segfaults.
+  Look at the R_ocr_alternatives and see if we can reuse that code.
+  Note that ocr(alternatives = TRUE) works.
 
 compareWords() warns about different lengths. Something wrong. See MarkLundy/ocr.R
+  Is this to be expected as the ocr and truth words may have different number of characters.
+  Or think of other ways to compare them - adist?
 
-PrintVariables scan() problem.
-    Error during wrapup: line 376 did not have 3 elements
-    Yet
-       tt = readLines(f)
-       els = strsplit(tt, "\t")
-       sapply(els, length)
 cropToBoxes = TRUE in plot.OCR - get it to work.
 
 ocr() function using the API-level functions.
@@ -50,3 +48,10 @@ then see if we can cluster them.
 [Done] capabilities  - at configure time.
   e.g. image formats leptonica understands.
    leptonicaImageFormats()
+
+[Done] PrintVariables scan() problem.
+    Error during wrapup: line 376 did not have 3 elements
+    Yet
+       tt = readLines(f)
+       els = strsplit(tt, "\t")
+       sapply(els, length)

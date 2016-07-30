@@ -10,7 +10,7 @@
 }
 \usage{
 GetVariables(api, var)
-PrintVariables(api, file = tempfile())
+PrintVariables(api = tesseract(), asDataFrame = FALSE, file = tempfile())
 SetVariables(api, ..., .vars = sapply(list(...), as, "character")) 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -31,7 +31,13 @@ SetVariables(api, ..., .vars = sapply(list(...), as, "character"))
     compute the variable names and values and pass the resulting list or
     vector as a single argument rather than as individual arguments in
     the call.
-   }
+  }
+  \item{asDataFrame}{a logical value. If \code{TRUE}, the options, their
+  values and information describing the purpose of the option are
+  returned as 3-column data frame. If this is \code{FALSE},
+  a named character vector  is returned giving the option value and the
+  associated name.  No description of the options is returned.
+ }
 }
 \value{
   \code{GetVariables} returns a named list containing the values for the different tesseract
