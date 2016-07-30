@@ -19,9 +19,6 @@ function(api, level = "word",
        m = do.call(rbind, bbox)
     else
        m = bbox
-    
-    xr = range(m[, 1], m[,3])
-    yr = range(m[, 2], m[,4])
 
 # The body of the if and the else could and should be consolidated to move the rasterImage, rect, rect calls after
 # the computations, as it used to be. But this involves both using the y values reoriented to bottom to top.
