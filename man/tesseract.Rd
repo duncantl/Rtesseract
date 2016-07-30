@@ -23,7 +23,11 @@
 \description{
   To perform OCR on an image, we need a Tesseract API object
   and then can call its methods.
-  
+
+  If the image format is not supported by the leptonica library being
+  used, an error of class \code{UnsupportedImageFormat} is raised.
+  The error message indicates the supported image types, and the
+  error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
 tesseract(image = character(), ..., init = TRUE)

@@ -2,7 +2,20 @@
 \alias{ocr}
 \title{Perform OCR on an image}
 \description{
-This is the primary high-level function for performing OCR on a document.
+This is the primary high-level function for performing OCR on a
+document.
+It reads the image, identifies the elements (symbols/characters, words,
+lines, etc.) as identified by the \code{level} argument, and
+then "recognizes" them. It returns the elements
+and the score/"confidence" in the recognition of each.
+The function can also return the elements and possible alternatives
+along with their confidence scores.
+
+
+If the image format is not supported by the leptonica library being
+used, an error of class \code{UnsupportedImageFormat} is raised.
+The error message indicates the supported image types, and the
+error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
 ocr(img, level = PageIteratorLevel["word"], alternatives = FALSE,
@@ -53,7 +66,7 @@ Duncan Temple Lang
 
  ans = ocr(f, "word", boundingBox = TRUE)
 
- f = system.file("images", "IMG_1234.jpg", package = "Rtesseract")
+ f = system.file("images", "IMG_1234.png", package = "Rtesseract")
  o = ocr(f, "symbol", opts = c("tessedit_char_whitelist" = "0123456789."))
 
  ans = ocr(f, "word", alternatives = TRUE, "tessedit_char_whitelist" = "0123456789.")

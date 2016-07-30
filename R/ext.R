@@ -271,7 +271,7 @@ function(api = tesseract(), asDataFrame = FALSE, file = tempfile())
 readVars =
 function(f, asDataFrame = FALSE)
 {
-  d = read.table(f, sep = "\t", stringsAsFactors = FALSE, quote = '', comment = '')
+  d = read.table(f, sep = "\t", stringsAsFactors = FALSE, quote = '', comment.char = '')
   if(asDataFrame)
      structure(d, names = c("optionName", "value", "info"))
   else
@@ -282,6 +282,7 @@ function(f, asDataFrame = FALSE)
 SetInputName =
 function(api, name)
 {
+  checkImageTypeSupported(name)    
   .Call("R_tesseract_SetInputName", api, as.character(name))
 }
 

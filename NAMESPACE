@@ -2,6 +2,11 @@ useDynLib(Rtesseract, R_ResultIterator_Confidence)
 
 import(methods)
 
+importFrom("utils", read.table)
+import(graphics)
+importFrom("grDevices", "rgb")
+
+
 export(ocr)
 export(PageIteratorLevel)
 

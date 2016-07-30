@@ -1,4 +1,8 @@
-ocr = 
+ocr =
+  # ocr(system.file("images", "IMG_1234.png", package = "Rtesseract"), opts = c("tessedit_char_whitelist" = "0123456789."))
+  #
+  # tryCatch( ocr("Rtesseract/inst/images/IMG_1234.jpg"), error = function(e) class(e) )
+    
 function(img, level = PageIteratorLevel["word"], 
          alternatives = FALSE, boundingBox = FALSE,
          opts = sapply(list(...), as, "character"), ...)
@@ -9,6 +13,8 @@ function(img, level = PageIteratorLevel["word"],
    img = path.expand(as.character(img))
    if(!file.exists(img))
      stop("image file ", img, " does not exist")
+
+   checkImageTypeSupported(img)
 
     if(is.character(level)) {
       tmp = level
@@ -32,4 +38,51 @@ function(img, level = PageIteratorLevel["word"],
   .Call(sym, img, opts, as.integer(level))
 }
 
-#ocr("IMG_1234.jpg", opts = c("tessedit_char_whitelist" = "0123456789."))
+
+
+
+checkImageTypeSupported =
+function(file)
+{
+  ext = tolower(getExtension(file))
+
+  if(ext == "jpeg")
+      ext = "jpg"
+
+  sup = leptonicaImageFormats()
+  ok = FALSE
+  if(ext %in% names(sup))
+    ok = sup[ext]
+  
+  if(!ok) 
+    stop( mkError(paste("we don't support this image format. The installed leptonica supports ", paste(names(sup)[sup], collapse = ", ")),
+                  "UnsupportedImageFormat", filename = file))
+
+  ok
+}
+
+getExtension =
+    #  getExtension(list.files(system.file("images", package = "Rtesseract")))
+    #  getExtension(getwd())
+function(file, default = "")
+{
+   if(grepl("\\.([A-Za-z]+)$", file))
+     gsub(".*\\.([A-Za-z]+)$", "\\1", file)
+   else
+     default
+}
+
+
+
+mkError =
+function(message, class = character(), call = NULL, ...)
+{
+  e = simpleError(message, call)
+  
+#  e = append(e, list(...))
+  args = list(...)
+  e[names(args)] = args
+  
+  class(e) = c(class, class(e))
+  e
+}

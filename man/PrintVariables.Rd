@@ -65,11 +65,11 @@ Duncan Temple Lang
 \examples{
   api = tesseract()
   v = GetVariables(api)
-  names(v)
+  head(names(v))
   table(sapply(v, class)) 
 
   out = tempfile()
-  PrintVariables(api, out)
+  PrintVariables(api, file = out)
 }
 \keyword{programming}
 
