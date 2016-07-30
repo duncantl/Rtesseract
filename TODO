@@ -1,23 +1,27 @@
 ? Other methods form the baseapi.h ?
 
+Give a blank image (i.e. a file that contains nothing) and ocr() seg faults
+   created via PDFBox w/o the jbig2-imageio in the classpath
+
 GetAlternatives
   Only returns one
   Segfaults.
   Look at the R_ocr_alternatives and see if we can reuse that code.
   Note that ocr(alternatives = TRUE) works.
 
-compareWords() warns about different lengths. Something wrong. See MarkLundy/ocr.R
+compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr.R
   Is this to be expected as the ocr and truth words may have different number of characters.
   Or think of other ways to compare them - adist?
 
-cropToBoxes = TRUE in plot.OCR - get it to work.
 
-ocr() function using the API-level functions.
+[low] ocr() function using the API-level functions.
    i.e. implement not in C but in R code to assemble the different pieces.
 
 [Done] Plot the image and the components and 
 *  show the confidence level for each 
    See tests/plot.R
+
+   Color code the rectangles for the bboxes according to the confidence.
 
   Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
@@ -30,11 +34,15 @@ then see if we can cluster them.
 [ok] error rates and confusion matrix when know the actual values.
 
 [low] Get components - leptonica objects Boxa and Pixa
-
+   How about identifying lines
 
 [Check] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
    Is this in the ocr() routine? e.g. ocr(, alternatives = TRUE)
 
+
+---------------------
+
+[Done] cropToBoxes = TRUE in plot.OCR - get it to work.
 
 [Done] When Recognize() not called, don't seg fault in lapply().
 
