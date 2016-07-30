@@ -25,8 +25,7 @@ function(api, level = "word",
     m[,2] = r - m[,2]
     m[,4] = r - m[,4]    
 
-# The body of the if and the else could and should be consolidated to move the rasterImage, rect, rect calls after
-# the computations, as it used to be. But this involves both using the y values reoriented to bottom to top.
+    
     if(cropToBoxes) {
        # The intent here is to crop the image so that we don't show it all but limit
        # it to a range that only includes the bounding boxes we observe.
@@ -34,31 +33,15 @@ function(api, level = "word",
        if(length(margin) == 1)
           margin = c(1 - margin, 1 + margin)
        
-    
 
-       orig = dim(img)
-
-    
-       
        mx = c(min(m[,1]), max(m[,3]))*margin
        my = c(min(m[,2]), max(m[,4]))*margin
     
-       img = img[ sort(orig[1] - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
-    
-
+       img = img[ sort(nrow(img) - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
     
     } else {  # show whole image
-
-
        mx = c(0, ncol(img))
        my = c(0, r)
-#       plot(0, type = "n", xlab = "", ylab = "", xlim = c(0, c), ylim = c(0, r), ...)
-       
-#       if(!is.null(img) && !is.na(img))
-#          rasterImage(img, 0, 0, c, r)
-        # Draw the bounding boxes for the detected elements.
-#       rect(m[,1], r - m[,2], m[,3], r - m[,4], border = border)
-        # And now the outer containing rectangle enclosing all the bounding boxes
     }
 
     plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
@@ -72,7 +55,6 @@ function(api, level = "word",
     
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
-# was    rect(min(m[,1]), r - min(m[,2]), max(m[,3]), r - max(m[,4]), border = outer.border)    
     
     NULL
 }
