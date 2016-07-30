@@ -1,5 +1,5 @@
 readImage =
-function()
+function(filename)
 {
-
+    readPNG(filename)
 }
