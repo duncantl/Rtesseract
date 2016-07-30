@@ -47,7 +47,7 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
       const char* word = ri->GetUTF8Text(level);
       float conf = ri->Confidence(level);
 
-      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_STRING_ELT(names, i, Rf_mkChar(word ? word : ""));
       REAL(ans)[i] = conf;
       delete[] word;
       i++;
@@ -105,7 +105,7 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
     do {
       const char* word = ri->GetUTF8Text(level);
       float conf = ri->Confidence(level);
-      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_STRING_ELT(names, i, Rf_mkChar(word ? word : ""));
       SET_VECTOR_ELT(ans, i, getAlternatives(ri, word, conf));
       delete[] word;
       i++;
@@ -130,7 +130,7 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
       PROTECT(names = NEW_CHARACTER(nels));
       
       int i = 0;
-      SET_STRING_ELT(names, 0, Rf_mkChar(word));
+      SET_STRING_ELT(names, 0, Rf_mkChar(word ? word : ""));
       REAL(ans)[0] = conf;
 
       tesseract::ChoiceIterator ci(*ri);
@@ -138,7 +138,7 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 	const char* choice = ci.GetUTF8Text();
 	conf = ci.Confidence();
 	if(choice)
-	  SET_STRING_ELT(names, i, Rf_mkChar(choice));
+           SET_STRING_ELT(names, i, Rf_mkChar(choice ? choice : ""));
 	REAL(ans)[i] = conf;
 	//	delete [] choice;
       }
@@ -190,7 +190,7 @@ R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
       float conf = ri->Confidence(level);
 
       ri->BoundingBox(level, &x1, &y1, &x2, &y2);
-      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_STRING_ELT(names, i, Rf_mkChar(word ? word : ""));
       SET_VECTOR_ELT(ans, i, tmp = NEW_NUMERIC(5));
       REAL(tmp)[0] = conf;
       REAL(tmp)[1] = x1;

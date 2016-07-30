@@ -225,7 +225,7 @@ R_ResultIterator_lapply(SEXP r_it, SEXP r_level, SEXP r_fun)
 
    do {
       const char* word = ri->GetUTF8Text(level);
-      SET_STRING_ELT(names, i, Rf_mkChar(word));
+      SET_STRING_ELT(names, i, Rf_mkChar(word ? word : ""));
       if(fun)
 	el = fun(ri, level);
       else
@@ -299,7 +299,7 @@ R_ResultIterator_GetUTF8Text(SEXP r_it, SEXP r_level)
    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
    const char * val = ri->GetUTF8Text(level);
-   SEXP ans = ScalarString(mkChar(val));
+   SEXP ans = ScalarString(mkChar(val ? val : ""));
    delete[] val;
 
    return(ans);
@@ -312,7 +312,8 @@ SEXP
 R_tesseract_GetInitLanguagesAsString(SEXP r_api)
 {
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
-  return(ScalarString(mkChar(api->GetInitLanguagesAsString())));
+  const char * const str = api->GetInitLanguagesAsString();
+  return(ScalarString(mkChar(str ? str : "")));
 }
 
 
@@ -527,7 +528,7 @@ getAlts(tesseract::ResultIterator *ri)
 	const char* choice = ci.GetUTF8Text();
 	conf = ci.Confidence();
 	if(choice) {
-	  SET_STRING_ELT(names, i, Rf_mkChar(choice));
+           SET_STRING_ELT(names, i, Rf_mkChar(choice ? choice : ""));
 //          delete [] choice;
         }
 	REAL(ans)[i] = conf;

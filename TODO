@@ -1,8 +1,5 @@
 ? Other methods form the baseapi.h ?
 
-Give a blank image (i.e. a file that contains nothing) and ocr() seg faults
-   created via PDFBox w/o the jbig2-imageio in the classpath
-
 GetAlternatives
   Only returns one
   Segfaults.
@@ -41,6 +38,14 @@ then see if we can cluster them.
 
 
 ---------------------
+
+[Done] Give a blank image (i.e. a file that contains nothing) and ocr() seg faults
+   created via PDFBox w/o the jbig2-imageio in the classpath
+   To create one, in DSIProjects/MarkMundy, 
+      java -jar ~/Downloads/pdfbox-app-2.0.2.jar PDFToImage -outputPrefix test -imageType png 1982-128-44.pdf 
+
+[Done] Check if we have support for a particular image based on its type.
+  Check the supported leptonica image formats.
 
 [Done] cropToBoxes = TRUE in plot.OCR - get it to work.
 
