@@ -1,5 +1,8 @@
 ? Other methods form the baseapi.h ?
 
+With cropBoxes, can get negative indices.
+  Change the margin.  Compute it so that it can't yield negative indices.
+
 GetAlternatives
   Only returns one
   Segfaults.
