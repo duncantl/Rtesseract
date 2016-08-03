@@ -50,6 +50,8 @@ SetImage =
 function(api, pix)
 {
   if(is.character(pix)) {
+     if(!file.exists(pix))
+        stop("No such file ", file)
      SetInputName(api, pix)
      pix = pixRead(pix)
   }
@@ -125,8 +127,9 @@ BoundingBoxes =
 function(ri, level = 3L)
 {
    m = lapply(as(ri, "ResultIterator"), BoundingBox, level = level)
-   ans = do.call(rbind, m)
-   colnames(ans) = c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")
+   ans = as.data.frame(do.call(rbind, m))
+   names(ans) = c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")
+   ans$text = names(m)
    ans
 }
 

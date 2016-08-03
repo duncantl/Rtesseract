@@ -15,7 +15,7 @@ function(api, level = "word",
          cropToBoxes = FALSE, margin = .05,
          ...)
 {
-    if(!is.matrix(bbox))
+    if(!is.matrix(bbox) && !is.data.frame(bbox))
        m = do.call(rbind, bbox)
     else
        m = bbox
@@ -55,6 +55,8 @@ function(api, level = "word",
     
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
+
+    title(filename)
     
     NULL
 }
