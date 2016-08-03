@@ -1,17 +1,5 @@
-#include <baseapi.h>
-#include <Rdefines.h>
+#include "Rtesseract.h"
 
-#include <allheaders.h>
-
-void R_pixDestroy(SEXP obj);
-
-
-#define GET_REF(obj, type) \
-  (type *) R_ExternalPtrAddr(GET_SLOT(obj, Rf_install("ref")))
-
-SEXP createRef(void *ptr, const char * const classname, R_CFinalizer_t fin);
-void R_freeAPI(SEXP obj);
-void R_freeResultIterator(SEXP obj);
 
 extern "C"
 SEXP
@@ -549,3 +537,69 @@ R_getAlternatives(SEXP r_api, SEXP r_level)
     return(getAlts(ri));
 }
 
+
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetPageSegMode(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  tesseract::PageSegMode ans = api->GetPageSegMode();
+
+  return( ScalarInteger((int) ans));
+}
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_SetPageSegMode(SEXP r_api, SEXP r_val)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  api->SetPageSegMode((tesseract::PageSegMode)  INTEGER(r_val)[0]);
+
+  return( ScalarLogical( TRUE));
+}
+
+#ifdef error
+#undef error
+#endif
+
+#include <tesseract/genericvector.h>
+
+#define error Rf_error
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  GenericVector<STRING> langs;
+  api->GetAvailableLanguagesAsVector(&langs);
+
+  int i = 0, len = langs.length();
+  SEXP r_ans;
+  PROTECT(r_ans = NEW_CHARACTER(len));
+  for(i = 0; i < len; i++) {
+      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
+  }
+  UNPROTECT(1);
+
+  return(r_ans) ;
+}
