@@ -127,9 +127,9 @@ BoundingBoxes =
 function(ri, level = 3L)
 {
    m = lapply(as(ri, "ResultIterator"), BoundingBox, level = level)
-   ans = as.data.frame(do.call(rbind, m))
-   names(ans) = c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")
-   ans$text = names(m)
+   ans = do.call(rbind, m)
+   colnames(ans) = c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")
+#   rownames(ans) = names(m)
    ans
 }
 
