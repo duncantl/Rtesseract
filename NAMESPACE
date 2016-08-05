@@ -49,3 +49,7 @@ export(plotSubImage)
 
 export(GetAlternatives)
 
+
+
+export(readBoxFile)
+
