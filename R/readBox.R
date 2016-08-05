@@ -5,6 +5,8 @@ if(FALSE) {
     plot(d[ d[,2] > 1500, ], cex = 1.2)
 }
 
+setOldClass(c("TesseractBoxdata", "data.frame"))
+
 readBoxFile =
     # Read a file  created as part of the training.
     # e.g., tesseract eng.tables.ex0.png eng.tables.ex0 batch.nochop makebox
@@ -39,6 +41,8 @@ function(file, imgDim = integer(), ...)
    d
 }
 
+
+if(FALSE) {
 getTextInfo =
 function(x, ...)
   UseMethod("getTextInfo")
@@ -56,14 +60,20 @@ function(x, ymax = NA, ...)
 # ans[,2] =  ymax - ans[,2]
   ans
 }
-    
+}
+
+
+setMethod("plot", "TesseractBoxdata",
+           function(x, y, ...)
+             plot.TesseractBoxdata(x, ...))
+
 plot.TesseractBoxdata =
 function(x, cex = .9, ...)
 {
     plot(0, type = "n", xlim = range(x[, c(1, 3)]), ylim = range(x[, c(2, 4)]), xlab = "", ylab = "")
-    rect(d[,1], d[,2], d[,3], d[, 4])
+    rect(x[,1], x[,2], x[,3], x[, 4])
     opar = par(no.readonly = TRUE)
     on.exit(par(opar))
     par(pty = "s")
-    text(d[,1], d[,2], d[, "text"], adj = c(-0.2, -.2), cex = cex)
+    text(x[,1], x[,2], x[, "text"], adj = c(-0.2, -.2), cex = cex)
 }
