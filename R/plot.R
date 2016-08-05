@@ -7,12 +7,13 @@ setMethod("plot", "TesseractBaseAPI",
 plot.OCR =
 function(api, level = "word",
          ri = GetIterator(api),
-         filename = GetInputName(api),
+         filename = if(!missing(api)) GetInputName(api) else "",         
          img = readImage(filename),
          bbox = BoundingBoxes(ri, level),
          border = "red",
          outer.border = "green",
          cropToBoxes = FALSE, margin = .05,
+         main = filename,         
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -56,7 +57,7 @@ function(api, level = "word",
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
 
-    title(filename)
+    title(main)
     
     NULL
 }
