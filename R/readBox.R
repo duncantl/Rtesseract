@@ -1,12 +1,8 @@
 if(FALSE) {
     library(Rtesseract)
-#    library(png)
-#    img = readPNG(system.file("trainingSample", "eng.tables.ex0.png", package = "Rtesseract"))
-    d = readBoxFile(system.file("trainingSample", "eng.tables.ex0.box", package = "Rtesseract"), dim(img))
+    d = readBoxFile(system.file("trainingSample", "eng.tables.exp0.box", package = "Rtesseract"), dim(img))
     plot(d)
-
     plot(d[ d[,2] > 1500, ], cex = 1.2)
-#    Rtesseract:::plot.OCR(, img = NULL, bbox = d, filename = "foo", showText = TRUE, dim = dim(img))
 }
 
 readBoxFile =
