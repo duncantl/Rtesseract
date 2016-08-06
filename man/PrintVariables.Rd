@@ -11,7 +11,7 @@
 \usage{
 GetVariables(api, var)
 PrintVariables(api = tesseract(), asDataFrame = FALSE, file = tempfile())
-SetVariables(api, ..., .vars = sapply(list(...), as, "character")) 
+SetVariables(api, ..., .vars = list(...))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

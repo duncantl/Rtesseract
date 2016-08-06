@@ -1,10 +1,13 @@
 tesseract =
-function(image = character(), ..., .vars = list(...), init = TRUE)
+function(image = character(), pageSegMode = integer(), ..., .vars = list(...), init = TRUE)
 {
   api = .Call("R_TessBaseAPI_new")
 
   if(init)
      Init(api)
+
+  if(length(pageSegMode))
+      SetPageSegMode(api, pageSegMode)
   
   if(nargs() > 0)
      SetVariables(api, .vars = .vars)
@@ -190,10 +193,10 @@ function(api, ppi)
 }
 
 ReadConfigFile = 
-function(api, files, force = FALSE)
+function(api, files, ok = FALSE)
 {
    ff = path.expand(files)
-   if(!force && !all(ok <- file.exists(ff)))
+   if(!ok && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
    .Call("R_tesseract_ReadConfigFile", api, ff)
