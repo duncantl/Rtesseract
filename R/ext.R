@@ -1,5 +1,5 @@
 tesseract =
-function(image = character(), pageSegMode = integer(), ..., .vars = list(...), init = TRUE)
+function(image = character(), pageSegMode = integer(), ..., opts = list(...), init = TRUE)
 {
   api = .Call("R_TessBaseAPI_new")
 
@@ -10,7 +10,7 @@ function(image = character(), pageSegMode = integer(), ..., .vars = list(...), i
       SetPageSegMode(api, pageSegMode)
   
   if(nargs() > 0)
-     SetVariables(api, .vars = .vars)
+     SetVariables(api, opts = opts)
 
   if(length(image))
      SetImage(api, image)
@@ -31,13 +31,13 @@ function(api)
 }
 
 SetVariables =
-function(api, ..., .vars = list(...))
+function(api, ..., opts = list(...))
 {
-  .vars = sapply(.vars, as, "character")
+  .vars = sapply(opts, as, "character")
   .vars[ .vars == "FALSE" ] = "F"
   .vars[ .vars == "TRUE" ] = "T"  
     
-  .Call("R_TessBaseAPI_SetVariables", api, as(.vars, "character"))
+  .Call("R_TessBaseAPI_SetVariables", api, opts)
 }
 
 pixRead = 

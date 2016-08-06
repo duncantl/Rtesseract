@@ -11,7 +11,7 @@
 \usage{
 GetVariables(api, var)
 PrintVariables(api = tesseract(), asDataFrame = FALSE, file = tempfile())
-SetVariables(api, ..., .vars = list(...))
+SetVariables(api, ..., opts = list(...))
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -26,7 +26,7 @@ SetVariables(api, ..., .vars = list(...))
   \item{\dots}{\code{name = value} pairs specifying the name of the
     variable and its new value to be set in the tesseract object.
   }
-  \item{.vars}{an alternative way to specify the \code{name = value}
+  \item{opts}{an alternative way to specify the \code{name = value}
     pairs of variable name and values to set. This allows the caller to
     compute the variable names and values and pass the resulting list or
     vector as a single argument rather than as individual arguments in

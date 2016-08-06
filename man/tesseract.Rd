@@ -17,6 +17,8 @@
 \alias{Clear}
 \alias{plot,TesseractBaseAPI-method}
 \alias{coerce,TesseractBaseAPI,ResultIterator-method}
+\alias{GetPageSegMode}
+\alias{SetPageSegMode}
 %\alias{SetVariables}
 
 \title{Top-level Tesseract OCR API Functions and Classes}
@@ -30,7 +32,7 @@
   error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
-tesseract(image = character(), ..., .vars = list(...), init = TRUE)
+tesseract(image = character(), pageSegMode = integer(), ..., opts = list(...), init = TRUE)
 
 SetImage(api, pix)
 Init(api, lang = "eng")
@@ -69,7 +71,7 @@ End(api)
   \item{\dots}{\code{name = value} pairs that are passed to
     \code{SetVariables} to configure the
     \code{\link{TesseractBaseAPI-class}} instance.}
-  \item{.vars}{a list (or vector) of named values that are the options
+  \item{opts}{a list (or vector) of named values that are the options
     we can pass via \code{\dots}.}
   \item{init}{a logical value controlling whether \code{Init} is called
     by the \code{tesseract} function.}
@@ -86,7 +88,7 @@ End(api)
   \item{ok}{in \code{ReadConfigFile}, tesseract can locate configuration
     files in its data directory (typically, /usr/local/share/tessdata or
     specified with the environment variable \code{TESSDATA})}
-  \item{mode}{the value for the page segmentation mode for the tesseract
+  \item{mode,pageSegMode}{the value for the page segmentation mode for the tesseract
   instance. This must correspond to one of the values in
   \code{PageSegModeValues} or the corresponding R variables.
    However, one can use symbolic names (lower or upper case) from this
