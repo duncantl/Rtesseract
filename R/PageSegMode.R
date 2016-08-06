@@ -1,0 +1,23 @@
+setClass("PageSegMode", contains = "EnumValue")
+
+PageSegModeValues = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L), .Names = c('PSM_OSD_ONLY', 'PSM_AUTO_OSD', 'PSM_AUTO_ONLY', 'PSM_AUTO', 'PSM_SINGLE_COLUMN', 'PSM_SINGLE_BLOCK_VERT_TEXT', 'PSM_SINGLE_BLOCK', 'PSM_SINGLE_LINE', 'PSM_SINGLE_WORD', 'PSM_CIRCLE_WORD', 'PSM_SINGLE_CHAR', 'PSM_SPARSE_TEXT', 'PSM_SPARSE_TEXT_OSD', 'PSM_RAW_LINE', 'PSM_COUNT'))
+
+`PSM_OSD_ONLY` = GenericEnumValue('PSM_OSD_ONLY', 0L, 'PageSegMode')
+`PSM_AUTO_OSD` = GenericEnumValue('PSM_AUTO_OSD', 1L, 'PageSegMode')
+`PSM_AUTO_ONLY` = GenericEnumValue('PSM_AUTO_ONLY', 2L, 'PageSegMode')
+`PSM_AUTO` = GenericEnumValue('PSM_AUTO', 3L, 'PageSegMode')
+`PSM_SINGLE_COLUMN` = GenericEnumValue('PSM_SINGLE_COLUMN', 4L, 'PageSegMode')
+`PSM_SINGLE_BLOCK_VERT_TEXT` = GenericEnumValue('PSM_SINGLE_BLOCK_VERT_TEXT', 5L, 'PageSegMode')
+`PSM_SINGLE_BLOCK` = GenericEnumValue('PSM_SINGLE_BLOCK', 6L, 'PageSegMode')
+`PSM_SINGLE_LINE` = GenericEnumValue('PSM_SINGLE_LINE', 7L, 'PageSegMode')
+`PSM_SINGLE_WORD` = GenericEnumValue('PSM_SINGLE_WORD', 8L, 'PageSegMode')
+`PSM_CIRCLE_WORD` = GenericEnumValue('PSM_CIRCLE_WORD', 9L, 'PageSegMode')
+`PSM_SINGLE_CHAR` = GenericEnumValue('PSM_SINGLE_CHAR', 10L, 'PageSegMode')
+`PSM_SPARSE_TEXT` = GenericEnumValue('PSM_SPARSE_TEXT', 11L, 'PageSegMode')
+`PSM_SPARSE_TEXT_OSD` = GenericEnumValue('PSM_SPARSE_TEXT_OSD', 12L, 'PageSegMode')
+`PSM_RAW_LINE` = GenericEnumValue('PSM_RAW_LINE', 13L, 'PageSegMode')
+`PSM_COUNT` = GenericEnumValue('PSM_COUNT', 14L, 'PageSegMode')
+
+ setAs("character", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )
+ setAs("integer", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )
+ setAs("numeric", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )

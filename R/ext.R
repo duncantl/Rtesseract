@@ -1,5 +1,5 @@
 tesseract =
-function(image = character(), ..., init = TRUE)
+function(image = character(), ..., .vars = list(...), init = TRUE)
 {
   api = .Call("R_TessBaseAPI_new")
 
@@ -7,7 +7,7 @@ function(image = character(), ..., init = TRUE)
      Init(api)
   
   if(nargs() > 0)
-     SetVariables(api, ...)
+     SetVariables(api, .vars = .vars)
 
   if(length(image))
      SetImage(api, image)
@@ -28,8 +28,9 @@ function(api)
 }
 
 SetVariables =
-function(api, ..., .vars = sapply(list(...), as, "character"))
+function(api, ..., .vars = list(...))
 {
+  .vars = sapply(.vars, as, "character")
   .vars[ .vars == "FALSE" ] = "F"
   .vars[ .vars == "TRUE" ] = "T"  
     
@@ -189,10 +190,10 @@ function(api, ppi)
 }
 
 ReadConfigFile = 
-function(api, files)
+function(api, files, force = FALSE)
 {
    ff = path.expand(files)
-   if(!all(ok <- file.exists(ff)))
+   if(!force && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
    .Call("R_tesseract_ReadConfigFile", api, ff)
@@ -296,4 +297,17 @@ GetAlternatives =
 function(ri, ...)
 {
     .Call("R_getAlternatives", as(ri, "ResultIterator"))
+}
+
+
+SetPageSegMode =
+function(api, mode)
+{
+    .Call("R_TessBaseAPI_SetPageSegMode", as(api, "TesseractBaseAPI"), as(mode, "PageSegMode"))
+}
+
+GetPageSegMode =
+function(api)
+{
+    .Call("R_TessBaseAPI_GetPageSegMode", as(api, "TesseractBaseAPI"))
 }
