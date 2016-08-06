@@ -30,7 +30,7 @@
   error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
-tesseract(image = character(), ..., init = TRUE)
+tesseract(image = character(), ..., .vars = list(...), init = TRUE)
 
 SetImage(api, pix)
 Init(api, lang = "eng")
@@ -42,8 +42,11 @@ SetInputName(api, name)
 GetInputName(api)
 GetDatapath(api)
 GetInitLanguages(api)
-ReadConfigFile(api, files)
+ReadConfigFile(api, files, ok = FALSE)
 GetSourceYResolution(api)
+
+GetPageSegMode(api)
+SetPageSegMode(api, mode)
 
 IsValidWord(api, word)
 
@@ -64,7 +67,10 @@ End(api)
     image, but it is not the case now.}
   \item{api}{the instance of the  \code{\link{TesseractBaseAPI-class}} in which to perform the operations.}
   \item{\dots}{\code{name = value} pairs that are passed to
-    \code{SetVariables} to configure the \code{\link{TesseractBaseAPI-class}} instance.}
+    \code{SetVariables} to configure the
+    \code{\link{TesseractBaseAPI-class}} instance.}
+  \item{.vars}{a list (or vector) of named values that are the options
+    we can pass via \code{\dots}.}
   \item{init}{a logical value controlling whether \code{Init} is called
     by the \code{tesseract} function.}
   \item{ppi}{the per-pixel resolution as an integer.}
@@ -75,7 +81,17 @@ End(api)
   \item{word}{a character vector of words whose validity we want to
     check}
   \item{name}{the name of the file being processed by the OCR system.}
-  \item{lang}{a string specifying the language for the text to be recognized.}
+  \item{lang}{a string specifying the language for the text to be
+    recognized.}
+  \item{ok}{in \code{ReadConfigFile}, tesseract can locate configuration
+    files in its data directory (typically, /usr/local/share/tessdata or
+    specified with the environment variable \code{TESSDATA})}
+  \item{mode}{the value for the page segmentation mode for the tesseract
+  instance. This must correspond to one of the values in
+  \code{PageSegModeValues} or the corresponding R variables.
+   However, one can use symbolic names (lower or upper case) from this
+   vector, e.g., \code{"psm_auto"}.
+  }
 }
 
 \value{
