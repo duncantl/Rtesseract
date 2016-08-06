@@ -59,5 +59,5 @@ export(readBoxFile)
 export(SetPageSegMode, GetPageSegMode)
 
 
-exportClasses("PageSegMode")
-
+#exportClasses("PageSegMode")
+exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageSegMode, PageIteratorLevel, ParagraphJustification, OcrEngineMode, StrongScriptDirection)
