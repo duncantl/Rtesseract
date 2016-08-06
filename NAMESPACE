@@ -61,3 +61,5 @@ export(SetPageSegMode, GetPageSegMode)
 
 #exportClasses("PageSegMode")
 exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageSegMode, PageIteratorLevel, ParagraphJustification, OcrEngineMode, StrongScriptDirection)
+
+S3method(plot, TesseractBoxdata)
