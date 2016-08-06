@@ -6,6 +6,8 @@ importFrom("utils", read.table)
 import(graphics)
 importFrom("grDevices", "rgb")
 
+import(RAutoGenRunTime)
+
 
 export(ocr)
 export(PageIteratorLevel)
@@ -52,4 +54,10 @@ export(GetAlternatives)
 
 
 export(readBoxFile)
+
+
+export(SetPageSegMode, GetPageSegMode)
+
+
+exportClasses("PageSegMode")
 
