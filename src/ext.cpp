@@ -553,7 +553,7 @@ R_TessBaseAPI_GetPageSegMode(SEXP r_api)
 
   tesseract::PageSegMode ans = api->GetPageSegMode();
 
-  return( ScalarInteger((int) ans));
+  return( Renum_convert_PageSegMode(ans) );
 }
 
 

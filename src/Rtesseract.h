@@ -17,5 +17,8 @@ void R_freeAPI(SEXP obj);
 void R_freeResultIterator(SEXP obj);
 
 
+SEXP Renum_convert_PageSegMode(tesseract::PageSegMode val);
+
+
 #endif
 
