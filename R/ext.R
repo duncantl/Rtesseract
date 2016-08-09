@@ -316,7 +316,7 @@ function(api)
 }
 
 GetInputImage = GetImage =
-function(api, asArray = TRUE)
+function(api, asArray = FALSE)
 {
   .Call("R_TessBaseAPI_GetInputImage", api, as.logical(asArray))
 }
