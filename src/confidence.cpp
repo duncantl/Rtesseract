@@ -3,8 +3,12 @@
 
 #include <Rdefines.h>
 
+#include "Rtesseract.h"
+
 
 SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf);
+SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
+SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
 
 extern "C"
 SEXP
@@ -27,17 +31,50 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 
 
   api->Recognize(0);
-  tesseract::ResultIterator* ri = api->GetIterator();
-  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
-  if(ri != 0) {
+
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
+
+  ans = getRIConfidences(level, api);
+
+  pixDestroy(&image);
+
+ return(ans);
+}
+
+extern "C"
+SEXP
+R_TesseractBaseAPI_getConfidences(SEXP r_api, SEXP r_level)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
+  return(getRIConfidences(level, api));
+}
+
+SEXP
+getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api)
+{
+  SEXP ans;
 
     int n = 1, i;
+    tesseract::ResultIterator* ri = api->GetIterator();
+    if(!ri) {
+      api->Recognize(0);
+      ri = api->GetIterator();
+      if(!ri) {
+          PROBLEM "cannot get ResultIterator"
+          ERROR;
+      }
+    }
+
     while(ri->Next(level))   n++;
-    //    printf("num words %d\n", n);
 
     delete ri; // XXX check
 
-    //    api->Recognize(0);
     ri = api->GetIterator();
     SEXP names;
     PROTECT(names = NEW_CHARACTER(n));
@@ -57,11 +94,8 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 
     SET_NAMES(ans, names);
     UNPROTECT(2);
-  }
 
-  pixDestroy(&image);
-
- return(ans);
+  return(ans);
 }
 
 
@@ -71,7 +105,6 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 /*
   Get the alternative predictions for each symbol.
  */
-
 extern "C"
 SEXP
 R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
@@ -172,15 +205,52 @@ R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
 
 
   api->Recognize(0);
-  tesseract::ResultIterator* ri = api->GetIterator();
+
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
-  if(ri != 0) {
+
+  ans = getRIBoundingBoxes(level, api, r_names);
+
+  pixDestroy(&image);
+
+ return(ans);
+}
+
+
+extern "C"
+SEXP
+R_TesseractBaseAPI_getBoundingBoxes(SEXP r_api, SEXP r_level)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
+  return(getRIBoundingBoxes(level, api, R_NilValue));
+}
+
+SEXP
+getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names)
+{
+    tesseract::ResultIterator* ri = api->GetIterator();
+
+    if(ri != 0) {
+      api->Recognize(0);
+      ri = api->GetIterator();
+      if(!ri) {
+          PROBLEM "cannot get ResultIterator"
+          ERROR;
+      }
+    }
+
 
     int n = 1, i;
-    while(ri->Next(level))   n++;
+    while(ri->Next(level))   
+        n++;
 
     ri = api->GetIterator();
-    SEXP names, tmp;
+    SEXP ans, names, tmp;
     PROTECT(names = NEW_CHARACTER(n));
     PROTECT(ans = NEW_LIST(n));
     i = 0;
@@ -207,11 +277,8 @@ R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
 
     SET_NAMES(ans, names);
     UNPROTECT(2);
-  }
 
-  pixDestroy(&image);
-
- return(ans);
+   return(ans);
 }
 
 

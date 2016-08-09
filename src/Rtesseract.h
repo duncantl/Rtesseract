@@ -19,6 +19,8 @@ void R_freeResultIterator(SEXP obj);
 
 SEXP Renum_convert_PageSegMode(tesseract::PageSegMode val);
 
+SEXP getPixAsArray(const Pix *pix);
+
 
 #endif
 

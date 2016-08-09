@@ -23,7 +23,7 @@ R_freeAPI(SEXP obj)
 
 extern "C"
 SEXP
-R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang)
+R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 {
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
   if(!api) {
@@ -32,7 +32,11 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang)
   }
 
   const char *lang = CHAR(STRING_ELT(r_lang, 0));
-  int ok = api->Init(NULL, lang); 
+  const char *datapath = NULL;
+  if(STRING_ELT(r_datapath, 0) != NA_STRING)
+      datapath = CHAR(STRING_ELT(r_datapath, 0));
+  int ok = api->Init(datapath, lang); 
+
   return( ScalarLogical( ok == 0 ));
 }
 
@@ -114,13 +118,30 @@ R_TessBaseAPI_SetImage_raw(SEXP r_api, SEXP r_img, SEXP r_dims, SEXP r_bytes_per
 }
 
 
+extern "C"
+SEXP
+R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    Pix *pix = api->GetInputImage();
+    if(LOGICAL(r_asArray)[0])
+      return(getPixAsArray(pix));
+
+  return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
+}
+
 
 extern "C"
 SEXP
 R_pixRead(SEXP r_filename)
 {
   Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
-  return(createRef(image, "Pix", R_pixDestroy));
+  return(createRef(image, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
 }
 
 void
@@ -348,6 +369,16 @@ R_tesseract_Clear(SEXP r_api)
 {
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
   api->Clear();
+
+  return(R_NilValue);
+}
+
+extern "C"
+SEXP
+R_tesseract_ClearAdaptiveClassifier(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  api->ClearAdaptiveClassifier();
 
   return(R_NilValue);
 }
@@ -602,4 +633,79 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
   UNPROTECT(1);
 
   return(r_ans) ;
+}
+
+
+SEXP
+makeImageDims(Pix *pix)
+{
+    if(!pix)
+        return(R_NilValue); // or a numeric vector of length 5 of NAs
+
+    SEXP ans = NEW_NUMERIC(3);
+    REAL(ans)[0] = pix->h;
+    REAL(ans)[1] = pix->w;
+    REAL(ans)[2] = pix->d;
+    return(ans);
+}
+
+
+extern "C"
+SEXP
+R_Pix_GetDimensions(SEXP r_pix)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    return(makeImageDims(pix));
+}
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetImageDimensions(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    Pix *pix = api->GetInputImage();
+    return(makeImageDims(pix));
+}
+
+
+SEXP
+makeImageInfo(Pix *pix)
+{
+    if(!pix)
+        return(R_NilValue); // or a numeric vector of length 5 of NAs
+
+    SEXP ans = NEW_NUMERIC(5);
+    REAL(ans)[0] = pix->spp;
+    REAL(ans)[1] = pix->xres;
+    REAL(ans)[2] = pix->yres;
+    REAL(ans)[3] = pix->informat;
+    REAL(ans)[4] = pix->colormap ? pix->colormap->depth : R_NaReal;
+    return(ans);
+}
+
+extern "C"
+SEXP
+R_Pix_GetInfo(SEXP r_pix)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    return(makeImageInfo(pix));
+}
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetImageInfo(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    Pix *pix = api->GetInputImage();
+    return(makeImageInfo(pix));
 }
