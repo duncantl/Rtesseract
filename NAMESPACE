@@ -63,3 +63,12 @@ export(SetPageSegMode, GetPageSegMode)
 exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageSegMode, PageIteratorLevel, ParagraphJustification, OcrEngineMode, StrongScriptDirection)
 
 S3method(plot, TesseractBoxdata)
+
+
+export(getSpecs, getCharWidth, getCharHeight, bboxToDF, orderBBox)
+
+export(getConfidences, getBoxes)
+exportMethods("getConfidences", "getBoxes")
+
+export(getImageDims, getImageInfo, GetInputImage)
+
