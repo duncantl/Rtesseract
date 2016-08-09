@@ -17,12 +17,14 @@ function(img, level = PageIteratorLevel["word"],
 
    checkImageTypeSupported(img)
 
-    if(is.character(level)) {
-      tmp = level
-      level = PageIteratorLevel[level]
-      if(is.na(level))
-        stop("no match for ", tmp)
-    }
+   level = as(level, "PageIteratorLevel")
+
+#   if(is.character(level)) {
+#     tmp = level
+#     level = PageIteratorLevel[level]
+#     if(is.na(level))
+#       stop("no match for ", tmp)
+#   }
 
    opts = as(opts, "character")
 
@@ -31,7 +33,7 @@ function(img, level = PageIteratorLevel["word"],
 
    if(boundingBox) {
                                                                                   #was       "x1", "y1", "x2", "y2"
-     tmp = .Call("R_ocr_boundingBoxes", img, opts, as.integer(level), c("confidence", c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")))
+     tmp = .Call("R_ocr_boundingBoxes", img, opts, level, c("confidence", c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")))
      return(do.call(rbind, tmp))
    }
    

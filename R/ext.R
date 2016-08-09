@@ -200,7 +200,7 @@ setGeneric("getBoxes",
 setMethod("getBoxes",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
-              ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as.integer(level))
+              ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as(level, "PageIteratorLevel"))
               m = do.call(rbind, ans)
               rownames(m) = names(ans)
               colnames(m) = c("confidence", "left", "bottom", "right", "top") #XXXX
