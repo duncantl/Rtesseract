@@ -1,5 +1,60 @@
 ? Other methods form the baseapi.h ?
 
+
+How can we query whether we have to call Recognize() or not?
+
+GetInputImage() - figure out how to deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
+   [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
+
+
+Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
+Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
+ and creates a data frame/matrix.
+
+When we return a Pix, increase the reference count and put a finalizer to decrease it.
+
+??Change the names to lower case, e.g. getInputName(), ?
+
+When tesseract complains below, raise an error.  Stop the output going to stdout/stderr
+      The error messages run through tprintf_internal() in ccutil/tprinf.cpp.
+      There is a debug_file that we can write to.  Set this and then read that file when there is an error. Very ugly.
+      How do people do this in python, etc.
+  Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
+  Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+  Failed loading language 'osd'
+  Tesseract couldn't load any languages!
+
+ How do we regenerate this?
+   Unset TESSDATA_PREFIX in ~/.cshrc and run Rtesseract.
+       api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
+
+ This is what did it - but not anymore.
+  Sys.setenv(TESSDATA_PREFIX= path.expand("~/Projects/OCR/tesseract-ocr"))
+  library(Rtesseract)
+   api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
+   Recognize(api)
+
+
+Be able to interrupt in OCR computations with Ctrl-c.
+
+Connect to OpenCV  for manipulating the image.  perhaps thresholding away the specs. 
+    https://github.com/swarm-lab/videoplayR
+    https://code.google.com/archive/p/r-opencv/source/default/source
+
+
+? GetInputName seems to take an age (in some cases)!!  Did time it and got exactly 0.
+
+plot.OCR() seems to be doing something unnecessary - an extra call to Recognize() somewhere?
+
+create searchable pdf - use their renderer
+  want to be able to fix the errors and then create it.
+  Started in example in pdf.R and code in render.cpp.
+     It generates a pdf but it cannot be opened.  
+
+See MutableIterator for possibly modifying the tesseract content.
+
+Can't seem to open pdf config file - i.e., the one called pdf in /usr/local/share/tessdata/configs, but can find batch.nochop.
+
 With cropBoxes, can get negative indices.
   Change the margin.  Compute it so that it can't yield negative indices.
 
@@ -16,6 +71,7 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
 
 [low] ocr() function using the API-level functions.
    i.e. implement not in C but in R code to assemble the different pieces.
+   Can do now.
 
 [Done] Plot the image and the components and 
 *  show the confidence level for each 
@@ -34,13 +90,17 @@ then see if we can cluster them.
 [ok] error rates and confusion matrix when know the actual values.
 
 [low] Get components - leptonica objects Boxa and Pixa
-   How about identifying lines
+   How about identifying lines.  Done in bounding box if we use psm_auto for PageSegmentationMode
 
 [Check] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
    Is this in the ocr() routine? e.g. ocr(, alternatives = TRUE)
 
 
 ---------------------
+
+[done] get information about the current image - dimensions, other info. See getImageInfo() & getImageDims()
+
+[Done] See getConfidences() on a tessseract object.  Get the confidences separately from ocr().
 
 [Done] Give a blank image (i.e. a file that contains nothing) and ocr() seg faults
    created via PDFBox w/o the jbig2-imageio in the classpath
@@ -71,3 +131,58 @@ then see if we can cluster them.
        tt = readLines(f)
        els = strsplit(tt, "\t")
        sapply(els, length)
+p[fixed] If the file doesn't exist, get a weird  error message.
+
+[Done] Make getCharWidth/Height ignore text with no content & just one space.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Session generating error about not being able to read osd.traineddata.
+ api = tesseract("inst/trainingSample/eng.tables.exp0.png")
+17> .Call("R_TessBaseAPI_SetPageSegMode", api, 0L)
+[1] TRUE
+18> Recognize
+*** output flushed ***
+19> Recognize(api)
+Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
+Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+Failed loading language 'osd'
+Tesseract couldn't load any languages!
+Warning: Auto orientation and script detection requested, but osd language failed to load
+[1] TRUE
+20> .Call("R_TessBaseAPI_SetPageSegMode", api, 1L)
+[1] TRUE
+21> Recognize(api)
+Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
+Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+Failed loading language 'osd'
+Tesseract couldn't load any languages!
+Warning: Auto orientation and script detection requested, but osd language failed to load
+[1] TRUE
+22> .Call("R_TessBaseAPI_SetPageSegMode", api, 2L)
+[1] TRUE
+
+
+
+
