@@ -1,5 +1,6 @@
 \name{getCharWidth}
 \alias{getCharWidth}
+\alias{getCharHeight}
 \title{
 Utlities for Computing Typical Character Height and Width on this Page
 }

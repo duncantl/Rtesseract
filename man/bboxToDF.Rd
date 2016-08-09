@@ -26,9 +26,10 @@ orderBBox(bbox, colName = "bottom", decreasing = TRUE)
 \arguments{
   \item{bb}{the bounding box as a matrix}
   \item{bbox}{the bounding box as a matrix or data.frame}
-  \item{colName}{the name of the column of the bounding box to order the
+  \item{colName}{the name or index/positio of the column of the bounding box to order the
     rows by.}
-  \item{decreasing}{}
+  \item{decreasing}{a logical value controlling whether the rows are
+    odered by the values in \code{colName} in decreasing or increasing order.}
 }
 \value{
  \code{bboxToDF} returns a data frame with the text for each bounding

@@ -60,7 +60,7 @@ ts = tesseract(f)
 getImageDims(ts)
 getImageInfo(ts)
 
-pix = GetInputImage(f)
+pix = GetInputImage(ts)
 getImageDims(pix)
 getImageInfo(pix)
 }
