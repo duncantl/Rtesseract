@@ -8,4 +8,5 @@ check.cc
 readImage$
 readImage.dSYM$
 Makevars-$
+R/plot.R-tmp
 
