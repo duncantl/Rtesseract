@@ -17,6 +17,11 @@ par(mfrow = c(1, 2))
 plot(api, main = "Words")
 plot(api, level = "symbol", main = "Individual Characters")
 
+
+bbox = getBoxes(api)
+plot(api, NULL, bbox = bbox)
+
+
 if(FALSE) {
 
 ri = GetIterator(api)
