@@ -4,7 +4,7 @@
 \alias{WritingDirection-class}
 \alias{TextlineOrder-class}
 \alias{PageSegMode-class}
-\alias{PageIteratorLevel-class}
+%\alias{PageIteratorLevel-class}
 \alias{ParagraphJustification-class}
 \alias{OcrEngineMode-class}
 \alias{StrongScriptDirection-class}

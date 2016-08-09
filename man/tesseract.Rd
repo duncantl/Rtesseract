@@ -2,6 +2,8 @@
 \alias{tesseract}
 \alias{TesseractBaseAPI-class}
 \alias{SetImage}
+\alias{GetImage}
+\alias{GetInputImage}
 \alias{Recognize}
 \alias{SetRectangle}
 \alias{SetSourceResolution}
@@ -32,10 +34,12 @@
   error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
-tesseract(image = character(), pageSegMode = integer(), ..., opts = list(...), init = TRUE)
+tesseract(image = character(), pageSegMode = integer(), lang = "eng",
+          datapath = NA, ..., opts = list(...), init = TRUE)
 
 SetImage(api, pix)
-Init(api, lang = "eng")
+Init(api, lang = "eng", datapath = NA)
+
 SetRectangle(api, ..., dims = sapply(list(...), as.integer))
 SetSourceResolution(api, ppi)
 Recognize(api)
@@ -67,7 +71,11 @@ End(api)
     this \code{\link{TesseractBaseAPI-class}} instance.
     In the future, we will ensure that garbage collection protects the
     image, but it is not the case now.}
-  \item{api}{the instance of the  \code{\link{TesseractBaseAPI-class}} in which to perform the operations.}
+  \item{api}{the instance of the  \code{\link{TesseractBaseAPI-class}}
+    in which to perform the operations.}
+  \item{lang}{a string identifying the language(s) for the character
+    recognition}
+  \item{datapath}{the name of a directory that contains the tessdata/ directory.}
   \item{\dots}{\code{name = value} pairs that are passed to
     \code{SetVariables} to configure the
     \code{\link{TesseractBaseAPI-class}} instance.}
@@ -83,8 +91,6 @@ End(api)
   \item{word}{a character vector of words whose validity we want to
     check}
   \item{name}{the name of the file being processed by the OCR system.}
-  \item{lang}{a string specifying the language for the text to be
-    recognized.}
   \item{ok}{in \code{ReadConfigFile}, tesseract can locate configuration
     files in its data directory (typically, /usr/local/share/tessdata or
     specified with the environment variable \code{TESSDATA})}

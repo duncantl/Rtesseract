@@ -3,20 +3,20 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
 {
   api = .Call("R_TessBaseAPI_new")
 
-  if(nargs() > 0)
-     SetVariables(api, opts = opts)  
-
   if(length(pageSegMode))
       SetPageSegMode(api, pageSegMode)
 
-  if(!init && length(image) && file.exists(image)) {
-      warning("forcing a call to Init() since setting the image.")
+  if(!init && ((length(image) && file.exists(image)) || length(opts))) {
+      warning("forcing a call to Init() since setting the image and/or variables.")
       init = TRUE
   }
       
   if(init)
-     Init(api, lang, datapath)  
+     Init(api, lang, datapath)
 
+  if(nargs() > 0)
+     SetVariables(api, opts = opts)  
+  
   if(length(image))
      SetImage(api, image)
   
@@ -189,7 +189,7 @@ setMethod("getConfidences",
           function(obj, level = 3L, ...) {
               ts = tesseract(obj)
               Recognize(ts)
-              Confidences(ts, level, ...)
+              getConfidences(ts, level, ...)
           })
 
 
@@ -211,7 +211,7 @@ setMethod("getBoxes",
            "character",
           function(obj, level = 3L, ...) {
               ts = tesseract(obj)
-              Recognize(ts)
+              Recognize(ts) # Want to avoid doing this twice if possible
               getBoxes(ts, level, ...)
           })
 
@@ -315,7 +315,7 @@ function(api)
   .Call("R_tesseract_GetInputName", api)
 }
 
-GetInputImage =
+GetInputImage = GetImage =
 function(api, asArray = TRUE)
 {
   .Call("R_TessBaseAPI_GetInputImage", api, as.logical(asArray))

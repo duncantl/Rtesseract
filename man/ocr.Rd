@@ -18,14 +18,24 @@ The error message indicates the supported image types, and the
 error object also contains the name of the file in the \code{filename} element.
 }
 \usage{
-ocr(img, level = PageIteratorLevel["word"], alternatives = FALSE,
+ocr(img, level = PageIteratorLevel["word"],
+    pageSegMode = "psm_single_block", alternatives = FALSE,
     boundingBox = FALSE,
     opts = sapply(list(...), as, "character"), ...)
 }
 \arguments{
   \item{img}{the file name of the image to be processed}
  \item{alternatives}{a logical value that controls whether the possible alternatives for each recognized element are returned. This allows us to compare the "confidence" we have in the predicted text relative to the other possibilities.}
-  \item{opts}{a character vector of \code{name = value} pairs specifying tesseract variables and values.}
+ \item{pageSegMode}{a value indicating how to do the segmentation of the
+   elements on the page. This allows us to treat the content as a single
+ line, word, a vertical or horizontal block, or a general collection of
+ elements.  Different values lead to identifying different elements such
+  as lines and rectangles rather than just words, symbols, and lines of
+  text.
+  The value should be consistent with the \code{\link{PageSegMode-class}}
+  enumerated type.
+}
+ \item{opts}{a character vector of \code{name = value} pairs specifying tesseract variables and values.}
   \item{\dots}{\code{name = value} pairs for specifying tesseract options individually rather than in a character vector via \code{opts}.}
   \item{level}{an integer value specifying what level/unit to return the results for, e.g.,
       paragraph, word, character. This can also be a character string

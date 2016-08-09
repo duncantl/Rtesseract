@@ -1,4 +1,4 @@
-getSpecs =
+getSmudges =
     #
     # Identify what are probably specs/smudges from the scanning process that are not characters.
     # These are small boxes. We also want them to be far way from other elements.

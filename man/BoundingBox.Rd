@@ -27,7 +27,7 @@ GetAlternatives(ri, ...)
   call to \code{\link{GetIterator}}}
   \item{level}{if \code{ri} is a \code{\link{ResultIterator-class}},
   this is ignored. However, if \code{ri} is a
-  \code{\link{TesseractBaseAPI}} object, this level determines whether
+  \code{\link{TesseractBaseAPI-class}} object, this level determines whether
   we recognize blocks, paragraphs, words or characters, i.e., the unit
   to be reconized as a single entity.
   This is a value from enumerated constant type

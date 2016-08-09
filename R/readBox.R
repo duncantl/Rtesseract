@@ -63,17 +63,20 @@ function(x, ymax = NA, ...)
 }
 
 
-setMethod("plot", "TesseractBoxdata",
-           function(x, y, ...)
-             plot.TesseractBoxdata(x, ...))
-
 plot.TesseractBoxdata =
-function(x, cex = .9, ...)
+function(x, str.cex = .9, ...)
 {
     plot(0, type = "n", xlim = range(x[, c(1, 3)]), ylim = range(x[, c(2, 4)]), xlab = "", ylab = "")
     rect(x[,1], x[,2], x[,3], x[, 4])
     opar = par(no.readonly = TRUE)
     on.exit(par(opar))
     par(pty = "s")
-    text(x[,1], x[,2], x[, "text"], adj = c(-0.2, -.2), cex = cex)
+    text(x[,1], x[,2], x[, "text"], adj = c(-0.2, -.2), cex = str.cex)
 }
+
+#setMethod("plot", "TesseractBoxdata",
+#           function(x, ...)
+#             plot.TesseractBoxdata(x, ...))
+
+setMethod("plot", "TesseractBoxdata", plot.TesseractBoxdata)
+
