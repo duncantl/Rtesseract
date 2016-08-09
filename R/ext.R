@@ -1,16 +1,21 @@
 tesseract =
-function(image = character(), pageSegMode = integer(), ..., opts = list(...), init = TRUE)
+function(image = character(), pageSegMode = integer(), lang = "eng", datapath = NA, ..., opts = list(...), init = TRUE)
 {
   api = .Call("R_TessBaseAPI_new")
 
-  if(init)
-     Init(api)
+  if(nargs() > 0)
+     SetVariables(api, opts = opts)  
 
   if(length(pageSegMode))
       SetPageSegMode(api, pageSegMode)
-  
-  if(nargs() > 0)
-     SetVariables(api, opts = opts)
+
+  if(!init && length(image) && file.exists(image)) {
+      warning("forcing a call to Init() since setting the image.")
+      init = TRUE
+  }
+      
+  if(init)
+     Init(api, lang, datapath)  
 
   if(length(image))
      SetImage(api, image)
@@ -19,9 +24,17 @@ function(image = character(), pageSegMode = integer(), ..., opts = list(...), in
 }
 
 Init = 
-function(api, lang = "eng")
+function(api, lang = "eng", datapath = NA)
 {
-  .Call("R_TessBaseAPI_Init", api, as.character(lang))
+  if(!is.na(datapath) && (!file.exists(datapath) || !file.info(datapath)[1, "isdir"])) 
+      stop("No such directory ", datapath)
+
+   
+  ok = .Call("R_TessBaseAPI_Init", api, as.character(lang), as.character(datapath))
+  if(!ok) 
+      stop(mkError("Error calling Init() for the tesseract object", "TesseractInitFailure"))
+
+  TRUE
 }
 
 End =
@@ -37,7 +50,7 @@ function(api, ..., opts = list(...))
   .vars[ .vars == "FALSE" ] = "F"
   .vars[ .vars == "TRUE" ] = "T"  
     
-  .Call("R_TessBaseAPI_SetVariables", api, opts)
+  .Call("R_TessBaseAPI_SetVariables", api, .vars)
 }
 
 pixRead = 
@@ -45,7 +58,7 @@ function(filename, ...)
 {
    filename = path.expand(filename)
    if(!file.exists(filename))
-      stop("no such file ",  file)
+      stop("no such file ",  filename)
 
    .Call("R_pixRead", filename)
 }
@@ -55,7 +68,7 @@ function(api, pix)
 {
   if(is.character(pix)) {
      if(!file.exists(pix))
-        stop("No such file ", file)
+        stop("No such file ", pix)
      SetInputName(api, pix)
      pix = pixRead(pix)
   }
@@ -158,6 +171,54 @@ function(ri, level = 3L)
   .Call("R_ResultIterator_Confidence", ri, as.integer(level))
 }
 
+
+
+
+setGeneric("getConfidences",
+           function(obj, level = 3L, ...)
+             standardGeneric("getConfidences"))
+
+setMethod("getConfidences",
+          "TesseractBaseAPI",
+          function(obj, level = 3L, ...) {
+              .Call("R_TesseractBaseAPI_getConfidences", obj, as.integer(level))
+          })
+
+setMethod("getConfidences",
+           "character",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(obj)
+              Recognize(ts)
+              Confidences(ts, level, ...)
+          })
+
+
+setGeneric("getBoxes",
+           function(obj, level = 3L, ...)
+             standardGeneric("getBoxes"))
+
+setMethod("getBoxes",
+          "TesseractBaseAPI",
+          function(obj, level = 3L, ...) {
+              ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as.integer(level))
+              m = do.call(rbind, ans)
+              rownames(m) = names(ans)
+              colnames(m) = c("confidence", "left", "bottom", "right", "top") #XXXX
+              m[, 2:5]  # still numeric! Change to integer.  Or leave the confidence in.
+          })
+
+setMethod("getBoxes",
+           "character",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(obj)
+              Recognize(ts)
+              getBoxes(ts, level, ...)
+          })
+
+
+
+
+
 GetText = GetUTF8Text = 
 function(ri, level = 3L)
 {
@@ -174,6 +235,13 @@ function(api)
 {
   .Call("R_tesseract_Clear", api)
 }
+
+ClearAdaptiveClassifier = 
+function(api)
+{
+  .Call("R_tesseract_ClearAdaptiveClassifier", api)
+}
+
 
 
 SetRectangle = 
@@ -247,6 +315,12 @@ function(api)
   .Call("R_tesseract_GetInputName", api)
 }
 
+GetInputImage =
+function(api, asArray = TRUE)
+{
+  .Call("R_TessBaseAPI_GetInputImage", api, as.logical(asArray))
+}
+
 
 GetDatapath =
 function(api)
@@ -314,3 +388,37 @@ function(api)
 {
     .Call("R_TessBaseAPI_GetPageSegMode", as(api, "TesseractBaseAPI"))
 }
+
+
+setGeneric("getImageDims", function(obj, ...) standardGeneric("getImageDims"))
+
+setMethod("getImageDims", "TesseractBaseAPI",
+          function(obj, ...) {
+              ans = .Call("R_TessBaseAPI_GetImageDimensions", obj)
+              names(ans) = c("height", "width", "depth")
+              ans
+          })
+
+setMethod("getImageDims", "Pix",
+          function(obj, ...) {
+              ans = .Call("R_Pix_GetDimensions", obj)
+              names(ans) = c("height", "width", "depth")
+              ans
+          })
+
+setGeneric("getImageInfo", function(obj, ...) standardGeneric("getImageInfo"))
+
+setMethod("getImageInfo", "TesseractBaseAPI",
+          function(obj, ...) {
+              ans = .Call("R_TessBaseAPI_GetImageInfo", obj)
+              names(ans) = c("samplesPerPixel", "xres", "yres", "informat", "colorDepth")  # from .../include/leptonica/pix.h
+              ans
+          })
+setMethod("getImageInfo", "Pix",
+          function(obj, ...) {
+              ans = .Call("R_Pix_GetInfo", obj)
+              names(ans) = c("samplesPerPixel", "xres", "yres", "informat", "colorDepth")  # from .../include/leptonica/pix.h
+              ans
+          })
+
+   

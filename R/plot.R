@@ -1,19 +1,18 @@
-setMethod("plot", "TesseractBaseAPI",
-          function(x, y, level = "word", ...) {
-              plot.OCR(x, level = level, ...)
-          })
+#         function(x, y, level = "word", ...) {
+#             plot.OCR(x, level = level, ...)
+#         })
 
 
 plot.OCR =
-function(api, level = "word",
-         ri = GetIterator(api),
-         filename = if(!missing(api)) GetInputName(api) else "",         
+function(x, y = "word",
+         ri = GetIterator(x),
+         filename = if(!missing(x)) GetInputName(x) else "",         
          img = readImage(filename),
-         bbox = BoundingBoxes(ri, level),
+         bbox = BoundingBoxes(ri, y),
          border = "red",
          outer.border = "green",
          cropToBoxes = FALSE, margin = .05,
-         main = filename,         
+         main = filename,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -21,10 +20,19 @@ function(api, level = "word",
     else
        m = bbox
 
+    if(is.null(img)) {
+        dims = getImageDims(x)
+        nrow = dims[1]
+        ncol = dims[2]
+    } else {
+        nrow = nrow(img)
+        ncol = ncol(img)
+    }
+        
+
          # put the y's going from bottom to top, unlike their originals which are top to bottom.
-    r = nrow(img)    
-    m[,2] = r - m[,2]
-    m[,4] = r - m[,4]    
+    m[,2] = nrow - m[,2]
+    m[,4] = nrow - m[,4]    
 
     
     if(cropToBoxes) {
@@ -38,11 +46,11 @@ function(api, level = "word",
        mx = c(min(m[,1]), max(m[,3]))*margin
        my = c(min(m[,2]), max(m[,4]))*margin
     
-       img = img[ sort(nrow(img) - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
+       img = img[ sort(nrow - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
     
     } else {  # show whole image
-       mx = c(0, ncol(img))
-       my = c(0, r)
+       mx = c(0, ncol)
+       my = c(0, nrow)
     }
 
     plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
@@ -61,6 +69,14 @@ function(api, level = "word",
     
     NULL
 }
+
+#setMethod("plot", "TesseractBaseAPI",   plot.OCR)
+setMethod("plot", "TesseractBaseAPI",
+            function(x, y, ...) {
+             if(missing(y))
+                 y = "word"
+             plot.OCR(x, y, ...)
+           })
 
 
 plot.ConfusionMatrix =

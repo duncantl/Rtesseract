@@ -3,7 +3,8 @@ ocr =
   #
   # tryCatch( ocr("Rtesseract/inst/images/IMG_1234.jpg"), error = function(e) class(e) )
     
-function(img, level = PageIteratorLevel["word"], 
+function(img, level = PageIteratorLevel["word"],
+         pageSegMode = "psm_single_block",
          alternatives = FALSE, boundingBox = FALSE,
          opts = sapply(list(...), as, "character"), ...)
 {
@@ -28,8 +29,11 @@ function(img, level = PageIteratorLevel["word"],
    if(alternatives)
       opts["save_blob_choices"] = "T"
 
-   if(boundingBox)
-     return(.Call("R_ocr_boundingBoxes", img, opts, as.integer(level), c("confidence", "x1", "y1", "x2", "y2")))
+   if(boundingBox) {
+                                                                                  #was       "x1", "y1", "x2", "y2"
+     tmp = .Call("R_ocr_boundingBoxes", img, opts, as.integer(level), c("confidence", c("bottom.left.x", "bottom.left.y", "top.right.x", "top.right.y")))
+     return(do.call(rbind, tmp))
+   }
    
    sym = if(as.logical(alternatives)) 
             "R_ocr_alternatives" 
@@ -75,6 +79,9 @@ function(file, default = "")
 
 
 mkError =
+    #
+    # For creating structured errors with classes that can be used in tryCatch()
+    #
 function(message, class = character(), call = NULL, ...)
 {
   e = simpleError(message, call)
