@@ -25,9 +25,16 @@ GetAlternatives(ri, ...)
 \arguments{
   \item{ri}{the \code{\link{ResultIterator-class}} class, obtained via a
   call to \code{\link{GetIterator}}}
-  \item{level}{this is typically ignored, but provided for compatability
-    with the way C routines are called.}
-  \item{\dots}{other arguments that are ignored.}
+  \item{level}{if \code{ri} is a \code{\link{ResultIterator-class}},
+  this is ignored. However, if \code{ri} is a
+  \code{\link{TesseractBaseAPI}} object, this level determines whether
+  we recognize blocks, paragraphs, words or characters, i.e., the unit
+  to be reconized as a single entity.
+  This is a value from enumerated constant type
+  \code{\link{PageIteratorLevel}}.
+  One can specify it as a value, a names from that vector.
+ }
+  \item{\dots}{other arguments that are currently ignored.}
 }
 \value{
   \code{BoundingBoxes} returns a matrix with 4 columns
