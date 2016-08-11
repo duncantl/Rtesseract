@@ -21,6 +21,11 @@
 \alias{coerce,TesseractBaseAPI,ResultIterator-method}
 \alias{GetPageSegMode}
 \alias{SetPageSegMode}
+\alias{ClearAdaptiveClassifier}
+\alias{GetThresholdedImage}
+\alias{SetOutputName}
+\alias{hasRecognized}
+\alias{oem}
 %\alias{SetVariables}
 
 \title{Top-level Tesseract OCR API Functions and Classes}
@@ -48,16 +53,20 @@
 }
 \usage{
 tesseract(image = character(), pageSegMode = integer(), lang = "eng",
-          datapath = NA, ..., opts = list(...), init = TRUE)
+          datapath = NA, configs = character(), vars = character(),
+          engineMode = OEM_DEFAULT, debugOnly = FALSE,
+          ..., opts = list(...), init = TRUE)
 
 SetImage(api, pix)
-Init(api, lang = "eng", datapath = NA)
+Init(api, lang = "eng", configs = character(), vars =
+     character(), datapath = NA, engineMode = OEM_DEFAULT,
+     debugOnly = FALSE, force2 = FALSE)
 
 SetRectangle(api, ..., dims = sapply(list(...), as.integer))
 SetSourceResolution(api, ppi)
 Recognize(api)
 
-SetInputName(api, name)
+SetInputName(api, name, check = TRUE, load = TRUE)
 GetInputName(api)
 GetDatapath(api)
 GetInitLanguages(api)
@@ -69,7 +78,15 @@ SetPageSegMode(api, mode)
 
 IsValidWord(api, word)
 
+SetOutputName(api, filename)
+oem(api)
+
+hasRecognized(api)
+
+GetThresholdedImage(api)
+
 Clear(api)
+ClearAdaptiveClassifier(api)
 End(api)
 }
 \arguments{
@@ -88,7 +105,15 @@ End(api)
     in which to perform the operations.}
   \item{lang}{a string identifying the language(s) for the character
     recognition}
-  \item{datapath}{the name of a directory that contains the tessdata/ directory.}
+  \item{datapath}{the name of a directory that contains the tessdata/
+    directory.}
+  \item{engineMode}{the mode for the OCR engine. The default is to use
+    tesseract. One can use a Cube method, or a Cube and Tesseract
+    combinatin. See the \code{OcrEngineMode} enumerated constant vector.}
+  \item{configs}{a named character vector of configuration arguments}
+  \item{vars}{variables to set for controling Tesseract}
+  \item{debugOnly}{a logical value that controls whether in the Init()
+    call, only non-debugging variables in \code{vars} are to be processed.}
   \item{\dots}{\code{name = value} pairs that are passed to
     \code{SetVariables} to configure the
     \code{\link{TesseractBaseAPI-class}} instance.}
@@ -112,7 +137,12 @@ End(api)
   \code{PageSegModeValues} or the corresponding R variables.
    However, one can use symbolic names (lower or upper case) from this
    vector, e.g., \code{"psm_auto"}.
-  }
+ }
+ \item{check}{check to see if the file actually exists}
+ \item{load}{load the image in the file name and set it as the current
+   image in the tesseract object.}
+ \item{force2}{a logical value to control whether to use the Init2
+   routine. Should never be needed.}
 }
 
 \value{

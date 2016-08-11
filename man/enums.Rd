@@ -34,6 +34,11 @@
 \alias{coerce,numeric,TextlineOrder-method}
 \alias{coerce,numeric,WritingDirection-method}
 
+\alias{InputFileFormat-class}
+\alias{coerce,character,InputFileFormat-method}
+\alias{coerce,integer,InputFileFormat-method}
+\alias{coerce,numeric,InputFileFormat-method}
+
 \title{Tesseract Enums}
 \description{
 Enumerated constant classes used in the Tesseract API.

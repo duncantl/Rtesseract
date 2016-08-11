@@ -13,13 +13,16 @@
   existing tesseract object.
 }
 \usage{
-getBoxes(obj, level = 3L, ...)
+getBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
 }
 \arguments{
   \item{obj}{the tesseract object, or the name of an image file}
   \item{level}{the type of element to be recognized - block, paragraph,
     word or symbol.  This should be a value from the PageIteratorLevel
     enumerated constants.}
+  \item{keepConfidence}{a logical value. If \code{TRUE}, the final
+    column of the matrix is the confidence associated with the text as
+    determined by the OCR.}
   \item{\dots}{additional arguments for other methods}
 }
 %\details{}
