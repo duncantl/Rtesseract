@@ -1,19 +1,21 @@
 tesseract =
-function(image = character(), pageSegMode = integer(), lang = "eng", datapath = NA, ..., opts = list(...), init = TRUE)
+function(image = character(), pageSegMode = integer(), lang = "eng", datapath = NA,
+         configs = character(), vars = character(), engineMode = OEM_DEFAULT, debugOnly = FALSE,
+         ..., opts = list(...), init = TRUE)
 {
   api = .Call("R_TessBaseAPI_new")
 
-  if(length(pageSegMode))
-      SetPageSegMode(api, pageSegMode)
-
   if(!init && ((length(image) && file.exists(image)) || length(opts))) {
-      warning("forcing a call to Init() since setting the image and/or variables.")
-      init = TRUE
+     warning("forcing a call to Init() since setting the image and/or variables.")
+     init = TRUE
   }
       
   if(init)
-     Init(api, lang, datapath)
+     Init(api, lang, datapath = datapath, configs = configs, vars = vars, engineMode = engineMode, debugOnly = debugOnly)
 
+  if(length(pageSegMode))  # Make certain this happens after Init() as the C++ Init() resets PageSegMode
+      SetPageSegMode(api, pageSegMode)
+  
   if(nargs() > 0)
      SetVariables(api, opts = opts)  
   
@@ -24,13 +26,16 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
 }
 
 Init = 
-function(api, lang = "eng", datapath = NA)
+function(api, lang = "eng", configs = character(), vars = character(), datapath = NA, engineMode = OEM_DEFAULT, debugOnly = FALSE, force2 = FALSE)
 {
   if(!is.na(datapath) && (!file.exists(datapath) || !file.info(datapath)[1, "isdir"])) 
       stop("No such directory ", datapath)
 
-   
-  ok = .Call("R_TessBaseAPI_Init", api, as.character(lang), as.character(datapath))
+  if(length(configs) == 0 && length(vars) == 0 && engineMode == OEM_DEFAULT && !force2) # so nothing special
+     ok = .Call("R_TessBaseAPI_Init", as(api, "TesseractBaseAPI"), as.character(lang), as.character(datapath))
+  else
+     ok = .Call("R_TessBaseAPI_Init2", as(api, "TesseractBaseAPI"), as.character(lang), as.character(datapath),
+                     as(engineMode, "OcrEngineMode"), as.character(configs), as.character(vars), as.logical(debugOnly))      
   if(!ok) 
       stop(mkError("Error calling Init() for the tesseract object", "TesseractInitFailure"))
 
@@ -40,7 +45,7 @@ function(api, lang = "eng", datapath = NA)
 End =
 function(api)
 {
-  .Call("R_TessBaseAPI_End", api)
+  .Call("R_TessBaseAPI_End", as(api, "TesseractBaseAPI"))
 }
 
 SetVariables =
@@ -50,7 +55,7 @@ function(api, ..., opts = list(...))
   .vars[ .vars == "FALSE" ] = "F"
   .vars[ .vars == "TRUE" ] = "T"  
     
-  .Call("R_TessBaseAPI_SetVariables", api, .vars)
+  .Call("R_TessBaseAPI_SetVariables", as(api, "TesseractBaseAPI"),  .vars)
 }
 
 pixRead = 
@@ -69,25 +74,27 @@ function(api, pix)
   if(is.character(pix)) {
      if(!file.exists(pix))
         stop("No such file ", pix)
-     SetInputName(api, pix)
+     filename = pix
      pix = pixRead(pix)
+      # Do this second in case pixRead() fails.
+     SetInputName(api, filename, load = FALSE)
   }
   
-  .Call("R_TessBaseAPI_SetImage", api, pix)
+  .Call("R_TessBaseAPI_SetImage", as(api, "TesseractBaseAPI"), pix)
   pix
 }
 
 Recognize =
 function(api)
 {
-   .Call("R_TessBaseAPI_Recognize", api)
+   .Call("R_TessBaseAPI_Recognize", as(api, "TesseractBaseAPI"))
 }
 
 
 GetIterator =
 function(api, recognize = TRUE)
 {
-   ans = .Call("R_TessBaseAPI_GetIterator", api)
+   ans = .Call("R_TessBaseAPI_GetIterator", as(api, "TesseractBaseAPI"))
    if(is.null(ans)) {
        if(recognize) {
            Recognize(api)
@@ -141,6 +148,9 @@ setAs("TesseractBaseAPI", "ResultIterator",
 
 
 BoundingBoxes =
+    #
+    # see getBoxes() instead.
+    #
 function(ri, level = 3L)
 {
    m = lapply(as(ri, "ResultIterator"), BoundingBox, level = level)
@@ -150,25 +160,31 @@ function(ri, level = 3L)
    ans
 }
 
-BoundingBox = 
+BoundingBox =
+    # Retire this - getBoxes()
 function(ri, level = 3L)
 {
   ri = as(ri, "ResultIterator")
-#  if(!is(ri, "ResultIterator"))
-#    stop("need a result iterator")
 
   #!!! Put names on these.
-  .Call("R_ResultIterator_BoundingBox", ri, as.integer(level))
+  .Call("R_ResultIterator_BoundingBox", ri, as(level, "PageIteratorLevel"))
 }
 
 Confidence = 
 function(ri, level = 3L)
 {
   ri = as(ri, "ResultIterator")    
-#  if(!is(ri, "ResultIterator"))
-#    stop("need a result iterator")
 
-  .Call("R_ResultIterator_Confidence", ri, as.integer(level))
+  .Call("R_ResultIterator_Confidence", ri, as(level, "PageIteratorLevel"))
+}
+
+GetText = GetUTF8Text =
+    # Justs gets one
+function(ri, level = 3L)
+{
+   ri = as(ri, "ResultIterator")
+
+  .Call("R_ResultIterator_GetUTF8Text", ri, as(level, "PageIteratorLevel"))
 }
 
 
@@ -181,7 +197,7 @@ setGeneric("getConfidences",
 setMethod("getConfidences",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
-              .Call("R_TesseractBaseAPI_getConfidences", obj, as.integer(level))
+              .Call("R_TesseractBaseAPI_getConfidences", obj, as(level, "PageIteratorLevel"))
           })
 
 setMethod("getConfidences",
@@ -194,52 +210,43 @@ setMethod("getConfidences",
 
 
 setGeneric("getBoxes",
-           function(obj, level = 3L, ...)
+           function(obj, level = 3L, keepConfidence = TRUE, ...)
              standardGeneric("getBoxes"))
 
 setMethod("getBoxes",
           "TesseractBaseAPI",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 3L, keepConfidence = TRUE, ...) {
               ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as(level, "PageIteratorLevel"))
               m = do.call(rbind, ans)
               rownames(m) = names(ans)
               colnames(m) = c("confidence", "left", "bottom", "right", "top") #XXXX
-              m[, 2:5]  # still numeric! Change to integer.  Or leave the confidence in.
+              m[, c(2:5, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
           })
 
 setMethod("getBoxes",
            "character",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 3L, keepConfidence = TRUE, ...) {
               ts = tesseract(obj)
               Recognize(ts) # Want to avoid doing this twice if possible
-              getBoxes(ts, level, ...)
+              getBoxes(ts, level, keepConfidence, ...)
           })
 
 
 
 
 
-GetText = GetUTF8Text = 
-function(ri, level = 3L)
-{
-   ri = as(ri, "ResultIterator")
-#  if(!is(ri, "ResultIterator"))
-#    stop("need a result iterator")
-
-  .Call("R_ResultIterator_GetUTF8Text", ri, as.integer(level))
-}
 
 
 Clear = 
 function(api)
 {
-  .Call("R_tesseract_Clear", api)
+  .Call("R_tesseract_Clear",  as(api, "BaseTesseractAPI"))
 }
 
 ClearAdaptiveClassifier = 
 function(api)
 {
-  .Call("R_tesseract_ClearAdaptiveClassifier", api)
+  .Call("R_tesseract_ClearAdaptiveClassifier", as(api, "BaseTesseractAPI"))
 }
 
 
@@ -251,13 +258,13 @@ function(api, ..., dims = sapply(list(...), as.integer))
   if(length(dims) < 4)
     stop("incorrect number of dimensions for rectangle")
   
-  .Call("R_tesseract_SetRectangle", api, dims)
+  .Call("R_tesseract_SetRectangle", as(api, "TesseractBaseAPI"), dims)
 }
 
 SetSourceResolution =
 function(api, ppi)
 {
-  .Call("R_tesseract_SetSourceResolution", api, as.integer(ppi))
+  .Call("R_tesseract_SetSourceResolution", as(api, "TesseractBaseAPI"), as.integer(ppi))
 }
 
 ReadConfigFile = 
@@ -267,13 +274,13 @@ function(api, files, ok = FALSE)
    if(!ok && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
-   .Call("R_tesseract_ReadConfigFile", api, ff)
+   .Call("R_tesseract_ReadConfigFile", as(api, "TesseractBaseAPI"), ff)
 }
 
 GetInitLanguages = 
 function(api)
 {
-  .Call("R_tesseract_GetInitLanguagesAsString", api)
+  .Call("R_tesseract_GetInitLanguagesAsString", as(api, "TesseractBaseAPI"))
 }
 
 
@@ -298,40 +305,40 @@ if(FALSE) {
   }
 }
   
-  .Call("R_tesseract_GetVariable", api, as.character(var), rep(0L, length(var)))
+  .Call("R_tesseract_GetVariable", as(api, "TesseractBaseAPI"), as.character(var), rep(0L, length(var)))
 }
 
 
 IsValidWord =
 function(api, word)
 {
-   .Call("R_tesseract_IsValidWord", api, as.character(word))
+   .Call("R_tesseract_IsValidWord", as(api, "TesseractBaseAPI"), as.character(word))
 }
 
 
 GetInputName =
 function(api)
 {
-  .Call("R_tesseract_GetInputName", api)
+  .Call("R_tesseract_GetInputName", as(api, "TesseractBaseAPI"))
 }
 
 GetInputImage = GetImage =
 function(api, asArray = FALSE)
 {
-  .Call("R_TessBaseAPI_GetInputImage", api, as.logical(asArray))
+  .Call("R_TessBaseAPI_GetInputImage", as(api, "TesseractBaseAPI"), as.logical(asArray))
 }
 
 
 GetDatapath =
 function(api)
 {
-  .Call("R_tesseract_GetDatapath", api)
+  .Call("R_tesseract_GetDatapath", as(api, "TesseractBaseAPI"))
 }
 
 GetSourceYResolution =
 function(api)
 {
-  .Call("R_tesseract_GetSourceYResolution", api)
+  .Call("R_tesseract_GetSourceYResolution", as(api, "TesseractBaseAPI"))
 }
 
 
@@ -342,7 +349,7 @@ function(api = tesseract(), asDataFrame = FALSE, file = tempfile())
   if(m)
      on.exit(unlink(file))
   
-  .Call("R_tesseract_PrintVariables", api, as.character(file))
+  .Call("R_tesseract_PrintVariables", as(api, "TesseractBaseAPI"), as.character(file))
 
   if(m) 
     readVars(file, asDataFrame)
@@ -361,10 +368,13 @@ function(f, asDataFrame = FALSE)
 
 
 SetInputName =
-function(api, name)
+function(api, name, check = TRUE, load = TRUE)
 {
-  checkImageTypeSupported(name)    
-  .Call("R_tesseract_SetInputName", api, as.character(name))
+  if(check)
+     checkImageTypeSupported(name)
+  if(load)
+     SetImage(api, pixRead(name))
+  .Call("R_tesseract_SetInputName", as(api, "TesseractBaseAPI"), as.character(name))
 }
 
 
@@ -422,3 +432,60 @@ setMethod("getImageInfo", "Pix",
           })
 
    
+
+
+GetThresholdedImage =
+function(api)
+{
+    .Call("R_TessBaseAPI_GetThresholdedImage", as(api, "TesseractBaseAPI"))
+}
+
+GetThresholdedImageScaleFactor =
+function(api)
+{
+    .Call("R_TessBaseAPI_GetThresholdedImageScaleFactor", as(api, "TesseractBaseAPI"))
+}
+
+pixWrite =
+function(pix, file, format)
+{
+   if(!file.exists(dirname(file)) && file.info(dirname(file))[1, "isdir"])
+       stop("no such directory ", dirname(file))
+   
+   .Call("R_pixWrite", as(pix, "Pix"), as.character(file), as(format, "InputFileFormatValues"))
+}
+
+
+AdaptToWordStr =
+function(api, word, segMode = GetPageSegMode(api))
+{
+  word = as.character(word)
+  if(length(word) == 0)
+      stop("Must supply a word")
+  
+  .Call("R_TessBaseAPI_AdaptToWordStr", as(api, "TesseractBaseAPI"), as(segMode, "PageSegMode"), word)
+}
+
+
+hasRecognized =
+function(api)
+{
+   .Call("R_TessBaseAPI_hasRecognized", as(api, "TesseractBaseAPI"))
+}
+
+
+
+SetOutputName =
+function(api, filename)
+{
+    if(length(filename) != 1)
+        stop("need one file")
+    .Call("R_TessBaseAPI_SetOutputName", as(api, "TesseractBaseAPI"), filename)
+}
+
+oem =
+function(api)
+{
+   .Call("R_TessBaseAPI_oem", as(api, "TesseractBaseAPI"))
+}
+

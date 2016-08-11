@@ -1,6 +1,5 @@
 #include "Rtesseract.h"
 
-
 extern "C"
 SEXP
 R_TessBaseAPI_new()
@@ -39,6 +38,48 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 
   return( ScalarLogical( ok == 0 ));
 }
+
+
+#ifdef error
+#undef error
+#endif
+
+#include <tesseract/genericvector.h>
+
+#define error Rf_error
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_Init2(SEXP r_api, SEXP r_lang, SEXP r_datapath, 
+                    SEXP r_engMode, SEXP r_configs, SEXP r_vars, SEXP r_debugOnly)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  const char *lang = CHAR(STRING_ELT(r_lang, 0));
+  const char *datapath = NULL;
+  if(STRING_ELT(r_datapath, 0) != NA_STRING)
+      datapath = CHAR(STRING_ELT(r_datapath, 0));
+  tesseract::OcrEngineMode engMode = (tesseract::OcrEngineMode) INTEGER(r_engMode)[0];
+  int numConfigs = Rf_length(r_configs), i;
+  char **configs = NULL;
+  if(numConfigs > 0)  {
+      configs = (char **) R_alloc(sizeof(char*), numConfigs);
+      for(i = 0; i < numConfigs ;  i++)
+          configs[i] = (char *) CHAR(STRING_ELT(r_configs, i));
+  }
+
+  GenericVector<STRING> vars_vec, vars_values;
+
+  int ok = api->Init(datapath, lang, engMode, configs, numConfigs, &vars_vec, &vars_values, INTEGER(r_debugOnly)[0]); 
+
+  return( ScalarLogical( ok == 0 ));
+}
+
 
 extern "C"
 SEXP
@@ -135,6 +176,33 @@ R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
   return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
 }
 
+extern "C"
+SEXP
+R_TessBaseAPI_GetThresholdedImageScaleFactor(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+    int val = api->GetThresholdedImageScaleFactor();
+    return(ScalarInteger(val));
+}
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetThresholdedImage(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    Pix *pix = api->GetThresholdedImage();
+    return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
+}
+
 
 extern "C"
 SEXP
@@ -199,6 +267,7 @@ R_TessBaseAPI_GetIterator(SEXP r_api)
   }
   tesseract::ResultIterator* ri = api->GetIterator();
   if(!ri) {
+// Call Recognize() ????
       return(R_NilValue);
       PROBLEM "ResultIterator is NULL. Did you call Recognize" 
       ERROR;
@@ -471,6 +540,8 @@ R_tesseract_GetInputName(SEXP r_api)
     return(ScalarString( w ? mkChar( w ) : NA_STRING  ) );
 }
 
+
+
 extern "C"
 SEXP
 R_tesseract_SetInputName(SEXP r_api, SEXP r_name)
@@ -597,8 +668,9 @@ R_TessBaseAPI_SetPageSegMode(SEXP r_api, SEXP r_val)
       PROBLEM "NULL value for api reference"
       ERROR;
   }
-
-  api->SetPageSegMode((tesseract::PageSegMode)  INTEGER(r_val)[0]);
+  
+  tesseract::PageSegMode val = (tesseract::PageSegMode)  INTEGER(r_val)[0];
+  api->SetPageSegMode(val);
 
   return( ScalarLogical( TRUE));
 }
@@ -708,4 +780,99 @@ R_TessBaseAPI_GetImageInfo(SEXP r_api)
 
     Pix *pix = api->GetInputImage();
     return(makeImageInfo(pix));
+}
+
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_AdaptToWordStr(SEXP r_api, SEXP r_segMode, SEXP r_word)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    tesseract::PageSegMode segMode = (tesseract::PageSegMode) INTEGER(r_segMode)[0];
+    
+    bool ans = api->AdaptToWordStr(segMode, CHAR(STRING_ELT(r_word, 0)));
+    return(ScalarLogical(ans));
+}
+
+
+extern SEXP Renum_convert_OcrEngineMode(tesseract::OcrEngineMode val);
+
+extern "C"
+SEXP
+R_TessBaseAPI_oem(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+    return(Renum_convert_OcrEngineMode( api->oem()));
+    
+}
+
+
+
+#if 0
+// No user data passed to DictFunc. So harder to use an R function.
+// Can compile one eventually with Rllvm.
+
+int 
+foo(void *args, UNICHAR_ID unichar_id , bool wordEnd)
+{
+    printf("In foo for dictionary\n");
+    return(1);
+}
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_SetDicFunc(SEXP r_api, SEXP r_fun)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+    const tesseract::DictFunc f = foo;
+    api->SetDictFunc(f);
+
+}
+#endif
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_hasRecognized(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+    return(ScalarLogical (  api->GetIterator() != NULL ) );
+}
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_SetOutputName(SEXP r_api, SEXP r_output)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  api->SetOutputName(CHAR(STRING_ELT(r_output, 0)));
+
+  return(R_NilValue);
 }

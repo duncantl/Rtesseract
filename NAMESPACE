@@ -9,15 +9,18 @@ importFrom("stats", dist, median, quantile)
 
 import(RAutoGenRunTime)
 
+export(tesseractVersion)
 
 export(ocr)
+export(tesseract)
+
+exportClass(PageIteratorLevel)
 export(PageIteratorLevel)
 
-export(tesseractVersion)
+
 
 exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
-export(tesseract)
 
 
 export(lapply)
@@ -25,20 +28,21 @@ exportMethods(lapply)
 
 export(GetIterator, SetImage, Recognize, Init, End, SetVariables, pixRead)
 
-export(GetText, Confidence, BoundingBox, BoundingBoxes)
+# export(GetText, Confidence, BoundingBox)
+#BoundingBoxes)
 
-export(SetRectangle, Clear)
+export(SetRectangle, Clear, ClearAdaptiveClassifier )
 export(GetInitLanguages, ReadConfigFile, SetSourceResolution)
 
 export(GetVariables)
 
 export(IsValidWord)
 
-export(GetDatapath, GetSourceYResolution, GetInputName)
+export(GetDatapath, GetSourceYResolution, GetInputName, SetInputName)
 
 export(PrintVariables)
 
-exportClass(PageIteratorLevel)
+
 
 exportMethods(coerce)
 exportMethods(plot)
@@ -72,4 +76,15 @@ export(getConfidences, getBoxes)
 exportMethods("getConfidences", "getBoxes")
 
 export(getImageDims, getImageInfo, GetImage, GetInputImage)
+
+
+export(GetThresholdedImage)
+
+
+export(hasRecognized) # rename!
+
+export(SetOutputName)
+
+export(oem)
+
 

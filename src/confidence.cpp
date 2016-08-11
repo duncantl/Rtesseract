@@ -235,13 +235,14 @@ getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *a
 {
     tesseract::ResultIterator* ri = api->GetIterator();
 
-    if(ri != 0) {
-      api->Recognize(0);
-      ri = api->GetIterator();
-      if(!ri) {
+    if(!ri) {
+       Rprintf("Calling Recognize again\n");
+       api->Recognize(0);
+       ri = api->GetIterator();
+       if(!ri) {
           PROBLEM "cannot get ResultIterator"
           ERROR;
-      }
+       }
     }
 
 
