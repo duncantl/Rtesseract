@@ -21,6 +21,9 @@ SEXP Renum_convert_PageSegMode(tesseract::PageSegMode val);
 
 SEXP getPixAsArray(const Pix *pix);
 
+#define CHECK_RECOGNIZE \
+   if(!api->GetIterator()) api->Recognize();
+
 
 #endif
 
