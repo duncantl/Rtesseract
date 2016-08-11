@@ -1,19 +1,49 @@
 ? Other methods form the baseapi.h ?
+  ProcessPages in render.cpp
+
+??Change the names of the functions to initial lower case, e.g. getInputName(), ?
+
+Rationalize tesseract() and Init() so can pass all the arguments through to Init()
+
+SetInputName - if no api, warn don't treat file name as api.
+
+[Doesn't do better] Use the cube - Init() with an engineMode
+
+[Fixed] read_params_file
+          read_params_file: Can't open NA
+
+[Fixed] Why does cmd-line tesseract give a different set of words as ocr()
+  What about 
+    ts = tesseract(fs)
+    getConfidences(ts)
+    The PageSegMode was being reset in the API::Init() method and we were setting it before calling that.
+
+[test] Have an option for SetInputName() to read the image and load it via SetImage().
+
+[change name of function] How can we query whether we have to call Recognize() or not?
+              hasRecognized() function - Change name
+                 Ask for a ResultIterator and if it returns NULL, then call Recognize().
 
 
-How can we query whether we have to call Recognize() or not?
+GetInputImage() - figure out how to convert the Pix to an array() in R 
+     deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
+     [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
 
-GetInputImage() - figure out how to deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
-   [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
 
+Sort out the R renderer class.
+  Why do we want to have our own?  If we have to use ProcessPages() we don't want to write to disk unnecessarily.
 
 Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
 Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
  and creates a data frame/matrix.
 
 When we return a Pix, increase the reference count and put a finalizer to decrease it.
+    The destroyPix  seems to be there.
 
-??Change the names to lower case, e.g. getInputName(), ?
+Also if we have a ResultIterator, don't let the tesseract instance die/
+ ?Should we introduce  a sub-class of tesseract with which we can solve these and the already Recognize()d issues?
+
+
 
 When tesseract complains below, raise an error.  Stop the output going to stdout/stderr
       The error messages run through tprintf_internal() in ccutil/tprinf.cpp.
@@ -37,14 +67,15 @@ When tesseract complains below, raise an error.  Stop the output going to stdout
 
 Be able to interrupt in OCR computations with Ctrl-c.
 
-Connect to OpenCV  for manipulating the image.  perhaps thresholding away the specs. 
+Connect to OpenCV for manipulating the image.  perhaps thresholding away the specs. 
     https://github.com/swarm-lab/videoplayR
     https://code.google.com/archive/p/r-opencv/source/default/source
 
 
 ? GetInputName seems to take an age (in some cases)!!  Did time it and got exactly 0.
 
-plot.OCR() seems to be doing something unnecessary - an extra call to Recognize() somewhere?
+? plot.OCR() seems to be doing something unnecessary - an extra call to Recognize() somewhere?
+   Seems okay.  rasterImage() and readPNG() do take time.
 
 create searchable pdf - use their renderer
   want to be able to fix the errors and then create it.
@@ -58,7 +89,7 @@ Can't seem to open pdf config file - i.e., the one called pdf in /usr/local/shar
 With cropBoxes, can get negative indices.
   Change the margin.  Compute it so that it can't yield negative indices.
 
-GetAlternatives
+[Done] GetAlternatives - use getAlternatives
   Only returns one
   Segfaults.
   Look at the R_ocr_alternatives and see if we can reuse that code.
@@ -74,16 +105,16 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
    Can do now.
 
 [Done] Plot the image and the components and 
-*  show the confidence level for each 
+   show the confidence level for each  box
    See tests/plot.R
 
    Color code the rectangles for the bboxes according to the confidence.
 
   Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
-When find an error, get the subset of the image for that bounding box and 
-then see if we can cluster them.
-  See inst/caseStudies
+[Feature Request] When find an error, get the subset of the image for that bounding box and 
+   then see if we can cluster them.
+    See inst/caseStudies
 
   Can do this from the bounding box information and reading the image using one of the  R packages.
 
