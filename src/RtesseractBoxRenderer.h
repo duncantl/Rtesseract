@@ -1,19 +1,27 @@
 #include <tesseract/renderer.h>
 
-class RTessBoxTextRenderer : public tesseract::TessBoxTextRenderer {
+class RTessBoxTextRenderer : public tesseract::TessResultRenderer /* BoxTextRenderer */ {
 
 public:
-    RTessBoxTextRenderer() : tesseract::TessBoxTextRenderer((const char *) "/tmp/ffff")  { nprotect = 0; ans = NULL; count = 0;};
-    bool BeginDocument(const char* title) {return true;}
+// tesseract::TessResultRenderer((const char *) "/tmp/ffff", (const char *) "crap")
+RTessBoxTextRenderer() : tesseract::TessResultRenderer("abc", "abc") { nprotect = 0; ans = NULL; count = 0;};
+    bool BeginDocument(const char* title); 
+    bool BeginDocumentHandler(){return(true);}; 
     bool EndDocument(){return true;};
+    bool EndDocumentHandler(){return(true);}; 
 
     void AppendString(const char* s);
+
+    bool AddImage(tesseract::TessBaseAPI* api);
+    bool AddImageHandler(tesseract::TessBaseAPI* api);
 
     ~RTessBoxTextRenderer() {
         UNPROTECT(nprotect);
     }
 
     SEXP getRVector() {
+	if(!ans)
+           return(R_NilValue);
         PROTECT(SET_LENGTH(ans, count));
         return(ans);
     }
