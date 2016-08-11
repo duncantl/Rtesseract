@@ -27,8 +27,21 @@
 \description{
   To perform OCR on an image, we need a Tesseract API object
   and then can call its methods.
+  We create such an object with the \code{tesseract} function.
+  We can specify the image,  segmentation mode for identifying the
+  elements, and also the language for the content.
+  We can also set any of the over 600 variables that control  how
+  tesseract operates on the image. (See \code{\link{PrintVariables}}.)
 
-  If the image format is not supported by the leptonica library being
+  The \code{\link{ocr}} function is a function that does the OCR and
+  hides the  tesseract API object.  However, working with the
+  tesseract object gives us more control and allows us to query the
+  results in different ways.
+
+  We can zoom in to a part of the image.
+  
+  
+  If the file format of the image is not supported by the leptonica library being
   used, an error of class \code{UnsupportedImageFormat} is raised.
   The error message indicates the supported image types, and the
   error object also contains the name of the file in the \code{filename} element.
