@@ -1,5 +1,5 @@
 readImage =
 function(filename)
 {
-    readPNG(filename)
+    png::readPNG(filename)
 }
