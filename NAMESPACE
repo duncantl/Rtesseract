@@ -4,7 +4,7 @@ import(methods)
 
 importFrom("utils", read.table)
 import(graphics)
-importFrom("grDevices", "rgb")
+importFrom("grDevices", "rgb", "colorRampPalette")
 importFrom("stats", dist, median, quantile)
 
 import(RAutoGenRunTime)
