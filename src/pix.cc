@@ -22,3 +22,14 @@ getPixAsArray(const Pix *pix)
     UNPROTECT(2);
     return(ans);
 }
+
+
+extern "C"
+SEXP
+R_pixWrite(SEXP r_pix, SEXP r_file, SEXP r_format)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    int ans = pixWrite(CHAR(STRING_ELT(r_file, 0)), pix, (l_int32) INTEGER(r_format)[0]);
+    return(ScalarInteger(ans));
+}
+
