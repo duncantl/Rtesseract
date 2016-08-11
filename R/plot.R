@@ -60,14 +60,16 @@ function(x, y = "word",
         rasterImage(img, mx[1], my[1], mx[2], my[2])    
 
         # Draw the bounding boxes for the detected elements.
-    rect(m[,1],  m[,2], m[,3],  m[,4], border = border)
+    rect(m[,1],  m[,2], m[,3],  m[,4], border = border, ...)
     
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
 
     title(main)
-    
-    NULL
+
+     # return the modified bounding box so that people can continue to add the plot.
+     # Recall the top and bottom have been "corrected" for use on this plot.
+    invisible(m)
 }
 
 #setMethod("plot", "TesseractBaseAPI",   plot.OCR)
@@ -99,4 +101,17 @@ function(box, img, ...)
   k = img[ pos[2]:pos[4],  pos[1]:pos[3], ]
   plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), ...)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
+}
+
+
+
+
+getConfidenceColors =
+function(bbox, confidences = bbox[, "confidence"],
+         numColors = 10,
+         colors = colorRampPalette(c("blue", "red"))(numColors),
+         intervals = quantile(confidences, seq(0, 1, by = .1)))
+{
+   i = cut(confidences, intervals )
+   structure(colors[ i ], names = as.character(i))
 }
