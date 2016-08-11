@@ -4,7 +4,7 @@ vars = list(chop_enable =  0L, wordrec_enable_assoc = 0L, tessedit_create_boxfil
 
 
 ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"), "psm_auto") # , .vars = vars)
-ReadConfigFile(ts, c("makebox", "batch.nochop"), force = TRUE)
+ReadConfigFile(ts, c("makebox", "batch.nochop"), ok = TRUE)
 PrintVariables(ts)[names(vars)]
 
 GetPageSegMode(ts)
