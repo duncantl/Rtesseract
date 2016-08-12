@@ -1,55 +1,78 @@
 \name{tesseract}
 \alias{tesseract}
 \alias{TesseractBaseAPI-class}
-\alias{SetImage}
-\alias{GetImage}
-\alias{GetInputImage}
 \alias{Recognize}
-\alias{SetRectangle}
-\alias{SetSourceResolution}
-\alias{GetInputName}
-\alias{SetInputName}
-\alias{GetDatapath}
-\alias{GetInitLanguages}
-\alias{ReadConfigFile}
-\alias{GetSourceYResolution}
-\alias{IsValidWord}
 \alias{Init}
-\alias{End}
-\alias{Clear}
-\alias{plot,TesseractBaseAPI-method}
-\alias{coerce,TesseractBaseAPI,ResultIterator-method}
-\alias{GetPageSegMode}
-\alias{SetPageSegMode}
-\alias{ClearAdaptiveClassifier}
-\alias{GetThresholdedImage}
-\alias{SetOutputName}
-\alias{hasRecognized}
-\alias{oem}
-%\alias{SetVariables}
 
-\title{Top-level Tesseract OCR API Functions and Classes}
+\title{Creating a Tesseract Object}
 \description{
+  The \code{ocr} function hides all of the details of the OCR mechanism.
+  The \code{tesseract} function provides an entry to much more control
+  and detail about the process and the ability to query the results in
+  different ways. The \code{tesseract} function is the building
+  block for \code{\link{ocr}} and all the functionality of the package.
+  
   To perform OCR on an image, we need a Tesseract API object
   and then can call its methods.
   We create such an object with the \code{tesseract} function.
-  We can specify the image,  segmentation mode for identifying the
-  elements, and also the language for the content.
+  We typically specify the image, the segmentation mode for identifying the
+  elements in the page, and also the language for the content.
   We can also set any of the over 600 variables that control  how
   tesseract operates on the image. (See \code{\link{PrintVariables}}.)
 
-  The \code{\link{ocr}} function is a function that does the OCR and
-  hides the  tesseract API object.  However, working with the
-  tesseract object gives us more control and allows us to query the
-  results in different ways.
+  We can create a tesseract object without specifying an image, the
+  segmentation mode, etc.
+  Instead, we can set this later when we use the tesseract object,
+  and we can also update these values to reuse the same tesseract
+  object on different images, with different segmentation modes, etc.
+  Alternatively, we can create new separate tesseract objects
+  that work on different images or in different segmentation modes.
 
-  We can zoom in to a part of the image.
+  The \code{tesseract} function, by default, performs the initialization
+  of the internal C++ object. This can be deferred if necessary (with
+  \code{init = FALSE}. Also, a tesseract object can be re-initialized.
+
+  One has to be careful when initializing a tesseract object because
+  it will reset the page segmentation  mode to a default value.
+  So it is vital to set that after initialization. The \code{tesseract}
+  function takes care of this.
+
+  We can set tesseract variables at any point in the lifetime of the
+  tesseract object, either in the call to \code{tesseract},
+  \code{Init} or \code{\link{SetVariables}}.
+  However, there are some variables that need to be explicitly set in
+  the call to \code{Init} or before.
+
+  There are many functions that operate on a \code{TesseractBaseAPI}
+  object that provide the interesting functionality for the package.
+  These are noted in the see also section and in other help pages,
+  e.g., \code{\link{SetImage}}, \code{\link{GetDatapath}}.
+
+  When we have configured the tesseract object appropriately,
+  we call \code{\link{Recognize}} to perform the OCR.
+  We then collect the results in which we are interested.
+
+  We can extract the bounding boxes of the elements it recognizes.
+  We can get the confidence associated with each match it made.
+  We can obtain the alternatives or "next best" guesses the OCR had for
+  each element.
   
-  
-  If the file format of the image is not supported by the leptonica library being
-  used, an error of class \code{UnsupportedImageFormat} is raised.
-  The error message indicates the supported image types, and the
-  error object also contains the name of the file in the \code{filename} element.
+  We can switch the image to be processed, the page segmentation mode,
+  quey the file name of the current image, get the image itself,
+  query the current variable settings for tesseract,
+  ask if a particular word is considered valid.
+
+  We can also zoom in to a sub-region of the image and run the OCR again
+  on this part.
+
+  We can query the current state and settings of the tesseract object.
+
+  The package also provides a way to plot a tesseract object,
+  i.e., show the image and superimpose the bounding boxes of the recognized
+  elements in the image.
+  One can color the rectangles by their confidence/accuracy levels.
+  In the future, we may develop an interactive plot to allow users to
+  visually explore  and compare the original image and the OCR text.
 }
 \usage{
 tesseract(image = character(), pageSegMode = integer(), lang = "eng",
@@ -57,40 +80,15 @@ tesseract(image = character(), pageSegMode = integer(), lang = "eng",
           engineMode = OEM_DEFAULT, debugOnly = FALSE,
           ..., opts = list(...), init = TRUE)
 
-SetImage(api, pix)
+
 Init(api, lang = "eng", configs = character(), vars =
      character(), datapath = NA, engineMode = OEM_DEFAULT,
      debugOnly = FALSE, force2 = FALSE)
 
-SetRectangle(api, ..., dims = sapply(list(...), as.integer))
-SetSourceResolution(api, ppi)
 Recognize(api)
-
-SetInputName(api, name, check = TRUE, load = TRUE)
-GetInputName(api)
-GetDatapath(api)
-GetInitLanguages(api)
-ReadConfigFile(api, files, ok = FALSE)
-GetSourceYResolution(api)
-
-GetPageSegMode(api)
-SetPageSegMode(api, mode)
-
-IsValidWord(api, word)
-
-SetOutputName(api, filename)
-oem(api)
-
-hasRecognized(api)
-
-GetThresholdedImage(api)
-
-Clear(api)
-ClearAdaptiveClassifier(api)
-End(api)
 }
 \arguments{
-  \item{image,pix}{either a \code{\link{Pix-class}} object, or a file name
+  \item{image}{either a \code{\link{Pix-class}} object, or a file name
     from which to read the image. Specifying the name of a file also
     arranges to call \code{\link{SetInputName}} and so the
     \code{\link{TesseractBaseAPI-class}}
@@ -121,32 +119,36 @@ End(api)
     we can pass via \code{\dots}.}
   \item{init}{a logical value controlling whether \code{Init} is called
     by the \code{tesseract} function.}
-  \item{ppi}{the per-pixel resolution as an integer.}
-  \item{dims}{a vector of length 4 giving the location of the rectangle
-    as x1, y1, x2, y2.}
-  \item{files}{a character vector specifying the full or relative paths
-    to the configuration files.}
-  \item{word}{a character vector of words whose validity we want to
-    check}
-  \item{name}{the name of the file being processed by the OCR system.}
-  \item{ok}{in \code{ReadConfigFile}, tesseract can locate configuration
-    files in its data directory (typically, /usr/local/share/tessdata or
-    specified with the environment variable \code{TESSDATA})}
-  \item{mode,pageSegMode}{the value for the page segmentation mode for the tesseract
+  \item{pageSegMode}{the value for the page segmentation mode for the tesseract
   instance. This must correspond to one of the values in
   \code{PageSegModeValues} or the corresponding R variables.
    However, one can use symbolic names (lower or upper case) from this
    vector, e.g., \code{"psm_auto"}.
- }
- \item{check}{check to see if the file actually exists}
- \item{load}{load the image in the file name and set it as the current
-   image in the tesseract object.}
+ }  
  \item{force2}{a logical value to control whether to use the Init2
-   routine. Should never be needed.}
+   routine. Should never be needed.}  
 }
 
 \value{
-The different functions return very different objects.
+  The \code{tesseract} function returns an object of class
+  \code{TesseractBaseAPI}.  This is an S4 object that contains
+  an opaque  reference to a C++ object. It should be used in other calls
+  expecting the tesseract instance.
+
+  For \code{tesseract}, if the file format of the image is not supported
+  by the installed leptonica library being used, an error of class \code{UnsupportedImageFormat} is raised.
+  The error message indicates the supported image types, and the
+  error object also contains the name of the file in the \code{filename}
+  element.    
+
+  \code{Init} returns a logical value indicating whether the
+  initialization was successful \code{TRUE}, or raises
+  an error of class \code{TesseractInitFailure}.
+  This provides an opportunity to catch the error and use a different
+  initialization approach (e.g. different language, variables, engine
+  mode).
+
+  \code{Recognize} returns \code{TRUE} if the call was successful.
 }
 \references{
   Tesseract \url{https://code.google.com/p/tesseract-ocr/},
@@ -158,7 +160,6 @@ Duncan Temple Lang
 }
 \seealso{
   \code{\link{GetIterator}}, \code{\link{lapply}}.
-
   \code{\link{SetVariables}},   \code{\link{PrintVariables}}
 }
 

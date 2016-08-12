@@ -30,6 +30,5 @@ Duncan Temple Lang
 \seealso{
 \code{\link{getBoxes}}, \code{\link{tesseract}}
 }
-\examples{
-}
+%\examples{}
 \keyword{IO}

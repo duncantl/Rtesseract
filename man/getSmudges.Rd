@@ -34,7 +34,5 @@ Duncan Temple Lang
 \seealso{
 \code{\link{getBoxes}}
 }
-\examples{
-
-}
+%\examples{}
 \keyword{IO}
