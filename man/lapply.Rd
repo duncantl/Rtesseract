@@ -45,19 +45,23 @@ Duncan Temple Lang
 \code{\link{ResultIterator-class}}
 }
 \examples{
+
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  api = tesseract(f)
  Recognize(api)
  ri = GetIterator(api)
+
+\dontrun{
  lapply(ri, Confidence, "word")
  conf = lapply(ri, Confidence, "symbol")
  names(conf)
 
  lapply(ri, BoundingBox, "symbol")
-
+}
 
  sym = getNativeSymbolInfo("r_getConfidence")
  conf = lapply(ri, sym$address, "word")
+
 }
 \keyword{programming}
 \keyword{iteration}

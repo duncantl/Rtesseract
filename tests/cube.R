@@ -1,7 +1,8 @@
 
 library(Rtesseract)
 
-f = "inst/trainingSample/eng.tables.exp0.png"
+f = system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract")
+
 ts = tesseract(init = FALSE)
 Init(ts, engineMode = 'OEM_TESSERACT_CUBE_COMBINED')
 SetPageSegMode(ts, 'psm_auto')

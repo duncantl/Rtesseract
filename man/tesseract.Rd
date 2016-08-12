@@ -73,6 +73,15 @@
   One can color the rectangles by their confidence/accuracy levels.
   In the future, we may develop an interactive plot to allow users to
   visually explore  and compare the original image and the OCR text.
+
+  We can also treat the \code{TesseractBaseAPI} as a virtual list
+  and then use \code{lapply} to iterate over its elements.
+  There are functions within the package that
+  can be used within the \code{lapply} to extract the
+  individual elements of the results.
+  These are \code{BoundingBox}, \code{GetAlternatives}, ...
+  There are equivalent higher-level functions to  access these elements
+   more efficiently, but with less flexibility.
 }
 \usage{
 tesseract(image = character(), pageSegMode = integer(), lang = "eng",

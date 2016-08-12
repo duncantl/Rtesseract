@@ -1,22 +1,10 @@
 ? Other methods form the baseapi.h ?
-  ProcessPages in render.cpp
+
+[adapt but okay] ProcessPages in render.cpp
 
 ??Change the names of the functions to initial lower case, e.g. getInputName(), ?
 
-Rationalize tesseract() and Init() so can pass all the arguments through to Init()
-
-SetInputName - if no api, warn don't treat file name as api.
-
-[Doesn't do better] Use the cube - Init() with an engineMode
-
-[Fixed] read_params_file
-          read_params_file: Can't open NA
-
-[Fixed] Why does cmd-line tesseract give a different set of words as ocr()
-  What about 
-    ts = tesseract(fs)
-    getConfidences(ts)
-    The PageSegMode was being reset in the API::Init() method and we were setting it before calling that.
+[check] Rationalize tesseract() and Init() so can pass all the arguments through to Init()
 
 [test] Have an option for SetInputName() to read the image and load it via SetImage().
 
@@ -42,8 +30,6 @@ When we return a Pix, increase the reference count and put a finalizer to decrea
 
 Also if we have a ResultIterator, don't let the tesseract instance die/
  ?Should we introduce  a sub-class of tesseract with which we can solve these and the already Recognize()d issues?
-
-
 
 When tesseract complains below, raise an error.  Stop the output going to stdout/stderr
       The error messages run through tprintf_internal() in ccutil/tprinf.cpp.
@@ -128,6 +114,20 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
 
 
 ---------------------
+
+[done] SetInputName - if no api, warn don't treat file name as api.
+
+[Doesn't do better] Use the cube - Init() with an engineMode
+
+[Fixed] read_params_file
+          read_params_file: Can't open NA
+
+[Fixed] Why does cmd-line tesseract give a different set of words as ocr()
+  What about 
+    ts = tesseract(fs)
+    getConfidences(ts)
+    The PageSegMode was being reset in the API::Init() method and we were setting it before calling that.
+
 
 [done] get information about the current image - dimensions, other info. See getImageInfo() & getImageDims()
 

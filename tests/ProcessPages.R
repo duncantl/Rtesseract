@@ -4,7 +4,7 @@
 
 library(Rtesseract)
 
-f = "../Matt/1990_p44.png"
+ f = system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract")
 ts = tesseract(f, "psm_auto")
 
 print(SetPageSegMode(ts, 3))

@@ -28,8 +28,8 @@ exportMethods(lapply)
 
 export(GetIterator, SetImage, Recognize, Init, End, SetVariables, pixRead)
 
-# export(GetText, Confidence, BoundingBox)
-#BoundingBoxes)
+export(GetText, Confidence, BoundingBox, BoundingBoxes, GetAlternatives)
+
 
 export(SetRectangle, Clear, ClearAdaptiveClassifier )
 export(GetInitLanguages, ReadConfigFile, SetSourceResolution)
@@ -54,7 +54,6 @@ export(compareWord, compareWords) # collapse
 S3method(plot, ConfusionMatrix)
 export(plotSubImage)
 
-export(GetAlternatives)
 
 
 

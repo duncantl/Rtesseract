@@ -370,11 +370,16 @@ function(f, asDataFrame = FALSE)
 SetInputName =
 function(api, name, check = TRUE, load = TRUE)
 {
+  if(is.character(api))
+     stop("First argument to SetInputName is the Tesseract object, not the file name")
+  
+  api = as(api, "TesseractBaseAPI")
+    
   if(check)
      checkImageTypeSupported(name)
   if(load)
      SetImage(api, pixRead(name))
-  .Call("R_tesseract_SetInputName", as(api, "TesseractBaseAPI"), as.character(name))
+  .Call("R_tesseract_SetInputName", api, as.character(name))
 }
 
 
