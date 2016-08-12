@@ -329,7 +329,7 @@ function(api, asArray = FALSE)
 }
 
 
-GetDatapath =
+GetDatapath = GetDataPath =
 function(api)
 {
   .Call("R_tesseract_GetDatapath", as(api, "TesseractBaseAPI"))
@@ -489,3 +489,25 @@ function(api)
    .Call("R_TessBaseAPI_oem", as(api, "TesseractBaseAPI"))
 }
 
+
+
+ProcessPages =
+function(filename, api = tesseract(), timeout = 0L, out = tempfile())
+{
+    # While the output goes to out, we can pick up the results in the tesseract object if it was passed in
+    # otherwise.
+  mo = missing(out)
+  if(.Call("R_TessBaseAPI_ProcessPages", as(api, "TesseractBaseAPI"), filename, as.integer(timeout), as.character(out))) {
+     if(mo)
+       return(readLines(out))
+  }
+  api
+}
+
+
+
+ClearPersistentCache =
+function(...)
+{
+   .Call("R_tesseract_ClearPersistentCache")
+}

@@ -88,3 +88,6 @@ export(SetOutputName)
 export(oem)
 
 
+export(ProcessPages)
+
+export(ClearPersistentCache)

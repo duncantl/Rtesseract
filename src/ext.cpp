@@ -431,7 +431,6 @@ R_tesseract_SetRectangle(SEXP r_api, SEXP r_dims)
 }
 
 
-
 extern "C"
 SEXP
 R_tesseract_Clear(SEXP r_api)
@@ -439,7 +438,7 @@ R_tesseract_Clear(SEXP r_api)
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
   api->Clear();
 
-  return(R_NilValue);
+  return(ScalarLogical(true));
 }
 
 extern "C"
@@ -449,8 +448,18 @@ R_tesseract_ClearAdaptiveClassifier(SEXP r_api)
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
   api->ClearAdaptiveClassifier();
 
-  return(R_NilValue);
+  return(ScalarLogical(true));
 }
+
+
+extern "C"
+SEXP
+R_tesseract_ClearPersistentCache()
+{
+    tesseract::TessBaseAPI::ClearPersistentCache();
+    return(ScalarLogical(true));
+}
+
 
 
 #if 1
