@@ -1,5 +1,9 @@
 ? Other methods form the baseapi.h ?
 
+seg fault in plotSubImage() when run via the examples.
+  Could be an earlier example with memory issues appearing at this point.
+  e.g. pixRead()
+
 [adapt but okay] ProcessPages in render.cpp
 
 ??Change the names of the functions to initial lower case, e.g. getInputName(), ?
@@ -72,6 +76,7 @@ See MutableIterator for possibly modifying the tesseract content.
 
 Can't seem to open pdf config file - i.e., the one called pdf in /usr/local/share/tessdata/configs, but can find batch.nochop.
 
+[check] 
 With cropBoxes, can get negative indices.
   Change the margin.  Compute it so that it can't yield negative indices.
 
