@@ -471,6 +471,20 @@ function(api, word, segMode = GetPageSegMode(api))
   .Call("R_TessBaseAPI_AdaptToWordStr", as(api, "TesseractBaseAPI"), as(segMode, "PageSegMode"), word)
 }
 
+AdaptToChar =
+function(api, char, baseline, xheight, descender, ascender)
+{
+  word = as.character(word)
+  if(length(word) == 0)
+      stop("Must supply a word")
+  if(nchar(word) != 1)
+      stop("only single characters")
+
+  dims = c(baseline, xheight, descender, ascender)
+  
+  .Call("R_TessBaseAPI_AdaptToCharacter", as(api, "TesseractBaseAPI"), word, as.numeric(dims))
+}
+
 
 hasRecognized =
 function(api)
@@ -515,4 +529,17 @@ ClearPersistentCache =
 function(...)
 {
    .Call("R_tesseract_ClearPersistentCache")
+}
+
+
+GetTextDirection =
+function(api)
+{
+    .Call("R_TessBaseAPI_GetTextDirection", as(api, "TesseractBaseAPI"))
+}
+
+DetectOS =
+function(api)
+{
+    .Call("R_TessBaseAPI_DetectOS", as(api, "TesseractBaseAPI"))
 }
