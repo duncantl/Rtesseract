@@ -1,3 +1,4 @@
+#include <tesseract/osdetect.h>
 #include "Rtesseract.h"
 
 extern "C"
@@ -684,37 +685,6 @@ R_TessBaseAPI_SetPageSegMode(SEXP r_api, SEXP r_val)
   return( ScalarLogical( TRUE));
 }
 
-#ifdef error
-#undef error
-#endif
-
-#include <tesseract/genericvector.h>
-
-#define error Rf_error
-
-extern "C"
-SEXP
-R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
-{
-  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
-  if(!api) {
-      PROBLEM "NULL value for api reference"
-      ERROR;
-  }
-
-  GenericVector<STRING> langs;
-  api->GetAvailableLanguagesAsVector(&langs);
-
-  int i = 0, len = langs.length();
-  SEXP r_ans;
-  PROTECT(r_ans = NEW_CHARACTER(len));
-  for(i = 0; i < len; i++) {
-      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
-  }
-  UNPROTECT(1);
-
-  return(r_ans) ;
-}
 
 
 SEXP
@@ -811,6 +781,24 @@ R_TessBaseAPI_AdaptToWordStr(SEXP r_api, SEXP r_segMode, SEXP r_word)
 }
 
 
+#if 0
+// This is a protected method so not accessible.
+extern "C"
+SEXP
+R_TessBaseAPI_AdaptToChar(SEXP r_api, SEXP r_char, SEXP r_dim_info)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    if(!api) {
+        PROBLEM "NULL value for api reference"
+            ERROR;
+    }
+
+    double *dims = REAL(r_dim_info);
+    api->AdaptToCharacter(CHAR(STRING_ELT(r_char, 0)), 1, dims[0], dims[1], dims[2], dims[3]);
+    return(R_NilValue);
+}
+#endif
+
 extern SEXP Renum_convert_OcrEngineMode(tesseract::OcrEngineMode val);
 
 extern "C"
@@ -884,4 +872,101 @@ R_TessBaseAPI_SetOutputName(SEXP r_api, SEXP r_output)
   api->SetOutputName(CHAR(STRING_ELT(r_output, 0)));
 
   return(R_NilValue);
+}
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetTextDirection(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+  int offset;
+  float slope;
+  bool ans = api->GetTextDirection(&offset, &slope);
+  if(!ans) {
+      return(R_NilValue);
+  }
+  SEXP r_ans = NEW_NUMERIC(2);
+  REAL(r_ans)[0] = offset;
+  REAL(r_ans)[1] = slope;
+  return(r_ans);
+}
+
+
+#if 1
+
+extern "C"
+SEXP
+R_TessBaseAPI_DetectOS(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+  OSResults res;
+  bool ans = api->DetectOS(&res);
+  if(!ans) {
+      return(R_NilValue);
+  }
+  res.print_scores();
+//  int w = res.get_best_script();
+  SEXP r_ans, el;
+  PROTECT(r_ans = NEW_LIST(2));
+//  SET_VECTOR_ELT(r_ans, 0, ScalarInteger(w));
+  SET_VECTOR_ELT(r_ans, 0, el = NEW_NUMERIC(4));
+  int i, j;
+  for(i = 0; i < 4; i++) 
+      REAL(el)[i] = res.orientations[i];
+
+  SET_VECTOR_ELT(r_ans, 1, el = NEW_NUMERIC(4*kMaxNumberOfScripts));
+  for(i = 0; i < 4; i++) {
+      for(j = 0; j < kMaxNumberOfScripts; j++)
+          REAL(el)[i + j*3] = res.scripts_na[i][j];
+  }
+  UNPROTECT(1);
+  return(r_ans);
+}
+#endif
+
+
+
+
+
+
+#ifdef error
+#undef error
+#endif
+
+#include <tesseract/genericvector.h>
+
+#define error Rf_error
+#undef length
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+
+  GenericVector<STRING> langs;
+  api->GetAvailableLanguagesAsVector(&langs);
+
+  int i = 0, len = langs.length();
+  SEXP r_ans;
+  PROTECT(r_ans = NEW_CHARACTER(len));
+  for(i = 0; i < len; i++) {
+      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
+  }
+  UNPROTECT(1);
+
+  return(r_ans) ;
 }
