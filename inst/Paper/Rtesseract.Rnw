@@ -1,0 +1,35 @@
+\documentclass{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+
+
+\title{Rtesseract: A package for Optical Character Recognition (OCR)
+  from R}
+
+\author{Duncan Temple Lang \and Matthew B. Espe}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\section{Introduction}\label{intro}
+
+\section{Package Description}\label{desc}
+
+\section{Examples}\label{examples}
+
+\subsection{Prose}
+
+\subsection{Structured data}
+
+<<<>>=
+print("Testing")
+@ 
+
+
+
+\end{document}
