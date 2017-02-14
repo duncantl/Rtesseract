@@ -188,7 +188,23 @@ function(ri, level = 3L)
 }
 
 
+setGeneric("getAlternatives",
+           function(obj, level = 3L, ...)
+             standardGeneric("getAlternatives"))
 
+setMethod("getAlternatives",
+          "TesseractBaseAPI",
+          function(obj, level = 3L, ...) {
+             GetAlternatives(obj, level)
+          })
+
+setMethod("getAlternatives",
+           "character",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(obj, ...)
+              Recognize(ts)
+              getAlternatives(ts, level)
+          })
 
 setGeneric("getConfidences",
            function(obj, level = 3L, ...)
@@ -203,9 +219,9 @@ setMethod("getConfidences",
 setMethod("getConfidences",
            "character",
           function(obj, level = 3L, ...) {
-              ts = tesseract(obj)
+              ts = tesseract(obj, ...)
               Recognize(ts)
-              getConfidences(ts, level, ...)
+              getConfidences(ts, level)
           })
 
 
@@ -226,9 +242,9 @@ setMethod("getBoxes",
 setMethod("getBoxes",
            "character",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
-              ts = tesseract(obj)
+              ts = tesseract(obj, ...)
               Recognize(ts) # Want to avoid doing this twice if possible
-              getBoxes(ts, level, keepConfidence, ...)
+              getBoxes(ts, level, keepConfidence)
           })
 
 
@@ -383,13 +399,27 @@ function(api, name, check = TRUE, load = TRUE)
 }
 
 
+setGeneric("GetAlternatives",
+            function(ri, level = 3L, ...)
+                standardGeneric("GetAlternatives"))
 
-
-GetAlternatives =
-function(ri, ...)
+setMethod("GetAlternatives", "TesseractBaseAPI",
+    #
+    #  For each of the recognized elements in the OCR, get its alternatives for that "word"
+    #
+function(ri, level = 3L, ...)
 {
-    .Call("R_getAlternatives", as(ri, "ResultIterator"))
-}
+    .Call("R_getAllAlternatives", ri, as(level, "PageIteratorLevel"))
+})
+
+setMethod("GetAlternatives", "ResultIterator",
+    #
+    #  For the current cursor in the result iterator get the alternatives for that "word"
+    #
+function(ri, level = 3L, ...)
+{
+    .Call("R_Current_getAlternatives", "ResultIterator", as(level, "PageIteratorLevel"))
+})
 
 
 SetPageSegMode =
