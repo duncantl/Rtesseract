@@ -9,7 +9,7 @@ Test that output is the same and correct between ocr and getXXX functions.
 
 Test that plot/other helper functions are still functioning with output from the getXXX functions.
 
-
+Update documentation/NAMESPACE to reflect current functions and functionality.
 
 ? Other methods form the baseapi.h ?
 
