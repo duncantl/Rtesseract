@@ -210,6 +210,7 @@ R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
 
   ans = getRIBoundingBoxes(level, api, r_names);
 
+  delete api;
   pixDestroy(&image);
 
  return(ans);
