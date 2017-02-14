@@ -24,9 +24,9 @@ getCharWidth =
 function(bbox, fun = median, onlyAlphaNumeric = TRUE)
 {
    if(onlyAlphaNumeric)
-      bbox = bbox[ grepl( "[A-Za-z0-9]", getText(bbox)), ]
+      bbox = bbox[ grepl( "[A-Za-z0-9]", getRecText(bbox)), ]
    
-   fun(  (bbox[,3] - bbox[,1])/nchar(getText(bbox)) )
+   fun(  (bbox[,3] - bbox[,1])/nchar(getRecText(bbox)) )
 }
 
 
@@ -37,12 +37,12 @@ getCharHeight =
 function(bbox, fun = median, onlyAlphaNumeric = TRUE)
 {
    if(onlyAlphaNumeric)
-      bbox = bbox[ grepl( "[A-Za-z0-9]", getText(bbox)), ]
+      bbox = bbox[ grepl( "[A-Za-z0-9]", getRecText(bbox)), ]
    
    fun(  (bbox[,4] - bbox[,2])  )
 }    
 
-getText =
+getRecText =
     #
     # get the text from a bbox which can either be a matrix with rownames as text, or a data frame with a "text" column.
     #
