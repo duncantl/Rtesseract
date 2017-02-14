@@ -7,9 +7,9 @@
 
 
 SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf);
-extern "C" SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
-extern "C" SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
-extern "C" SEXP getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level);
+SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
+SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
+
 
 extern "C"
 SEXP
@@ -126,7 +126,7 @@ R_TesseractBaseAPI_getConfidences(SEXP r_api, SEXP r_level)
   return(getRIConfidences(level, api));
 }
 
-extern "C"
+
 SEXP
 getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api)
 {
@@ -171,17 +171,22 @@ getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api
 }
 
 
-
-
-
 extern "C"
+SEXP
+R_getAllAlternatives(SEXP r_api, SEXP r_level)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
+    return(getAllAlternatives(api, level));
+}
+
+
 SEXP
 getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level)
 {
   SEXP ans = R_NilValue; 
-  tesseract::ResultIterator* ri = api->GetIterator();
-
   int n = 1, i;
+    tesseract::ResultIterator* ri = api->GetIterator();
     while(ri->Next(level))
         n++;
 
@@ -209,7 +214,7 @@ SEXP
 getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 {
       tesseract::ChoiceIterator ci_r(*ri);
-      int nels = 2;
+      int nels = 1; // was 2    ????
       while(ci_r.Next()) 
         nels++;         
 
@@ -255,7 +260,7 @@ R_TesseractBaseAPI_getBoundingBoxes(SEXP r_api, SEXP r_level)
   return(getRIBoundingBoxes(level, api, R_NilValue));
 }
 
-extern "C"
+
 SEXP
 getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names)
 {

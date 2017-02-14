@@ -279,6 +279,8 @@ R_TessBaseAPI_GetIterator(SEXP r_api)
 
 typedef SEXP (*NativeIteratorFun)(tesseract::ResultIterator *, tesseract::PageIteratorLevel);
 
+
+// XXX Does getAllAlternatives do what we have here less generally
 extern "C"
 SEXP
 R_ResultIterator_lapply(SEXP r_it, SEXP r_level, SEXP r_fun)
@@ -609,9 +611,12 @@ R_tesseract_PrintVariables(SEXP r_api, SEXP r_filename)
 
 
 
-
+//XXX Compare to 
+// SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
+// currently in confidence.cpp.
+// Here nels = 1 initially, in the other it is nels = 2
 SEXP
-getAlts(tesseract::ResultIterator *ri)
+getAlts(tesseract::ResultIterator *ri, tesseract::PageIteratorLevel level)
 {
       tesseract::ChoiceIterator ci_r(*ri);
       int nels = 1;
@@ -642,11 +647,13 @@ getAlts(tesseract::ResultIterator *ri)
 
 extern "C"
 SEXP
-R_getAlternatives(SEXP r_api, SEXP r_level)
+R_Current_getAlternatives(SEXP r_api, SEXP r_level)
 {
-    tesseract::ResultIterator * ri = GET_REF(r_api, tesseract::ResultIterator );
+    tesseract::ResultIterator *ri = GET_REF(r_api, tesseract::ResultIterator );
 
-    return(getAlts(ri));
+    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
+
+    return(getAlts(ri, level));
 }
 
 

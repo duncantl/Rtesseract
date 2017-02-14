@@ -25,5 +25,8 @@ SEXP getPixAsArray(const Pix *pix);
    if(!api->GetIterator()) api->Recognize();
 
 
+SEXP getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level);
+//SEXP getAllAlternatives(tesseract::ResultIterator *ri, tesseract::PageIteratorLevel level);
+
 #endif
 
