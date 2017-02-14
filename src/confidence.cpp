@@ -39,7 +39,7 @@ R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
 
   pixDestroy(&image);
 
- return(ans);
+  return(ans);
 }
 
 
@@ -69,12 +69,9 @@ R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
 
   ans = getRIBoundingBoxes(level, &api, r_names);
 
-//  api->Clear();
-//  api->End();
-//  delete api;
   pixDestroy(&image);
 
- return(ans);
+  return(ans);
 }
 
 
@@ -103,7 +100,11 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
 
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
-  return(getAllAlternatives(&api, level));
+  SEXP ans = getAllAlternatives(&api, level);
+
+  pixDestroy(&image);
+
+  return(ans);
 }
 
 /******************************************/
