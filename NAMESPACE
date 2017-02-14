@@ -71,8 +71,8 @@ S3method(plot, TesseractBoxdata)
 
 export(getSmudges, getCharWidth, getCharHeight, bboxToDF, orderBBox)
 
-export(getConfidences, getBoxes)
-exportMethods("getConfidences", "getBoxes")
+export(getConfidences, getBoxes, getAlternatives)
+exportMethods("getConfidences", "getBoxes", "getAlternatives")
 
 export(getImageDims, getImageInfo, GetImage, GetInputImage)
 
