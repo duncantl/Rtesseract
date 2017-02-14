@@ -195,7 +195,6 @@ setGeneric("getAlternatives",
 setMethod("getAlternatives",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
-            # GetAlternatives(obj, level)
             .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
@@ -203,7 +202,6 @@ setMethod("getAlternatives",
 setMethod("getAlternatives",
           "ResultIterator",
           function(obj, level = 3L, ...) {
-             # GetAlternatives(obj, level)
             .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
@@ -408,30 +406,6 @@ function(api, name, check = TRUE, load = TRUE)
   .Call("R_tesseract_SetInputName", api, as.character(name))
 }
 
-
-if(FALSE) {
-setGeneric("GetAlternatives",
-            function(ri, level = 3L, ...)
-                standardGeneric("GetAlternatives"))
-
-setMethod("GetAlternatives", "TesseractBaseAPI",
-    #
-    #  For each of the recognized elements in the OCR, get its alternatives for that "word"
-    #
-function(ri, level = 3L, ...)
-{
-    .Call("R_getAllAlternatives", ri, as(level, "PageIteratorLevel"))
-})
-
-setMethod("GetAlternatives", "ResultIterator",
-    #
-    #  For the current cursor in the result iterator get the alternatives for that "word"
-    #
-function(ri, level = 3L, ...)
-{
-    .Call("R_Current_getAlternatives", "ResultIterator", as(level, "PageIteratorLevel"))
-})
-}
 
 
 SetPageSegMode =
