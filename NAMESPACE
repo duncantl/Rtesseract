@@ -28,7 +28,8 @@ exportMethods(lapply)
 
 export(GetIterator, SetImage, Recognize, Init, End, SetVariables, pixRead)
 
-export(GetText, Confidence, BoundingBox, BoundingBoxes, GetAlternatives)
+export(GetText, Confidence, BoundingBox, BoundingBoxes)
+#, GetAlternatives)
 
 
 export(SetRectangle, Clear, ClearAdaptiveClassifier )
