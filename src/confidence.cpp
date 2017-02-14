@@ -7,13 +7,13 @@
 
 
 SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf);
-SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
-SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
-SEXP getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level);
+extern "C" SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
+extern "C" SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
+extern "C" SEXP getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level);
 
 extern "C"
 SEXP
-R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
+R_ocr(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_collectorRoutines)
 {
   SEXP ans = R_NilValue; 
   int i;
@@ -126,6 +126,7 @@ R_TesseractBaseAPI_getConfidences(SEXP r_api, SEXP r_level)
   return(getRIConfidences(level, api));
 }
 
+extern "C"
 SEXP
 getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api)
 {
@@ -173,7 +174,7 @@ getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api
 
 
 
-
+extern "C"
 SEXP
 getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level)
 {
@@ -254,6 +255,7 @@ R_TesseractBaseAPI_getBoundingBoxes(SEXP r_api, SEXP r_level)
   return(getRIBoundingBoxes(level, api, R_NilValue));
 }
 
+extern "C"
 SEXP
 getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names)
 {
