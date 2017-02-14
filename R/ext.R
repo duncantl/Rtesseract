@@ -195,8 +195,18 @@ setGeneric("getAlternatives",
 setMethod("getAlternatives",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
-             GetAlternatives(obj, level)
+            # GetAlternatives(obj, level)
+            .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
+
+
+setMethod("getAlternatives",
+          "ResultIterator",
+          function(obj, level = 3L, ...) {
+             # GetAlternatives(obj, level)
+            .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
+          })
+
 
 setMethod("getAlternatives",
            "character",
@@ -399,6 +409,7 @@ function(api, name, check = TRUE, load = TRUE)
 }
 
 
+if(FALSE) {
 setGeneric("GetAlternatives",
             function(ri, level = 3L, ...)
                 standardGeneric("GetAlternatives"))
@@ -420,6 +431,7 @@ function(ri, level = 3L, ...)
 {
     .Call("R_Current_getAlternatives", "ResultIterator", as(level, "PageIteratorLevel"))
 })
+}
 
 
 SetPageSegMode =
