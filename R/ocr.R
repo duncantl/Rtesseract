@@ -2,9 +2,9 @@ ocr =
   # ocr(system.file("images", "IMG_1234.png", package = "Rtesseract"), opts = c("tessedit_char_whitelist" = "0123456789."))
   #
   # tryCatch( ocr("Rtesseract/inst/images/IMG_1234.jpg"), error = function(e) class(e) )
-    
+  #    
 function(img, level = PageIteratorLevel["word"],
-         pageSegMode = "psm_single_block",
+         pageSegMode = "psm_single_block",  #XXX not used.
          alternatives = FALSE, boundingBox = FALSE,
          opts = sapply(list(...), as, "character"), ...)
 {
