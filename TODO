@@ -1,3 +1,12 @@
+
+Get alternatives is returning different output between:
+ocr(image, alternatives = TRUE)
+getAlternatives(image)
+
+Additionally, Seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) - need to check that this is operating correctly.
+
+
+
 ? Other methods form the baseapi.h ?
 
 seg fault in plotSubImage() when run via the examples.
