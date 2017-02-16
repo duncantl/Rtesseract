@@ -188,11 +188,60 @@ function(ri, level = 3L)
 }
 
 
+getText =
+function(obj, level = 3L, ...)
+{
+  names(getConfidences(obj, level, ...))
+}
 
+
+
+setGeneric("getAlternatives",
+           function(obj, level = 3L, ...)
+             standardGeneric("getAlternatives"))
+
+setMethod("getAlternatives",
+          "TesseractBaseAPI",
+          function(obj, level = 3L, ...) {
+            .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
+          })
+
+
+setMethod("getAlternatives",
+          "ResultIterator",
+          function(obj, level = 3L, ...) {
+            .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
+          })
+
+
+setMethod("getAlternatives",
+           "character",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(obj, ...)
+              Recognize(ts)
+              getAlternatives(ts, level)
+          })
+
+setMethod("getAlternatives",
+           "Pix",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(...)
+              SetImage(ts, obj)              
+              Recognize(ts)
+              getAlternatives(ts, level)
+          })
 
 setGeneric("getConfidences",
            function(obj, level = 3L, ...)
              standardGeneric("getConfidences"))
+
+setMethod("getConfidences",
+          "Pix",
+          function(obj, level = 3L, ...) {
+              api = tesseract(...)
+              SetImage(api, obj)
+              getConfidences(api, level)
+          })
 
 setMethod("getConfidences",
           "TesseractBaseAPI",
@@ -203,9 +252,9 @@ setMethod("getConfidences",
 setMethod("getConfidences",
            "character",
           function(obj, level = 3L, ...) {
-              ts = tesseract(obj)
+              ts = tesseract(obj, ...)
               Recognize(ts)
-              getConfidences(ts, level, ...)
+              getConfidences(ts, level)
           })
 
 
@@ -226,13 +275,19 @@ setMethod("getBoxes",
 setMethod("getBoxes",
            "character",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
-              ts = tesseract(obj)
+              ts = tesseract(obj, ...)
               Recognize(ts) # Want to avoid doing this twice if possible
-              getBoxes(ts, level, keepConfidence, ...)
+              getBoxes(ts, level, keepConfidence)
           })
 
 
-
+setMethod("getBoxes",
+          "Pix",
+          function(obj, level = 3L, keepConfidence = TRUE, ...) {
+              api = tesseract(...)
+              SetImage(api, obj)
+              getBoxes(api, level, keepConfidence)
+          })
 
 
 
@@ -382,14 +437,6 @@ function(api, name, check = TRUE, load = TRUE)
   .Call("R_tesseract_SetInputName", api, as.character(name))
 }
 
-
-
-
-GetAlternatives =
-function(ri, ...)
-{
-    .Call("R_getAlternatives", as(ri, "ResultIterator"))
-}
 
 
 SetPageSegMode =

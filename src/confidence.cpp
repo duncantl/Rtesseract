@@ -10,36 +10,107 @@ SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf
 SEXP getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api);
 SEXP getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names);
 
+
 extern "C"
 SEXP
-R_ocr(SEXP filename, SEXP r_vars, SEXP r_level)
+R_ocr(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_collectorRoutines)
 {
   SEXP ans = R_NilValue; 
   int i;
 
-  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  if(api->Init(NULL, "eng")) {
+  tesseract::TessBaseAPI api; // = new tesseract::TessBaseAPI();
+  if(api.Init(NULL, "eng")) {
+    PROBLEM "could not intialize tesseract engine."	      
+    ERROR;
+  }
+  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
+  api.SetImage(image);
+
+  SEXP r_optNames = GET_NAMES(r_vars);
+  for(i = 0; i < Rf_length(r_vars); i++) 
+      api.SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+
+
+  api.Recognize(0);
+
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
+
+  ans = getRIConfidences(level, &api);
+
+  pixDestroy(&image);
+
+  return(ans);
+}
+
+
+extern "C"
+SEXP
+R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
+{
+  SEXP ans = R_NilValue; 
+  int i;
+
+  tesseract::TessBaseAPI api; // = new tesseract::TessBaseAPI();
+  if(api.Init(NULL, "eng")) {
      PROBLEM "could not intialize tesseract engine."	      
      ERROR;
   }
   Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
-  api->SetImage(image);
+  api.SetImage(image);
 
   SEXP r_optNames = GET_NAMES(r_vars);
   for(i = 0; i < Rf_length(r_vars); i++) 
-      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+      api.SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
 
 
-  api->Recognize(0);
+  api.Recognize(0);
 
-  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
 
-  ans = getRIConfidences(level, api);
+  ans = getRIBoundingBoxes(level, &api, r_names);
 
   pixDestroy(&image);
 
- return(ans);
+  return(ans);
 }
+
+
+/*
+  Get the alternative predictions for each symbol.
+ */
+extern "C"
+SEXP
+R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
+{
+  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
+  int i;
+
+  tesseract::TessBaseAPI api; // = new tesseract::TessBaseAPI();
+  if(api.Init(NULL, "eng")) {
+    PROBLEM "could not intialize tesseract engine."	      
+    ERROR;
+  }
+  api.SetImage(image);
+
+  SEXP r_optNames = GET_NAMES(r_vars);
+  for(i = 0; i < Rf_length(r_vars); i++) 
+      api.SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+
+  api.Recognize(0);
+
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
+
+  SEXP ans = getAllAlternatives(&api, level);
+
+  pixDestroy(&image);
+
+  return(ans);
+}
+
+/******************************************/
+
+
+
 
 extern "C"
 SEXP
@@ -54,6 +125,7 @@ R_TesseractBaseAPI_getConfidences(SEXP r_api, SEXP r_level)
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
   return(getRIConfidences(level, api));
 }
+
 
 SEXP
 getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api)
@@ -99,34 +171,22 @@ getRIConfidences(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api
 }
 
 
-
-
-
-/*
-  Get the alternative predictions for each symbol.
- */
 extern "C"
 SEXP
-R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
+R_getAllAlternatives(SEXP r_api, SEXP r_level)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
+    return(getAllAlternatives(api, level));
+}
+
+
+SEXP
+getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel level)
 {
   SEXP ans = R_NilValue; 
-  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
-  int i;
-
-  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  api->Init(NULL, "eng");
-  api->SetImage(image);
-
-  SEXP r_optNames = GET_NAMES(r_vars);
-  for(i = 0; i < Rf_length(r_vars); i++) 
-      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
-
-  api->Recognize(0);
-
-  tesseract::ResultIterator* ri = api->GetIterator();
-  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
-
-    int n = 1;
+  int n = 1, i;
+    tesseract::ResultIterator* ri = api->GetIterator();
     while(ri->Next(level))
         n++;
 
@@ -147,14 +207,14 @@ R_ocr_alternatives(SEXP filename, SEXP r_vars, SEXP r_level)
     SET_NAMES(ans, names);
     UNPROTECT(2);
 
- return(ans);
+    return(ans);
 }
 
 SEXP
 getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 {
       tesseract::ChoiceIterator ci_r(*ri);
-      int nels = 2;
+      int nels = 1; // was 2    ????
       while(ci_r.Next()) 
         nels++;         
 
@@ -184,37 +244,6 @@ getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 
 
 
-extern "C"
-SEXP
-R_ocr_boundingBoxes(SEXP filename, SEXP r_vars, SEXP r_level, SEXP r_names)
-{
-  SEXP ans = R_NilValue; 
-  int i;
-
-  tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  if(api->Init(NULL, "eng")) {
-     PROBLEM "could not intialize tesseract engine."	      
-     ERROR;
-  }
-  Pix *image = pixRead(CHAR(STRING_ELT(filename, 0)));
-  api->SetImage(image);
-
-  SEXP r_optNames = GET_NAMES(r_vars);
-  for(i = 0; i < Rf_length(r_vars); i++) 
-      api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
-
-
-  api->Recognize(0);
-
-  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  //RIL_WORD;
-
-  ans = getRIBoundingBoxes(level, api, r_names);
-
-  delete api;
-  pixDestroy(&image);
-
- return(ans);
-}
 
 
 extern "C"
@@ -230,6 +259,7 @@ R_TesseractBaseAPI_getBoundingBoxes(SEXP r_api, SEXP r_level)
   tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];  
   return(getRIBoundingBoxes(level, api, R_NilValue));
 }
+
 
 SEXP
 getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *api, SEXP r_names)
