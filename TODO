@@ -1,9 +1,26 @@
-
 Get alternatives is returning different output between:
-ocr(image, alternatives = TRUE)
-getAlternatives(image)
+library(Rtesseract)
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+a = getAlternatives(f)
+api = tesseract(f)
+Recognize(api)
+ri = as(api, "ResultIterator")
+b = lapply(ri, getAlternatives, "word")
+identical(a, b)
 
-Additionally, Seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) - need to check that this is operating correctly.
+api = tesseract(f)
+Recognize(api)
+ri = as(api, "ResultIterator")
+b = lapply(ri, getNativeSymbolInfo("getAlts"), "word")
+
+
+
+getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
+
+
+[] Additionally, Seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
+  - need to check that this is operating correctly.
+   This is because we never call Next(), but lapply(ri, fun, level) does. And we have to specify the level here.
 
 
 
