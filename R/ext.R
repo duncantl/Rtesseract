@@ -188,6 +188,14 @@ function(ri, level = 3L)
 }
 
 
+getText =
+function(obj, level = 3L, ...)
+{
+  names(getConfidences(obj, level, ...))
+}
+
+
+
 setGeneric("getAlternatives",
            function(obj, level = 3L, ...)
              standardGeneric("getAlternatives"))
@@ -214,9 +222,26 @@ setMethod("getAlternatives",
               getAlternatives(ts, level)
           })
 
+setMethod("getAlternatives",
+           "Pix",
+          function(obj, level = 3L, ...) {
+              ts = tesseract(...)
+              SetImage(ts, obj)              
+              Recognize(ts)
+              getAlternatives(ts, level)
+          })
+
 setGeneric("getConfidences",
            function(obj, level = 3L, ...)
              standardGeneric("getConfidences"))
+
+setMethod("getConfidences",
+          "Pix",
+          function(obj, level = 3L, ...) {
+              api = tesseract(...)
+              SetImage(api, obj)
+              getConfidences(api, level)
+          })
 
 setMethod("getConfidences",
           "TesseractBaseAPI",
@@ -256,7 +281,13 @@ setMethod("getBoxes",
           })
 
 
-
+setMethod("getBoxes",
+          "Pix",
+          function(obj, level = 3L, keepConfidence = TRUE, ...) {
+              api = tesseract(...)
+              SetImage(api, obj)
+              getBoxes(api, level, keepConfidence)
+          })
 
 
 

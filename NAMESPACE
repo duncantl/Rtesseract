@@ -72,6 +72,7 @@ S3method(plot, TesseractBoxdata)
 
 export(getSmudges, getCharWidth, getCharHeight, bboxToDF, orderBBox)
 
+export(getText)
 export(getConfidences, getBoxes, getAlternatives)
 exportMethods("getConfidences", "getBoxes", "getAlternatives")
 
