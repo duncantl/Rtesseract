@@ -268,7 +268,6 @@ R_TessBaseAPI_GetIterator(SEXP r_api)
   }
   tesseract::ResultIterator* ri = api->GetIterator();
   if(!ri) {
-// Call Recognize() ????
       return(R_NilValue);
       PROBLEM "ResultIterator is NULL. Did you call Recognize" 
       ERROR;
@@ -615,6 +614,7 @@ R_tesseract_PrintVariables(SEXP r_api, SEXP r_filename)
 // SEXP getAlternatives(tesseract::ResultIterator* ri, const char *word, float conf)
 // currently in confidence.cpp.
 // Here nels = 1 initially, in the other it is nels = 2
+extern "C"
 SEXP
 getAlts(tesseract::ResultIterator *ri, tesseract::PageIteratorLevel level)
 {
