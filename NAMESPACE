@@ -17,11 +17,8 @@ export(tesseract)
 exportClass(PageIteratorLevel)
 export(PageIteratorLevel)
 
-
-
 exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
-
 
 export(lapply)
 exportMethods(lapply)
@@ -31,18 +28,15 @@ export(GetIterator, SetImage, Recognize, Init, End, SetVariables, pixRead)
 export(GetText, Confidence, BoundingBox, BoundingBoxes)
 #, GetAlternatives)
 
-
 export(SetRectangle, Clear, ClearAdaptiveClassifier )
 export(GetInitLanguages, ReadConfigFile, SetSourceResolution)
 
 export(GetVariables)
+export(PrintVariables)
 
 export(IsValidWord)
 
 export(GetDatapath, GetSourceYResolution, GetInputName, SetInputName)
-
-export(PrintVariables)
-
 
 
 exportMethods(coerce)
@@ -55,14 +49,9 @@ export(compareWord, compareWords) # collapse
 S3method(plot, ConfusionMatrix)
 export(plotSubImage)
 
-
-
-
 export(readBoxFile)
 
-
 export(SetPageSegMode, GetPageSegMode)
-
 
 #exportClasses("PageSegMode")
 exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageSegMode, PageIteratorLevel, ParagraphJustification, OcrEngineMode, StrongScriptDirection)
@@ -72,22 +61,18 @@ S3method(plot, TesseractBoxdata)
 
 export(getSmudges, getCharWidth, getCharHeight, bboxToDF, orderBBox)
 
-export(getText)
-export(getConfidences, getBoxes, getAlternatives)
+export(getText, getConfidences, getBoxes, getAlternatives)
 exportMethods("getConfidences", "getBoxes", "getAlternatives")
 
 export(getImageDims, getImageInfo, GetImage, GetInputImage)
 
-
 export(GetThresholdedImage)
-
 
 export(hasRecognized) # rename!
 
 export(SetOutputName)
 
 export(oem)
-
 
 export(ProcessPages)
 
