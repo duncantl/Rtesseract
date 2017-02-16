@@ -13,13 +13,13 @@ http://www.leptonica.com/.
 This is currently a basic interface to the essential functionality, with some
 added R functionality to visualize the results.
 
-+ Of course, the package provides functionality to get the recognized text.
+1 Of course, the package provides functionality to get the recognized text.
 However, it also allows us to do this at various different levels, e.g.
 word, character, line
-+ We can also use different page segmentation modes so that we can detect/recognize
+2 We can also use different page segmentation modes so that we can detect/recognize
 lines on the image which is useful for processing tables where the lines separate
 rows or columns
-+ We can get the confidence for each recognized text element to understand whether it is 
+3 We can get the confidence for each recognized text element to understand whether it is 
   a good match or not.
 + We can get the location and dimensions of each of the text elements. Again, this is 
  necessary for processing tables and other structured content.
