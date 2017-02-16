@@ -37,4 +37,4 @@ We can machine generate the interface to the other methods and classes in the te
 
 
 ## History
-We started developing this package in April 2015.
+We - Matt Espe & Duncan Temple Lang - started developing this package in April 2015.
