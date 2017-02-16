@@ -2,6 +2,7 @@ Get alternatives is returning different output between:
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 a = getAlternatives(f)
+
 api = tesseract(f)
 Recognize(api)
 ri = as(api, "ResultIterator")
