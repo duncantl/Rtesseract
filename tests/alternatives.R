@@ -2,6 +2,7 @@ library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 
 alts = ocr(f, alternatives = TRUE)
+
 alts1 = getAlternatives(f)
 identical(alts, alts1)
 

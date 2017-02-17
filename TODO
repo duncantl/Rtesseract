@@ -1,3 +1,14 @@
+[check] Segfaults if Recognize hasn't been called.
+ library(Rtesseract)
+ ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+ a = getAlternatives(ts)
+
+[Fixed now] Investigate  "Calling Recognize again"
+  library(Rtesseract)
+  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+  b = getBoxes(ts)
+
+
 Get alternatives is returning different output between:
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
@@ -19,7 +30,8 @@ b = lapply(ri, getNativeSymbolInfo("getAlts"), "word")
 getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
 
 
-[] Additionally, Seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
+[] Additionally, seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
+  Does ChoiceIterator() only work for characters/symbols, not words.
   - need to check that this is operating correctly.
    This is because we never call Next(), but lapply(ri, fun, level) does. And we have to specify the level here.
 
@@ -28,6 +40,7 @@ getAlternatives(ri) may not want to just get the alternatives for the current cu
 ? Other methods form the baseapi.h ?
 
 seg fault in plotSubImage() when run via the examples.
+  [Seems okay on OSX machine (DTL)]
   Could be an earlier example with memory issues appearing at this point.
   e.g. pixRead()
 
@@ -118,7 +131,8 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
   Or think of other ways to compare them - adist?
 
 
-[low] ocr() function using the API-level functions.
+[check] ocr() function using the API-level functions.
+ ACTUALLY, just remove and use getAlternatives(), getConfidences(), getBoxes(), getText().
    i.e. implement not in C but in R code to assemble the different pieces.
    Can do now.
 
@@ -130,8 +144,10 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
 
   Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
-[Feature Request] When find an error, get the subset of the image for that bounding box and 
+[Feature Request] When find an error in the OCR, get the subset of the image for that bounding box and 
    then see if we can cluster them.
+    Need to know if it is an error, so presumably need to know truth.
+    Or instead of errors, just those values with low confidence.
     See inst/caseStudies
 
   Can do this from the bounding box information and reading the image using one of the  R packages.

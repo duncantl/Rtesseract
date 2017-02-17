@@ -10,6 +10,9 @@ readImage.dSYM$
 R/plot.R-tmp
 Makevars$
 BoundingBox.Rd-old
-
+autom4te.cache
+FUNS
+^vars.R$
+.gitignore
 
 
