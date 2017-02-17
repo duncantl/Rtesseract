@@ -837,7 +837,7 @@ foo(void *args, UNICHAR_ID unichar_id , bool wordEnd)
 
 extern "C"
 SEXP
-R_TessBaseAPI_SetDicFunc(SEXP r_api, SEXP r_fun)
+R_TessBaseAPI_SetDictFunc(SEXP r_api, SEXP r_fun)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
     if(!api) {
