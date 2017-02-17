@@ -187,6 +187,10 @@ getAllAlternatives(tesseract::TessBaseAPI *api, tesseract::PageIteratorLevel lev
   SEXP ans = R_NilValue; 
   int n = 1, i;
     tesseract::ResultIterator* ri = api->GetIterator();
+    if(!ri) {
+        PROBLEM "No ResultIterator. Have you called Recognize() on the tesseract object"
+            ERROR;
+    }
     while(ri->Next(level))
         n++;
 
