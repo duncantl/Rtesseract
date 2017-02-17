@@ -113,7 +113,7 @@ function(box, img, ...)
 getConfidenceColors =
 function(bbox, confidences = bbox[, "confidence"],
          numColors = 10,
-         colors = colorRampPalette(c("blue", "red"))(numColors),
+         colors = colorRampPalette(c("#f7fcf5", "#005a32"))(numColors),
          intervals = quantile(confidences, seq(0, 1, by = .1)))
 {
    i = cut(confidences, intervals )
