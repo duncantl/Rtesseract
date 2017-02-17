@@ -6,7 +6,7 @@
 \title{Rtesseract: A package for Optical Character Recognition (OCR)
   from R}
 
-\author{Duncan Temple Lang \and Matthew B. Espe}
+\author{Matthew B. Espe \and Duncan Temple Lang}
 
 \begin{document}
 
@@ -18,7 +18,107 @@
 
 \section{Introduction}\label{intro}
 
+Brief intro to OCR, Tesseract. Introduce some applications.
+
+Optical Character Recognition (OCR) is a means of converting an image
+of text to strings or characters that can be manipulated by a
+computer. Typical OCR is used to convert a scanned image of a text to
+a digital copy. With increasingly powerful capacity for the analysis
+of the contents of text, there is increasing demand for the ability
+enter text into a computer efficiently (compared to human transcription).
+
+Tesseract development began at Hewlett Packard Laboratories Bristol
+and Hewlett Packard Co between 1985 to 1994. It was entered into 1995
+UNLV Annual Test of OCR Accuracy, where it scored well against
+commercial products. Little additional development occurred between
+1995 and when the code base was
+released for Open Source in 2005. It has since been maintained
+by Google (accuracy?) and open-source developers.
+
+The biggest strength of Tesseract is its flexibility and ability to be
+trained. There are many commercial OCR products, but few allow user
+training to custom fonts and languages. Tesseract, on the other hand,
+is highly customizable, and allows user access to low-level
+calibration parameters for fine-tuning the OCR engine for increasing
+accuracy to specific problems. The design philosophy of the Rtesseract
+package was to allow convenience wrappers for the OCR engine while
+preserving access to the fine-scale controls. There are other wrappers
+for Tesseract for R (tesseract; Ooms 2016), however the Rtesseract
+package pre-dates this and allows additional functionality and finer
+control.
+
 \section{Package Description}\label{desc}
+
+\subsection{Base Functions}
+
+The base of the package is a collection of four high-level functions,
+getText(), getConfidences(), getAlternatives(), and
+getBoundingBoxes(). Of these, getText() is the simplest by taking an
+image and returning a character vector of the recognized
+characters/words. This is similar to the functionality of most common
+OCR engines (e.g., Google Vision, PDF Pen Pro, Adobe
+Acrobat), as well as the tesseract package. However, with
+getConfidences(), the confidences of the OCR engine can be returned,
+allowing further analysis of the results. Building on this, the
+alternative matches at the character level can be returned with
+getAlternatives(). Lastly, the spatial locations of the bounding boxes
+around each character, word, or element can be returned with
+getBoundingBoxes().
+
+Additionally, plotting functions have been included, which allow
+visualization of the results of OCR alongside/over-top the original
+image, plotting of bounding boxes and confidence intervals, etc.
+
+%% Code chunks are just placeholders for eventual examples
+
+\begin{figure}[h]
+<<fig = TRUE>>=
+plot(img, bboxes, confidences = XXX)
+@ 
+\caption{Plotting OCR results}
+\label{fig:cor}
+\end{figure}
+
+\subsection{Meta data}
+
+In addition to the base functions, meta data about the OCR engine and
+the input image can be retrieved using a collection of
+functions. Examples of these functions include GetImageDims(),
+getCharWidth(), etc. 
+
+%% Expand this with list Duncan created
+
+\subsection{Fine control}
+
+Many customizable fine controls are accessible through R, including
+pageSegMode, pageOrientation, language, white- and black-list
+characters, custom user-added patterns and words, alternative OCR
+engines, etc. 
+
+If multiple outputs are desired (e.g., bounding boxes as well as
+confidences), a TesseractAPI object can be created outside the above
+main functions, avoiding the need to repeatedly create and OCR the
+same image. 
+
+%% Give some example of adjusting the PSM mode, etc.
+<<>>=
+api = tesseract(img)
+getConfidences(api)
+getBoundingBoxes(api)
+
+@
+
+\section{Advantages}
+
+Provides both easy access to OCR functionality and access to low-level
+control parameters. Allows recovery of confidence and bounding boxes,
+which allow spatial analysis of results. Spatial information can be
+used to refine OCR area or recover table/structured data. 
+
+Free, open-source.
+
+Allows integration of full work-flow into R. OCR, NLP, etc.
+
 
 \section{Examples}\label{examples}
 
@@ -27,7 +127,7 @@
 \subsection{Structured data}
 
 <<<>>=
-print("Testing")
+
 @ 
 
 

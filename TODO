@@ -35,7 +35,11 @@ getAlternatives(ri) may not want to just get the alternatives for the current cu
   - need to check that this is operating correctly.
    This is because we never call Next(), but lapply(ri, fun, level) does. And we have to specify the level here.
 
+Test that output is the same and correct between ocr and getXXX functions.
 
+Test that plot/other helper functions are still functioning with output from the getXXX functions.
+
+Update documentation/NAMESPACE to reflect current functions and functionality.
 
 ? Other methods form the baseapi.h ?
 
