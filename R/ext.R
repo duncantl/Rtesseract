@@ -197,26 +197,29 @@ function(obj, level = 3L, ...)
 
 
 setGeneric("getAlternatives",
-           function(obj, level = 3L, ...)
+           function(obj, level = 4L, ...)
              standardGeneric("getAlternatives"))
 
 setMethod("getAlternatives",
           "TesseractBaseAPI",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 4L, ...) {
+            if(!hasRecognized(obj))
+              Recognize(obj)
+            
             .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
 setMethod("getAlternatives",
           "ResultIterator",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 4L, ...) {
             .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
 setMethod("getAlternatives",
            "character",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 4L, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts)
               getAlternatives(ts, level)
@@ -224,12 +227,14 @@ setMethod("getAlternatives",
 
 setMethod("getAlternatives",
            "Pix",
-          function(obj, level = 3L, ...) {
+          function(obj, level = 4L, ...) {
               ts = tesseract(...)
               SetImage(ts, obj)              
               Recognize(ts)
               getAlternatives(ts, level)
           })
+
+
 
 setGeneric("getConfidences",
            function(obj, level = 3L, ...)
@@ -246,6 +251,8 @@ setMethod("getConfidences",
 setMethod("getConfidences",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
+              if(!hasRecognized(obj))
+                 Recognize(obj)
               .Call("R_TesseractBaseAPI_getConfidences", obj, as(level, "PageIteratorLevel"))
           })
 
@@ -265,6 +272,9 @@ setGeneric("getBoxes",
 setMethod("getBoxes",
           "TesseractBaseAPI",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
+              if(!hasRecognized(obj))
+                 Recognize(obj)
+              
               ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as(level, "PageIteratorLevel"))
               m = do.call(rbind, ans)
               rownames(m) = names(ans)
