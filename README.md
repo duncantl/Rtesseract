@@ -16,6 +16,7 @@ added R functionality to visualize the results.
 1. Of course, the package provides functionality to get the recognized text.
 However, it also allows us to do this at various different levels, e.g.
 word, character, line
+3. We can create a searchable and selectable PDF version of the image(s).
 2. We can also use different page segmentation modes so that we can detect/recognize
 lines on the image which is useful for processing tables where the lines separate
 rows or columns
@@ -31,6 +32,7 @@ rows or columns
 3. We can set and query many variables cotrolling tesseract's behaviour.
 3. We can query details about the image.
 3. We can query the metadata about the version of tesseract, the supported image formats, etc.
+
 
 
 We can machine generate the interface to the other methods and classes in the tesseract API/library.
