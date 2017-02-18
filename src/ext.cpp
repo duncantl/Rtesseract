@@ -400,11 +400,18 @@ R_tesseract_GetInitLanguagesAsString(SEXP r_api)
 
 extern "C"
 SEXP
-R_tesseract_ReadConfigFile(SEXP r_api, SEXP r_filename)
+R_tesseract_ReadConfigFile(SEXP r_api, SEXP r_filename, SEXP r_debug)
 {
   tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
-  for(int i = 0; i < Rf_length(r_filename); i++)
-    api->ReadConfigFile(CHAR(STRING_ELT(r_filename, i)));
+  bool debug = (bool) LOGICAL(r_debug)[0];
+  
+  for(int i = 0; i < Rf_length(r_filename); i++) {
+      const char *tmp = CHAR(STRING_ELT(r_filename, i));
+      if(debug) 
+         api->ReadDebugConfigFile(tmp);
+      else 
+         api->ReadConfigFile(tmp);
+  }
 
   return(R_NilValue);
 }

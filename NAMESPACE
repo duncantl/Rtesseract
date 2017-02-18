@@ -23,7 +23,7 @@ exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
 exportClass("TessPDFRenderer")
 
-export(toPDF)
+export(toPDF, toTSV, toHTML, toHOcr, toUNLV, toOSD, toBoxText)
 
 export(lapply)
 exportMethods(lapply)

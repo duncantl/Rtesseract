@@ -92,7 +92,7 @@ R_TessBaseAPI_ProcessPages(SEXP r_api, SEXP r_filename, SEXP r_retry_config, SEX
 void
 R_finalizePDFRender(SEXP extPtr)
 {
-   tesseract::TessPDFRenderer *renderer = (tesseract::TessPDFRenderer *) R_ExternalPtrAddr(extPtr);
+   tesseract::TessResultRenderer *renderer = (tesseract::TessResultRenderer *) R_ExternalPtrAddr(extPtr);
    if(renderer)
        delete renderer;
 }
@@ -104,5 +104,58 @@ R_TessPDFRender(SEXP r_file, SEXP r_datadir)
     tesseract::TessPDFRenderer *renderer;
     renderer = new tesseract::TessPDFRenderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0)));
 
-    return(createRef(renderer, "TessPDFRenderer", R_finalizePDFRender));    //XXX put finalizer
+    return(createRef(renderer, "TessPDFRenderer", R_finalizePDFRender));   
 }
+
+
+extern "C"
+SEXP
+R_TessTsvRender(SEXP r_file, SEXP r_font_info)
+{
+    tesseract::TessTsvRenderer *renderer;
+    renderer = new tesseract::TessTsvRenderer(CHAR(STRING_ELT(r_file, 0)), LOGICAL(r_font_info)[0]);
+
+    return(createRef(renderer, "TessTsvRenderer", R_finalizePDFRender));   
+}
+
+extern "C"
+SEXP
+R_TessHOcrRender(SEXP r_file, SEXP r_font_info)
+{
+    tesseract::TessHOcrRenderer *renderer;
+    renderer = new tesseract::TessHOcrRenderer(CHAR(STRING_ELT(r_file, 0)), LOGICAL(r_font_info)[0]);
+
+    return(createRef(renderer, "TessHOcrRenderer", R_finalizePDFRender));   
+}
+
+extern "C"
+SEXP
+R_TessOsdRender(SEXP r_file)
+{
+    tesseract::TessOsdRenderer *renderer;
+    renderer = new tesseract::TessOsdRenderer(CHAR(STRING_ELT(r_file, 0)));
+
+    return(createRef(renderer, "TessOsdRenderer", R_finalizePDFRender));   
+}
+
+
+extern "C"
+SEXP
+R_TessBoxTextRender(SEXP r_file)
+{
+    tesseract::TessBoxTextRenderer *renderer;
+    renderer = new tesseract::TessBoxTextRenderer(CHAR(STRING_ELT(r_file, 0)));
+
+    return(createRef(renderer, "TessBoxTextRenderer", R_finalizePDFRender));   
+}
+
+extern "C"
+SEXP
+R_TessUnlvRender(SEXP r_file)
+{
+    tesseract::TessUnlvRenderer *renderer;
+    renderer = new tesseract::TessUnlvRenderer(CHAR(STRING_ELT(r_file, 0)));
+
+    return(createRef(renderer, "TessUnlvRenderer", R_finalizePDFRender));   
+}
+

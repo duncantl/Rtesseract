@@ -333,13 +333,13 @@ function(api, ppi)
 }
 
 ReadConfigFile = 
-function(api, files, ok = FALSE)
+function(api, files, debug = FALSE, ok = FALSE)
 {
    ff = path.expand(files)
    if(!ok && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
-   .Call("R_tesseract_ReadConfigFile", as(api, "TesseractBaseAPI"), ff)
+   .Call("R_tesseract_ReadConfigFile", as(api, "TesseractBaseAPI"), ff, as.logical(debug))
 }
 
 GetInitLanguages = 

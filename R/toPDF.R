@@ -1,19 +1,67 @@
-
 toPDF =
 function(imgFile, outFile = removeExtension(imgFile),
          api = tesseract(, PSM_AUTO))
 {
-    render = .Call("R_TessPDFRender", outFile, GetDatapath(api))
-    ok = .Call("R_TessBaseAPI_ProcessPages", api, imgFile, character(), 0L, render)
-    if(!ok) {
-        stop("Problem creating PDF file")
-    }
+   renderPages(imgFile, api, .Call("R_TessPDFRender", outFile, GetDatapath(api)))
      # ensure the finalizer for the render object is run now.
      # This calls the C++ destructor (inherited one from TessResultRender) which flushes and closes the file.
-    rm(render)
+   #rm(render); gc()
+   gc()
+   paste0(outFile, ".pdf")   
+}
+
+renderPages =
+function(imgFile, api, render)
+{    
+    ok = .Call("R_TessBaseAPI_ProcessPages", api, imgFile, character(), 0L, render)
+    if(!ok) 
+        stop("Problem rendering page(s)")
     gc()
-    
-    paste0(outFile, ".pdf")
+}
+
+toTSV =
+function(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+{
+   renderPages(imgFile, api, .Call("R_TessTsvRender", outFile, as.logical(fontInfo)))
+   gc()
+   paste0(outFile, ".tsv")
+}
+
+toHTML = toHOcr =
+function(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+{
+   renderPages(imgFile, api, .Call("R_TessHOcrRender", outFile, as.logical(fontInfo)))
+   gc()
+   paste0(outFile, ".hocr")
+}
+
+
+toUNLV =
+    # UNLV
+function(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+{
+   renderPages(imgFile, api, .Call("R_TessUnlvRender", outFile))
+   gc()
+   paste0(outFile, ".unlv")
+}
+
+
+toOSD =
+    # OSD - orientation and script detection
+function(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+{
+   renderPages(imgFile, api, .Call("R_TessOsdRender", outFile))
+   gc()
+   paste0(outFile, ".osd")
+}
+
+
+toBoxText =
+function(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+{
+   renderPages(imgFile, api, .Call("R_TessBoxTextRender", outFile))
+   gc()
+   paste0(outFile, ".box")
 }
 
 

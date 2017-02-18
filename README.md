@@ -17,6 +17,7 @@ added R functionality to visualize the results.
 However, it also allows us to do this at various different levels, e.g.
 word, character, line
 3. We can create a searchable and selectable PDF version of the image(s).
+3. We can output the results of the OCR to a tab-separated-value file, an HTML (hocr) file, a BoxText, a UNLV, or a OSD file.
 2. We can also use different page segmentation modes so that we can detect/recognize
 lines on the image which is useful for processing tables where the lines separate
 rows or columns
