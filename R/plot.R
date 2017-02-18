@@ -9,10 +9,11 @@ function(x, y = "word",
          filename = if(!missing(x)) GetInputName(x) else "",         
          img = readImage(filename),
          bbox = BoundingBoxes(ri, y),
-         border = "red",
-         outer.border = "green",
+         border = if(confidence) getConfidenceColors(bbox) else "red",
+         outer.border = border,
          cropToBoxes = FALSE, margin = .05,
-         main = filename,
+         main = basename(filename),
+         confidence = TRUE,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
