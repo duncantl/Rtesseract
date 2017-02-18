@@ -1,4 +1,9 @@
-[check] Segfaults if Recognize hasn't been called.
+ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
+  try sliding in definition of exit() in Rexit/exit.c
+
+  library(Rtesseract); api = tesseract();ReadConfigFile(api, "bad_config")
+
+[fixed] Segfaults if Recognize hasn't been called.
  library(Rtesseract)
  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
  a = getAlternatives(ts)
@@ -9,6 +14,7 @@
   b = getBoxes(ts)
 
 
+[Verify sane]
 Get alternatives is returning different output between:
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
@@ -48,7 +54,7 @@ seg fault in plotSubImage() when run via the examples.
   Could be an earlier example with memory issues appearing at this point.
   e.g. pixRead()
 
-[adapt but okay] ProcessPages in render.cpp
+[done] ProcessPages in render.cpp
 
 ??Change the names of the functions to initial lower case, e.g. getInputName(), ?
 
@@ -66,7 +72,7 @@ GetInputImage() - figure out how to convert the Pix to an array() in R
      [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
 
 
-Sort out the R renderer class.
+[very low priority] Sort out the R renderer class.
   Why do we want to have our own?  If we have to use ProcessPages() we don't want to write to disk unnecessarily.
 
 Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
