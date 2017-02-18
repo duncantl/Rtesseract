@@ -13,7 +13,7 @@ function(imgFile, outFile = removeExtension(imgFile),
     rm(render)
     gc()
     
-    outFile
+    paste0(outFile, ".pdf")
 }
 
 
