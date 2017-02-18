@@ -39,3 +39,7 @@ setAs("character", "PageIteratorLevel",
 
 
 
+
+
+setClass("TessResultRenderer", contains = "TesseractRef")
+setClass("TessPDFRenderer", contains = "TessResultRenderer")

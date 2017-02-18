@@ -9,6 +9,8 @@ importFrom("stats", dist, median, quantile)
 
 import(RAutoGenRunTime)
 
+export(getConfidenceColors)
+
 export(tesseractVersion)
 
 export(ocr)
@@ -19,6 +21,9 @@ export(PageIteratorLevel)
 
 exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
+exportClass("TessPDFRenderer")
+
+export(toPDF)
 
 export(lapply)
 exportMethods(lapply)
