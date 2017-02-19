@@ -135,9 +135,10 @@ setMethod("lapply", "ResultIterator", lapply.ResultIterator)
 
 setMethod("lapply", "TesseractBaseAPI",
            function(X, FUN, level = "word", ...) {
-               lapply(as(X, "ResultIterator"), FUN, level, ...)
+               lapply(GetIterator(X), FUN, level, ...)
            })
 
+if(FALSE) # Don't expose this.
 setAs("TesseractBaseAPI", "ResultIterator",
         function(from) {
               # Do we need to ensure Recognize() has been called ?
@@ -160,6 +161,7 @@ function(ri, level = 3L)
    ans
 }
 
+if(FALSE) {
 BoundingBox =
     # Retire this - getBoxes()
 function(ri, level = 3L)
@@ -186,6 +188,7 @@ function(ri, level = 3L)
 
   .Call("R_ResultIterator_GetUTF8Text", ri, as(level, "PageIteratorLevel"))
 }
+} #end of if(FALSE)
 
 
 getText =
@@ -205,15 +208,17 @@ setMethod("getAlternatives",
           function(obj, level = 4L, ...) {
             if(!hasRecognized(obj))
               Recognize(obj)
-            
-            .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
+
+           getAlternatives(GetIterator(obj), level)
+  #          .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
 setMethod("getAlternatives",
           "ResultIterator",
           function(obj, level = 4L, ...) {
-            .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
+             lapply(obj, "getAlts", as(level, "PageIteratorLevel"))
+#            .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
@@ -336,6 +341,7 @@ ReadConfigFile =
 function(api, files, debug = FALSE, ok = FALSE)
 {
    ff = path.expand(files)
+     # We can use GetDatapath() and add /configs/ to that 
    if(!ok && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
 
