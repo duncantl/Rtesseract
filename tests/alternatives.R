@@ -11,10 +11,14 @@ api = tesseract(f)
 Recognize(api)
 alts2 = getAlternatives(api)
 
-api = tesseract(f)
-Recognize(api)
-ri = as(api, "ResultIterator")
-alts3 = getAlternatives(api)
+if(FALSE) {
+ api = tesseract(f)
+ Recognize(api)
+   # No longer allowing people to get the ResultIterator as it raises memory management coordination
+ ri = as(api, "ResultIterator")
+ alts3 = getAlternatives(ri)
+}
+
 
 
 
