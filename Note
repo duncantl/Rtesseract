@@ -1,0 +1,31 @@
+The following relates to memory management.
+
+For the most part, users can specify the image to be OCR'ed by name
+and get the results with getText(), getConfidences(), getBoxes(), getAlternatives().
+
+Alternatively, it can be useful to create a TessBaseAPI object via the tesseract()
+function and to use this to query additional information and set variables, etc.
+
+However, we get the results from a ResultIterator obtained from a TessBaseAPI.
+It is natural to expose this to end users for more advanced use.
+However, one can get an iterator as an R object and then discard the associated tesseract object.
+The tesseract object will be garbage collected at some point, and then the iterator is then invalid 
+and one can cause a segmentation fault.
+
+Similarly, it can be convenient to get the current image being processed by the tesseract object.
+Again, however, if we retrieve this as an R object and the tesseract object is garbage collected,
+the image is invalid and using it will cause problems.
+
+We use the ResultIterator internally where we can ensure that the tesseract object is not
+garbage collected when we have a reference to the iterator.
+
+We could develop a more elaborate mechanism to track ResultIterator and Pix objects
+that are queried from a given tesseract object. However, for now, it doesn't seem
+to be worth the complexity.
+
+
+The basic sequence of events leading to an invalid iterator is 
+
+Time ->
+
+tesseract  ->  iterator  -> GC tesseract -> use invalid iterator

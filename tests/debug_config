@@ -1,0 +1,4 @@
+
+tessedit_char_whitelist acgt
+tessedit_zero_rejection 0
+debug_file /tmp/foo
