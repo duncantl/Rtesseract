@@ -1,0 +1,10 @@
+library(Rtesseract)
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+
+ts = tesseract(f)
+Recognize(ts)
+ri = as(ts, "ResultIterator")
+rm(ts)
+gc()
+gc()
+a = getAlternatives(ri)
