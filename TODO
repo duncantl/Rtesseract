@@ -90,10 +90,11 @@ GetInputImage() - figure out how to convert the Pix to an array() in R
   Why do we want to have our own?  If we have to use ProcessPages() we don't want to write to disk unnecessarily.
 
 
-When we return a Pix, increase the reference count and put a finalizer to decrease it.
+[don't make it accessible from the tesseract object]
+  When we return a Pix, increase the reference count and put a finalizer to decrease it.
     The destroyPix  seems to be there.
 
-Also if we have a ResultIterator, don't let the tesseract instance die/
+[dont expose it to end-user] Also if we have a ResultIterator, don't let the tesseract instance die/
  ?Should we introduce  a sub-class of tesseract with which we can solve these and the already Recognize()d issues?
 
 When tesseract complains below, raise an error.  Stop the output going to stdout/stderr

@@ -1,3 +1,20 @@
+0.3-0
+	* getText(), getConfidences(), getBoxes(), getAlternatives() with methods for image file
+	  name or TessBaseAPI objects (and others internally).
+
+	* removed ocr() function
+
+	* color the plot of results by confidence.
+
+	* removed exposure of ResultIterator and Pix to the end user to avoid potential memory
+	  management issues.
+
+	* ReadConfigFile() has a debug = FALSE parameter.
+
+	* several functions to convert the image to searchable/selectable PDF, HTML, TSV, OSD.
+
+	* code more robust.
+
 0.2-0
 
 	* coerce tesseract API object to iterator as necessary

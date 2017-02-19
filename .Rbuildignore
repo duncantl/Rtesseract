@@ -11,8 +11,13 @@ R/plot.R-tmp
 Makevars$
 BoundingBox.Rd-old
 autom4te.cache
+config.log
+config.status
 FUNS
 ^vars.R$
 .gitignore
 Experiments
+src/Expt
+^mywords$
+^Notes$
 
