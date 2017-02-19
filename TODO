@@ -1,7 +1,13 @@
+remove the ocr() function
+
 ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
   try sliding in definition of exit() in Rexit/exit.c
 
   library(Rtesseract); api = tesseract();ReadConfigFile(api, "bad_config")
+
+tprintf() annd messages on console.
+
+Be able to interrupt in OCR computations with Ctrl-c.
 
 [fixed] Segfaults if Recognize hasn't been called.
  library(Rtesseract)
@@ -14,8 +20,7 @@ ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
   b = getBoxes(ts)
 
 
-[Verify sane]
-Get alternatives is returning different output between:
+[Verify sane] Get alternatives is returning different output between:
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 a = getAlternatives(f)
@@ -32,11 +37,16 @@ ri = as(api, "ResultIterator")
 b = lapply(ri, getNativeSymbolInfo("getAlts"), "word")
 
 
+[done] switch getAlternatives() method for TessBaseAPI to use ResultIterator method.
 
-getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
+[yes] Does the ResultIterator get released?
+
+Do we need to delete the choice object
+
+[done] getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
 
 
-[] Additionally, seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
+[resolved] Additionally, seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
   Does ChoiceIterator() only work for characters/symbols, not words.
   - need to check that this is operating correctly.
    This is because we never call Next(), but lapply(ri, fun, level) does. And we have to specify the level here.
@@ -44,6 +54,10 @@ getAlternatives(ri) may not want to just get the alternatives for the current cu
 Test that output is the same and correct between ocr and getXXX functions.
 
 Test that plot/other helper functions are still functioning with output from the getXXX functions.
+Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
+Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
+ and creates a data frame/matrix.
+
 
 Update documentation/NAMESPACE to reflect current functions and functionality.
 
@@ -75,9 +89,6 @@ GetInputImage() - figure out how to convert the Pix to an array() in R
 [very low priority] Sort out the R renderer class.
   Why do we want to have our own?  If we have to use ProcessPages() we don't want to write to disk unnecessarily.
 
-Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
-Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
- and creates a data frame/matrix.
 
 When we return a Pix, increase the reference count and put a finalizer to decrease it.
     The destroyPix  seems to be there.
@@ -86,6 +97,7 @@ Also if we have a ResultIterator, don't let the tesseract instance die/
  ?Should we introduce  a sub-class of tesseract with which we can solve these and the already Recognize()d issues?
 
 When tesseract complains below, raise an error.  Stop the output going to stdout/stderr
+ (see tprintf_internal issue above. )
       The error messages run through tprintf_internal() in ccutil/tprinf.cpp.
       There is a debug_file that we can write to.  Set this and then read that file when there is an error. Very ugly.
       How do people do this in python, etc.
@@ -105,26 +117,26 @@ When tesseract complains below, raise an error.  Stop the output going to stdout
    Recognize(api)
 
 
-Be able to interrupt in OCR computations with Ctrl-c.
-
 Connect to OpenCV for manipulating the image.  perhaps thresholding away the specs. 
     https://github.com/swarm-lab/videoplayR
     https://code.google.com/archive/p/r-opencv/source/default/source
 
 
-? GetInputName seems to take an age (in some cases)!!  Did time it and got exactly 0.
+?? GetInputName seems to take an age (in some cases)!!  Did time it and got exactly 0.
 
-? plot.OCR() seems to be doing something unnecessary - an extra call to Recognize() somewhere?
+?? plot.OCR() seems to be doing something unnecessary - an extra call to Recognize() somewhere?
    Seems okay.  rasterImage() and readPNG() do take time.
 
-create searchable pdf - use their renderer
+[done] create searchable pdf - use their renderer
   want to be able to fix the errors and then create it.
   Started in example in pdf.R and code in render.cpp.
      It generates a pdf but it cannot be opened.  
+   Needed a finalizer on the R object to call the destructor to close the file.
 
-See MutableIterator for possibly modifying the tesseract content.
+[not really relevant] See MutableIterator for possibly modifying the tesseract content.
+  This is just a live ResultIterator that has access to the contents of the TessBaseAPI so we could change them.
 
-Can't seem to open pdf config file - i.e., the one called pdf in /usr/local/share/tessdata/configs, but can find batch.nochop.
+[okay now] Can't seem to open pdf config file - i.e., the one called pdf in /usr/local/share/tessdata/configs, but can find batch.nochop.
 
 [check] 
 With cropBoxes, can get negative indices.
@@ -146,13 +158,12 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
    i.e. implement not in C but in R code to assemble the different pieces.
    Can do now.
 
-[Done] Plot the image and the components and 
-   show the confidence level for each  box
+[Done] Plot the image and the components and show the confidence level for each  box
    See tests/plot.R
 
-   Color code the rectangles for the bboxes according to the confidence.
+[Mostly done]   Color code the rectangles for the bboxes according to the confidence.
 
-  Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
+Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
 [Feature Request] When find an error in the OCR, get the subset of the image for that bounding box and 
    then see if we can cluster them.
@@ -160,7 +171,7 @@ compareWords() warns about different lengths. Something wrong? See MarkLundy/ocr
     Or instead of errors, just those values with low confidence.
     See inst/caseStudies
 
-  Can do this from the bounding box information and reading the image using one of the  R packages.
+  Can do this from the bounding box information and reading the image using one of the R packages.
 
 [ok] error rates and confusion matrix when know the actual values.
 
