@@ -5,10 +5,9 @@
 
 plot.OCR =
 function(x, y = "word",
-         ri = GetIterator(x),
          filename = if(!missing(x)) GetInputName(x) else "",         
          img = readImage(filename),
-         bbox = BoundingBoxes(ri, y),
+         bbox = getBoxes(x),
          border = if(confidence) getConfidenceColors(bbox) else "red",
          outer.border = border,
          cropToBoxes = FALSE, margin = .05,
