@@ -1,15 +1,12 @@
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
-
-alts = ocr(f, alternatives = TRUE)
+api = tesseract(f)
+Recognize(api)
+alts = getAlternatives(api)
 
 alts1 = getAlternatives(f)
 identical(alts, alts1)
 
-
-api = tesseract(f)
-Recognize(api)
-alts2 = getAlternatives(api)
 
 if(FALSE) {
  api = tesseract(f)

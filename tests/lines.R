@@ -12,8 +12,9 @@ GetPageSegMode(ts)
 
 Recognize(ts)
 
-bbb = BoundingBoxes(ts)
+bbb = getBoxes(ts)
 print(max(bbb[,3]  - bbb[,1]))
+
 
 
 if(FALSE) {

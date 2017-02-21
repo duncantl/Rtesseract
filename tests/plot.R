@@ -16,7 +16,8 @@ Recognize(api)
 par(mfrow = c(1, 2))
 plot(api, main = "Words")
 ## need to change the level at the API
-## plot(api, main = "Individual Characters")
+plot(api, main = "Individual Characters",
+     bbox = getBoxes(api, level = 4))
 
 
 bbox = getBoxes(api)
