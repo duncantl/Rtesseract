@@ -12,7 +12,7 @@ GetPageSegMode(ts)
 
 Recognize(ts)
 
-bbb = getBoxes(ts)
+bbb = GetBoxes(ts)
 print(max(bbb[,3]  - bbb[,1]))
 
 

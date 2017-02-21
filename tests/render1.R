@@ -1,5 +1,6 @@
 library(Rtesseract)
-f = "inst/images/OCRSample2.png"
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+
 out = Rtesseract:::removeExtension(basename(f))
 
 a = toHTML(f, outFile = out)

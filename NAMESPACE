@@ -9,7 +9,7 @@ importFrom("stats", dist, median, quantile)
 
 import(RAutoGenRunTime)
 
-export(getConfidenceColors)
+export(GetConfidenceColors)
 
 export(tesseractVersion)
 
@@ -65,12 +65,12 @@ exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageS
 
 S3method(plot, TesseractBoxdata)
 
-export(getSmudges, getCharWidth, getCharHeight, bboxToDF, orderBBox)
+export(GetSmudges, GetCharWidth, GetCharHeight, bboxToDF, orderBBox)
 
-export(getText, getConfidences, getBoxes, getAlternatives)
-exportMethods("getConfidences", "getBoxes", "getAlternatives")
+export(GetText, GetConfidences, GetBoxes, GetAlternatives)
+exportMethods("GetConfidences", "GetBoxes", "GetAlternatives")
 
-export(getImageDims, getImageInfo)
+export(GetImageDims, GetImageInfo)
 
 
 #, GetImage, GetInputImage)

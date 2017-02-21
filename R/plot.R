@@ -7,8 +7,8 @@ plot.OCR =
 function(x, y = "word",
          filename = if(!missing(x)) GetInputName(x) else "",         
          img = readImage(filename),
-         bbox = getBoxes(x),
-         border = if(confidence) getConfidenceColors(bbox) else "red",
+         bbox = GetBoxes(x),
+         border = if(confidence) GetConfidenceColors(bbox) else "red",
          outer.border = border,
          cropToBoxes = FALSE, margin = .05,
          main = basename(filename),
@@ -21,7 +21,7 @@ function(x, y = "word",
        m = bbox
 
     if(is.null(img)) {
-        dims = getImageDims(x)
+        dims = GetImageDims(x)
         nrow = dims[1]
         ncol = dims[2]
     } else {
@@ -110,7 +110,7 @@ function(box, img, ...)
 
 
 
-getConfidenceColors =
+GetConfidenceColors =
 function(bbox, confidences = bbox[, "confidence"],
          numColors = 10,
          colors = colorRampPalette(c("#f7fcf5", "#005a32"))(numColors),

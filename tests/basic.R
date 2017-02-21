@@ -1,9 +1,9 @@
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 
-alts = getAlternatives(f)
-w = getConfidences(f)
-bb = getBoxes(f)
+alts = GetAlternatives(f)
+w = GetConfidences(f)
+bb = GetBoxes(f)
 
 
 if(FALSE) {
@@ -11,7 +11,7 @@ if(FALSE) {
 api = tesseract(f)
 Recognize(api)
 ri = as(api, "ResultIterator")
-alts.ri = getAlternatives(ri)
+alts.ri = GetAlternatives(ri)
 identical(alts[[1]], alts.ri)
 }
 

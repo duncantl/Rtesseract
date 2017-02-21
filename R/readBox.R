@@ -43,15 +43,15 @@ function(file, imgDim = integer(), ...)
 
 
 if(FALSE) {
-getTextInfo =
+GetTextInfo =
 function(x, ...)
-  UseMethod("getTextInfo")
+  UseMethod("GetTextInfo")
 
-getTextInfo.default =
+GetTextInfo.default =
 function(x, ...)
     NULL
 
-getTextInfo.TesseractBoxdata =
+GetTextInfo.TesseractBoxdata =
 function(x, ymax = NA, ...)
 {
   ans = x[, c("left", "bottom", "text")]

@@ -10,7 +10,7 @@ SetInputName(ts, f)
 Recognize(ts)
 Rtesseract:::oem(ts)
 
-bbox = getBoxes(ts)
+bbox = GetBoxes(ts)
 
 
 ts2 = tesseract(init = FALSE)
@@ -19,5 +19,5 @@ SetPageSegMode(ts2, 'psm_auto')
 SetInputName(ts2, f)
 Recognize(ts2)
 
-bbox2 = getBoxes(ts2)
+bbox2 = GetBoxes(ts2)
 

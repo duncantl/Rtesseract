@@ -1,9 +1,9 @@
-getSmudges =
+GetSmudges =
     #
     # Identify what are probably specs/smudges from the scanning process that are not characters.
     # These are small boxes. We also want them to be far way from other elements.
     #
-function(bbox, threshold = 5, charWidth = getCharWidth(bbox), charHeight = getCharHeight(bbox), anywhere = FALSE)
+function(bbox, threshold = 5, charWidth = GetCharWidth(bbox), charHeight = GetCharHeight(bbox), anywhere = FALSE)
 {
   w = bbox[,3] - bbox[,1]
   h = bbox[,4] - bbox[,2]
@@ -17,32 +17,32 @@ function(bbox, threshold = 5, charWidth = getCharWidth(bbox), charHeight = getCh
 }
 
 
-getCharWidth =
+GetCharWidth =
     #
     # get an estimate of the typical character width
     #
 function(bbox, fun = median, onlyAlphaNumeric = TRUE)
 {
    if(onlyAlphaNumeric)
-      bbox = bbox[ grepl( "[A-Za-z0-9]", getRecText(bbox)), ]
+      bbox = bbox[ grepl( "[A-Za-z0-9]", GetRecText(bbox)), ]
    
-   fun(  (bbox[,3] - bbox[,1])/nchar(getRecText(bbox)) )
+   fun(  (bbox[,3] - bbox[,1])/nchar(GetRecText(bbox)) )
 }
 
 
-getCharHeight =
+GetCharHeight =
     #
     # get an estimate of the typical character height
     #
 function(bbox, fun = median, onlyAlphaNumeric = TRUE)
 {
    if(onlyAlphaNumeric)
-      bbox = bbox[ grepl( "[A-Za-z0-9]", getRecText(bbox)), ]
+      bbox = bbox[ grepl( "[A-Za-z0-9]", GetRecText(bbox)), ]
    
    fun(  (bbox[,4] - bbox[,2])  )
 }    
 
-getRecText =
+GetRecText =
     #
     # get the text from a bbox which can either be a matrix with rownames as text, or a data frame with a "text" column.
     #

@@ -164,7 +164,7 @@ function(ri, level = 3L)
 
 if(FALSE) {
 BoundingBox =
-    # Retire this - getBoxes()
+    # Retire this - GetBoxes()
 function(ri, level = 3L)
 {
   ri = as(ri, "ResultIterator")
@@ -192,30 +192,30 @@ function(ri, level = 3L)
 } #end of if(FALSE)
 
 
-getText =
+GetText =
 function(obj, level = 3L, ...)
 {
-  names(getConfidences(obj, level, ...))
+  names(GetConfidences(obj, level, ...))
 }
 
 
 
-setGeneric("getAlternatives",
+setGeneric("GetAlternatives",
            function(obj, level = 4L, ...)
-             standardGeneric("getAlternatives"))
+             standardGeneric("GetAlternatives"))
 
-setMethod("getAlternatives",
+setMethod("GetAlternatives",
           "TesseractBaseAPI",
           function(obj, level = 4L, ...) {
             if(!hasRecognized(obj))
               Recognize(obj)
 
-           getAlternatives(GetIterator(obj), level)
+           GetAlternatives(GetIterator(obj), level)
   #          .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
-setMethod("getAlternatives",
+setMethod("GetAlternatives",
           "ResultIterator",
           function(obj, level = 4L, ...) {
              lapply(obj, "getAlts", as(level, "PageIteratorLevel"))
@@ -223,38 +223,38 @@ setMethod("getAlternatives",
           })
 
 
-setMethod("getAlternatives",
+setMethod("GetAlternatives",
            "character",
           function(obj, level = 4L, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts)
-              getAlternatives(ts, level)
+              GetAlternatives(ts, level)
           })
 
-setMethod("getAlternatives",
+setMethod("GetAlternatives",
            "Pix",
           function(obj, level = 4L, ...) {
               ts = tesseract(...)
               SetImage(ts, obj)              
               Recognize(ts)
-              getAlternatives(ts, level)
+              GetAlternatives(ts, level)
           })
 
 
 
-setGeneric("getConfidences",
+setGeneric("GetConfidences",
            function(obj, level = 3L, ...)
-             standardGeneric("getConfidences"))
+             standardGeneric("GetConfidences"))
 
-setMethod("getConfidences",
+setMethod("GetConfidences",
           "Pix",
           function(obj, level = 3L, ...) {
               api = tesseract(...)
               SetImage(api, obj)
-              getConfidences(api, level)
+              GetConfidences(api, level)
           })
 
-setMethod("getConfidences",
+setMethod("GetConfidences",
           "TesseractBaseAPI",
           function(obj, level = 3L, ...) {
               if(!hasRecognized(obj))
@@ -262,20 +262,20 @@ setMethod("getConfidences",
               .Call("R_TesseractBaseAPI_getConfidences", obj, as(level, "PageIteratorLevel"))
           })
 
-setMethod("getConfidences",
+setMethod("GetConfidences",
            "character",
           function(obj, level = 3L, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts)
-              getConfidences(ts, level)
+              GetConfidences(ts, level)
           })
 
 
-setGeneric("getBoxes",
+setGeneric("GetBoxes",
            function(obj, level = 3L, keepConfidence = TRUE, ...)
-             standardGeneric("getBoxes"))
+             standardGeneric("GetBoxes"))
 
-setMethod("getBoxes",
+setMethod("GetBoxes",
           "TesseractBaseAPI",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
               if(!hasRecognized(obj))
@@ -288,21 +288,21 @@ setMethod("getBoxes",
               m[, c(2:5, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
           })
 
-setMethod("getBoxes",
+setMethod("GetBoxes",
            "character",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts) # Want to avoid doing this twice if possible
-              getBoxes(ts, level, keepConfidence)
+              GetBoxes(ts, level, keepConfidence)
           })
 
 
-setMethod("getBoxes",
+setMethod("GetBoxes",
           "Pix",
           function(obj, level = 3L, keepConfidence = TRUE, ...) {
               api = tesseract(...)
               SetImage(api, obj)
-              getBoxes(api, level, keepConfidence)
+              GetBoxes(api, level, keepConfidence)
           })
 
 
@@ -469,31 +469,31 @@ function(api)
 }
 
 
-setGeneric("getImageDims", function(obj, ...) standardGeneric("getImageDims"))
+setGeneric("GetImageDims", function(obj, ...) standardGeneric("GetImageDims"))
 
-setMethod("getImageDims", "TesseractBaseAPI",
+setMethod("GetImageDims", "TesseractBaseAPI",
           function(obj, ...) {
               ans = .Call("R_TessBaseAPI_GetImageDimensions", obj)
               names(ans) = c("height", "width", "depth")
               ans
           })
 
-setMethod("getImageDims", "Pix",
+setMethod("GetImageDims", "Pix",
           function(obj, ...) {
               ans = .Call("R_Pix_GetDimensions", obj)
               names(ans) = c("height", "width", "depth")
               ans
           })
 
-setGeneric("getImageInfo", function(obj, ...) standardGeneric("getImageInfo"))
+setGeneric("GetImageInfo", function(obj, ...) standardGeneric("GetImageInfo"))
 
-setMethod("getImageInfo", "TesseractBaseAPI",
+setMethod("GetImageInfo", "TesseractBaseAPI",
           function(obj, ...) {
               ans = .Call("R_TessBaseAPI_GetImageInfo", obj)
               names(ans) = c("samplesPerPixel", "xres", "yres", "informat", "colorDepth")  # from .../include/leptonica/pix.h
               ans
           })
-setMethod("getImageInfo", "Pix",
+setMethod("GetImageInfo", "Pix",
           function(obj, ...) {
               ans = .Call("R_Pix_GetInfo", obj)
               names(ans) = c("samplesPerPixel", "xres", "yres", "informat", "colorDepth")  # from .../include/leptonica/pix.h

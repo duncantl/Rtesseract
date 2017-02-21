@@ -1,20 +1,20 @@
 library(Rtesseract)
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 img = pixRead(f)
-o = getConfidences(img)
+o = GetConfidences(img)
 head(o)
-o1 = getConfidences(f)
+o1 = GetConfidences(f)
 stopifnot(identical(o, o1))
 
 
-o = getAlternatives(img)
+o = GetAlternatives(img)
 head(o)
-o1 = getAlternatives(f)
+o1 = GetAlternatives(f)
 stopifnot(identical(o, o1))
 
-o = getBoxes(img)
+o = GetBoxes(img)
 head(o)
-o1 = getBoxes(f)
+o1 = GetBoxes(f)
 stopifnot(identical(o, o1))
 
 

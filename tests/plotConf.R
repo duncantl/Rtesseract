@@ -4,10 +4,10 @@ f = system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract")
 
 ts = tesseract(f)
 #Recognize(ts)
-bbox = getBoxes(ts)
+bbox = GetBoxes(ts)
 
 library(png)
-colors = getConfidenceColors(bbox)  # Rtesseract:::
+colors = GetConfidenceColors(bbox)  # Rtesseract:::
 plot(ts, bbox = bbox, border = colors)
 
 

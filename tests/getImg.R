@@ -2,14 +2,13 @@ library(Rtesseract)
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 
 ts = tesseract(f)
-a = GetInputImage(ts)
+a = GetImageInfo(ts)
 
 library(png)
 b = readPNG(f)
        
+##ref = GetInputName(ts)
 
-ref = GetInputImage(ts, FALSE)
-
-getImageDims(ref)
+GetImageDims(ts)
 
 

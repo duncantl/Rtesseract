@@ -17,6 +17,7 @@ SetImage(api, pix)
 # Run the ORC on this image.
 Recognize(api)
 
+if(FALSE){
 # Get the results object
 ri = GetIterator(api)
 
@@ -34,6 +35,6 @@ identical(conf, conf1)
 bbox = lapply(ri, BoundingBox, 3L)
 
 alts = lapply(ri, GetAlternatives, "symbol")
-
+}
 
 
