@@ -1,9 +1,9 @@
 
 findColumns =
-function(ri, bbox = BoundingBoxes(ri, level = level), level = "word")
+function(api, bbox = getBoxes(api, level = level), level = 3)
 {
 
-    qleft = quantile(bbox[, "bottom.left.x"], seq(0, 1, by = .1))
-    qright = quantile(bbox[, "top.right.x"], seq(0, 1, by = .1))    
-    
+    qleft = quantile(bbox[, "left"], seq(0, 1, by = .1))
+    qright = quantile(bbox[, "right"], seq(0, 1, by = .1))    
+    return(data.frame(qleft = qleft, qright = qright))
 }

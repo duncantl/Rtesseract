@@ -9,13 +9,14 @@ library(png)
 
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 
-api = tesseract()
+api = tesseract(f, pageSegMode=6)
 pix = SetImage(api, f)
 Recognize(api)
 
 par(mfrow = c(1, 2))
 plot(api, main = "Words")
-plot(api, level = "symbol", main = "Individual Characters")
+## need to change the level at the API
+## plot(api, main = "Individual Characters")
 
 
 bbox = getBoxes(api)
