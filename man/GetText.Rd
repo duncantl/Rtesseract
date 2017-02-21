@@ -14,24 +14,26 @@
   detected elements in the image.
 }
 \usage{
-GetBoxes(api, level = 3L)
-GetConfidences(api, level = 3L)
-GetText(api, level = 3L)
-GetAlternatives(api)
+GetBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
+GetConfidences(obj, level = 3L, ...)
+GetText(obj, level = 3L, ...)
+GetAlternatives(obj)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{the \code{\link{TesseractBaseAPI-class}} class, obtained via a
+  \item{obj}{either the location of an image
+  file, or a \code{\link{TesseractBaseAPI-class}} class, obtained via a
   call to \code{\link{tesseract}}}
-  \item{level}{if \code{ri} is a
-  \code{\link{TesseractBaseAPI-class}} object, this level determines whether
+  \item{level}{this level determines whether
   we recognize blocks, paragraphs, words or characters, i.e., the unit
   to be reconized as a single entity.
   This is a value from enumerated constant type
   \code{\link{PageIteratorLevel}}.
   One can specify it as a value, a names from that vector.
- }
-  \item{\dots}{other arguments that are currently ignored.}
+  }
+  \item{keepConfidence}{logical, should the confidences be retained in
+	the output}
+  \item{\dots}{other arguments that are passed to \code{\link{tesseract}}}
 }
 \value{
   \code{GetBoxes} returns a matrix with 4 columns
@@ -62,12 +64,19 @@ Duncan Temple Lang
 %%\code{\link{GetIterator}}
 }
 \examples{
- f = system.file("images", "OCRSample2.png", package = "Rtesseract")
- api = tesseract(f)
- Recognize(api)
- boxes = GetBoxes(api)
- rownames(boxes)
- boxes
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+
+# Constructing an API object that can be reused
+api = tesseract(f)
+Recognize(api)
+boxes = GetBoxes(api)
+rownames(boxes)
+boxes
+
+## Using the image name
+boxes2 = GetBoxes(f)
+
+
 }
 \keyword{IO}
 

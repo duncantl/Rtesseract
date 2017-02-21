@@ -1,4 +1,6 @@
-remove the ocr() function
+[done] Make function calls consistent (getXXX to GetXXX)
+
+[done] remove the ocr() function
 
 ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
   try sliding in definition of exit() in Rexit/exit.c
@@ -51,13 +53,12 @@ Do we need to delete the choice object
   - need to check that this is operating correctly.
    This is because we never call Next(), but lapply(ri, fun, level) does. And we have to specify the level here.
 
-Test that output is the same and correct between ocr and getXXX functions.
+[resolved - ocr removed] Test that output is the same and correct between ocr and getXXX functions.
 
 Test that plot/other helper functions are still functioning with output from the getXXX functions.
 Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
 Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
  and creates a data frame/matrix.
-
 
 Update documentation/NAMESPACE to reflect current functions and functionality.
 
@@ -70,7 +71,7 @@ seg fault in plotSubImage() when run via the examples.
 
 [done] ProcessPages in render.cpp
 
-??Change the names of the functions to initial lower case, e.g. getInputName(), ?
+[done - changed to upper to match API] ??Change the names of the functions to initial lower case, e.g. getInputName(), ?
 
 [check] Rationalize tesseract() and Init() so can pass all the arguments through to Init()
 
