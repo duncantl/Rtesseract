@@ -32,7 +32,11 @@ Duncan Temple Lang
   \code{\link{tesseract}}
 }
 \examples{
-
+f = system.file("images", "UseRSchedule.png", package = "Rtesseract")
+ts = tesseract(f)
+GetSourceYResolution(ts) # correctly detected at 600 ppi
+SetSourceYResolution(ts, 300) # but we can change this
+GetSourceYResolution(ts) # 300
 }
 \keyword{programming}
 \keyword{IO}
