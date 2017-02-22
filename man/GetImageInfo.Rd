@@ -1,10 +1,10 @@
-\name{getImageInfo}
-\alias{getImageInfo}
-\alias{getImageInfo,TesseractBaseAPI-method}
-\alias{getImageInfo,Pix-method}
-\alias{getImageDims}
-\alias{getImageDims,Pix-method}
-\alias{getImageDims,TesseractBaseAPI-method}
+\name{GetImageInfo}
+\alias{GetImageInfo}
+\alias{GetImageInfo,TesseractBaseAPI-method}
+\alias{GetImageInfo,Pix-method}
+\alias{GetImageDims}
+\alias{GetImageDims,Pix-method}
+\alias{GetImageDims,TesseractBaseAPI-method}
 
 \title{Get Information about the Current Tesseract Image}
 \description{
@@ -15,14 +15,12 @@ and also information about the samples per pixel,
 x and y resolution (not pixels), the format and the color depth.
 }
 \usage{
-getImageInfo(obj, ...)
-getImageDims(obj, ...)
+GetImageInfo(obj, ...)
+GetImageDims(obj, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{obj}{an object of class \code{\link{Pix-class}} via a call to
-    \code{\link{SetImage}} or  \code{\link{GetImage}},
-    or alternatively, a
+  \item{obj}{an object of class 
         \code{\link{TesseractBaseAPI-class}} objected created via a call
 	to \code{\link{tesseract}}.
 }
@@ -42,6 +40,20 @@ getImageDims(obj, ...)
   \item{depth}{the number of "planes" in the image}  
   
   In either case, if there is no image, the method returns \code{NULL}.
+}
+\note{
+It is possible to pass a 
+\code{\link{Pix-class}} object as the value of \code{obj}
+in these functions.
+One can obtain the \code{\link{Pix-class}} object via
+a call to the unexported  \code{\link{SetImage}} or  \code{\link{GetImage}},
+or alternatively, via \code{pixRead}.
+If one obtains the \code{\link{Pix-class}} instance  via
+\code{\link{SetImage}} or   \code{\link{GetImage}}, it is only valid
+as long as the corresponding tesseract object  is valid.
+In other words, if you obtain the image and then remove
+the references to the tesseract object, you should  not use the
+image object.
 }
 \references{
 Tesseract API Documentation.

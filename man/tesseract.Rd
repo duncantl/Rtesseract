@@ -46,7 +46,7 @@
   There are many functions that operate on a \code{TesseractBaseAPI}
   object that provide the interesting functionality for the package.
   These are noted in the see also section and in other help pages,
-  e.g., \code{\link{SetImage}}, \code{\link{GetDatapath}}.
+  e.g., \code{\link{GetDatapath}}, \code{\link{GetVariables}}, \code{\link{SetVariables}}.
 
   When we have configured the tesseract object appropriately,
   we call \code{\link{Recognize}} to perform the OCR.

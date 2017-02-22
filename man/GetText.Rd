@@ -1,36 +1,48 @@
 \name{GetText}
-\alias{GetBoxes}
-\alias{GetConfidences}
 \alias{GetText}
+\alias{GetBoxes}
+\alias{GetBoxes,TesseractBaseAPI-method}
+\alias{GetBoxes,character-method}
+\alias{GetConfidences}
+\alias{GetConfidences,TesseractBaseAPI-method}
+\alias{GetConfidences,character-method}
 \alias{GetAlternatives}
-\title{Query the Current Result}
+\title{}
+\title{Query the Current OCR Result to Get Text, Bounding Boxes, Confidence or Alternative Characters}
 \description{
-  These functions allow us to get information about the current
-  item in the OCR result iterator.
-  We can get the result itself, the confidence for the recognized
-  result, the location of the result in the image
+  These functions provide access to the information about each recognized element
+  in a tesseract object.  These work at different element levels
+  (characters, words, lines).
+  We can get the recognized elements, their locations in the image, the
+  confidence/certainty of the recognition, and possible alternative
+  characters along with their confidences.
+  
+  There are methods that work on a the filename of an image or an
+  existing tesseract object.  
 
-  \code{BoundingBoxes} gets all of the bounding boxes, i.e., for all the
-  detected elements in the image.
+%  \code{GetBoxes} gets all of the bounding boxes, i.e., for all the
+%  detected elements in the image.
 }
 \usage{
-GetBoxes(api, level = 3L)
-GetConfidences(api, level = 3L)
-GetText(api, level = 3L)
-GetAlternatives(api)
+GetBoxes(api, level = 3L, keepConfidence = TRUE, ...)
+GetConfidences(api, level = 3L, ...)
+GetText(api, level = 3L, ...)
+GetAlternatives(api, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{the \code{\link{TesseractBaseAPI-class}} class, obtained via a
+  \item{api}{the name of the file containing the image on which to do
+ OCR
+   or the \code{\link{TesseractBaseAPI-class}} class, obtained via a
   call to \code{\link{tesseract}}}
-  \item{level}{if \code{ri} is a
-  \code{\link{TesseractBaseAPI-class}} object, this level determines whether
-  we recognize blocks, paragraphs, words or characters, i.e., the unit
-  to be reconized as a single entity.
-  This is a value from enumerated constant type
-  \code{\link{PageIteratorLevel}}.
-  One can specify it as a value, a names from that vector.
- }
+  \item{level}{the type of element to be recognized - block, paragraph,
+    word or symbol.  This should be a value from the \code{\link{PageIteratorLevel}}
+    enumerated constants.
+  One can specify it as a value or  a name from that vector.
+}
+  \item{keepConfidence}{a logical value. If \code{TRUE}, the final
+    column of the matrix returned by \code{GetBoxes} is the confidence associated with the text as
+    determined by the OCR.}
   \item{\dots}{other arguments that are currently ignored.}
 }
 \value{
@@ -44,7 +56,7 @@ GetAlternatives(api)
   \code{GetConfidences} returns a numeric value between 0 and 100 indicating
   the confidence level of the recognized term.
 
-  \code{GetText} returns the text of the recognized term.
+  \code{GetText} returns the text of all the recognized elements.
 
   \code{GetAlternatives} returns a named numeric vector
   giving the confidence levels for the possible characters that are
@@ -58,9 +70,9 @@ Tesseract \url{https://code.google.com/p/tesseract-ocr/}
 Duncan Temple Lang
 }
 
-\seealso{
+%\seealso{
 %%\code{\link{GetIterator}}
-}
+%}
 \examples{
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  api = tesseract(f)
@@ -68,6 +80,16 @@ Duncan Temple Lang
  boxes = GetBoxes(api)
  rownames(boxes)
  boxes
+
+f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
+GetBoxes(f, "word")
+GetBoxes(f, "symbol")
+GetConfidences(f)
+
+ts = tesseract(f)
+Recognize(ts)
+GetBoxes(ts)
+GetConfidences(ts)
 }
 \keyword{IO}
 
