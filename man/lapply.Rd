@@ -18,7 +18,7 @@ lapply(X, FUN, ...) # level = "word",
 
 \arguments{
   \item{X}{
-    an object of class \code{\link{TesseractBaseAPI-method}} obtained
+    an object of class \code{\link{TesseractBaseAPI-class}} obtained
   via  call to \code{\link{tesseract}}.
 %a \code{\link{ResultIterator-class}} object obtained via a  call to \code{\link{GetIterator}}
   }
@@ -46,14 +46,14 @@ Duncan Temple Lang
 }
 
 \seealso{
-\code{\link{ResultIterator-class}}
+%\code{\link{ResultIterator-class}}
 }
 \examples{
 
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  api = tesseract(f)
  Recognize(api)
- ri = GetIterator(api)
+
 
  sym = getNativeSymbolInfo("r_getConfidence")
  conf = lapply(api, sym$address, "word")

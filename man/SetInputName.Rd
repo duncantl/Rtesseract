@@ -23,7 +23,7 @@ SetImage(api, pix)
     \code{name} must identify an actual file that exists}
   \item{load}{a logical value indicating whether to actually read the image}
   \item{pix}{a \code{\link{Pix-class}} object, typically created via
-    \code{\link{readPix}}. This is the contents of the image.
+    \code{\link{pixRead}}. This is the contents of the image.
   }
 }
 \value{

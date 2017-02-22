@@ -2,7 +2,10 @@
 \alias{ReadConfigFile}
 \title{Read a Tesseract Variable Configuration File}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  This function finds and reads a tesseract configuration
+  file that specifies one or more \code{variable value} pairs
+  per line.  This can be a convenient way to set multiple
+  variables.
 }
 \usage{
 ReadConfigFile(api, files, debug = FALSE, ok = FALSE)
@@ -24,46 +27,22 @@ ReadConfigFile(api, files, debug = FALSE, ok = FALSE)
   \item{ok}{a logical value which controls whether to check if the files
   actually exist}
 }
-\details{
-}
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  This is used for its side-effect of updating the tesseract instance
+  with the variable values in the file.
 }
 \references{
-%% ~put references to the literature/web site here ~
+ \url{http://zdenop.github.io/tesseract-doc/classtesseract_1_1_tess_base_a_p_i.html}  
 }
 \author{
-%%  ~~who you are~~
+Duncan Temple Lang
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{tesseract}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (api, files, debug = FALSE, ok = FALSE) 
-{
-    ff = path.expand(files)
-    if (!ok && !all(ok <- file.exists(ff))) 
-        stop("some files don't exist: ", paste(ff[!ok], collapse = ", "))
-    .Call("R_tesseract_ReadConfigFile", as(api, "TesseractBaseAPI"), 
-        ff, as.logical(debug))
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{IO}
+\keyword{programming}
+

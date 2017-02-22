@@ -1,61 +1,34 @@
 \name{SetOutputName}
 \alias{SetOutputName}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Set the Output Name for Any Content Written by Tesseract}
 \description{
-}
+  When a tesseract object is used to generate output to a file,
+  it uses this output prefix for each file it generates.
+  This is not used directly very often, but in the \code{ProcessPages}
+  mechanism used in the \code{\link{toPDF}} and related functions to
+  generate different formats of the results from the OCR.
+ }
 \usage{
 SetOutputName(api, filename)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{
-%%     ~~Describe \code{api} here~~
-}
-  \item{filename}{
-%%     ~~Describe \code{filename} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{api}{an instance of the \code{\link{TesseractBaseAPI-class}}
+    obtained from a call to \code{\link{tesseract}}}  
+  \item{filename}{the name of the output file, without the extension}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  No result, but used for its side-effect.
 }
 \references{
-%% ~put references to the literature/web site here ~
+ \url{http://zdenop.github.io/tesseract-doc/classtesseract_1_1_tess_base_a_p_i.html}
 }
 \author{
-%%  ~~who you are~~
+Duncan Temple Lang
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
-
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+\code{\link{toPDF}}, etc.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
-
-## The function is currently defined as
-function (api, filename) 
-{
-    if (length(filename) != 1) 
-        stop("need one file")
-    .Call("R_TessBaseAPI_SetOutputName", as(api, "TesseractBaseAPI"), 
-        filename)
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{IO}
+\keyword{programming}

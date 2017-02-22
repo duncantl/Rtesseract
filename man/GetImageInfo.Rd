@@ -46,11 +46,11 @@ It is possible to pass a
 \code{\link{Pix-class}} object as the value of \code{obj}
 in these functions.
 One can obtain the \code{\link{Pix-class}} object via
-a call to the unexported  \code{\link{SetImage}} or  \code{\link{GetImage}},
+a call to the unexported  \code{\link{SetImage}} or  \code{GetImage},
 or alternatively, via \code{pixRead}.
-If one obtains the \code{\link{Pix-class}} instance  via
-\code{\link{SetImage}} or   \code{\link{GetImage}}, it is only valid
-as long as the corresponding tesseract object  is valid.
+If one obtains the \code{\link{Pix-class}} instance from
+a tesseract instance, it is only valid
+as long as the corresponding tesseract object is valid and not garbage collected.
 In other words, if you obtain the image and then remove
 the references to the tesseract object, you should  not use the
 image object.
@@ -64,7 +64,8 @@ Duncan Temple Lang
 
 \seealso{
 \code{\link{tesseract}}  
- \code{\link{SetImage}},  \code{\link{GetImage}}
+\code{\link{SetImage}}
+%\code{\link{GetImage}}
 }
 \examples{
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")

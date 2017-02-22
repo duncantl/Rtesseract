@@ -11,8 +11,8 @@
 }
 \details{
 We can use either the values in the vector
-or the corresponding name in the call to \code{\link{ocr}} for the 
-\code{level} argument.
+or the corresponding name in the call to \code{\link{GetText}} and the
+associated higher-level functions for the  \code{level} argument.
 }
 \source{
 The Tesseract  project \url{https://code.google.com/p/tesseract-ocr/}

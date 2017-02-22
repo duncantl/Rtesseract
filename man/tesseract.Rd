@@ -10,7 +10,7 @@
   The \code{tesseract} function provides an entry to much more control
   and detail about the process and the ability to query the results in
   different ways. The \code{tesseract} function is the building
-  block for \code{\link{ocr}} and all the functionality of the package.
+  block for all the functionality of the package.
   
   To perform OCR on an image, we need a Tesseract API object
   and then can call its methods.
@@ -170,14 +170,13 @@ Duncan Temple Lang
 \seealso{
   \code{\link{SetVariables}},   \code{\link{PrintVariables}},
   \code{\link{SetInputName}},  \code{\link{SetImage}},
-  \code{\link{SetOutpuName}},
+  \code{\link{SetOutputName}},
   \code{\link{ReadConfigFile}},
   \code{\link{SetVariables}}, \code{\link{GetVariables}},
   \code{\link{PrintVariables}},
   \code{\link{SetPageSegMode}},     \code{\link{GetPageSegMode}},
   \code{\link{SetRectangle}},
-  \code{\link{SetSourceResolution}},   \code{\link{SetSourceYResolution}},   
-  \code{\link{ProcessPages}}  
+  \code{\link{SetSourceResolution}},   \code{\link{GetSourceYResolution}}   
 }
 
 \examples{

@@ -1,61 +1,45 @@
 \name{SetPageSegMode}
 \alias{SetPageSegMode}
 \alias{GetPageSegMode}
-%- Also NEED an '\alias' for EACH other topic documented here.
 \title{Set and Query the Page Segmentation Mode for Tesseract Instance}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  These functions allow us to set at what level the OCR is done -
+  lines, words, characters, etc.
 }
 \usage{
 SetPageSegMode(api, mode)
+GetPageSegMode(api)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{
-%%     ~~Describe \code{api} here~~
+  \item{api}{an instance of the \code{\link{TesseractBaseAPI-class}}
+    obtained from a call to \code{\link{tesseract}}}  
+  \item{mode}{a value of class \code{PageSegMode} or that can be coerced
+  to such a value. This can be an integer or a character string
+  corresponding to the values or names of the vector
+  \code{PageSegModeValues}
+ or can be any of the corresponding variables, e.g. \code{PSM_OSD_ONLY}, etc.
 }
-  \item{mode}{
-%%     ~~Describe \code{mode} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+  \code{SetPageSegMode}  is used for its side-effect of setting the
+  value in the tesseract instance.
+  
+  \code{GetPageSegMode} returns an object of class \code{PageSegMode}.
 }
 \references{
-%% ~put references to the literature/web site here ~
+ API \url{http://zdenop.github.io/tesseract-doc/classtesseract_1_1_tess_base_a_p_i.html}
 }
 \author{
-%%  ~~who you are~~
+Duncan Temple Lang
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{tesseract}},   \code{\link{Recognize}},
+    \code{\link{GetText}}, etc.
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (api, mode) 
-{
-    .Call("R_TessBaseAPI_SetPageSegMode", as(api, "TesseractBaseAPI"), 
-        as(mode, "PageSegMode"))
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{IO}
+\keyword{programming}
+
