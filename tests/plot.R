@@ -9,7 +9,7 @@ library(png)
 
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 
-api = tesseract(f, pageSegMode=6)
+api = tesseract(f, pageSegMode = 6)
 pix = SetImage(api, f)
 Recognize(api)
 

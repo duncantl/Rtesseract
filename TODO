@@ -1,12 +1,12 @@
+Get this working on Windows.
+
 [done from NAMESPACE] remove the ocr() function
+
+[done] readImage not being found in plot.OCR() - .Rbuildignore was causing it to be discard due to FUNS. Matching is case-insensitive.
 
 Example for GetSmudges
 
 Check GetBoxes returns what BoundingBoxes used to.
-
-Document SetInputName, SetImage
-
-Remove GetIterator.Rd
 
 Add an example for lapply.Rd with an R function.
 
@@ -18,17 +18,6 @@ ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
 tprintf() annd messages on console.
 
 Be able to interrupt in OCR computations with Ctrl-c.
-
-[fixed] Segfaults if Recognize hasn't been called.
- library(Rtesseract)
- ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
- a = getAlternatives(ts)
-
-[Fixed now] Investigate  "Calling Recognize again"
-  library(Rtesseract)
-  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
-  b = getBoxes(ts)
-
 
 [Verify sane] Get alternatives is returning different output between:
 library(Rtesseract)
@@ -192,6 +181,21 @@ Annotate an SVG plot of this so that we can see the confidence levels and altern
 
 
 ---------------------
+[done] Document SetInputName, SetImage
+
+[done] Remove GetIterator.Rd
+
+[fixed] Segfaults if Recognize hasn't been called.
+ library(Rtesseract)
+ ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+ a = getAlternatives(ts)
+
+[Fixed now] Investigate  "Calling Recognize again"
+  library(Rtesseract)
+  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+  b = getBoxes(ts)
+
+
 
 [done] SetInputName - if no api, warn don't treat file name as api.
 

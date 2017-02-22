@@ -1,5 +1,4 @@
 .git
-readImage
 src/Makevars$
 .o$
 .so$
@@ -13,11 +12,10 @@ BoundingBox.Rd-old
 autom4te.cache
 config.log
 config.status
-FUNS
+^FUNS$
 ^vars.R$
 .gitignore
-Experiments
-src/Expt
+^Experiments$
+^src/Expt
 ^mywords$
 ^Notes$
-
