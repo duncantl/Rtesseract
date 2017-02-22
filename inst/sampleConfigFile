@@ -1,0 +1,4 @@
+certainty_scale 50.0
+classify_bln_numeric_mode 1
+classify_misfit_junk_penalty 1
+debug_fix_space_level 1
