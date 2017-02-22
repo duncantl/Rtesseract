@@ -168,8 +168,16 @@ Recognize(api)
 Duncan Temple Lang
 }
 \seealso{
-  \code{\link{GetIterator}}, \code{\link{lapply}}.
-  \code{\link{SetVariables}},   \code{\link{PrintVariables}}
+  \code{\link{SetVariables}},   \code{\link{PrintVariables}},
+  \code{\link{SetInputName}},  \code{\link{SetImage}},
+  \code{\link{SetOutpuName}},
+  \code{\link{ReadConfigFile}},
+  \code{\link{SetVariables}}, \code{\link{GetVariables}},
+  \code{\link{PrintVariables}},
+  \code{\link{SetPageSegMode}},     \code{\link{GetPageSegMode}},
+  \code{\link{SetRectangle}},
+  \code{\link{SetSourceResolution}},   \code{\link{SetSourceYResolution}},   
+  \code{\link{ProcessPages}}  
 }
 
 \examples{
@@ -186,5 +194,5 @@ Duncan Temple Lang
  }
 }
 
-\keyword{IO }
+\keyword{IO}
 \keyword{programming}

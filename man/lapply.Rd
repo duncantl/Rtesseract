@@ -15,9 +15,13 @@
 lapply(X, FUN, ...) # level = "word",
 }
 %- maybe also 'usage' for other objects documented here.
+
 \arguments{
-  \item{X}{a \code{\link{ResultIterator-class}} object obtained via a
-    call to \code{\link{GetIterator}}.}
+  \item{X}{
+    an object of class \code{\link{TesseractBaseAPI-method}} obtained
+  via  call to \code{\link{tesseract}}.
+%a \code{\link{ResultIterator-class}} object obtained via a  call to \code{\link{GetIterator}}
+  }
   \item{FUN}{the function to be applied to each successive result in the
     \code{ResultIterator}. This can also the address of a compatible C
     routine.  This can be significantly faster.
@@ -51,17 +55,16 @@ Duncan Temple Lang
  Recognize(api)
  ri = GetIterator(api)
 
-\dontrun{
- lapply(ri, Confidence, "word")
- conf = lapply(ri, Confidence, "symbol")
- names(conf)
-
- lapply(ri, BoundingBox, "symbol")
-}
-
  sym = getNativeSymbolInfo("r_getConfidence")
- conf = lapply(ri, sym$address, "word")
+ conf = lapply(api, sym$address, "word")
 
 }
 \keyword{programming}
 \keyword{iteration}
+%\dontrun{
+%lapply(ri, Confidence, "word")
+%conf = lapply(ri, Confidence, "symbol")
+%names(conf)
+%
+%lapply(ri, BoundingBox, "symbol")
+%}
