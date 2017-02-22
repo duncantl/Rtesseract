@@ -23,7 +23,7 @@ exportClass("TesseractBaseAPI")
 exportClasses("Pix", "ResultIterator")
 exportClass("TessPDFRenderer")
 
-export(toPDF, toTSV, toHTML, toHOcr, toUNLV, toOSD, toBoxText)
+export(toPDF, toTSV, toHTML, toHOcr, toOSD, toBoxText) # toUNLV,
 
 export(lapply)
 exportMethods(lapply)
@@ -82,7 +82,7 @@ export(SetOutputName)
 
 export(oem)
 
-export(ProcessPages)
+#export(ProcessPages)
 
 export(ClearPersistentCache)
 
