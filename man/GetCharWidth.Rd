@@ -28,7 +28,7 @@ GetCharHeight(bbox, fun = median, onlyAlphaNumeric = TRUE)
 Duncan Temple Lang
 }
 \seealso{
-\code{\link{getBoxes}}, \code{\link{tesseract}}
+\code{\link{GetBoxes}}, \code{\link{tesseract}}
 }
 %\examples{}
 \keyword{IO}

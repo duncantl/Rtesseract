@@ -36,7 +36,7 @@ Duncan Temple Lang
 }
 
 \seealso{
- \code{\link{BoundingBox}}
+ \code{\link{GetBoxes}}
 }
 \examples{
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")

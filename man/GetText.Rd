@@ -3,11 +3,17 @@
 \alias{GetBoxes}
 \alias{GetBoxes,TesseractBaseAPI-method}
 \alias{GetBoxes,character-method}
+\alias{GetBoxes,Pix-method}
 \alias{GetConfidences}
 \alias{GetConfidences,TesseractBaseAPI-method}
 \alias{GetConfidences,character-method}
+\alias{GetConfidences,Pix-method}
 \alias{GetAlternatives}
-\title{}
+\alias{GetAlternatives,ResultIterator-method}
+\alias{GetAlternatives,TesseractBaseAPI-method}
+\alias{GetAlternatives,character-method}
+\alias{GetAlternatives,Pix-method}
+
 \title{Query the Current OCR Result to Get Text, Bounding Boxes, Confidence or Alternative Characters}
 \description{
   These functions provide access to the information about each recognized element
@@ -24,14 +30,14 @@
 %  detected elements in the image.
 }
 \usage{
-GetBoxes(api, level = 3L, keepConfidence = TRUE, ...)
-GetConfidences(api, level = 3L, ...)
-GetText(api, level = 3L, ...)
-GetAlternatives(api, ...)
+GetBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
+GetConfidences(obj, level = 3L, ...)
+GetText(obj, level = 3L, ...)
+GetAlternatives(obj, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{the name of the file containing the image on which to do
+  \item{obj}{the name of the file containing the image on which to do
  OCR
    or the \code{\link{TesseractBaseAPI-class}} class, obtained via a
   call to \code{\link{tesseract}}}

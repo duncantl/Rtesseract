@@ -27,14 +27,14 @@ GetImageDims(obj, ...)
   \item{\dots}{additional arguments for future methods}
 }
 \value{
-  \code{\link{getImageInfo}} returns a numeric vector with 5 elements.
+  \code{\link{GetImageInfo}} returns a numeric vector with 5 elements.
   \item{samplesPerPixel}{}
   \item{xres}{}
   \item{yres}{}
   \item{informat}{}
   \item{colorDepth}{}
 
-  \code{\link{getImageDims}} returns a numeric vector with 3 elements.
+  \code{\link{GetImageDims}} returns a numeric vector with 3 elements.
   \item{height}{the number of rows}
   \item{width}{the number of columns}
   \item{depth}{the number of "planes" in the image}  
@@ -69,11 +69,15 @@ Duncan Temple Lang
 \examples{
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
 ts = tesseract(f)
-getImageDims(ts)
-getImageInfo(ts)
+GetImageDims(ts)
+GetImageInfo(ts)
 
+\dontrun{
+# Don't get the Pix object this way.
 pix = GetInputImage(ts, FALSE)
-getImageDims(pix)
-getImageInfo(pix)
+GetImageDims(pix)
+GetImageInfo(pix)
+rm(pix)
+}
 }
 \keyword{IO}
