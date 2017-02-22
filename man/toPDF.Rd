@@ -66,7 +66,7 @@ toPDF(f, "tmp")
 toHTML(f, TRUE, "tmp")
 
 o = toTSV(f, TRUE, "tmp")
-d = read.table(o)
+d = read.table(o, header = TRUE, fill = TRUE)
 names(d)
 }
 \keyword{IO}

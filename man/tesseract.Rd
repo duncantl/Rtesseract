@@ -178,6 +178,10 @@ Recognize(api)
 Duncan Temple Lang
 }
 \seealso{
+  \code{\link{GetText}}  
+  \code{\link{GetBoxes}}
+  \code{\link{GetConfidences}}
+  \code{\link{GetAlternatives}}  
   \code{\link{SetVariables}},   \code{\link{PrintVariables}},
   \code{\link{SetInputName}},  \code{\link{SetImage}},
   \code{\link{SetOutputName}},
@@ -194,8 +198,10 @@ Duncan Temple Lang
  api = tesseract(f)
  GetInputName(api)
  Recognize(api)
- ri = GetIterator(api)
- bbox = lapply(ri, BoundingBox, "word")
+ GetText(api)
+ bbox = GetBoxes(api)
+ conf = GetConfidences(api)
+ alts = GetAlternatives(api)
 
  if(require("png")) {
     i = readPNG(f)

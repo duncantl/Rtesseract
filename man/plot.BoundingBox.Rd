@@ -42,8 +42,9 @@ Duncan Temple Lang
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 pix = pixRead(f)
 api = tesseract(pix)
-Recognize(api)
-bbox = lapply(api, BoundingBox, "textline")
+bbox = GetBoxes(api, "textline")
+#Recognize(api)
+#bbox = lapply(api, BoundingBox, "textline")
 
 if(FALSE && require("png")) {
   img = png::readPNG(f)
