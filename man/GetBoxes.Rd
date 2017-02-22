@@ -1,10 +1,10 @@
-\name{getBoxes}
-\alias{getBoxes}
-\alias{getBoxes,TesseractBaseAPI-method}
-\alias{getBoxes,character-method}
-\alias{getConfidences}
-\alias{getConfidences,TesseractBaseAPI-method}
-\alias{getConfidences,character-method}
+\name{GetBoxes}
+\alias{GetBoxes}
+\alias{GetBoxes,TesseractBaseAPI-method}
+\alias{GetBoxes,character-method}
+\alias{GetConfidences}
+\alias{GetConfidences,TesseractBaseAPI-method}
+\alias{GetConfidences,character-method}
 \title{Get bounding boxes or confidence level for each recognized element}
 \description{
   These provide access to the information for each recognized element
@@ -13,7 +13,7 @@
   existing tesseract object.
 }
 \usage{
-getBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
+GetBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
 }
 \arguments{
   \item{obj}{the tesseract object, or the name of an image file}
@@ -27,9 +27,9 @@ getBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
 }
 %\details{}
 \value{
-  \code{getConfidences} returns ..
+  \code{GetConfidences} returns ..
 
-  \code{getBoxes} returns a matrix of left, bottom, right, top positions
+  \code{GetBoxes} returns a matrix of left, bottom, right, top positions
   for each element, along with the text for each element in the  row names.
 }
 \references{
@@ -40,18 +40,18 @@ Duncan Temple Lang
 }
 
 \seealso{
-  \code{\link{tesseract}}, \code{\link{Recognize}},
-  \code{\link{BoundingBoxes}}, \code{\link{ocr}}
+  \code{\link{tesseract}}, \code{\link{Recognize}}
+%  \code{\link{BoundingBoxes}}, \code{\link{ocr}}
 }
 \examples{
 f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
-getBoxes(f, "word")
-getBoxes(f, "symbol")
-getConfidences(f)
+GetBoxes(f, "word")
+GetBoxes(f, "symbol")
+GetConfidences(f)
 
 ts = tesseract(f)
 Recognize(ts)
-getBoxes(ts)
-getConfidences(ts)
+GetBoxes(ts)
+GetConfidences(ts)
 }
 \keyword{IO}
