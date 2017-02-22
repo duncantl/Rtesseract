@@ -7,7 +7,7 @@ Description: This provides a flexible Optical Character Recognition (OCR)
   We can do data analysis on the errors, if we know the truth, and 
   explore how we may improve the recognition.
 Version: 0.3-0
-Author: Duncan Temple Lang
+Author: Duncan Temple Lang, Matt Espe
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
 License: Apache License
 SystemRequirements: tesseract_3.0.3 release candidate or higher
