@@ -1,9 +1,19 @@
-remove the ocr() function
+[done from NAMESPACE] remove the ocr() function
+
+Example for GetSmudges
+
+Check GetBoxes returns what BoundingBoxes used to.
+
+Document SetInputName, SetImage
+
+Remove GetIterator.Rd
+
+Add an example for lapply.Rd with an R function.
 
 ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
   try sliding in definition of exit() in Rexit/exit.c
 
-  library(Rtesseract); api = tesseract();ReadConfigFile(api, "bad_config")
+  library(Rtesseract); api = tesseract();ReadConfigFile(api, "Experiments/bad_config")
 
 tprintf() annd messages on console.
 
@@ -45,7 +55,6 @@ Do we need to delete the choice object
 
 [done] getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
 
-
 [resolved] Additionally, seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
   Does ChoiceIterator() only work for characters/symbols, not words.
   - need to check that this is operating correctly.
@@ -58,12 +67,11 @@ Fix the names on the bounding boxes to be consistent within the package and with
 Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
  and creates a data frame/matrix.
 
-
 Update documentation/NAMESPACE to reflect current functions and functionality.
 
 ? Other methods form the baseapi.h ?
 
-seg fault in plotSubImage() when run via the examples.
+[can we reproduce this] seg fault in plotSubImage() when run via the examples.
   [Seems okay on OSX machine (DTL)]
   Could be an earlier example with memory issues appearing at this point.
   e.g. pixRead()
