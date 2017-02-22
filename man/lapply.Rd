@@ -55,10 +55,11 @@ Duncan Temple Lang
  api = tesseract(f)
  Recognize(api)
 
+ alt = lapply(api, GetAlternatives, "symbol")
+
 
  sym = getNativeSymbolInfo("r_getConfidence")
  conf = lapply(api, sym$address, "word")
-
 }
 \keyword{programming}
 \keyword{iteration}

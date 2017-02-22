@@ -1,21 +1,22 @@
 \name{tesseractFuns}
-\alias{SetImage}
-\alias{GetImage}
-\alias{GetInputImage}
-\alias{GetInputName}
-\alias{SetInputName}
+\alias{tesseractFunctions}
+%\alias{SetImage}
+%\alias{GetImage}
+%\alias{GetInputImage}
+%\alias{GetInputName}
+%\alias{SetInputName}
 
-\alias{SetRectangle}
-\alias{SetSourceResolution}
-\alias{GetSourceYResolution}
+%\alias{SetRectangle}
+%\alias{SetSourceResolution}
+%\alias{GetSourceYResolution}
 
-\alias{ReadConfigFile}
+%\alias{ReadConfigFile}
 
-\alias{GetPageSegMode}
-\alias{SetPageSegMode}
-\alias{SetOutputName}
+%\alias{GetPageSegMode}
+%\alias{SetPageSegMode}
+%\alias{SetOutputName}
 
-\alias{ProcessPages}
+%\alias{ProcessPages}
 %\alias{SetVariables}
 
 \alias{coerce,TesseractBaseAPI,ResultIterator-method}
@@ -24,19 +25,10 @@
 \description{
   These functions provide ways to both set and query the state of the
   tesseract object.
-  We can load configuration files of variable settings,
-  set the image to be processed, the page segmentation
-  mode and the resolution specification of the image.
-  We can also query these.
-
-  A potentially very useful facility is to specify the
-  sub-region of the current image for tesseract to analyze
-  with \code{SetRectangle}. This allows us to zoom in
-  and redo the OCR within this constrained context.
   
 }
 \usage{
-ReadConfigFile(api, files, ok = FALSE)
+ReadConfigFile(api, files, debug = FALSE, ok = FALSE)
 SetImage(api, pix)
 SetInputName(api, name, check = TRUE, load = TRUE)
 GetInputName(api)

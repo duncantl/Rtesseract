@@ -19,7 +19,10 @@ SetRectangle(api, ..., dims = sapply(list(...), as.integer))
   \item{dims}{an alternative mechanism for specifying the location of
     the corners of the rectangle as a single object, a vector of integer
     values. The elements identify the left, top, width and height of the
-  rectangle}
+    rectangle
+    This should NOT be the coordinates
+    of the top-left and bottom-right of the rectangle, i.e. \code{(x1, y1, x2, y2)}.
+    The 3rd and 4th values are the width and height of the box.}
 }
 \value{
  \code{NULL}. The function is used for its side-effect on the tesseract instance.

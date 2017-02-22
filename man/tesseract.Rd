@@ -46,7 +46,17 @@
   There are many functions that operate on a \code{TesseractBaseAPI}
   object that provide the interesting functionality for the package.
   These are noted in the see also section and in other help pages,
-  e.g., \code{\link{GetDatapath}}, \code{\link{GetVariables}}, \code{\link{SetVariables}}.
+  e.g., \code{\link{GetDatapath}}, \code{\link{GetVariables}},
+  \code{\link{SetVariables}}.
+  We can load configuration files of variable settings,
+  set the image to be processed, the page segmentation
+  mode and the resolution specification of the image.
+  We can also query these.
+
+  A potentially very useful facility is to specify the
+  sub-region of the current image for tesseract to analyze
+  with \code{SetRectangle}. This allows us to zoom in
+  and redo the OCR within this constrained context.
 
   When we have configured the tesseract object appropriately,
   we call \code{\link{Recognize}} to perform the OCR.
