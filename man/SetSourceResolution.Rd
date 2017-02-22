@@ -35,7 +35,7 @@ Duncan Temple Lang
 f = system.file("images", "UseRSchedule.png", package = "Rtesseract")
 ts = tesseract(f)
 GetSourceYResolution(ts) # correctly detected at 600 ppi
-SetSourceYResolution(ts, 300) # but we can change this
+SetSourceResolution(ts, 300) # but we can change this
 GetSourceYResolution(ts) # 300
 }
 \keyword{programming}
