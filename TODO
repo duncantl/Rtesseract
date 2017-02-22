@@ -1,8 +1,6 @@
 Get this working on Windows.
 
-[done from NAMESPACE] remove the ocr() function
-
-[done] readImage not being found in plot.OCR() - .Rbuildignore was causing it to be discard due to FUNS. Matching is case-insensitive.
+Merge tesseractFuns.Rd
 
 Example for GetSmudges
 
@@ -181,6 +179,8 @@ Annotate an SVG plot of this so that we can see the confidence levels and altern
 
 
 ---------------------
+[done from NAMESPACE] remove the ocr() function
+[done] readImage not being found in plot.OCR() - .Rbuildignore was causing it to be discard due to FUNS. Matching is case-insensitive.
 [done] Document SetInputName, SetImage
 
 [done] Remove GetIterator.Rd
