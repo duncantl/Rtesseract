@@ -4,6 +4,7 @@
 \alias{toHOcr}
 \alias{toOSD}
 \alias{toTSV}
+\alias{toBoxText}
 %\alias{toUNLV}
 \title{Write Tesseract Results to Various Formats}
 \description{
@@ -24,6 +25,7 @@ toHOcr(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile),
 toTSV(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile), 
        api = tesseract(, PSM_AUTO))
 toOSD(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO)) 
+toBoxText(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
 }
 
 \arguments{
