@@ -7,6 +7,8 @@
   This is not used directly very often, but in the \code{ProcessPages}
   mechanism used in the \code{\link{toPDF}} and related functions to
   generate different formats of the results from the OCR.
+  However, we specify the output name in those functions.
+  This is part of the tesseract API and so included here.
  }
 \usage{
 SetOutputName(api, filename)
@@ -29,6 +31,9 @@ Duncan Temple Lang
 \code{\link{toPDF}}, etc.
 }
 \examples{
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+ts = tesseract(f)
+SetOutputName(ts, "tmp")
 }
 \keyword{IO}
 \keyword{programming}

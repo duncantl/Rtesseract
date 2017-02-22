@@ -41,7 +41,17 @@ Duncan Temple Lang
 \code{\link{tesseract}}
 }
 \examples{
+ts = tesseract()
+ReadConfigFile(ts, "bigram", ok = TRUE) # read from tessdata/configs
 
+f = system.file("sampleConfigFile", package = "Rtesseract")
+GetVariables(ts)["certainty_scale"]
+GetVariables(ts)["debug_fix_space_level"]
+ReadConfigFile(ts, f, debug = TRUE)
+GetVariables(ts)["debug_fix_space_level"]
+GetVariables(ts)["certainty_scale"] # unchanged
+ReadConfigFile(ts, f)
+GetVariables(ts)["certainty_scale"] # changed
 }
 \keyword{IO}
 \keyword{programming}

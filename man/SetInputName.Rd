@@ -42,7 +42,14 @@ Duncan Temple Lang
   \code{\link{tesseract}}, \code{\link{GetText}}
 }
 \examples{
-
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+p = pixRead(f)
+ts = tesseract()
+GetInputName(ts) # NA
+SetImage(ts, p)
+GetInputName(ts) # NA
+SetInputName(ts, f)
+GetInputName(ts)
 }
 \keyword{IO}
 \keyword{programming}

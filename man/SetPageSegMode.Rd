@@ -38,7 +38,24 @@ Duncan Temple Lang
     \code{\link{GetText}}, etc.
 }
 \examples{
+f = system.file("images", "1990-10.png", package = "Rtesseract")
+ts = tesseract(f)
+GetPageSegMode(ts)
+b = GetBoxes(ts)
 
+# See if any of the matched elements are blank spaces corresponding to lines
+i = grep("^[[:space:]]*$", rownames(b))
+
+# Change to PSM_AUTO mode
+SetPageSegMode(ts, 'PSM_AUTO')
+GetPageSegMode(ts)
+b1 = GetBoxes(ts)
+# Find the potential lines
+i = grep("^[[:space:]]*$", rownames(b1))
+b1[i,]
+
+# The last of these is the large black rectangle at the bottom of the
+# page due to the page not covering the entire scanner bed.
 }
 \keyword{IO}
 \keyword{programming}

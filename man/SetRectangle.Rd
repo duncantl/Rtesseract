@@ -36,6 +36,12 @@ Duncan Temple Lang
   \code{\link{GetText}}
 }
 \examples{
+f = system.file("images", "1990_p44.png", package = "Rtesseract")
+ts = tesseract(f)
+dims = GetImageDims(ts)
+ # region chosen interactively
+SetRectangle(ts, 500, 800, 1300, 800)
+GetText(ts)
 }
 \keyword{IO}
 \keyword{programming}

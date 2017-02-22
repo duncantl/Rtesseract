@@ -46,7 +46,8 @@ Duncan Temple Lang
 }
 
 \seealso{
-%\code{\link{ResultIterator-class}}
+  %\code{\link{ResultIterator-class}}
+  \code{\link{tesseract}}
 }
 \examples{
 

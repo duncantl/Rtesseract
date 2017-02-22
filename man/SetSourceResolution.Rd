@@ -3,58 +3,36 @@
 \alias{GetSourceYResolution}
 \title{Set and Get the Pixels Per Inch Resolution for a Tesseract Image}
 \description{
-%%  ~~ A concise (1-5 lines) description of what the function does. ~~
+  These functions allows us to specify the resolution of the image in
+  pixels per inch and also to query the vertical resolution.
+  This allows tesseract to more accurately estimate font size.
 }
 \usage{
 SetSourceResolution(api, ppi)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
-  \item{api}{
-%%     ~~Describe \code{api} here~~
-}
-  \item{ppi}{
-%%     ~~Describe \code{ppi} here~~
-}
-}
-\details{
-%%  ~~ If necessary, more details than the description above ~~
+  \item{api}{an instance of the \code{\link{TesseractBaseAPI-class}}
+    obtained from a call to \code{\link{tesseract}}}
+  \item{ppi}{an integer giving the number  of pixels per inch in the image}
 }
 \value{
-%%  ~Describe the value returned
-%%  If it is a LIST, use
-%%  \item{comp1 }{Description of 'comp1'}
-%%  \item{comp2 }{Description of 'comp2'}
-%% ...
+\code{SetSourceResolution} returns \code{NULL} and is used for its
+side-effect  on the tesseract object.
+
+\code{GetSourceYResolution} returns an integer value.
 }
 \references{
-%% ~put references to the literature/web site here ~
+ \url{https://tesseract-ocr.github.io/a01281.html}
 }
 \author{
-%%  ~~who you are~~
+Duncan Temple Lang
 }
-\note{
-%%  ~~further notes~~
-}
-
-%% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+  \code{\link{tesseract}}
 }
 \examples{
-##---- Should be DIRECTLY executable !! ----
-##-- ==>  Define data, use random,
-##--	or do  help(data=index)  for the standard data sets.
 
-## The function is currently defined as
-function (api, ppi) 
-{
-    .Call("R_tesseract_SetSourceResolution", as(api, "TesseractBaseAPI"), 
-        as.integer(ppi))
-  }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
-\keyword{ ~kwd1 }% use one of  RShowDoc("KEYWORDS")
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{programming}
+\keyword{IO}
