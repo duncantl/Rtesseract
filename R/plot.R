@@ -113,8 +113,9 @@ function(box, img, ...)
 GetConfidenceColors =
 function(bbox, confidences = bbox[, "confidence"],
          numColors = 10,
-         colors = colorRampPalette(c("#f7fcf5", "#005a32"))(numColors),
-         intervals = quantile(confidences, seq(0, 1, by = .1)))
+         colors = colorRampPalette(colorEnds)(numColors),
+         colorEnds = c("#f7fcf5", "#005a32"),
+         intervals = quantile(confidences, seq(0, 1, by = 1/numColors)))
 {
    i = cut(confidences, intervals )
    structure(colors[ i ], names = as.character(i))
