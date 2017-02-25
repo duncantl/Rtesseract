@@ -10,7 +10,7 @@
   The \code{tesseract} function provides an entry to much more control
   and detail about the process and the ability to query the results in
   different ways. The \code{tesseract} function is the building
-  block for \code{\link{ocr}} and all the functionality of the package.
+  block for all the functionality of the package.
   
   To perform OCR on an image, we need a Tesseract API object
   and then can call its methods.
@@ -46,7 +46,17 @@
   There are many functions that operate on a \code{TesseractBaseAPI}
   object that provide the interesting functionality for the package.
   These are noted in the see also section and in other help pages,
-  e.g., \code{\link{SetImage}}, \code{\link{GetDatapath}}.
+  e.g., \code{\link{GetDatapath}}, \code{\link{GetVariables}},
+  \code{\link{SetVariables}}.
+  We can load configuration files of variable settings,
+  set the image to be processed, the page segmentation
+  mode and the resolution specification of the image.
+  We can also query these.
+
+  A potentially very useful facility is to specify the
+  sub-region of the current image for tesseract to analyze
+  with \code{SetRectangle}. This allows us to zoom in
+  and redo the OCR within this constrained context.
 
   When we have configured the tesseract object appropriately,
   we call \code{\link{Recognize}} to perform the OCR.
@@ -168,8 +178,19 @@ Recognize(api)
 Duncan Temple Lang
 }
 \seealso{
-  \code{\link{GetIterator}}, \code{\link{lapply}}.
-  \code{\link{SetVariables}},   \code{\link{PrintVariables}}
+  \code{\link{GetText}}  
+  \code{\link{GetBoxes}}
+  \code{\link{GetConfidences}}
+  \code{\link{GetAlternatives}}  
+  \code{\link{SetVariables}},   \code{\link{PrintVariables}},
+  \code{\link{SetInputName}},  \code{\link{SetImage}},
+  \code{\link{SetOutputName}},
+  \code{\link{ReadConfigFile}},
+  \code{\link{SetVariables}}, \code{\link{GetVariables}},
+  \code{\link{PrintVariables}},
+  \code{\link{SetPageSegMode}},     \code{\link{GetPageSegMode}},
+  \code{\link{SetRectangle}},
+  \code{\link{SetSourceResolution}},   \code{\link{GetSourceYResolution}}   
 }
 
 \examples{
@@ -177,8 +198,10 @@ Duncan Temple Lang
  api = tesseract(f)
  GetInputName(api)
  Recognize(api)
- ri = GetIterator(api)
- bbox = lapply(ri, BoundingBox, "word")
+ GetText(api)
+ bbox = GetBoxes(api)
+ conf = GetConfidences(api)
+ alts = GetAlternatives(api)
 
  if(require("png")) {
     i = readPNG(f)
@@ -186,5 +209,5 @@ Duncan Temple Lang
  }
 }
 
-\keyword{IO }
+\keyword{IO}
 \keyword{programming}

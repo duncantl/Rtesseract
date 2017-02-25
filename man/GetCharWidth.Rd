@@ -1,6 +1,6 @@
-\name{getCharWidth}
-\alias{getCharWidth}
-\alias{getCharHeight}
+\name{GetCharWidth}
+\alias{GetCharWidth}
+\alias{GetCharHeight}
 \title{
 Utlities for Computing Typical Character Height and Width on this Page
 }
@@ -9,8 +9,8 @@ Utlities for Computing Typical Character Height and Width on this Page
   height and width of the characters recognized on the current page.
 }
 \usage{
-getCharWidth(bbox, fun = median, onlyAlphaNumeric = TRUE)
-getCharHeight(bbox, fun = median, onlyAlphaNumeric = TRUE)
+GetCharWidth(bbox, fun = median, onlyAlphaNumeric = TRUE)
+GetCharHeight(bbox, fun = median, onlyAlphaNumeric = TRUE)
 }
 \arguments{
   \item{bbox}{the matrix/data.frame of bounding boxes of the elements on
@@ -28,7 +28,7 @@ getCharHeight(bbox, fun = median, onlyAlphaNumeric = TRUE)
 Duncan Temple Lang
 }
 \seealso{
-\code{\link{getBoxes}}, \code{\link{tesseract}}
+\code{\link{GetBoxes}}, \code{\link{tesseract}}
 }
 %\examples{}
 \keyword{IO}

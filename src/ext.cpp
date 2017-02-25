@@ -984,3 +984,15 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
 
   return(r_ans) ;
 }
+
+
+
+#ifdef DEBUG_EXIT
+// Exploring ways to slide in a different exit() for libtesseract
+extern "C"
+void
+Rexit()
+{
+    exit(101);
+}
+#endif

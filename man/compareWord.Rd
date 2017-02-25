@@ -47,7 +47,7 @@ Duncan Temple Lang
 }
 
 \seealso{
-\code{\link{ocr}}
+\code{\link{tesseract}}, \code{\link{GetText}}, \code{\link{GetConfidences}}
 }
 \examples{
 compareWords(c("Duncin", "Temple", "Lung"), c("Duncan", "Temple", "Lang"))

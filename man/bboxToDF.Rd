@@ -43,7 +43,7 @@ orderBBox(bbox, colName = "bottom", decreasing = TRUE)
 Duncan Temple Lang
 }
 \seealso{
-  \code{\link{getBoxes}}
+  \code{\link{GetBoxes}}
 }
 %\examples{}
 \keyword{IO}

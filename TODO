@@ -1,26 +1,21 @@
-[done] Make function calls consistent (getXXX to GetXXX)
+Get this working on Windows.
 
-[done] remove the ocr() function
+Example for GetSmudges
+
+Check GetBoxes returns what BoundingBoxes used to.
 
 ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
   try sliding in definition of exit() in Rexit/exit.c
 
-  library(Rtesseract); api = tesseract();ReadConfigFile(api, "bad_config")
+  library(Rtesseract); api = tesseract();ReadConfigFile(api, "Experiments/bad_config")
 
 tprintf() annd messages on console.
 
 Be able to interrupt in OCR computations with Ctrl-c.
 
-[fixed] Segfaults if Recognize hasn't been called.
- library(Rtesseract)
- ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
- a = getAlternatives(ts)
+[done] Make function calls consistent (getXXX to GetXXX)
 
-[Fixed now] Investigate  "Calling Recognize again"
-  library(Rtesseract)
-  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
-  b = getBoxes(ts)
-
+[done] remove the ocr() function
 
 [Verify sane] Get alternatives is returning different output between:
 library(Rtesseract)
@@ -47,7 +42,6 @@ Do we need to delete the choice object
 
 [done] getAlternatives(ri) may not want to just get the alternatives for the current cursor in the iterator, but all of them.
 
-
 [resolved] Additionally, seems to be returing alternatives at the wrong level (Returns a single letter, only the first letter) 
   Does ChoiceIterator() only work for characters/symbols, not words.
   - need to check that this is operating correctly.
@@ -64,7 +58,7 @@ Update documentation/NAMESPACE to reflect current functions and functionality.
 
 ? Other methods form the baseapi.h ?
 
-seg fault in plotSubImage() when run via the examples.
+[can we reproduce this] seg fault in plotSubImage() when run via the examples.
   [Seems okay on OSX machine (DTL)]
   Could be an earlier example with memory issues appearing at this point.
   e.g. pixRead()
@@ -185,6 +179,25 @@ Annotate an SVG plot of this so that we can see the confidence levels and altern
 
 
 ---------------------
+[done] Add an example for lapply.Rd with an R function.
+[done] Merge tesseractFuns.Rd
+[done from NAMESPACE] remove the ocr() function
+[done] readImage not being found in plot.OCR() - .Rbuildignore was causing it to be discard due to FUNS. Matching is case-insensitive.
+[done] Document SetInputName, SetImage
+
+[done] Remove GetIterator.Rd
+
+[fixed] Segfaults if Recognize hasn't been called.
+ library(Rtesseract)
+ ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+ a = getAlternatives(ts)
+
+[Fixed now] Investigate  "Calling Recognize again"
+  library(Rtesseract)
+  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
+  b = getBoxes(ts)
+
+
 
 [done] SetInputName - if no api, warn don't treat file name as api.
 

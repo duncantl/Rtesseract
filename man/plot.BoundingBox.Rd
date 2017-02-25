@@ -19,7 +19,6 @@
 \usage{
 plotSubImage(box, img, ...)
 }
-%- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{box}{ a vector of length 4 giving the x1, y1, and x2, y2
     coordinates of the sub-region.}
@@ -37,23 +36,22 @@ Duncan Temple Lang
 }
 
 \seealso{
- \code{\link{BoundingBox}}
+ \code{\link{GetBoxes}}
 }
 \examples{
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 pix = pixRead(f)
 api = tesseract(pix)
-Recognize(api)
-bbox = lapply(api, BoundingBox, "textline")
+bbox = GetBoxes(api, "textline")
+#Recognize(api)
+#bbox = lapply(api, BoundingBox, "textline")
 
-if(require("png")) {
-  img = readPNG(f)
+if(FALSE && require("png")) {
+  img = png::readPNG(f)
   par(mfrow = c(3, 3))
   invisible(lapply(bbox, plotSubImage, img))
   invisible(lapply(bbox, plotSubImage, img, axes = FALSE, xlab = "", ylab = ""))
 }
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{graphics}
 \keyword{IO}

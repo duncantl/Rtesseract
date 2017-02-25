@@ -201,43 +201,43 @@ function(obj, level = 3L, ...)
 
 
 setGeneric("GetAlternatives",
-           function(obj, level = 4L, ...)
+           function(obj,  ...)
              standardGeneric("GetAlternatives"))
 
 setMethod("GetAlternatives",
           "TesseractBaseAPI",
-          function(obj, level = 4L, ...) {
+          function(obj, ...) {
             if(!hasRecognized(obj))
               Recognize(obj)
 
-           GetAlternatives(GetIterator(obj), level)
+           GetAlternatives(GetIterator(obj))
   #          .Call("R_getAllAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
 setMethod("GetAlternatives",
           "ResultIterator",
-          function(obj, level = 4L, ...) {
-             lapply(obj, "getAlts", as(level, "PageIteratorLevel"))
+          function(obj, ...) {
+             lapply(obj, "getAlts", as(4L, "PageIteratorLevel"))
 #            .Call("R_Current_getAlternatives", obj, as(level, "PageIteratorLevel"))
           })
 
 
 setMethod("GetAlternatives",
            "character",
-          function(obj, level = 4L, ...) {
+          function(obj, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts)
-              GetAlternatives(ts, level)
+              GetAlternatives(ts)
           })
 
 setMethod("GetAlternatives",
            "Pix",
-          function(obj, level = 4L, ...) {
+          function(obj, ...) {
               ts = tesseract(...)
               SetImage(ts, obj)              
               Recognize(ts)
-              GetAlternatives(ts, level)
+              GetAlternatives(ts)
           })
 
 
@@ -573,7 +573,7 @@ function(api)
 }
 
 
-
+if(FALSE) 
 ProcessPages =
 function(filename, api = tesseract(), timeout = 0L, out = tempfile())
 {

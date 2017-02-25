@@ -36,7 +36,7 @@ Duncan Temple Lang
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  pix = pixRead(f)
  api = tesseract(pix)
- lapply(api, Confidence, "textline")
+ lapply(api, GetAlternatives, "symbol")
 }
 \keyword{programming}
 \keyword{IO}

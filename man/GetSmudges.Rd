@@ -1,5 +1,5 @@
-\name{getSmudges}
-\alias{getSmudges}
+\name{GetSmudges}
+\alias{GetSmudges}
 \title{An Approach to Identifying Irrelevant Noisy Elements on the Page}
 \description{
 This function attempts to finds rows in the bounding box
@@ -10,7 +10,8 @@ This is ad hoc to say the least. One can implement additional or
 alternative approaches and this is just offered as a utility.
 }
 \usage{
-getSmudges(bbox, threshold = 5, charWidth = getCharWidth(bbox), charHeight = getCharHeight(bbox), anywhere = FALSE)
+GetSmudges(bbox, threshold = 5, charWidth = GetCharWidth(bbox),
+             charHeight = GetCharHeight(bbox), anywhere = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -32,7 +33,7 @@ Duncan Temple Lang
 }
 
 \seealso{
-\code{\link{getBoxes}}
+\code{\link{GetBoxes}}
 }
 %\examples{}
 \keyword{IO}
