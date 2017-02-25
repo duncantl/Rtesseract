@@ -46,10 +46,14 @@ function(x, y = "word",
        mx = c(min(m[,1]), max(m[,3]))*margin
        my = c(min(m[,2]), max(m[,4]))*margin
 
-          # make certain mx and my are > 0.  Could mx[2] or my[2] be negative
-       mx[1] = max(0, mx[1])
-       my[1] = max(0, my[1])       
-       
+        # make certain mx and my are > 0.  Could mx[2] or my[2] be negative
+        # Needs to be >= 1, since we are using this as an index
+        mx[1] = max(1, mx[1])
+        my[1] = max(1, my[1])
+        # Need to make sure the max value is not larger than the biggest dim
+        mx[2] = min(mx[2], ncol)
+        my[2] = min(my[2], nrow)
+        
        img = img[ sort(nrow - seq(as.integer(my[1]), as.integer(my[2]))), seq(as.integer(mx[1]), as.integer(mx[2])), ]
     
     } else {  # show whole image
