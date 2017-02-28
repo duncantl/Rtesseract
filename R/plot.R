@@ -12,7 +12,7 @@ function(x, y = "word",
          outer.border = border,
          cropToBoxes = FALSE, margin = .05,
          main = basename(filename),
-         confidence = TRUE,
+         confidence = TRUE, fillBoxes = FALSE,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -62,13 +62,14 @@ function(x, y = "word",
     }
 
     plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
-    
-       
+           
     if(!is.null(img) && !is.na(img))
         rasterImage(img, mx[1], my[1], mx[2], my[2])    
 
         # Draw the bounding boxes for the detected elements.
-    rect(m[,1],  m[,2], m[,3],  m[,4], border = border, ...)
+    rect(m[,1],  m[,2], m[,3],  m[,4], border = border,
+        col = if(fillBoxes && confidence) border else NULL,
+         ...)
     
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
