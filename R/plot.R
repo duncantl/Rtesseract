@@ -122,6 +122,10 @@ function(bbox, confidences = bbox[, "confidence"],
          colorEnds = c("#f7fcf5", "#005a32"),
          intervals = quantile(confidences, seq(0, 1, by = 1/numColors)))
 {
-   i = cut(confidences, intervals )
-   structure(colors[ i ], names = as.character(i))
+    # prevent cut from returning NAs
+    intervals[1] = 0
+    intervals[numColors] = 1
+    
+    i = cut(confidences, intervals )
+    structure(colors[ i ], names = as.character(i))
 }
