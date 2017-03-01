@@ -13,6 +13,7 @@ function(x, y = "word",
          cropToBoxes = FALSE, margin = .05,
          main = basename(filename),
          confidence = TRUE, fillBoxes = FALSE,
+         alpha = 0.4,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -68,7 +69,7 @@ function(x, y = "word",
 
         # Draw the bounding boxes for the detected elements.
     rect(m[,1],  m[,2], m[,3],  m[,4], border = border,
-        col = if(fillBoxes && confidence) border else NULL,
+        col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
          ...)
     
         # And now the outer containing rectangle enclosing all the bounding boxes
@@ -128,4 +129,15 @@ function(bbox, confidences = bbox[, "confidence"],
     
     i = cut(confidences, intervals )
     structure(colors[ i ], names = as.character(i))
+}
+
+toAlpha =
+    function(colors, alpha)
+{
+    # Converts colors to versions with some transparency
+    if(any(alpha < 0 | alpha > 1))
+       stop("Alpha must be between 0 and 1")
+    col = col2rgb(colors, TRUE) / 255
+    col["alpha",] = alpha
+    rgb(col["red",], col["green",], col["blue",], col["alpha",])
 }
