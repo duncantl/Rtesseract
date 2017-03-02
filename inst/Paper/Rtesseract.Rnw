@@ -23,11 +23,12 @@ Brief intro to OCR, Tesseract. Introduce some applications.
 Optical Character Recognition (OCR) is a means of converting an image
 of text to strings or characters that can be manipulated by a
 computer. Typical OCR is used to convert a scanned image of a text to
-a digital copy. With increasingly powerful capacity for the analysis
+a digital copy, which can be of the form of simple text, a
+``searchable'' pdf, XML, etc.. With increasingly powerful capacity for the analysis
 of the contents of text, there is increasing demand for the ability
-enter text into a computer efficiently (compared to human transcription).
+to efficiently (compared to human transcription) enter text from a simple image into a computer representation.
 
-Tesseract development began at Hewlett Packard Laboratories Bristol
+Tesseract is a OCR engine which is both capable and open source. Tesseract development began at Hewlett Packard Laboratories Bristol
 and Hewlett Packard Co between 1985 to 1994. It was entered into 1995
 UNLV Annual Test of OCR Accuracy, where it scored well against
 commercial products. Little additional development occurred between
@@ -43,7 +44,7 @@ calibration parameters for fine-tuning the OCR engine for increasing
 accuracy to specific problems. The design philosophy of the Rtesseract
 package was to allow convenience wrappers for the OCR engine while
 preserving access to the fine-scale controls. There are other wrappers
-for Tesseract for R (tesseract; Ooms 2016), however the Rtesseract
+for Tesseract for R \citep{ooms2016}, however the Rtesseract
 package pre-dates this and allows additional functionality and finer
 control.
 
@@ -52,39 +53,29 @@ control.
 \subsection{Base Functions}
 
 The base of the package is a collection of four high-level functions,
-getText(), getConfidences(), getAlternatives(), and
-getBoundingBoxes(). Of these, getText() is the simplest by taking an
+GetText(), GetConfidences(), GetAlternatives(), and
+GetBoundingBoxes(). Of these, GetText() is the simplest by taking an
 image and returning a character vector of the recognized
 characters/words. This is similar to the functionality of most common
 OCR engines (e.g., Google Vision, PDF Pen Pro, Adobe
 Acrobat), as well as the tesseract package. However, with
-getConfidences(), the confidences of the OCR engine can be returned,
+GetConfidences(), the confidences of the OCR engine can be returned,
 allowing further analysis of the results. Building on this, the
 alternative matches at the character level can be returned with
-getAlternatives(). Lastly, the spatial locations of the bounding boxes
+GetAlternatives(). Lastly, the spatial locations of the bounding boxes
 around each character, word, or element can be returned with
-getBoundingBoxes().
+GetBoundingBoxes().
 
 Additionally, plotting functions have been included, which allow
 visualization of the results of OCR alongside/over-top the original
 image, plotting of bounding boxes and confidence intervals, etc.
-
-%% Code chunks are just placeholders for eventual examples
-
-\begin{figure}[h]
-<<fig = TRUE>>=
-plot(img, bboxes, confidences = XXX)
-@ 
-\caption{Plotting OCR results}
-\label{fig:cor}
-\end{figure}
 
 \subsection{Meta data}
 
 In addition to the base functions, meta data about the OCR engine and
 the input image can be retrieved using a collection of
 functions. Examples of these functions include GetImageDims(),
-getCharWidth(), etc. 
+GetCharWidth(), etc. 
 
 %% Expand this with list Duncan created
 
@@ -100,13 +91,6 @@ confidences), a TesseractAPI object can be created outside the above
 main functions, avoiding the need to repeatedly create and OCR the
 same image. 
 
-%% Give some example of adjusting the PSM mode, etc.
-<<>>=
-api = tesseract(img)
-getConfidences(api)
-getBoundingBoxes(api)
-
-@
 
 \section{Advantages}
 
@@ -115,21 +99,84 @@ control parameters. Allows recovery of confidence and bounding boxes,
 which allow spatial analysis of results. Spatial information can be
 used to refine OCR area or recover table/structured data. 
 
+For example, by adjusting the variables for OCR, it is possible to
+recover the location of text on a page, as well as the locations of
+lines. We have used this functionality to recover data from tables.
+
+
+\section{Examples}\label{examples}
+
+\subsection{Basic Use}
+
+%% Do we need to have examples of GetAlts, etc?
+<<>>=
+library(Rtesseract)
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
+# Default is to return words
+GetText(f)
+# But you can also get individual letters
+GetText(f, level = 4L)
+# Or lines
+GetText(f, level = 2L)
+
+@ 
+
+
+<<>>=
+# We can create an TesseractBaseAPI object that can be reused
+api = tesseract(f)
+
+GetText(api)
+GetConfidences(api)
+GetBoxes(api)
+
+@
+
+<<fig = TRUE>>=
+par(mfrow = c(1, 2))
+plot(api)
+plot(api, fillBox = TRUE, alpha = .4)
+
+@ 
+
+\subsection{Advanced use}
+
+%% Changing tesseract variables
+<<>>=
+api = tesseract(f, pageSegMode = "psm_auto",
+                opts = list(tessedit_char_blacklist = "G",
+                            tessedit_enable_dict_correction = 1))
+
+GetText(api)
+@ 
+
+%% Example of recovering lines and columns
+%%
+<<>>=
+f = system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract")
+ts = tesseract(f, pageSegMode = "psm_auto")
+Recognize(ts)
+
+bb = GetBoxes(ts)
+
+quantile(bb[,"right"] - bb[,"left"], probs = seq(0,1, 0.1)) 
+
+i = bb[,"right"] - bb[,"left"] > 500
+bb[i,]
+m = plot(ts, cropToBoxes = TRUE)
+rect(m[i,"left"],m[i,"bottom"],m[i,"right"],m[i,"top"], col = "red")
+abline(v = quantile(bb[,c("left", "right")], probs = seq(0,1, 0.1)))
+abline(v = quantile(bb[,"right"], probs = seq(0,1, 0.1)))
+
+@
+
+\section{Conclusions}
+
 Free, open-source.
 
 Allows integration of full work-flow into R. OCR, NLP, etc.
 
 
-\section{Examples}\label{examples}
-
-\subsection{Prose}
-
-\subsection{Structured data}
-
-<<<>>=
-
-@ 
-
-
+%% Code chunks are just placeholders for eventual examples
 
 \end{document}
