@@ -24,7 +24,7 @@ plotSubImage(box, img, ...)
     coordinates of the sub-region.}
   \item{img}{the image object read using the appropriate function in
   the appropriate package for the image type. See \code{png},
-    \code{rjpeg}, or \code{rtiff}.}
+    \code{rjpeg}, or \code{tiff}.}
   \item{\dots}{additional arguments passed to the inherited \code{plot} methods.}
 }
 \value{
