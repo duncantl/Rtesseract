@@ -28,13 +28,14 @@ a digital copy, which can be of the form of simple text, a
 of the contents of text, there is increasing demand for the ability
 to efficiently (compared to human transcription) enter text from a simple image into a computer representation.
 
-Tesseract is a OCR engine which is both capable and open source. Tesseract development began at Hewlett Packard Laboratories Bristol
-and Hewlett Packard Co between 1985 to 1994. It was entered into 1995
-UNLV Annual Test of OCR Accuracy, where it scored well against
-commercial products. Little additional development occurred between
-1995 and when the code base was
-released for Open Source in 2005. It has since been maintained
-by Google (accuracy?) and open-source developers.
+Tesseract is a OCR engine which is both capable out-of-the-box, highly
+flexible, and open source. Tesseract development began at Hewlett
+Packard Laboratories Bristol and Hewlett Packard Co between 1985 to
+1994. It was entered into 1995 UNLV Annual Test of OCR Accuracy, where
+it scored well against commercial products. Little additional
+development occurred between 1995 and when the code base was released
+for Open Source in 2005. It has since been maintained by Google
+(accuracy?) and open-source developers.
 
 The biggest strength of Tesseract is its flexibility and ability to be
 trained. There are many commercial OCR products, but few allow user
@@ -45,8 +46,8 @@ accuracy to specific problems. The design philosophy of the Rtesseract
 package was to allow convenience wrappers for the OCR engine while
 preserving access to the fine-scale controls. There are other wrappers
 for Tesseract for R \citep{ooms2016}, however the Rtesseract
-package pre-dates this and allows additional functionality and finer
-control.
+package pre-dates this package and allows additional functionality and finer
+control by giving access to the TesseractBaseAPI from within R.
 
 \section{Package Description}\label{desc}
 
@@ -68,20 +69,31 @@ GetBoundingBoxes().
 
 Additionally, plotting functions have been included, which allow
 visualization of the results of OCR alongside/over-top the original
-image, plotting of bounding boxes and confidence intervals, etc.
+image. Rtesseract allows easy visualization of the bounding boxes
+drawn around lines, words, or characters, which is a useful diagnostic
+for choosing the proper pageSegMode. Additionally, Rtesseract allows
+the user to display the confidence intervals associated with each
+bounding box, allowing the user to quickly spot words or areas of the
+image that are with low confidence. plotting of bounding boxes and
+confidence intervals, etc.
 
 \subsection{Meta data}
 
 In addition to the base functions, meta data about the OCR engine and
 the input image can be retrieved using a collection of
-functions. Examples of these functions include GetImageDims(),
-GetCharWidth(), etc. 
+functions. The current settings for the tesseract OCR engine are
+returned by PrintVariables() (returns \Sexpr{length(PrintVariables())}
+variables at the time of writing). These variables can be adjusted via
+a call to SetVariables(). Additionally, configurations of these
+variable options can be read in from a file with the function
+ReadConfigFile().
 
 %% Expand this with list Duncan created
 
 \subsection{Fine control}
 
-Many customizable fine controls are accessible through R, including
+Many customizable variables which allow fine control of the 
+OCR engine are accessible through R via the Rtesseract package, including
 pageSegMode, pageOrientation, language, white- and black-list
 characters, custom user-added patterns and words, alternative OCR
 engines, etc. 
@@ -133,9 +145,12 @@ GetBoxes(api)
 @
 
 <<fig = TRUE>>=
+# We can plot the results with showing the bounding boxes and associated confidences
 par(mfrow = c(1, 2))
+
 plot(api)
-plot(api, fillBox = TRUE, alpha = .4)
+
+plot(api, fillBox = TRUE)
 
 @ 
 
@@ -148,12 +163,13 @@ api = tesseract(f, pageSegMode = "psm_auto",
                             tessedit_enable_dict_correction = 1))
 
 GetText(api)
+
 @ 
 
 %% Example of recovering lines and columns
 %%
 <<>>=
-f = system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract")
+f = system.file("images", "IMG_1234.jpg", package = "Rtesseract")
 ts = tesseract(f, pageSegMode = "psm_auto")
 Recognize(ts)
 
