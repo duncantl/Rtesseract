@@ -31,11 +31,10 @@ to efficiently (compared to human transcription) enter text from a simple image 
 Tesseract is a OCR engine which is both capable out-of-the-box, highly
 flexible, and open source. Tesseract development began at Hewlett
 Packard Laboratories Bristol and Hewlett Packard Co between 1985 to
-1994. It was entered into 1995 UNLV Annual Test of OCR Accuracy, where
+1994 \citep{Smith2007}. It was entered into 1995 UNLV Annual Test of OCR Accuracy, where
 it scored well against commercial products. Little additional
 development occurred between 1995 and when the code base was released
-for Open Source in 2005. It has since been maintained by Google
-(accuracy?) and open-source developers.
+for Open Source in 2005. Since been maintained by Google and open-source developers.
 
 The biggest strength of Tesseract is its flexibility and ability to be
 trained. There are many commercial OCR products, but few allow user
@@ -169,8 +168,10 @@ GetText(api)
 %% Example of recovering lines and columns
 %%
 <<>>=
-f = system.file("images", "IMG_1234.jpg", package = "Rtesseract")
-ts = tesseract(f, pageSegMode = "psm_auto")
+f = system.file("images", "1990_p44.png", package = "Rtesseract")
+ts = tesseract(f, pageSegMode = 3, datapath = "/home/mespe/DSI",
+              opts = list(tessedit_char_whitelist = paste(LETTERS, 0:9, " .-",
+                                                          collapse = "")))
 Recognize(ts)
 
 bb = GetBoxes(ts)
@@ -179,18 +180,27 @@ quantile(bb[,"right"] - bb[,"left"], probs = seq(0,1, 0.1))
 
 i = bb[,"right"] - bb[,"left"] > 500
 bb[i,]
-m = plot(ts, cropToBoxes = TRUE)
-rect(m[i,"left"],m[i,"bottom"],m[i,"right"],m[i,"top"], col = "red")
+m = plot(ts, fillBoxes = TRUE)
+rect(m[i,"left"],m[i,"bottom"],m[i,"right"],m[i,"top"], col = "red", border = NA)
 abline(v = quantile(bb[,c("left", "right")], probs = seq(0,1, 0.1)))
 abline(v = quantile(bb[,"right"], probs = seq(0,1, 0.1)))
-
+ 
 @
+
+% Looking at and changing options
+<<>>=
+v = PrintVariables()
+v[grep("char", names(v))]
+@ 
 
 \section{Conclusions}
 
 Free, open-source.
 
 Allows integration of full work-flow into R. OCR, NLP, etc.
+
+Works with both the current stable release (3.05) and the alpha
+release (4.00alpha).
 
 
 %% Code chunks are just placeholders for eventual examples
