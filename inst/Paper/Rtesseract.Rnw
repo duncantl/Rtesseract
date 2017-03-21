@@ -9,14 +9,52 @@
 
 \begin{abstract}
 
+  Here we describe the \pkg{Rtesseract} package that allows access
+to Tesseract, an Open Source program for Optical Character Recognition
+(OCR), from R. For basic use, simple wrapper functions in
+\pkg{Rtesseract} allow recovery of text from an image with a
+single command. For more advanced uses, the complete TesseractBaseAPI
+is accessible, allowing full customization of OCR behavior. Additional
+utilities are also included, which allow plotting of results,
+visualization of OCR confidences, output of multiple formats to file
+(e.g., PDF, HOCR, plain text), and recovery of information about the
+input image. By supporting recovery of text from images,
+\pkg{Rtesseract} allows a complete analysis to be conducted from
+within R.
+  
 \end{abstract}
 
 \section{Introduction}\label{intro}
 
-<<echo=FALSE, message=FALSE>>=
+<<setup, echo=FALSE, message=FALSE, warning=FALSE>>=
 library(Rtesseract)
 library(knitr)
 library(RAutoGenRunTime)
+
+# Globally set output to be limited to 4 lines
+knit_theme$set("print")
+opts_chunk$set(out.lines = 4)
+opts_chunk$set(highlight = FALSE, background = "white", prompt = TRUE,
+               comment = '')
+
+
+# # the default output hook
+# # From https://github.com/yihui/knitr-examples
+hook_output = knit_hooks$get("output")
+knit_hooks$set(output = function(x, options) {
+    if (!is.null(n <- options$out.lines)) {
+        x = unlist(stringr::str_split(x, "\n"))
+        if (length(x) > n) {
+            # truncate the output
+            x = c(head(x, n), "....\n")
+        }
+        x = paste(x, collapse = "\n")  # paste first n lines together
+    }
+    hook_output(x, options)
+})
+
+              
+
 @ 
 
 Optical Character Recognition (OCR) is a means of converting an image
@@ -24,17 +62,21 @@ of text to strings or characters that can be manipulated by a
 computer. Typically OCR is used to convert a scanned image of a text
 to a digital copy, which can be of the form of simple text, a
 ``searchable'' pdf, XML, etc.. With increasingly powerful capacity for
-the analysis of the contents of text, there is increasing demand for
-the ability to efficiently (compared to human transcription) enter
-text from a simple image into a computer representation.
+the analysis of the contents of text (e.g., Natural Language
+Processing), there is increasing demand for the ability to efficiently
+(compared to human transcription) enter text from a simple image into
+a computer representation.
 
 Tesseract is a OCR engine which is both capable out-of-the-box, highly
 flexible, and open source. Tesseract development began at Hewlett
 Packard Laboratories Bristol and Hewlett Packard Co between 1985 to
-1994 \citep{Smith2007}. It was entered into 1995 UNLV Annual Test of OCR Accuracy, where
-it scored well against commercial products. Little additional
-development occurred between 1995 and when the code base was released
-for Open Source in 2005. Since been maintained by Google and open-source developers.
+1994 \citep{Smith2007}. It was entered into 1995 UNLV Annual Test of
+OCR Accuracy, where it scored well against commercial products. Little
+additional development occurred between 1995 and when the code base
+was released for Open Source in 2005. Since 2005, Tesseract has been
+maintained by Google and open-source developers. Tesseract depends on
+Leptonica, an open source program for image manipulation, processing,
+and analysis.
 
 The biggest strength of Tesseract is its flexibility and ability to be
 trained, which allows users to custom tailor the OCR engine's behavior
@@ -47,7 +89,7 @@ calibration parameters for fine-tuning the OCR engine for increasing
 accuracy to specific problems.
 
 The design philosophy of the \pkg{Rtesseract}
-package was to provide convenience wrappers for the OCR engine in R,
+package is to provide convenience wrappers for the OCR engine in R,
 allowing ``out-of-the-box'' OCR capability while
 preserving access to the fine-scale controls for more advanced use
 cases. There are other packages which provide wrappers
@@ -76,92 +118,39 @@ around each character, word, or element can be returned with
 the input image, or even allows recovery of elements such as spaces,
 lines, and blocks in the input image.
 
-Additionally, plotting functions have been included in the \pkg{Rtesseract} package, which allow
-visualization of the results of OCR alongside and over-top the original
-image. \pkg{Rtesseract} allows easy visualization of the bounding boxes
-drawn around lines, words, or characters, which is a useful diagnostic
-for choosing the proper pageSegMode. Additionally, \pkg{Rtesseract} allows
-the user to display the confidence intervals associated with each
-bounding box, allowing the user to quickly spot words or areas of the
-image that are with low confidence. This is a useful feature for
-diagnosing issues related to un-even image quality in the input
-image.
-
-\subsection{Meta data}
-
-In addition to the base functions, meta data about the OCR engine and
-the input image can be retrieved using a collection of
-functions. The current version of Tesseract can be returned by
-\code{tesseractVersion}, while the capabilities for reading various
-image formats via leptonica is provided by
-\code{leptonicaImageFormates}. The current settings for the tesseract OCR engine are
-returned by \code{PrintVariables} (returns \Sexpr{length(PrintVariables())}
-variables at the time of writing). These variables can be adjusted via
-a call to \code{SetVariables}. Additionally, configurations of these
-variable options can be read in from a file with the function
-\code{ReadConfigFile}, allowing easy saving of configurations for sharing
-between computers.
-
-%% Expand this with list Duncan created
-
-\subsection{Fine control}
-
-Many customizable variables which allow fine control of the 
-OCR engine are accessible through R via the \pkg{Rtesseract} package, including
-pageSegMode, pageOrientation, language, white- and black-list
-characters, custom user-added patterns and words, alternative OCR
-engines, etc. Full documatation of user-adjustable variables is
-available at \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}. %% Expand
-
-If multiple outputs are desired (e.g., bounding boxes as well as
-confidences), a \code{TesseractBaseAPI} object can be created outside the four
-convience functions above (\code{GetText}, \code{GetConfindences}, \code{GetAlternatives},
-\code{GetBoundingBoxes}), avoiding the need to repeatedly create and OCR the
-same image. The ability to retain the API object allows increased
-efficiency, especially complex cases.
-
-\section{Advantages}
-
-Provides both easy access to OCR functionality and access to low-level
-control parameters. Allows recovery of confidence and bounding boxes,
-which allow spatial analysis of results. Spatial information can be
-used to refine OCR area or recover table/structured data. 
-
-For example, by adjusting the variables for OCR, it is possible to
-recover the location of text on a page, as well as the locations of
-lines. We have used this functionality to recover data from tables.
-
-
-\section{Examples}\label{examples}
-
-\subsection{Basic Use}
-
 %% Do we need to have examples of GetAlts, etc?
 <<>>=
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 # Default is to return words
-head(GetText(f))
+GetText(f)
 # But you can also get individual letters
-head(GetText(f, level = 4L))
+GetText(f, level = 4L)
 # Or lines
-head(GetText(f, level = 2L))
+GetText(f, level = 2L)
 
 @ 
 
+Additionally, plotting functions have been included in the
+\pkg{Rtesseract} package, which allow visualization of the results of
+OCR alongside and over-top the original image. \pkg{Rtesseract} allows
+easy visualization of the bounding boxes drawn around lines, words, or
+characters, which is a useful diagnostic for choosing the proper
+pageSegMode. Additionally, \pkg{Rtesseract} allows the user to display
+the confidence intervals associated with each bounding box, allowing
+the user to quickly spot words or areas of the image that are with low
+confidence. This is a useful feature for diagnosing issues related to
+un-even image quality in the input image.
 
-<<>>=
-# We can create an TesseractBaseAPI object that can be reused
+
+\begin{figure}
+\advance\leftskip-2cm
+\begin{minipage}{\dimexpr\textwidth+4cm\relax}%
+\captionsetup{margin=2cm}
+
+<<fig=TRUE, warning=FALSE, fig.height=5, echo=FALSE>>=
+# We can plot the results with showing the bounding boxes and associated confidences
 api = tesseract(f)
 
-head(GetText(api))
-head(GetConfidences(api))
-head(GetBoxes(api))
-head(GetAlternatives(api))
-@
-
-\begin{figure}[htbp]
-<<fig=TRUE>>=
-# We can plot the results with showing the bounding boxes and associated confidences
 par(mfrow = c(1, 2),
     mar = c(4,2,2,1))
 
@@ -171,35 +160,90 @@ plot(api, fillBox = TRUE)
 
 @
 \caption{An example of two different ways of plotting the bounding
-  boxes from a image Recognized by \pkg{Rtesseract}. The user can plot the
+  boxes from a image Recognized by \protect{\pkg{Rtesseract}}. The user can plot the
   just the bounding boxes surrounding the elements, or can fill the
   boxes by relative confidence level.}
 \label{fig:boxes}
+\end{minipage}
 \end{figure}
 
 
-%% Duncan - do we need a method to add a legend? Currently there is no
-%% indication of what the colors mean.
+\subsection{Meta data}
 
+In addition to the base functions, meta data about the OCR engine and
+the input image can be retrieved using a collection of functions. The
+current version of Tesseract can be returned by
+\code{tesseractVersion}, while the capabilities for reading various
+image formats via leptonica is provided by
+\code{leptonicaImageFormates}. The current settings for the tesseract
+OCR engine are returned by \code{PrintVariables} (returns
+\Sexpr{length(PrintVariables())} variables at the time of
+writing). These variables can be adjusted via a call to
+\code{SetVariables}. Additionally, configurations of these variable
+options can be read in from a file with the function
+\code{ReadConfigFile}, allowing easy saving of configurations for
+sharing between computers.
 
-\subsection{Advanced use}
-
-%% Changing tesseract variables
+% Looking at and changing options
 <<>>=
+v = PrintVariables()
+v[grep("tessedit_char", names(v))]
+@ 
+
+
+%% Expand this with list Duncan created
+
+\subsection{Fine control}
+
+If multiple outputs are desired (e.g., bounding boxes as well as
+confidences), a \code{TesseractBaseAPI} object can be created outside
+the four convience functions above (\code{GetText},
+\code{GetConfindences}, \code{GetAlternatives},
+\code{GetBoundingBoxes}), avoiding the need to repeatedly create and
+OCR the same image. The ability to retain the API object allows
+increased efficiency, especially complex cases.
+
+
+<<>>=
+# We can create an TesseractBaseAPI object that can be reused
+api = tesseract(f)
+
+GetText(api)
+GetConfidences(api)
+GetBoxes(api)
+GetAlternatives(api)
+@
+
+Many customizable variables which allow fine control of the OCR engine
+are accessible through R via the \pkg{Rtesseract} package, including
+pageSegMode, pageOrientation, language, white- and black-list
+characters, custom user-added patterns and words, alternative OCR
+engines, etc. Full documatation of user-adjustable variables is
+available at
+\url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
+%% Expand
+
+<<>>=
+# Changing the PageSegMode and editting API variables
 api = tesseract(f, pageSegMode = "psm_auto",
                 opts = list(tessedit_char_blacklist = "o",
                             tessedit_enable_dict_correction = 1))
 
-head(GetText(api))
+GetText(api)
 
-@ 
+@
 
-%% Example of recovering lines and columns
-%%
+An advantage of having access to these primatives is the option to
+recover spatial orientation from the image. Using this information,
+features on the page such as lines and columns can be recovered. We
+have used this property as a means to recover data from images of data
+stored in a table format.
+
+
 \begin{figure}[htbp]
-<<a, fig=TRUE>>=
+<<a, fig=TRUE, warning=FALSE>>=
 f = system.file("images", "1990_p44.png", package = "Rtesseract")
-ts = tesseract(f, pageSegMode = "psm_auto",# datapath = "/home/mespe/DSI",
+ts = tesseract(f, pageSegMode = "psm_auto", datapath = "/home/mespe/DSI",
               opts = list(tessedit_char_whitelist = paste(LETTERS, 0:9, " .-",
                                                           collapse = "")))
 Recognize(ts)
@@ -222,11 +266,16 @@ abline(v = Rtesseract:::findColumns(api = ts, ncols = 8, side = "left"))
 \end{figure}
 
 
-% Looking at and changing options
-<<>>=
-v = PrintVariables()
-v[grep("tessedit_char", names(v))]
-@ 
+\section{Advantages}
+
+Provides both easy access to OCR functionality and access to low-level
+control parameters. Allows recovery of confidence and bounding boxes,
+which allow spatial analysis of results. Spatial information can be
+used to refine OCR area or recover table/structured data. 
+
+For example, by adjusting the variables for OCR, it is possible to
+recover the location of text on a page, as well as the locations of
+lines. We have used this functionality to recover data from tables.
 
 \section{Conclusions}
 

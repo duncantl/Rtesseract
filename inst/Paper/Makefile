@@ -1,4 +1,4 @@
-Rtesseract.pdf: Rtesseract.bib RJwrapper.tex
+Rtesseract.pdf: Rtesseract.bib RJwrapper.tex 
 	pdflatex RJwrapper.tex
 	bibtex RJwrapper
 	pdflatex RJwrapper.tex
