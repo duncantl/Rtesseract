@@ -168,32 +168,7 @@ plot(api, fillBox = TRUE)
 \end{figure}
 
 
-\subsection{Meta data}
-
-In addition to the base functions, meta data about the OCR engine and
-the input image can be retrieved using a collection of functions. The
-current version of Tesseract can be returned by
-\code{tesseractVersion}, while the capabilities for reading various
-image formats via leptonica is provided by
-\code{leptonicaImageFormates}. The current settings for the tesseract
-OCR engine are returned by \code{PrintVariables} (returns
-\Sexpr{length(PrintVariables())} variables at the time of
-writing). These variables can be adjusted via a call to
-\code{SetVariables}. Additionally, configurations of these variable
-options can be read in from a file with the function
-\code{ReadConfigFile}, allowing easy saving of configurations for
-sharing between computers.
-
-% Looking at and changing options
-<<>>=
-v = PrintVariables()
-v[grep("tessedit_char", names(v))]
-@ 
-
-
-%% Expand this with list Duncan created
-
-\subsection{Fine control}
+\subsection{Advanced Use}
 
 If multiple outputs are desired (e.g., bounding boxes as well as
 confidences), a \code{TesseractBaseAPI} object can be created outside
@@ -201,7 +176,12 @@ the four convience functions above (\code{GetText},
 \code{GetConfindences}, \code{GetAlternatives},
 \code{GetBoundingBoxes}), avoiding the need to repeatedly create and
 OCR the same image. The ability to retain the API object allows
-increased efficiency, especially complex cases.
+increased efficiency, especially complex cases. A TesseractBaseAPI
+object can be created with a call to \code{tesseract()} or
+\code{Init()}, and the OCR can be run with a call to
+\code{Recognize()}. Changing the input image is achieved with
+\code{SetImage()}, while a sub-region of an image can be selected
+using the \code{SetRectangle()} function.
 
 
 <<>>=
@@ -221,6 +201,11 @@ characters, custom user-added patterns and words, alternative OCR
 engines, etc. Full documatation of user-adjustable variables is
 available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
+By creating TesseractBaseAPI objects, two or more APIs can be created
+with differing customized variables and their results can be inspected
+without the need to constaintly recreate and then destroy the
+TesseractBaseAPI.
+
 %% Expand
 
 <<>>=
@@ -233,12 +218,13 @@ GetText(api)
 
 @
 
-An advantage of having access to these primatives is the option to
-recover spatial orientation from the image. Using this information,
+Another advantage of having access to these primatives is the option to
+recover spatial orientation from the image. Typically, different
+elements are recognized by different PageSegModes. Using spatial information,
 features on the page such as lines and columns can be recovered. We
 have used this property as a means to recover data from images of data
-stored in a table format.
-
+stored in a table format (Fig. \ref{fig:spatial} for an example), or
+to segment text by sections on the page.
 
 \begin{figure}[htbp]
 <<a, fig=TRUE, warning=FALSE>>=
@@ -265,6 +251,38 @@ abline(v = Rtesseract:::findColumns(api = ts, ncols = 8, side = "left"))
 \label{fig:spatial}
 \end{figure}
 
+\subsection{Meta data}
+
+In addition to the base functions, meta data about the OCR engine and
+the input image can be retrieved using a collection of functions. The
+current version of Tesseract can be returned by
+\code{tesseractVersion}, while the capabilities for reading various
+image formats via leptonica is provided by
+\code{leptonicaImageFormates}. Information about the source image are
+also accessible through R using the \code{GetInputName},
+\code{getImageInfo},\code{GetImageDims}, and
+\code{GetSourceResolution} functions.
+
+The current settings for the tesseract
+OCR engine are returned by \code{PrintVariables} (returns
+\Sexpr{length(PrintVariables())} variables at the time of
+writing). These variables can be adjusted via a call to
+\code{SetVariables}. Additionally, configurations of these variable
+options can be read in from a file with the function
+\code{ReadConfigFile}, allowing easy saving of configurations for
+sharing between computers. By default, \pkg{Rtesseract} searches the
+/usr/bin/local directory for installed trained language files, but
+this can be overridden. The current location where the API is
+searching for language data is returned by \code{GetDataPath}. 
+
+% Looking at and changing options
+<<>>=
+v = PrintVariables()
+v[grep("tessedit_char", names(v))]
+@ 
+
+
+%% Expand this with list Duncan created
 
 \section{Advantages}
 
