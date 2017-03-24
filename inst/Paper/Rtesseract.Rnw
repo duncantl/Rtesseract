@@ -9,18 +9,18 @@
 
 \begin{abstract}
 
-  Here we describe the \pkg{Rtesseract} package that allows access
+  Here we describe \pkg{Rtesseract}, and R package that allows access
 to Tesseract, an Open Source program for Optical Character Recognition
-(OCR), from R. For basic use, simple wrapper functions in
-\pkg{Rtesseract} allow recovery of text from an image with a
-single command. For more advanced uses, the complete TesseractBaseAPI
-is accessible, allowing full customization of OCR behavior. Additional
+(OCR), from within R. For basic use, simple wrapper functions in
+\pkg{Rtesseract} allow recovery of text from an image with a single
+command. For more advanced uses, the complete TesseractBaseAPI is
+accessible, allowing full customization of OCR behavior. Additional
 utilities are also included, which allow plotting of results,
 visualization of OCR confidences, output of multiple formats to file
 (e.g., PDF, HOCR, plain text), and recovery of information about the
 input image. By supporting recovery of text from images,
-\pkg{Rtesseract} allows a complete analysis to be conducted from
-within R.
+\pkg{Rtesseract} allows supports a complete analysis of text from
+images to be conducted from within R.
   
 \end{abstract}
 
@@ -88,14 +88,15 @@ is highly customizable, and allows user access to low-level
 calibration parameters for fine-tuning the OCR engine for increasing
 accuracy to specific problems.
 
-The design philosophy of the \pkg{Rtesseract}
-package is to provide convenience wrappers for the OCR engine in R,
-allowing ``out-of-the-box'' OCR capability while
-preserving access to the fine-scale controls for more advanced use
-cases. There are other packages which provide wrappers
-for Tesseract for R \citep{ooms2016}, however the \pkg{Rtesseract}
-package pre-dates these package and allows additional functionality and finer
-control by giving access to the TesseractBaseAPI from within R.
+The design philosophy of the \pkg{Rtesseract} package is to provide
+convenience wrappers for the OCR engine in R, allowing
+``out-of-the-box'' OCR capability while preserving access to the
+fine-scale controls for more advanced use cases. There are other
+packages which provide wrappers of the commandline executable
+\citep{Hagmann2014}, or the API \citep{ooms2016}, however the
+\pkg{Rtesseract} package pre-dates later and allows additional
+functionality and finer control by giving access to the
+TesseractBaseAPI from within R.
 
 \section{Package Description}\label{desc}
 
@@ -116,21 +117,28 @@ diagnosing ambiguous characters. Lastly, the spatial locations of the bounding b
 around each character, word, or element can be returned with
 \code{GetBoundingBoxes}, which can be used for diagnostics of issues with
 the input image, or even allows recovery of elements such as spaces,
-lines, and blocks in the input image.
+lines, and blocks in the input image. Users should note that when
+these functions are called on an image path, the TessearctBaseAPI is
+created and then destroyed with each call. If repeated operations are
+needed on the same image, creating a persistant TesseractBaseAPI
+object will be more efficient (see ``Advanced Use'' below for more
+details).
+
 
 %% Do we need to have examples of GetAlts, etc?
+The default behavior is to operate at the word level (\code{level =
+  3L}), but Tesseract can also return results from the individual
+character level (\code{level = 4L}) or line level (\code{level = 2L}).
+
+  
 <<>>=
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
-# Default is to return words
 GetText(f)
-# But you can also get individual letters
 GetText(f, level = 4L)
-# Or lines
 GetText(f, level = 2L)
-
 @ 
 
-Additionally, plotting functions have been included in the
+Plotting functions have been included in the
 \pkg{Rtesseract} package, which allow visualization of the results of
 OCR alongside and over-top the original image. \pkg{Rtesseract} allows
 easy visualization of the bounding boxes drawn around lines, words, or
@@ -148,7 +156,6 @@ un-even image quality in the input image.
 \captionsetup{margin=2cm}
 
 <<fig=TRUE, warning=FALSE, fig.height=5, echo=FALSE>>=
-# We can plot the results with showing the bounding boxes and associated confidences
 api = tesseract(f)
 
 par(mfrow = c(1, 2),
@@ -185,9 +192,7 @@ using the \code{SetRectangle()} function.
 
 
 <<>>=
-# We can create an TesseractBaseAPI object that can be reused
 api = tesseract(f)
-
 GetText(api)
 GetConfidences(api)
 GetBoxes(api)
@@ -209,13 +214,10 @@ TesseractBaseAPI.
 %% Expand
 
 <<>>=
-# Changing the PageSegMode and editting API variables
 api = tesseract(f, pageSegMode = "psm_auto",
                 opts = list(tessedit_char_blacklist = "o",
                             tessedit_enable_dict_correction = 1))
-
 GetText(api)
-
 @
 
 Another advantage of having access to these primatives is the option to
@@ -227,7 +229,7 @@ stored in a table format (Fig. \ref{fig:spatial} for an example), or
 to segment text by sections on the page.
 
 \begin{figure}[htbp]
-<<a, fig=TRUE, warning=FALSE>>=
+<<a, fig=TRUE, warning=FALSE, echo=FALSE>>=
 f = system.file("images", "1990_p44.png", package = "Rtesseract")
 ts = tesseract(f, pageSegMode = "psm_auto", datapath = "/home/mespe/DSI",
               opts = list(tessedit_char_whitelist = paste(LETTERS, 0:9, " .-",
@@ -284,27 +286,32 @@ v[grep("tessedit_char", names(v))]
 
 %% Expand this with list Duncan created
 
+\section{Installation}
+
+In order to use \pkg{Rtesseract}, users must first have Tesseract and
+its dependency, Leptonica, installed. Tesseract is available from
+\url{https://github.com/tesseract-ocr/} and Leptonica from
+\url{https://github.com/DanBloomberg/leptonica}. Additionally, users
+must have a trained language dataset installed. Currently, there are
+pre-trained datasets for 140+ languages available from
+\url{https://github.com/tesseract-ocr}. Users are also able to provide
+their own trained data. For more information about training Tesseract,
+please see
+\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}. \pkg{Rtesseract}
+includes some functions that assist with training, including
+\code{ReadBoxFile()}. Finally, \pkg{Rtesseract} can be installed from
+source at \url{https://github.com/duncantl/Rtesseract}.%%Expand
+
 \section{Advantages}
 
-Provides both easy access to OCR functionality and access to low-level
-control parameters. Allows recovery of confidence and bounding boxes,
-which allow spatial analysis of results. Spatial information can be
-used to refine OCR area or recover table/structured data. 
-
-For example, by adjusting the variables for OCR, it is possible to
-recover the location of text on a page, as well as the locations of
-lines. We have used this functionality to recover data from tables.
-
-\section{Conclusions}
-
-Free, open-source.
-
-Allows integration of full work-flow into R. OCR, NLP, etc.
-
-Works with both the current stable release (3.05) and the alpha
-release (4.00alpha).
-
-
-\section{Works Cited}
+\pkg{Rtesseract} provides both easy access to basic OCR functionality
+for simple use-cases as well as access to low-level control parameters
+for more advanced uses. By allowing recovery of additional information
+generated by Tesseract, such as confidence levels and bounding boxes,
+\pkg{Rtesseract} supports novel applications of inputing data from
+images into R (e.g., spatial analysis of text). Leveraging free,
+open-source software allows full integration of the full work-flow of
+text from images into R. \pkg{Rtesseract} works with both the current
+stable release (3.05) and the alpha release (4.00alpha).
 
 \bibliography{Rtesseract.bib}
