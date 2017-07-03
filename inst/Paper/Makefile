@@ -1,15 +1,14 @@
-Rtesseract.pdf: Rtesseract.bib RJwrapper.tex 
+KNIT = Rscript -e "library(knitr); knit('$<')"
+
+Rtesseract.pdf: Rtesseract.bib RJwrapper.tex Rtesseract.tex
 	pdflatex RJwrapper.tex
 	bibtex RJwrapper
 	pdflatex RJwrapper.tex
 	pdflatex RJwrapper.tex
 	mv RJwrapper.pdf Rtesseract.pdf
 
-RJwrapper.tex: RJwrapper.Rnw Rtesseract.Rnw
-	Rscript -e "library(knitr);knit('RJwrapper.Rnw')"
-
-Rtesseract.tex: Rtesseract.Rnw
-	Rscript -e "library(knitr);knit('Rtesseract.Rnw')"
+%.tex: %.Rnw 
+	$(KNIT)
 
 clean:
-	rm Rtesseract.aux Rtesseract.log Rtesseract.out Rtesseract.blg
+	rm *.aux *.log *.out *.blg
