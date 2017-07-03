@@ -105,10 +105,14 @@ R_finalizePDFRender(SEXP extPtr)
 
 extern "C"
 SEXP
-R_TessPDFRender(SEXP r_file, SEXP r_datadir)
+R_TessPDFRender(SEXP r_file, SEXP r_datadir, SEXP r_textOnly)
 {
     tesseract::TessPDFRenderer *renderer;
-    renderer = new tesseract::TessPDFRenderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0)));
+    renderer = new tesseract::TessPDFRenderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0))
+#ifdef PDF_RENDER_HAS_TEXT_ONLY
+					, LOGICAL(r_textOnly)[0]
+#endif
+                                       );
 
     return(createRef(renderer, "TessPDFRenderer", R_finalizePDFRender));   
 }
