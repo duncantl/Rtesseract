@@ -242,7 +242,7 @@ to segment text by sections on the page.
 \begin{figure}[htbp]
 <<a, fig=TRUE, warning=FALSE, echo=FALSE>>=
 f = system.file("images", "1990_p44.png", package = "Rtesseract")
-ts = tesseract(f, pageSegMode = "psm_auto", datapath = "/home/mespe/DSI",
+ts = tesseract(f, pageSegMode = "psm_auto", ,
               opts = list(tessedit_char_whitelist = paste(LETTERS, 0:9, " .-",
                                                           collapse = "")))
 Recognize(ts)
