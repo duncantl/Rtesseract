@@ -9,6 +9,7 @@
 
 \begin{abstract}
 
+  % Work on this after the rest is more or less where we want it
   Here we describe \pkg{Rtesseract}, and R package that allows access
 to Tesseract, an Open Source program for Optical Character Recognition
 (OCR), from within R. For basic use, simple wrapper functions in
@@ -62,22 +63,30 @@ extreme data may be inaccessiable in their current form (e.g., in
 images or PDF documents). As the saying goes, ``PDFs are where data go
 to die.'' The PDF is the mainstay of scientific publication, yet
 extracting data from PDFs is not a straightforward task, especially
-from older PDF documents that are not ``text searchable.'' Ideally,
-there would be a means to extract information from images or PDF
-documents directly into the environment where analysis is being done
-to eliminate the need for multi-software workflows. Here, we describe
-a low-level and highly expandible tool to extract text and data from
-images into R, an environment for statistical computing. This tool
-uses Optical Character Recognition (OCR), a method to convert an image
-to strings or characters that can be directly manipulated by a
-program. Typically OCR is used to convert a scanned image of a text to
-a digital copy, which can be of the form of simple text, a
-``searchable'' PDF, structured XML, etc.. In addition to extracting
-numeric data, these tools support the increasingly powerful capacity
-to analyze the contents of text quantitatively (e.g., Natural Language
-Processing and Digital Humanities). Lastly, these tools can be used to
-efficiently (compared to human transcription) enter text from a simple
-image into a computer representation.
+from older PDF documents that are not ``text searchable.'' There are
+many pieces of software that provide a means to convert images of
+data into computer-usable formats (e.g., MS Word, Acrobat, PDFPen Pro,
+etc.), but these typically (1) lack fine scale control and/or ability
+to customize training and (2) are separate from the tools being used
+to analyze the resulting data. Ideally, there would be a means to
+extract information from images or PDF documents directly into the
+environment where analysis is being done to eliminate the need for
+multi-software workflows.
+
+Here, we describe a low-level and highly expandible tool to extract
+text and data from images into R, an environment for statistical
+computing. This tool uses Optical Character Recognition (OCR), a
+method to extract strings or characters from an image that can then be
+directly manipulated by a program. Typically OCR is used to convert a
+scanned image of a text to a digital copy, which can be of the form of
+a simple text file , a structured text file (e.g., XML or hOCR), a
+``searchable'' PDF document, etc.. In addition to extracting numeric
+data, OCR allows the extraction of text, expanding corpus available
+for the increasingly powerful capacity to analyze the contents of text
+quantitatively (e.g., Natural Language Processing and Digital
+Humanities). Lastly, these tools can be used to efficiently (compared
+to human transcription) enter text from a simple image into a computer
+representation.
 
 Tesseract is a OCR engine which is both capable out-of-the-box, highly
 flexible, and open source. Tesseract development began at Hewlett
@@ -88,15 +97,14 @@ additional development occurred between 1995 and when the code base
 was released for Open Source in 2005. Since 2005, Tesseract has been
 maintained by Google and open-source developers. Tesseract depends on
 Leptonica, an open source program for image manipulation, processing,
-and analysis. The biggest strength of Tesseract is its flexibility and
-ability to be trained, which allows users to custom tailor the OCR
-engine's behavior to individual problems, such as new fonts or
-languages, unusual spellings, etc. There are many commercial OCR
-products, but few allow user training to custom fonts and languages
-and even fewer allow user access to OCR control parameters. Tesseract,
-on the other hand, is highly customizable, and allows user access to
-low-level calibration parameters for fine-tuning the OCR engine for
-increasing accuracy to specific problems.
+and analysis. Recent developments to Tesseract include the integration
+of LSTM Deep Learning networks (versions >= 4.0) for increased speed
+and accuracy. An advantage of Tesseract over many commercial OCR
+products is that Tesseract allows user-training to custom fonts and
+languages and user-access to OCR engine control parameters, which
+allows users to custom tailor the OCR engine's behavior to specific
+applications (e.g., unusual fonts or languages, domain specific
+vocabularly, etc.).
 
 The design philosophy of the \pkg{Rtesseract} package is to provide
 convenience wrappers for the OCR engine in R, allowing
@@ -108,7 +116,7 @@ executable \citep{Hagmann2014}, or API \citep{ooms2016}, the
 \pkg{Rtesseract} package allows additional functionality and finer
 control by giving full access to the TesseractBaseAPI from within
 R. \pkg{Rtesseract} supports both the current release (v3.05.01) and
-development versions (v4.00.alpha) of Tesseract. 
+development versions (v4.00.alpha) of Tesseract.
 
 \section{Package Description}\label{desc}
 
@@ -123,17 +131,18 @@ OCR engines (e.g., Google Vision, PDF Pen Pro, Adobe Acrobat), as well
 as the tesseract package. However, with \code{GetConfidences}, the
 confidences of the OCR engine can be returned, allowing further
 analysis of the results. Building on this, the alternative matches at
-the character level can be returned with \code{GetAlternatives}, which
-is useful for diagnosing ambiguous characters. Lastly, the spatial
-locations of the bounding boxes around each character, word, or
-element can be returned with \code{GetBoundingBoxes}, which can be
-used for diagnostics of issues with the input image, or even allows
-recovery of elements such as spaces, lines, and blocks in the input
-image. Users should note that when these functions are called on an
-image path, the TessearctBaseAPI is created and then destroyed with
-each call. If repeated operations are needed on the same image,
-creating a persistant TesseractBaseAPI object will be more efficient
-(see ``Advanced Use'' below for more details).
+the ``symbol'' (i.e., individual character) level can be returned with
+\code{GetAlternatives}, which is useful for diagnosing ambiguous
+characters. Lastly, the spatial locations of the bounding boxes around
+each character, word, or element can be returned with
+\code{GetBoundingBoxes}, which can be used for diagnostics of issues
+with the input image, or even allows recovery of elements such as
+spaces, lines, and blocks in the input image. Users should note that
+when these functions are called on an image path, the TessearctBaseAPI
+is created and then destroyed with each call. If repeated operations
+are needed on the same image, creating a persistant TesseractBaseAPI
+object will be more efficient (see ``Advanced Use'' below for more
+details).
 
 
 %% Do we need to have examples of GetAlts, etc?  The default behavior
@@ -145,8 +154,8 @@ also return results from the individual character level (\code{level =
 <<>>=
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 GetText(f)
-GetText(f, level = 4L)
-GetText(f, level = 2L)
+GetText(f, level = "symbol")
+GetText(f, level = "textline")
 @ 
 
 Plotting functions have been included in the
