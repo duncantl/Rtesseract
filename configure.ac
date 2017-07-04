@@ -27,7 +27,7 @@ dnl  CXX=`R CMD config  CXX`
 AC_PROG_CXX
 
 
-CXXFLAGS="$TESS_CFLAGS"
+CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
 echo "$TESS_CFLAGS"
 AC_LANG(C++)
 
@@ -67,6 +67,18 @@ AC_TRY_COMPILE(
  [echo "No GetSourceYResolution() method for the TessBaseAPI"]
  )
 
+
+
+AC_TRY_COMPILE(
+ [ #include <tesseract/baseapi.h>
+   #include <tesseract/renderer.h>
+ ],
+ [
+    tesseract::TessPDFRenderer render("", "", true);
+ ],
+ [CPPDEFS="$CPPDEFS -DPDF_RENDER_HAS_TEXT_ONLY=1"; echo "Has textonly parameter"],
+ [echo "TessPDFRender constructor has no textonly parameter"]
+)
 
 
 

@@ -27,7 +27,12 @@ R_Tesseract_RenderBoxes(SEXP r_api)
 }
 
 
+/*
+This is now set via the configure script after testing to see 
+if we can compile with this additional parameter.
+
 #define PDF_RENDER_HAS_TEXT_ONLY 1
+*/
 
 extern "C"
 SEXP
