@@ -15,4 +15,4 @@ RJwrapper.tex: RJwrapper.Rnw Rtesseract.Rnw
 	$(KNIT)
 
 clean:
-	rm *.aux *.log *.out *.blg *.bbl *.brf
+	rm *.aux *.log *.out *.blg *.bbl *.brf RJwrapper.tex Rtesseract.pdf
