@@ -27,10 +27,16 @@ R_Tesseract_RenderBoxes(SEXP r_api)
 }
 
 
+/*
+This is now set via the configure script after testing to see 
+if we can compile with this additional parameter.
+
+#define PDF_RENDER_HAS_TEXT_ONLY 1
+*/
 
 extern "C"
 SEXP
-R_Tesseract_RenderAsPDF(SEXP r_api, SEXP r_file, SEXP r_datadir)
+R_Tesseract_RenderAsPDF(SEXP r_api, SEXP r_file, SEXP r_datadir, SEXP r_textOnly)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
     if(!api) {
@@ -38,7 +44,12 @@ R_Tesseract_RenderAsPDF(SEXP r_api, SEXP r_file, SEXP r_datadir)
             ERROR;
     }
 
-    tesseract::TessPDFRenderer renderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0)));
+    // should make adding r_textOnly optional depending on a configure check.
+    tesseract::TessPDFRenderer renderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0))
+#ifdef PDF_RENDER_HAS_TEXT_ONLY
+					, LOGICAL(r_textOnly)[0]
+#endif
+                                       );
 
     bool failed = !renderer.AddImage(api);
 
@@ -99,10 +110,14 @@ R_finalizePDFRender(SEXP extPtr)
 
 extern "C"
 SEXP
-R_TessPDFRender(SEXP r_file, SEXP r_datadir)
+R_TessPDFRender(SEXP r_file, SEXP r_datadir, SEXP r_textOnly)
 {
     tesseract::TessPDFRenderer *renderer;
-    renderer = new tesseract::TessPDFRenderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0)));
+    renderer = new tesseract::TessPDFRenderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0))
+#ifdef PDF_RENDER_HAS_TEXT_ONLY
+					, LOGICAL(r_textOnly)[0]
+#endif
+                                       );
 
     return(createRef(renderer, "TessPDFRenderer", R_finalizePDFRender));   
 }
