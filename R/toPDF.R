@@ -1,13 +1,20 @@
 toPDF =
 function(imgFile, outFile = removeExtension(imgFile),
-         api = tesseract(, PSM_AUTO))
+         renderer = PDFRenderer(outfile, api, ...),
+         api = tesseract(, PSM_AUTO), ...)
 {
-   renderPages(imgFile, api, .Call("R_TessPDFRender", outFile, GetDatapath(api)))
+   renderPages(imgFile, api, renderer)
      # ensure the finalizer for the render object is run now.
      # This calls the C++ destructor (inherited one from TessResultRender) which flushes and closes the file.
    #rm(render); gc()
    gc()
    paste0(outFile, ".pdf")   
+}
+
+PDFRenderer =
+function(outfile, datapath, textonly = FALSE)
+{
+   .Call("R_TessPDFRender", outFile, GetDatapath(api), as.logical(textonly))
 }
 
 renderPages =
