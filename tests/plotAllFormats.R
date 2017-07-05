@@ -1,3 +1,4 @@
+library(Rtesseract)
 # PNG
 a <- system.file("images", "OCRSample2.png", package = "Rtesseract")
 

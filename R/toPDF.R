@@ -1,6 +1,6 @@
 toPDF =
 function(imgFile, outFile = removeExtension(imgFile),
-         renderer = PDFRenderer(outFile, api, ...),
+         renderer = PDFRenderer(outFile, GetDataPath(api), ...),
          api = tesseract(, PSM_AUTO), ...)
 {
    renderPages(imgFile, api, renderer)
@@ -12,9 +12,9 @@ function(imgFile, outFile = removeExtension(imgFile),
 }
 
 PDFRenderer =
-function(outfile, datapath, textonly = FALSE)
+function(outFile, datapath, textonly = FALSE)
 {
-   .Call("R_TessPDFRender", outFile, GetDatapath(api), as.logical(textonly))
+   .Call("R_TessPDFRender", outFile, datapath, as.logical(textonly))
 }
 
 renderPages =
