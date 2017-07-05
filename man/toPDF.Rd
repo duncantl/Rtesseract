@@ -17,7 +17,9 @@
   and TSV (tab separated values) with details for each element.
 }
 \usage{
-toPDF(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUTO))
+toPDF(imgFile, outFile = removeExtension(imgFile),
+        renderer = PDFRenderer(outFile, GetDataPath(api), ...),
+        api = tesseract(, PSM_AUTO), ...)
 toHTML(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile), 
         api = tesseract(, PSM_AUTO))
 toHOcr(imgFile, fontInfo = TRUE, outFile = removeExtension(imgFile), 
