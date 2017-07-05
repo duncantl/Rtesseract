@@ -1,6 +1,6 @@
 toPDF =
 function(imgFile, outFile = removeExtension(imgFile),
-         renderer = PDFRenderer(outfile, api, ...),
+         renderer = PDFRenderer(outFile, api, ...),
          api = tesseract(, PSM_AUTO), ...)
 {
    renderPages(imgFile, api, renderer)
