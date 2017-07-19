@@ -58,35 +58,51 @@ knit_hooks$set(output = function(x, options) {
 
 @ 
 
-Data are rarely in a form ammeniable to data analysis, but at the
-extreme data may be inaccessiable in their current form (e.g., in
-images or PDF documents). As the saying goes, ``PDFs are where data go
-to die.'' The PDF is the mainstay of scientific publication, yet
-extracting data from PDFs is not a straightforward task, especially
-from older PDF documents that are not ``text searchable.'' There are
-many pieces of software that provide a means to convert images of
-data into computer-usable formats (e.g., MS Word, Acrobat, PDFPen Pro,
-etc.), but these typically (1) lack fine scale control and/or ability
-to customize training and (2) are separate from the tools being used
-to analyze the resulting data. Ideally, there would be a means to
-extract information from images or PDF documents directly into the
-environment where analysis is being done to eliminate the need for
-multi-software workflows.
-
-Here, we describe a low-level and highly expandible tool to extract
-text and data from images into R, an environment for statistical
-computing. This tool uses Optical Character Recognition (OCR), a
-method to extract strings or characters from an image that can then be
-directly manipulated by a program. Typically OCR is used to convert a
+Data are rarely in a form ammeniable to data analysis. At the
+extreme, data may be inaccessiable in their current form, for example
+in images or scans of documents or other records. Optical Character
+Recognition (OCR) technique to infer strings or
+characters from an image, thereby converting images into a format that can then be directly
+manipulated by a computer program. Typically OCR is used to convert a
 scanned image of a text to a digital copy, which can be of the form of
 a simple text file , a structured text file (e.g., XML or hOCR), a
-``searchable'' PDF document, etc.. In addition to extracting numeric
-data, OCR allows the extraction of text, expanding corpus available
-for the increasingly powerful capacity to analyze the contents of text
-quantitatively (e.g., Natural Language Processing and Digital
-Humanities). Lastly, these tools can be used to efficiently (compared
-to human transcription) enter text from a simple image into a computer
-representation.
+``searchable'' PDF document, etc.. While there are many pieces of
+software with the capability to convert images of data into
+computer-usable formats (e.g., Adobe Acrobat, PDFPen Pro, ABBY, etc.),
+these typically only output the result file. End-users are
+not often given access fine scale controls and/or able customize the
+trained behavior of the tool.
+
+There are a few issues with this arrangement. First, inaccurate
+results must be corrected in post-processing steps rather than
+tweaking the processing itself. Cases of unique or domain-specific
+vocabularly, text, or fonts can be completely inscruitable to OCR
+running default settings for a common language or font. Second, since
+these OCR tools are separate from the environments being used to
+correct and subsequently analyze the resulting data, multi-environment
+workflows are used which are difficult to replicate. Third, the there
+are often pieces of information in addition to the contents of text
+that are helpful for subsequent analyses. For example, the layout of
+the text into blocks, the presence of elements such as lines or other
+dividers, or even the relative size of the text can all be used to
+inform the analysis of an image. Lastly, diagnostic pieces of
+information such as the confidence in the matches, alternative
+matches, can be essential to improving OCR accuracy. If the OCR tool
+only returns the text contents, OCR is limited to cases where ...
+
+Ideally, information would be extracted from images directly into the
+environment where analysis is being done.
+
+% % not sure where to put this
+% In addition to extracting numeric data, OCR
+% allows the extraction of text, expanding corpus available for the
+% increasingly powerful capacity to analyze the contents of text
+% quantitatively (e.g., Natural Language Processing and Digital
+% Humanities). Lastly, these tools can be used to efficiently (compared
+% to human transcription) enter text from a simple image into a computer
+% representation.  Here, we describe a low-level and highly expandible
+% tool to extract text and data from images into R, an environment for
+% statistical computing.
 
 Tesseract is a OCR engine which is both capable out-of-the-box, highly
 flexible, and open source. Tesseract development began at Hewlett
