@@ -88,7 +88,7 @@ JPG_FILES="NA"
 TIFF_FILES="NA"
 
 echo "Compiling readImage"
-$CXX -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
+$CXX $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
 
 if test "$?" = "0" ; then
   echo "testing leptonica can read different image formats"
