@@ -126,9 +126,9 @@ Recognize(api)
     directory.}
   \item{engineMode}{the mode for the OCR engine. The default is to use
     tesseract. One can use a Cube method, or a Cube and Tesseract
-    combinatin. See the \code{OcrEngineMode} enumerated constant vector.}
+    combination. See the \code{OcrEngineMode} enumerated constant vector.}
   \item{configs}{a named character vector of configuration arguments}
-  \item{vars}{variables to set for controling Tesseract}
+  \item{vars}{variables to set for controlling Tesseract}
   \item{debugOnly}{a logical value that controls whether in the Init()
     call, only non-debugging variables in \code{vars} are to be processed.}
   \item{\dots}{\code{name = value} pairs that are passed to
