@@ -58,15 +58,15 @@ knit_hooks$set(output = function(x, options) {
 
 @ 
 
-Data are rarely in a form ammeniable to data analysis. At the extreme,
-data may be inaccessiable in their current form, for example in images
+Data are rarely in a form amenable to data analysis. At the extreme,
+data may be inaccessible in their current form, for example in images
 or scans of documents or other records. Optical Character Recognition
 (OCR) technique to infer strings or characters from an image, thereby
 converting images into a format that can then be directly manipulated
 by a computer program. Typically OCR is used to convert a scanned
 image of a text to a digital copy, which can be of the form of a
-simple text file , a structured text file (e.g., XML or hOCR), a
-``searchable'' PDF document, etc.. While there are many pieces of
+simple text file , a structured text file (e.g., XML or HOCR), a
+``search-able'' PDF document, etc.. While there are many pieces of
 software with the capability to convert images of data into
 computer-usable formats (e.g., Adobe Acrobat, PDFPen Pro, ABBY, etc.),
 these typically only output the result file. End-users are not often
@@ -76,8 +76,8 @@ behavior of the tool.
 There are a few issues with this arrangement. First, inaccurate
 results must be corrected in post-processing steps rather than
 tweaking the processing itself. Images containing unique or
-domain-specific vocabularly, or unconventional fonts can be completely
-inscruitable to OCR running default settings intended for a common
+domain-specific vocabulary, or unconventional fonts can be completely
+inscrutable to OCR running default settings intended for a common
 language or font, in which case no amount of post-processing can
 recover the data. Second, since these OCR tools are separate from the
 environments being used to correct and subsequently analyze the
@@ -115,7 +115,7 @@ package is to provide convenience wrappers for the OCR engine in R,
 allowing ``out-of-the-box'' OCR capability while preserving access to
 the fine-scale controls for more advanced use cases. Development of
 \pkg{Rtesseract} began in Apr. 2015, and while there are other
-packages which provide wrappers of the Tesseract commandline
+packages which provide wrappers of the Tesseract command line
 executable \citep{Hagmann2014}, or API \citep{ooms2016}, the
 \pkg{Rtesseract} package allows additional functionality and finer
 control by giving full access to the TesseractBaseAPI from within
@@ -138,7 +138,7 @@ products is that Tesseract allows user-training to custom fonts and
 languages and user-access to OCR engine control parameters, which
 allows users to custom tailor the OCR engine's behavior to specific
 applications (e.g., unusual fonts or languages, domain specific
-vocabularly, etc.).
+vocabulary, etc.).
 
 
 \section{Package Motivation}\label{desc}
@@ -146,7 +146,7 @@ vocabularly, etc.).
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient. \pkg{Rtesseract} provides simple
 interfaces that allow users to provide the path to an image in a
-supported format (tiff, jpg, and png on most systems), and OCR will be
+supported format (tiff, JPEG, and png on most systems), and OCR will be
 run on the image using the default settings. For example, say we had
 an image of the first page of a scientific publication:
 
@@ -181,7 +181,7 @@ might wish to know the location of the match, how confident the OCR
 engine is in each match, and what alternatives exist for the returned
 match. For these tasks, \pkg{Rtesseract} includes three other
 high-level functions; \code{GetConfidences}, \code{GetAlternatives},
-and \code{GetBoundingBoxes}. Similar to \code{GetText}, these
+and \code{GetBoxes}. Similar to \code{GetText}, these
 functions can take the path of the image file as a single argument,
 create a \code{TesseractBaseAPI} object, run the OCR engine and
 extract the information of interest, and then destroy the
@@ -192,11 +192,11 @@ It is easy to see the inefficiency in repeatedly creating a
 \code{TesseractBaseAPI} object only to destroy it before returning the
 results. For cases when the user is interested in multiple pieces of
 information from a single image, the \pkg{Rtesseract} package allows
-the user to create a persentent \code{TesseractBaseAPI} object using
+the user to create a persistent \code{TesseractBaseAPI} object using
 the \code{tesseract} function which can then be handed to each of the
 four high level functions rather than the file name. Due to
 lazy-evaluation, the OCR engine is not actually run until invoked, but
-once the image has been OCRed, subsequent queries for additional
+once the image has been OCR-ed, subsequent queries for additional
 information do not re-run the OCR engine but rather pull from the
 previous results. This is convenient when multiple pieces of
 information are needed from the same image.
@@ -241,7 +241,7 @@ axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
 Furthermore, \pkg{Rtesseract} includes plotting functions for visually
 inspecting the results from OCR. These plots, which by default include
 the bounding boxes colored by relative confidence overlaid over the
-orignal image, are helpful in diagnosing OCR behavior. Plotting the
+original image, are helpful in diagnosing OCR behavior. Plotting the
 results is especially helpful when adjusting the OCR configuration
 settings (discussed below under ``Advanced Use''). Similarly, by
 allowing access to information regarding the bounding boxes,
@@ -270,7 +270,7 @@ rownames(bb)[which.max(bb[,4] - bb[,2])]
 
 We have used the location of the bounding boxes to identify and
 reconstruct text arranged in columns, separating by unrelated elements
-(e.g., newpaper content), or even to reconstruct complex tabular
+(e.g., newspaper content), or even to reconstruct complex tabular
 content. % BB are better than padding results with spaces to simulate
          % the layout
 
@@ -292,11 +292,11 @@ specific cases.
 To continue the example above, on inspection of the results of the OCR
 there are some domain-specific terms that are not being recognized
 correctly. While it might be possible to correct these in
-post-processing, it is preferrable to tweak the settings of the OCR
+post-processing, it is preferable to tweak the settings of the OCR
 engine to aid the correct recognition in the processing stage. The
 above document includes the two terms that are consistently
 mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
-Paulo'' (a non-english place name). \code{Tesseract} allows
+Paulo'' (a non-English place name). \code{Tesseract} allows
 user-specified words to be added to the dictionary of correct matches
 through a ``user-words'' file. \pkg{Rtesseract} allows you to specify
 this file, which will then be used by the OCR engine to resolve
@@ -321,12 +321,12 @@ Many customizable variables which allow fine control of the OCR engine
 are accessible through R via the \pkg{Rtesseract} package, including
 pageSegMode, pageOrientation, language, white- and black-list
 characters, custom user-added patterns and words, alternative OCR
-engines, etc. Full documatation of user-adjustable variables is
+engines, etc. Full documentation of user-adjustable variables is
 available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
-As seen above, by creating persestent TesseractBaseAPI objects, two or
+As seen above, by creating persistent TesseractBaseAPI objects, two or
 more APIs can be created with differing customized variables and their
-results can be inspected without the need to constaintly recreate and
+results can be inspected without the need to constantly recreate and
 then destroy the TesseractBaseAPI.
 
 %% Expand
@@ -390,8 +390,8 @@ In order to use \pkg{Rtesseract}, users must first have Tesseract and
 its dependency, Leptonica, installed. Tesseract is available from
 \url{https://github.com/tesseract-ocr/} and Leptonica from
 \url{https://github.com/DanBloomberg/leptonica}. Additionally, users
-must have a trained language dataset installed. Currently, there are
-pre-trained datasets for 140+ languages available from
+must have a trained language data set installed. Currently, there are
+pre-trained data sets for 140+ languages available from
 \url{https://github.com/tesseract-ocr}. Users are also able to provide
 their own trained data. For more information about training Tesseract,
 please see
@@ -406,7 +406,7 @@ source at \url{https://github.com/duncantl/Rtesseract}.%%Expand
 for simple use-cases as well as access to low-level control parameters
 for more advanced uses. By allowing recovery of additional information
 generated by Tesseract, such as confidence levels and bounding boxes,
-\pkg{Rtesseract} supports novel applications of inputing data from
+\pkg{Rtesseract} supports novel applications of inputting data from
 images into R (e.g., spatial analysis of text). Leveraging free,
 open-source software allows full integration of the full work-flow of
 text from images into R. \pkg{Rtesseract} works with both the current
