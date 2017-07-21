@@ -161,70 +161,92 @@ f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 
 \subsection{Base Functions}
 
-For the simplest task, retrieving the text contents of the image,
+For the simplest task of retrieving the text contents of the image,
 \pkg{Rtesseract} includes the high-level function
 \code{GetText}. Provided the path to an image, this function will
 create a \code{TesseractBaseAPI} object, run the OCR engine, destroy
 the \code{TesseractBaseAPI} and then return the text. The function
 allows the user to specify multiple levels for the text to be
 returned, either as single characters, words (default), text-lines, or
-paragraphs.
+paragraphs. \code{GetText} therefore provides the functionality of
+most basic OCR applications. 
 
 <<>>=
 GetText(f)
 GetText(f, level = "textline")
 @ 
 
-However, merely retrieving text is often of limited usefulness. Users
-might wish to know the
-location of the match, how confident the OCR engine is in each match,
-and what alternatives exist for the returned match. For these tasks,
-\pkg{Rtesseract} includes three other high-level functions; \code{GetConfidences}, \code{GetAlternatives}, and
-\code{GetBoundingBoxes}. Similar to \code{GetText}, these functions
-can take the path of the image file as a single argument, create a
-\code{TesseractBaseAPI} object, run the OCR engine and extract the
-information of interest, and then destroy the \code{TesseractBaseAPI}
-object before returning the results to the user.
+However, merely retrieving text can be of limited usefulness. Users
+might wish to know the location of the match, how confident the OCR
+engine is in each match, and what alternatives exist for the returned
+match. For these tasks, \pkg{Rtesseract} includes three other
+high-level functions; \code{GetConfidences}, \code{GetAlternatives},
+and \code{GetBoundingBoxes}. Similar to \code{GetText}, these
+functions can take the path of the image file as a single argument,
+create a \code{TesseractBaseAPI} object, run the OCR engine and
+extract the information of interest, and then destroy the
+\code{TesseractBaseAPI} object before returning the results to the
+user.
 
-It is easy to see the inefficiency in repeatedly creating a \code{TesseractBaseAPI} object
-only to destroy it before returning the results. For cases when the
-user is interested in multiple pieces of information from a
-single image, the \pkg{Rtesseract} package provides the means to
-create a ....                   %Pick up here in the morning
+It is easy to see the inefficiency in repeatedly creating a
+\code{TesseractBaseAPI} object only to destroy it before returning the
+results. For cases when the user is interested in multiple pieces of
+information from a single image, the \pkg{Rtesseract} package allows
+the user to create a persentent \code{TesseractBaseAPI} object using
+the \code{tesseract} function which can then be handed to each of the
+four high level functions rather than the file name. Due to
+lazy-evaluation, the OCR engine is not actually run until invoked, but
+once the image has been OCRed, subsequent queries for additional
+information do not re-run the OCR engine but rather pull from the
+previous results. This is convenient when multiple pieces of
+information are needed from the same image.
 
+For example, say we wanted to OCR the previous image, but also were
+interested to know how the shadow on the image affected the OCR
+performance. Since the confidences for each match are available to us,
+we can easily explore this relationship statistically and/or visually.
 
-Of these, \code{GetText}() is the simplest by
-taking an image and returning a character vector of the recognized
-characters/words. This is similar to the functionality of most common
-OCR engines (e.g., Google Vision, PDF Pen Pro, Adobe Acrobat), as well
-as the tesseract package. However, with \code{GetConfidences}, the
-confidences of the OCR engine can be returned, allowing further
-analysis of the results. Building on this, the alternative matches at
-the ``symbol'' (i.e., individual character) level can be returned with
-\code{GetAlternatives}, which is useful for diagnosing ambiguous
-characters. Lastly, the spatial locations of the bounding boxes around
-each character, word, or element can be returned with
-\code{GetBoundingBoxes}, which can be used for diagnostics of issues
-with the input image, or even allows recovery of elements such as
-spaces, lines, and blocks in the input image. Users should note that
-when these functions are called on an image path, the TessearctBaseAPI
-is created and then destroyed with each call. If repeated operations
-are needed on the same image, creating a persistant TesseractBaseAPI
-object will be more efficient (see ``Advanced Use'' below for more
-details).
+% this is a bit contrived since I added the image. We could also take
+% a look at the confidences at the word or character level to see
+% which are causing the most issues.
 
-
-%% Do we need to have examples of GetAlts, etc?  The default behavior
-is to operate at the word level (\code{level = 3L}), but Tesseract can
-also return results from the individual character level (\code{level =
-4L}) or line level (\code{level = 2L}).
-
-  
 <<>>=
-f = system.file("images", "OCRSample2.png", package = "Rtesseract")
-GetText(f)
-GetText(f, level = "symbol")
-GetText(f, level = "textline")
+api = tesseract(f)
+
+# See if the shadow is affecting the OCR
+bb = GetBoxes(api)
+
+# Group words by the center of their bounding box left to right
+gg = cut(rowMeans(bb[,c(1,3)]), breaks = seq(0, max(bb[,3]), length.out = 7))
+tapply(bb[,"confidence"], gg, summary)
+@
+
+\begin{figure}[h]
+<<fig=TRUE, echo = FALSE>>=
+
+scatter.smooth(bb[,5] ~ rowMeans(bb[,c(1,3)]),
+     xlab = "Position of bounding box on page",
+     ylab = "Confidence (higher is more confident)",
+     xaxt = "n")
+axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
+
+@ 
+\caption{An example of plotting how location on the page influences
+  the results of the OCR engine.}
+\end{figure}
+
+Similarly, by accessing the information regarding the bounding boxes,
+users are able to use location or size specific information manipulate
+the results of the OCR. In the above image, identifying the title from
+plain text would involve using context-based heuristics, but with the
+text size in hand the matter becomes far simplier:
+
+<<>>=
+# To locate the title, first get the text-line level bounding boxes
+bb = GetBoxes(api, level = "textline")
+# Find the tallest box for a single text line
+rownames(bb)[which.max(bb[,4] - bb[,2])]
+
 @ 
 
 Plotting functions have been included in the
@@ -238,31 +260,31 @@ the user to quickly spot words or areas of the image that are with low
 confidence. This is a useful feature for diagnosing issues related to
 un-even image quality in the input image.
 
-
-\begin{figure}
-\advance\leftskip-2cm
-\begin{minipage}{\dimexpr\textwidth+4cm\relax}%
-\captionsetup{margin=2cm}
-
-<<fig=TRUE, warning=FALSE, fig.height=5, echo=FALSE>>=
-api = tesseract(f)
-
-par(mfrow = c(1, 2),
-    mar = c(4,2,2,1))
-
-plot(api, border = "black")
-
-plot(api, fillBox = TRUE)
-
-@
-\caption{An example of two different ways of plotting the bounding
-  boxes from a image Recognized by \protect{\pkg{Rtesseract}}. The user can plot the
-  just the bounding boxes surrounding the elements, or can fill the
-  boxes by relative confidence level.}
-\label{fig:boxes}
-\end{minipage}
-\end{figure}
-
+%
+%\begin{figure}
+%\advance\leftskip-2cm
+%\begin{minipage}{\dimexpr\textwidth+4cm\relax}%
+%\captionsetup{margin=2cm}
+%
+%<<fig=TRUE, warning=FALSE, fig.height=5, echo=FALSE>>=
+%api = tesseract(f)
+%
+%par(mfrow = c(1, 2),
+%    mar = c(4,2,2,1))
+%
+%plot(api, border = "black")
+%
+%plot(api, fillBox = TRUE)
+%
+%@
+%\caption{An example of two different ways of plotting the bounding
+%  boxes from a image Recognized by \protect{\pkg{Rtesseract}}. The user can plot the
+%  just the bounding boxes surrounding the elements, or can fill the
+%  boxes by relative confidence level.}
+%\label{fig:boxes}
+%\end{minipage}
+%\end{figure}
+%
 % New Example - start with just getting text
 % Look for title - need bounding boxes
 % Then by lines - illustrates the need to build the api object
@@ -271,10 +293,10 @@ plot(api, fillBox = TRUE)
 
 <<new>>=
 
-f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
-api = tesseract(f, pageSegMode="psm_auto")
+# f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
+# api = tesseract(f, pageSegMode="psm_auto")
 
-GetText(f, level = "textline")
+# GetText(f, level = "textline")
 
 # See if the shadow is affecting the OCR
 bb = GetBoxes(api)
