@@ -14,6 +14,7 @@ function(x, y = "word",
          main = basename(filename),
          confidence = TRUE, fillBoxes = FALSE,
          alpha = 0.4,
+         dims = GetImageDims(x),
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -22,7 +23,6 @@ function(x, y = "word",
        m = bbox
 
     if(is.null(img)) {
-        dims = GetImageDims(x)
         nrow = dims[1]
         ncol = dims[2]
     } else {
