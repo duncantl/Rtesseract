@@ -14,13 +14,24 @@ function(x, y = "word",
          main = basename(filename),
          confidence = TRUE, fillBoxes = FALSE,
          alpha = 0.4,
-         dims = GetImageDims(x),
+         dims = NULL,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
        m = do.call(rbind, bbox)
     else
-       m = bbox
+        m = bbox
+
+
+    if(is.null(dims)) {
+        if(!missing(x))
+           dims = GetImageDims(x)
+        else if(!missing(bbox))
+           dims = c(max(bbox[, c(2, 4)]), max(bbox[, c(1, 3)]))
+        else if(is.null(img))
+           stop("We need a way to get the image dimensions - the tesseract object, the bounding box (bbox) or the image")
+                       
+    }
 
     if(is.null(img)) {
         nrow = dims[1]
@@ -140,4 +151,22 @@ toAlpha =
     col = col2rgb(colors, TRUE) / 255
     col["alpha",] = alpha
     rgb(col["red",], col["green",], col["blue",], col["alpha",])
+}
+
+
+getDims =
+function(bbox)
+{
+    c(max(bbox[, c(2, 4)]), max(bbox[, c(1, 3)]))
+}
+
+showBoxes =
+    # getDims(bbox)
+function(bbox, dim = par()$usr[c(4, 2)], ...)
+{
+    m = bbox
+    m[,2] = dim[1] - m[,2]
+    m[,4] = dim[1] - m[,4]
+#browser()
+    rect(m[,1], m[,2], m[,3], m[,4], ...)
 }
