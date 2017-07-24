@@ -319,9 +319,6 @@ to attempting to simulate the layout of the page by padding the text
 with spaces (e.g., the ``layout'' output of many other OCR
 engines).
 
-Using these bounding boxes as guides, we are able to adjust the OCRed
-area without leaving R. Continuing the example, say we were primarily
-interested in the abstract. 
 
 % BB are better than padding results with spaces to simulate
 % the layout
@@ -368,6 +365,37 @@ GetText(api2, "textline")[34]
 GetText(api, "textline")[34]
 
 @
+
+Using the bounding boxes or other coordinates as guides, we are able
+to adjust the OCRed area without leaving R. Typically, to do this
+would involve partitioning the image into subsets using an image
+editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
+OCR on each of these subset images. However, \pkg{Rtesseract} allows
+the user to specify a rectangle of interest using the
+\code{SetRectangle} function, which takes the left, top, width and
+height of the sub-area as additional arguments. Once set, the next
+call to the \code{TesseractBaseAPI} will only OCR within this
+rectangle - no image manipulation required. Continuing the example,
+say we were primarily interested in the abstract. We know that the
+abstract is between the ``Abstract'' header and the ``Keywords''
+tagline. We can easily find the coordinates of these using the
+bounding boxes, and then only recognize text within this area:
+
+<<>>=
+bb = GetBoxes(api)
+idx = grep("Abstract|Keywords", rownames(bb))
+bb[idx,"top"]
+GetImageDims(api)
+
+SetRectangle(api, 0, 950, 4000, 1800 - 950)
+GetText(api, level = "textline")
+
+#Reset rectangle
+GetImageDims(api)
+
+SetRectangle(api, 0, 0, 4013, 3210)
+@ 
+
 
 Many customizable variables which allow fine control of the OCR engine
 are accessible through R via the \pkg{Rtesseract} package, including
