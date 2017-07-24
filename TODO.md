@@ -16,7 +16,6 @@
 
 1. Be able to interrupt in OCR computations with Ctrl-c.
 
-
 1. [Verify sane] Get alternatives is returning different output between:
  ```r
  library(Rtesseract)
