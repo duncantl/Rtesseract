@@ -91,16 +91,17 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
 
 1. How do we regenerate this?<br/>
    Unset TESSDATA_PREFIX in ~/.cshrc and run Rtesseract.
-   ```r
+ ```r
     api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
-   ```
+ ```
    This is what did it - but not anymore.
-   ```r
+ ```r
    Sys.setenv(TESSDATA_PREFIX= path.expand("~/Projects/OCR/tesseract-ocr"))
    library(Rtesseract)
    api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
    Recognize(api)
-  ```
+ ```
+
 
 1. Connect to OpenCV for manipulating the image.  perhaps thresholding away the specs. 
     https://github.com/swarm-lab/videoplayR
