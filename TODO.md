@@ -1,5 +1,6 @@
 # Todo Items
 
+1. Document build issues for tesseract 4.0 on different platforms.
 
 1. Get this working on Windows.
 
