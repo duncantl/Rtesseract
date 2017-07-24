@@ -29,7 +29,6 @@ and also visualizing them within R itself.
 <<setup, echo=FALSE, message=FALSE, warning=FALSE>>=
 library(Rtesseract)
 library(knitr)
-library(RAutoGenRunTime)
 
 # Globally set output to be limited to 4 lines
 knit_theme$set("print")
@@ -60,8 +59,8 @@ knit_hooks$set(output = function(x, options) {
 Data are rarely in a form amenable to data analysis. At the extreme,
 data may be inaccessible in their current form, for example in images
 or scans of documents or other records. Optical Character Recognition
-(OCR) technique to infer strings or characters from an image, thereby
-converting images into a format that can then be directly manipulated
+(OCR) is a technique to infer strings or characters from an image, thereby
+converting images into a format that can be directly manipulated
 by a computer program. Typically OCR is used to convert a scanned
 image of a text to a digital copy, which can be of the form of a
 simple text file , a structured text file (e.g., XML or HOCR), a
@@ -69,28 +68,28 @@ simple text file , a structured text file (e.g., XML or HOCR), a
 software with the capability to convert images of data into
 computer-usable formats (e.g., Adobe Acrobat, PDFPen Pro, ABBY, etc.),
 these typically only output the result file. End-users are not often
-given access fine scale controls and/or able customize the trained
-behavior of the tool.
+given access fine scale controls or intermedate outputs, and are not
+often able customize the trained behavior of the tool.
 
 There are a few issues with this arrangement. First, inaccurate
 results must be corrected in post-processing steps rather than
 tweaking the processing itself. Images containing unique or
 domain-specific vocabulary, or unconventional fonts can be completely
 inscrutable to OCR running default settings intended for a common
-language or font, in which case no amount of post-processing can
+language or font. In theses cases, no amount of post-processing may
 recover the data. Second, since these OCR tools are separate from the
 environments being used to correct and subsequently analyze the
-resulting data, multi-environment workflows are used which are
-difficult to replicate. Third, images often contain information beyond
-text which can aid subsequent analyses. For example, the layout of the
-text into blocks, the presence of elements such as lines or other
-dividers, or even the relative size of the text can all be used to
-inform the analysis of an image. Lastly, diagnostic pieces of
-information such as the confidence in the matches, alternative
-matches, etc., can be essential to improving OCR accuracy. If the OCR
-tool only returns the text results, OCR's usefulness is limited to
-cases where the problem is either simple or well-covered by the
-default setup.
+resulting data, users resort to multi-environment workflows which are
+difficult to automate or replicate. Third, images often contain
+information beyond text which can aid interpretation of the text
+results. For example, the layout of the text into blocks, the presence
+of elements such as lines or other dividers, or even the relative size
+of the text can all be used to inform the analysis of an
+image. Lastly, diagnostic pieces of information such as the confidence
+in the matches, alternative matches, etc., can be essential to
+improving OCR accuracy. If the OCR tool only returns the text results,
+OCR's usefulness is limited to cases where the problem is either
+simple or well-covered by the default setup.
 
 % In contrast, the \pkg{Rtesseract} package has been developed to
 % provide both 
@@ -107,7 +106,8 @@ default setup.
 % tool to extract text and data from images into R, an environment for
 % statistical computing.
 
-Here, we describe the \pkg{Rtesseract} package, which provides an
+Here, we describe the \pkg{Rtesseract} package, which addresses many
+of the above concerns. \pkg{Rtesseract} provides an
 interface to Tesseract, a fully capable, highly flexible, and open
 source OCR engine. The design philosophy of the \pkg{Rtesseract}
 package is to provide convenience wrappers for the OCR engine in R,
@@ -202,8 +202,9 @@ information are needed from the same image.
 
 For example, say we wanted to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
-performance from left to right. Since the confidences for each match are available to us,
-we can easily explore this relationship statistically and/or visually.
+performance from left to right. Since the confidences for each match
+are available to us, we can easily explore this relationship
+statistically and/or visually.
 
 % this is a bit contrived since I added shadow to the image. We could also take
 % a look at the confidences at the word or character level to see
@@ -238,18 +239,22 @@ axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
   the results of the OCR engine.}
 \end{figure}
 
-Furthermore, \pkg{Rtesseract} includes plotting functions for visually
-inspecting the results from OCR. These plots, which by default include
-the bounding boxes colored by relative confidence overlaid over the
-original image, are helpful in diagnosing OCR behavior. Plotting the
-results is especially helpful when adjusting the OCR configuration
-settings (discussed below under ``Advanced Use''). Similarly, by
-allowing access to information regarding the bounding boxes,
-\pkg{Rtesseract} enables users to use location or size specific
+Furthermore, \pkg{Rtesseract} includes a default plotting function for
+OCR output for users to visually inspecting the results. We have found
+these plots, which by default include the bounding boxes colored by
+relative confidence overlaid over the original image (see
+Fig. \ref{fig:rtess_plot} for an example), helpful in diagnosing OCR
+behavior and inaccuracies. Plotting the results is especially helpful
+when adjusting the OCR configuration settings (discussed below under
+``Advanced Use'').
+
+Similarly, by allowing access to information regarding the bounding
+boxes, \pkg{Rtesseract} enables users to use location or size specific
 information manipulate the results of the OCR. For example,
 identifying the title in the above image from plain text results would
 involve using context-based heuristics, but the task is far simpler
 with access to information about the text size:
+
 \begin{figure}[h]
 <<echo = FALSE>>=
 plot(api, fillBoxes = TRUE)
@@ -257,6 +262,7 @@ plot(api, fillBoxes = TRUE)
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the original image with the bounding boxes and associated
   confidences.}
+\label{fig:rtess_plot}
 \end{figure}
 
 <<>>=
@@ -271,8 +277,17 @@ rownames(bb)[which.max(bb[,4] - bb[,2])]
 We have used the location of the bounding boxes to identify and
 reconstruct text arranged in columns, separating by unrelated elements
 (e.g., newspaper content), or even to reconstruct complex tabular
-content. % BB are better than padding results with spaces to simulate
-         % the layout
+content. In our use, we have found using the bounding boxes preferable
+to attempting to simulate the layout of the page by padding the text
+with spaces (e.g., the ``layout'' output of many other OCR
+engines).
+
+Using these bounding boxes as guides, we are able to adjust the OCRed
+area without leaving R. Continuing the example, say we were primarily
+interested in the abstract. 
+
+% BB are better than padding results with spaces to simulate
+% the layout
 
 % New Example - start with just getting text
 % Look for title - need bounding boxes
