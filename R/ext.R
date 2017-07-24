@@ -160,7 +160,7 @@ function(ri, level = 3L)
 #   rownames(ans) = names(m)
    ans
 }
-}
+} # end of if(FALSE)
 
 if(FALSE) {
 BoundingBox =
@@ -322,12 +322,19 @@ function(api)
 
 
 
-SetRectangle = 
+SetRectangle =
+    #
+    # Specify as left, top, width, height
+    #
 function(api, ..., dims = sapply(list(...), as.integer))
 {
   dims = as.integer(dims)
   if(length(dims) < 4)
-    stop("incorrect number of dimensions for rectangle")
+      stop("incorrect number of dimensions for rectangle")
+
+  img.dims = GetImageDims(api)
+  if(any(dims < 0) || dims[3] > img.dims["width"] || (dims[3] - dims[1]) > img.dims["width"]) #XXX Add the tests for the height.
+      warning("dimensions of rectangle seem to be beyond the size of the current image")
   
   .Call("R_tesseract_SetRectangle", as(api, "TesseractBaseAPI"), dims)
 }
