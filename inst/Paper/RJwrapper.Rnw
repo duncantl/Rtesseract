@@ -1,6 +1,7 @@
 \documentclass[a4paper]{report}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage{verbatim} %for multiline comment
 \usepackage{RJournal}
 \usepackage{amsmath,amssymb,array}
 \usepackage{booktabs}
