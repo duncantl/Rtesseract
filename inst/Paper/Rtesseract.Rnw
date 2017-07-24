@@ -183,9 +183,7 @@ supported format (tiff, JPEG, and png on most systems), and OCR will be
 run on the image using the default settings. For example, say we had
 an image of the first page of a scientific publication:
 
-% Probably want to show this as otherwise, we are using a variable people don't see.
-% So let's define it in the first place we use it.
-<<echo=FALSE>>=
+<<echo = FALSE>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 @ 
 
@@ -217,7 +215,6 @@ GetText(f, level = "textline")
 
 @ 
 \code{GetText} therefore provides the functionality of most basic OCR applications. 
-
 
 However, merely retrieving text can be of limited usefulness. Users
 might wish to know the location of the match, how confident the OCR
@@ -264,7 +261,7 @@ statistically and/or visually.
 %XXX Need to explain pageSegMode.  Different from level.
 
 <<echo = FALSE>>=
-api = tesseract(f, pageSegMode = "psm_auto")
+api = tesseract(f)
 
 # See if the shadow is affecting the OCR
 bb = GetBoxes(api, level = "symbol")
@@ -345,7 +342,7 @@ engines).
 % Then by lines - illustrates the need to build the api object
 % rather than call and destroy repeatedly
 
-\subsection{Advanced Use}
+\section{Advanced Use}
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 for accessing and manipulating the results of running the OCR engine
@@ -354,6 +351,40 @@ behavior of the OCR engine itself rather than merely the output. For
 these purposes, the \pkg{Rtesseract} packages exposes full access to
 the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
 engine for specific cases.
+
+\subsection{Page Segmentation Mode and OCR Engine}
+
+Two variables, \code{pageSegMode} and \code{engineMode}, deserve
+special mention because these two can have large impact on the
+performance of the OCR. The first, the Page Segmentation Mode,
+adjusts how Tesseract recognizes lines of text in the image. The
+\pkg{Rtesseract} package reflects the defaults in the
+\code{TesseractAPI} and assumes the input is a single block of text
+(\code{PSM\_SINGLE\_BLOCK}) by default, though in our experience OCR
+can be significantly improved with changing the Page Segmentation
+Mode. For most problems, \code{PSM\_AUTO} is a good default, though
+any of the currently
+\Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))} available Page
+Segmentation modes might be best, depending on application (curiously,
+\code{PSM\_AUTO} is the default for the tesseract command line tool
+but not for the API). Page Segmentation Mode can be set either in the
+call to \code{tesseract}, in the \code{...}  arguments for any of the
+high-level functions (e.g., \code{GetText(f, pageSegMode =
+"PSM\_AUTO")}), or by using \code{SetPageSegMode} on an existing
+\code{TesseractBaseAPI} object.
+
+The second of these variables is the Tesseract Engine Mode, which
+determines what OCR engine is used to recognize text. By default,
+\pkg{Rtesseract} uses Tesseract only. Depending on installed version
+of Tesseract, other OCR engines can be used individually or in
+combination with Tesseract (Cube for Tesseract versions 3.04+, LSTM for
+Tesseract versions 4.00+). Although the use of these in combination
+with Tesseract can increase accuracy, their use can add significant
+computational load (between 6--10x) and require appropriately trained
+language files, so they are not used by default by \pkg{Rtesseract}'s
+OCR functions. 
+
+\subsection{Other Variables}
 
 To continue the example above, on inspection of the results of the OCR
 there are some domain-specific terms that are not being recognized
@@ -373,8 +404,7 @@ ambiguities:
 writeLines(c("aegypti", "São"), "eng.user-words")
 
 # Create a new API for comparison
-api2 = tesseract(f, pageSegMode="psm_auto", engineMode = 2,
-                 datapath = path.expand("~/DSI/tessdata"),
+api2 = tesseract(f, pageSegMode="psm_auto", 
                  opts = list(user_words_file = "eng.user-words"))
 
 # path.expand("~/DSI/Rtesseract/inst/Paper/")))
