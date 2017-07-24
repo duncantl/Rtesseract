@@ -217,6 +217,9 @@ Since this is reasonably computationally intensive, we want to perform
 the OCR once and then query each of the results we want, i.e.,
 the text, the confidences, the alternatives, \ldots.
 
+%XXX So I would show the code calling tesseract() and then GetText(), GetBoxes(), GetConfidences() right now
+% Then discuss why it is useful.
+
 For these cases where the user is interested in multiple pieces of
 information from a single file, 
 we use the \code{tesseract} function to create an instance of the OCR
