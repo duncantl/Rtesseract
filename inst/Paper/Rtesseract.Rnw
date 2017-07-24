@@ -56,7 +56,42 @@ knit_hooks$set(output = function(x, options) {
               
 
 @ 
+There has been an enormous increase in the amount of text data that we
+work with from social media, reports, scholarly articles, job applications.
+These often come as plain text or structured documents such as word-processing files, 
+HTML, PDF. However, there are many documents of interest that are only available as scanned images,
+e.g., old books, newspapers.
+Optical Character Recognition (OCR) is a technique to infer characters, words or lines of text from an image,
+thereby making it accessible for data analysis.
+There are many OCR software tools available, e.g., Adobe Acrobat, PDFPen Pro, ABBY.
+These typically only output the results to a file. End-users are not often
+given access fine scale controls, or able customize the trained
+behavior of the tool.  Importantly, the results are just the text.
 
+In response to our needs,  we developed an interface to the open source tesseract library.
+Importantly, this interface provides us 1) a simple high-level 
+function to extract the text from one or more images,
+2) the ability to also obtain important auxiliary data,
+e.g., the confidence in each prediction, the location within the image,
+and 3) customization of how the OCR is done.
+The results are accessible directly within R as
+text and/or a data frame of locations and confidences.
+
+
+This approach tightly integrates pre- and post-processing steps with the actual OCR. For example, we
+can focus on a sub-region of the image, or enhance the image with some computer vision techniques
+before performing the character recognition.  We can specify a domain-specific vocabulary, or
+identify unconventional fonts.  The tight integration simplifies workflows that rely on invoking
+stand-alone applications typically meant for human interactive use.  Also, the metadata about the
+resulting text aids subsequent analyses. For example, the layout of the text into blocks, the
+presence of elements such as lines or other dividers, or even the relative size of the text can all
+be used to make sense of the resulting text. Diagnostic pieces of information such as the confidence
+in the matches, alternative matches, etc., can be essential to improving OCR accuracy. If the OCR
+tool only returns the text results, OCR's usefulness is limited to cases where the problem is either
+simple or well-covered by the default setup.
+
+
+\begin{comment}
 Data are rarely in a form amenable to data analysis. At the extreme,
 data may be inaccessible in their current form, for example in images
 or scans of documents or other records. Optical Character Recognition
@@ -72,25 +107,8 @@ these typically only output the result file. End-users are not often
 given access fine scale controls and/or able customize the trained
 behavior of the tool.
 
-There are a few issues with this arrangement. First, inaccurate
-results must be corrected in post-processing steps rather than
-tweaking the processing itself. Images containing unique or
-domain-specific vocabulary, or unconventional fonts can be completely
-inscrutable to OCR running default settings intended for a common
-language or font, in which case no amount of post-processing can
-recover the data. Second, since these OCR tools are separate from the
-environments being used to correct and subsequently analyze the
-resulting data, multi-environment workflows are used which are
-difficult to replicate. Third, images often contain information beyond
-text which can aid subsequent analyses. For example, the layout of the
-text into blocks, the presence of elements such as lines or other
-dividers, or even the relative size of the text can all be used to
-inform the analysis of an image. Lastly, diagnostic pieces of
-information such as the confidence in the matches, alternative
-matches, etc., can be essential to improving OCR accuracy. If the OCR
-tool only returns the text results, OCR's usefulness is limited to
-cases where the problem is either simple or well-covered by the
-default setup.
+There are a few issues with this arrangement. 
+\end{comment}
 
 % In contrast, the \pkg{Rtesseract} package has been developed to
 % provide both 
@@ -149,6 +167,8 @@ supported format (tiff, JPEG, and png on most systems), and OCR will be
 run on the image using the default settings. For example, say we had
 an image of the first page of a scientific publication:
 
+% Probably want to show this as otherwise, we are using a variable people don't see.
+% So let's define it in the first place we use it.
 <<echo=FALSE>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 @ 
@@ -161,19 +181,25 @@ f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 \subsection{Base Functions}
 
 For the simplest task of retrieving the text contents of the image,
-\pkg{Rtesseract} includes the high-level function
-\code{GetText}. Provided the path to an image, this function will
-create a \code{TesseractBaseAPI} object, run the OCR engine, destroy
-the \code{TesseractBaseAPI} and then return the text. The function
-allows the user to specify multiple levels for the text to be
-returned, either as single characters, words (default), text-lines, or
-paragraphs. \code{GetText} therefore provides the functionality of
-most basic OCR applications. 
-
+we use the high-level function
+\code{GetText}. 
+We pass it the path to a file containing the image
+%this function will
+%create a \code{TesseractBaseAPI} object, run the OCR engine, destroy
+%the \code{TesseractBaseAPI} and then return the text. 
+By default, it returns the words it finds in the image in the order they appear.
 <<>>=
+f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 GetText(f)
-GetText(f, level = "textline")
 @ 
+However, rather than words, we sometimes want individual characters, text-lines
+or entire paragraphs. We can specify this via the \code{level} parameter.
+<<>>=
+GetText(f, level = "textline")
+
+@ 
+\code{GetText} therefore provides the functionality of most basic OCR applications. 
+
 
 However, merely retrieving text can be of limited usefulness. Users
 might wish to know the location of the match, how confident the OCR
