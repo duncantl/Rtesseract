@@ -1,5 +1,21 @@
 % !TeX root = RJwrapper.tex
 
+
+% Things we should add or make certain are there 
+%
+% + Examples showing setting some of the options and why they matter
+%   e.g. language, white list
+% + Querying current options/configuration settings.
+%
+% + Getting the dimension of the image 
+%    See  getImage.R 
+% + Limiting to a particular  subregion.
+%     See ./setRectangle.R and the SetRectangle example.
+%
+% + Setting an image after processing it in R first. Have to check this works. 
+%     SetImage_raw
+%
+
 \title{Rtesseract: A package for Optical Character Recognition (OCR)
   from R}
 
@@ -252,7 +268,6 @@ bb = GetBoxes(api, level = "symbol")
 @
 
 
-
 <<>>=
 # Group words by the center of their bounding box left to right
 gg = cut(rowMeans(bb[,c(1,3)]), breaks = seq(0, max(bb[,3]), length.out = 7))
@@ -345,7 +360,9 @@ writeLines(c("aegypti", "São"), "eng.user-words")
 # Create a new API for comparison
 api2 = tesseract(f, pageSegMode="psm_auto", engineMode = 2,
                  datapath = path.expand("~/DSI/tessdata"),
-                 opts = list(user_words_file = path.expand("~/DSI/Rtesseract/inst/Paper/")))
+                 opts = list(user_words_file = "eng.user-words"))
+
+# path.expand("~/DSI/Rtesseract/inst/Paper/")))
 
 #Fixed error in OCR engine rather than post-process results
 GetText(api2, "textline")[34]
