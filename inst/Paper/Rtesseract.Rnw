@@ -205,26 +205,30 @@ However, merely retrieving text can be of limited usefulness. Users
 might wish to know the location of the match, how confident the OCR
 engine is in each match, and what alternatives exist for the returned
 match. For these tasks, \pkg{Rtesseract} includes three other
-high-level functions; \code{GetConfidences}, \code{GetAlternatives},
+high-level functions: \code{GetConfidences}, \code{GetAlternatives},
 and \code{GetBoxes}. Similar to \code{GetText}, these
-functions can take the path of the image file as a single argument,
-create a \code{TesseractBaseAPI} object, run the OCR engine and
-extract the information of interest, and then destroy the
-\code{TesseractBaseAPI} object before returning the results to the
-user.
+functions can take the path of the image file 
+and the optional \code{level} argument.
 
-It is easy to see the inefficiency in repeatedly creating a
-\code{TesseractBaseAPI} object only to destroy it before returning the
-results. For cases when the user is interested in multiple pieces of
-information from a single image, the \pkg{Rtesseract} package allows
-the user to create a persistent \code{TesseractBaseAPI} object using
-the \code{tesseract} function which can then be handed to each of the
-four high level functions rather than the file name. Due to
-lazy-evaluation, the OCR engine is not actually run until invoked, but
-once the image has been OCR-ed, subsequent queries for additional
-information do not re-run the OCR engine but rather pull from the
-previous results. This is convenient when multiple pieces of
-information are needed from the same image.
+If we call \code{GetText} followed by another
+to, e.g., \code{GetAlternatives} for the same file,
+we would repeat the OCR twice on that same file.
+Since this is reasonably computationally intensive, we want to perform
+the OCR once and then query each of the results we want, i.e.,
+the text, the confidences, the alternatives, \ldots.
+
+For these cases where the user is interested in multiple pieces of
+information from a single file, 
+we use the \code{tesseract} function to create an instance of the OCR
+engine (an object of class \code{TesseractBaseAPI} in R). 
+We specify the path to the file and any other options controlling how the OCR will be performed.
+We then pass this to each of the four high level functions rather than the file name. 
+% It is not lazy evaluation.
+By default, the call to \code{tesseract} doesn't perform the OCR immediately.
+Instead, it is only done when we request any results, e.g., calling
+any of the four functions above, or explicitly calling the \code{Recognize}
+function with the .
+
 
 For example, say we wanted to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
@@ -235,12 +239,16 @@ we can easily explore this relationship statistically and/or visually.
 % a look at the confidences at the word or character level to see
 % which are causing the most issues.
 
+%XXX Need to explain pageSegMode.  Different from level.
+
 <<echo = FALSE>>=
 api = tesseract(f, pageSegMode = "psm_auto")
 
 # See if the shadow is affecting the OCR
 bb = GetBoxes(api, level = "symbol")
 @
+
+
 
 <<>>=
 # Group words by the center of their bounding box left to right
