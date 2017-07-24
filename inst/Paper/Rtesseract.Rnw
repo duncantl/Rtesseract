@@ -10,19 +10,18 @@
 \begin{abstract}
 
   % Work on this after the rest is more or less where we want it
-  Here we describe \pkg{Rtesseract}, and R package that allows access
-to Tesseract, an Open Source program for Optical Character Recognition
-(OCR), from within R. For basic use, simple wrapper functions in
-\pkg{Rtesseract} allow recovery of text from an image with a single
-command. For more advanced uses, the complete TesseractBaseAPI is
-accessible, allowing full customization of OCR behavior. Additional
-utilities are also included, which allow plotting of results,
-visualization of OCR confidences, output of multiple formats to file
-(e.g., PDF, HOCR, plain text), and recovery of information about the
-input image. By supporting recovery of text from images,
-\pkg{Rtesseract} allows supports a complete analysis of text from
-images to be conducted from within R.
-  
+  We describe \pkg{Rtesseract}, and R package that provides access
+to Tesseract, an Open Source C++ library for Optical Character Recognition
+(OCR), from within R. 
+At its simplest, \pkg{Rtesseract} allows an R user to recover of text from an image
+as lines, words or individual characters.
+We can also obtain the location of these text elements,
+possible alternatives and the predictive ``confidence'' for each.
+These are often necessary for interpreting the text, e.g.,
+for multicolumn layout, or tables.
+The package provides access to much of the  TesseractBaseAPI, allowing full customization of OCR behavior
+and also exporting the results in various formats (e.g. PDF)
+and also visualizing them within R itself.
 \end{abstract}
 
 \section{Introduction}\label{intro}
