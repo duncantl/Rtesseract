@@ -79,17 +79,17 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
 1. [dont expose it to end-user] Also if we have a ResultIterator, don't let the tesseract instance die/
  ?Should we introduce  a sub-class of tesseract with which we can solve these and the already Recognize()d issues?
 
-1. When tesseract complains below, raise an error.  Stop the output going to stdout/stderr
- (see tprintf_internal issue above. )
-      The error messages run through tprintf_internal() in ccutil/tprinf.cpp.
-      There is a debug_file that we can write to.  Set this and then read that file when there is an error. Very ugly.
-      How do people do this in python, etc.
-  Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
-  Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
-  Failed loading language 'osd'
+1. When tesseract complains below, raise an error.  Stop the output going to stdout/stderr<br/>
+ (see tprintf_internal issue above. )<br/>
+      The error messages run through tprintf_internal() in ccutil/tprinf.cpp.<br/>
+      There is a debug_file that we can write to.  Set this and then read that file when there is an error. Very ugly.<br/>
+      How do people do this in python, etc.<br/>
+  Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata<br/>
+  Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.<br/>
+  Failed loading language 'osd'<br/>
   Tesseract couldn't load any languages!
 
-1. How do we regenerate this?
+1. How do we regenerate this?<br/>
    Unset TESSDATA_PREFIX in ~/.cshrc and run Rtesseract.
        api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
 
