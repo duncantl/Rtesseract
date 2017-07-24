@@ -331,10 +331,11 @@ function(api, ..., dims = sapply(list(...), as.integer))
   dims = as.integer(dims)
   if(length(dims) < 4)
       stop("incorrect number of dimensions for rectangle")
+  
+  imgDim = GetImageDims(api)
+  if(any(dims < 0) || (dims[1] + dims[3]) > imgDim["width"] || (dims[2] + dims[4]) > imgDim["height"])
+      stop("Specified dims exceed image boundaries - please ensure dims were specified as left, top, width, and height.")
 
-  img.dims = GetImageDims(api)
-  if(any(dims < 0) || dims[3] > img.dims["width"] || (dims[3] - dims[1]) > img.dims["width"]) #XXX Add the tests for the height.
-      warning("dimensions of rectangle seem to be beyond the size of the current image")
   
   .Call("R_tesseract_SetRectangle", as(api, "TesseractBaseAPI"), dims)
 }

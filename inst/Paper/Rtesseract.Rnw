@@ -45,7 +45,6 @@ and also visualizing them within R itself.
 <<setup, echo=FALSE, message=FALSE, warning=FALSE>>=
 library(Rtesseract)
 library(knitr)
-library(RAutoGenRunTime)
 
 # Globally set output to be limited to 4 lines
 knit_theme$set("print")
@@ -111,8 +110,8 @@ simple or well-covered by the default setup.
 Data are rarely in a form amenable to data analysis. At the extreme,
 data may be inaccessible in their current form, for example in images
 or scans of documents or other records. Optical Character Recognition
-(OCR) technique to infer strings or characters from an image, thereby
-converting images into a format that can then be directly manipulated
+(OCR) is a technique to infer strings or characters from an image, thereby
+converting images into a format that can be directly manipulated
 by a computer program. Typically OCR is used to convert a scanned
 image of a text to a digital copy, which can be of the form of a
 simple text file , a structured text file (e.g., XML or HOCR), a
@@ -120,8 +119,8 @@ simple text file , a structured text file (e.g., XML or HOCR), a
 software with the capability to convert images of data into
 computer-usable formats (e.g., Adobe Acrobat, PDFPen Pro, ABBY, etc.),
 these typically only output the result file. End-users are not often
-given access fine scale controls and/or able customize the trained
-behavior of the tool.
+given access fine scale controls or intermedate outputs, and are not
+often able customize the trained behavior of the tool.
 
 There are a few issues with this arrangement. 
 \end{comment}
@@ -141,7 +140,8 @@ There are a few issues with this arrangement.
 % tool to extract text and data from images into R, an environment for
 % statistical computing.
 
-Here, we describe the \pkg{Rtesseract} package, which provides an
+Here, we describe the \pkg{Rtesseract} package, which addresses many
+of the above concerns. \pkg{Rtesseract} provides an
 interface to Tesseract, a fully capable, highly flexible, and open
 source OCR engine. The design philosophy of the \pkg{Rtesseract}
 package is to provide convenience wrappers for the OCR engine in R,
@@ -174,7 +174,7 @@ applications (e.g., unusual fonts or languages, domain specific
 vocabulary, etc.).
 
 
-\section{Package Motivation}\label{desc}
+\section{Package Description}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient. \pkg{Rtesseract} provides simple
@@ -207,9 +207,11 @@ By default, it returns the words it finds in the image in the order they appear.
 <<>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 GetText(f)
-@ 
+@
+
 However, rather than words, we sometimes want individual characters, text-lines
 or entire paragraphs. We can specify this via the \code{level} parameter.
+
 <<>>=
 GetText(f, level = "textline")
 
@@ -251,10 +253,11 @@ function with the .
 
 For example, say we wanted to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
-performance from left to right. Since the confidences for each match are available to us,
-we can easily explore this relationship statistically and/or visually.
+performance from left to right. Since the confidences for each match
+are available to us, we can easily explore this relationship
+statistically and/or visually.
 
-% this is a bit contrived since I added the image. We could also take
+% this is a bit contrived since I added shadow to the image. We could also take
 % a look at the confidences at the word or character level to see
 % which are causing the most issues.
 
@@ -285,22 +288,27 @@ scatter.smooth(bb[,5] ~ rowMeans(bb[,c(1,3)]),
 axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
 
 @ 
-\caption{An example of plotting how location on the page influences
+\caption{An example how visualizing the confidences from the OCR
+  allows investigation of how location on the page influences
   the results of the OCR engine.}
 \end{figure}
 
-Furthermore, \pkg{Rtesseract} includes plotting functions for visually
-inspecting the results from OCR. These plots, which by default include
-the bounding boxes colored by relative confidence overlaid over the
-original image, are helpful in diagnosing OCR behavior. Plotting the
-results is especially helpful when adjusting the OCR configuration
-settings (discussed below under ``Advanced Use''). Similarly, by
-allowing access to information regarding the bounding boxes,
-\pkg{Rtesseract} enables users to use location or size specific
+Furthermore, \pkg{Rtesseract} includes a default plotting function for
+OCR output for users to visually inspecting the results. We have found
+these plots, which by default include the bounding boxes colored by
+relative confidence overlaid over the original image (see
+Fig. \ref{fig:rtess_plot} for an example), helpful in diagnosing OCR
+behavior and inaccuracies. Plotting the results is especially helpful
+when adjusting the OCR configuration settings (discussed below under
+``Advanced Use'').
+
+Similarly, by allowing access to information regarding the bounding
+boxes, \pkg{Rtesseract} enables users to use location or size specific
 information manipulate the results of the OCR. For example,
 identifying the title in the above image from plain text results would
 involve using context-based heuristics, but the task is far simpler
 with access to information about the text size:
+
 \begin{figure}[h]
 <<echo = FALSE>>=
 plot(api, fillBoxes = TRUE)
@@ -308,6 +316,7 @@ plot(api, fillBoxes = TRUE)
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the original image with the bounding boxes and associated
   confidences.}
+\label{fig:rtess_plot}
 \end{figure}
 
 <<>>=
@@ -322,8 +331,14 @@ rownames(bb)[which.max(bb[,4] - bb[,2])]
 We have used the location of the bounding boxes to identify and
 reconstruct text arranged in columns, separating by unrelated elements
 (e.g., newspaper content), or even to reconstruct complex tabular
-content. % BB are better than padding results with spaces to simulate
-         % the layout
+content. In our use, we have found using the bounding boxes preferable
+to attempting to simulate the layout of the page by padding the text
+with spaces (e.g., the ``layout'' output of many other OCR
+engines).
+
+
+% BB are better than padding results with spaces to simulate
+% the layout
 
 % New Example - start with just getting text
 % Look for title - need bounding boxes
@@ -337,14 +352,14 @@ for accessing and manipulating the results of running the OCR engine
 on an image. In complex cases, it might be desirable to manipulate the
 behavior of the OCR engine itself rather than merely the output. For
 these purposes, the \pkg{Rtesseract} packages exposes full access to
-the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR for
-specific cases.
+the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
+engine for specific cases.
 
 To continue the example above, on inspection of the results of the OCR
 there are some domain-specific terms that are not being recognized
 correctly. While it might be possible to correct these in
 post-processing, it is preferable to tweak the settings of the OCR
-engine to aid the correct recognition in the processing stage. The
+engine to alow the correct recognition in the processing stage. The
 above document includes the two terms that are consistently
 mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
 Paulo'' (a non-English place name). \code{Tesseract} allows
@@ -370,17 +385,66 @@ GetText(api, "textline")[34]
 
 @
 
+Continuing the example, say we were primarily interested in the
+abstract. Using the bounding boxes or other coordinates as guides, we
+are able to adjust the OCRed area without leaving R. Typically, to do
+this would involve partitioning the image into subsets using an image
+editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
+OCR on each of these subset images. This process involves leaving R
+and involves steps that may be difficult to replicate. However, \pkg{Rtesseract} allows
+the user to specify a rectangle of interest using the
+\code{SetRectangle} function. This function takes a
+\code{TesseractBaseAPI} object and the left, top, width and
+height of the sub-area as additional arguments. Once set, the next
+call to the \code{TesseractBaseAPI} will only recognize text within this
+rectangle - no external image manipulation required. Since we know that the abstract
+is between the ``Abstract'' header and the ``Keywords'' tagline, we
+can easily find the coordinates of these using the bounding boxes and
+then only recognize text within this area:
+
+<<>>=
+bb = GetBoxes(api)
+idx = grep("Abstract|Keywords", rownames(bb))
+bb[idx,"top"]
+GetImageDims(api)
+
+SetRectangle(api, 0, 950, 4000, 1800 - 950)
+GetText(api, level = "textline")
+
+#Reset rectangle
+GetImageDims(api)
+
+SetRectangle(api, 0, 0, 4013, 3210)
+@ 
+
 Many customizable variables which allow fine control of the OCR engine
 are accessible through R via the \pkg{Rtesseract} package, including
 pageSegMode, pageOrientation, language, white- and black-list
 characters, custom user-added patterns and words, alternative OCR
-engines, etc. Full documentation of user-adjustable variables is
+engines, etc. The current settings for the tesseract OCR engine are returned by
+\code{PrintVariables} (returns \Sexpr{length(PrintVariables())}
+variables at the time of writing). These variables can be adjusted via
+a call to \code{SetVariables}. By default, \pkg{Rtesseract} searches the
+/usr/bin/local directory for installed trained language files, but
+this can be overridden. The current location where the API is
+searching for language data is returned by \code{GetDataPath}.
+Full documentation of user-adjustable variables is
 available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
-As seen above, by creating persistent TesseractBaseAPI objects, two or
-more APIs can be created with differing customized variables and their
-results can be inspected without the need to constantly recreate and
-then destroy the TesseractBaseAPI.
+
+By creating persistent TesseractBaseAPI objects, two or
+more \code{TesseractBaseAPI}s can be created to compare the impact of
+various settings and fine tune OCR for individual cases. Once a
+suitable set of adjustments have been found, the settings can be
+exported using \code{PrintVariables} to be saved as an R list that can
+then be handed to \code{SetVariables}.
+
+% Looking at and changing options
+<<>>=
+#Querying the adjustable variables
+v = PrintVariables()
+v[grep("tessedit_char", names(v))]
+@ 
 
 %% Expand
 %\begin{figure}[htbp]
@@ -408,11 +472,19 @@ then destroy the TesseractBaseAPI.
 %\label{fig:spatial}
 %\end{figure}
 %
-\subsection{Meta data}
 
-Lastly, in addition to the base functions, meta data about the OCR
-engine and the input image can be retrieved using \pkg{Rtesseract}
-using a collection of functions. The current version of Tesseract can
+\subsection{Writing directly to file}
+
+\pkg{Rtesseract} includes funcitonality to export the results of OCR
+to many conventional file types, including BoxText, HOcr/HTML , OSD
+(Orientation and Script Detection), TSV (tab separated values), and
+PDF. Of these, \code{toPDF} is unique in that it creates a searchable
+PDF document, not a plain-text document.
+
+\subsection{Metadata}
+
+Lastly, \pkg{Rtesseract} allows users to access metadata about the OCR
+engine and the input image. The current version of Tesseract can
 be returned by \code{tesseractVersion}, while the capabilities for
 reading various image formats via leptonica is provided by
 \code{leptonicaImageFormates}. Information about the source image are
@@ -420,38 +492,30 @@ also accessible through R using the \code{GetInputName},
 \code{getImageInfo},\code{GetImageDims}, and
 \code{GetSourceResolution} functions.
 
-The current settings for the tesseract OCR engine are returned by
-\code{PrintVariables} (returns \Sexpr{length(PrintVariables())}
-variables at the time of writing). These variables can be adjusted via
-a call to \code{SetVariables}. Additionally, configurations of these
-variable options can be read in from a file with the function
-\code{ReadConfigFile}, allowing easy saving of configurations for
-sharing between computers. By default, \pkg{Rtesseract} searches the
-/usr/bin/local directory for installed trained language files, but
-this can be overridden. The current location where the API is
-searching for language data is returned by \code{GetDataPath}.
-
-% Looking at and changing options
-<<>>=
-v = PrintVariables()
-v[grep("tessedit_char", names(v))]
-@ 
 
 \section{Installation}
 
 In order to use \pkg{Rtesseract}, users must first have Tesseract and
 its dependency, Leptonica, installed. Tesseract is available from
 \url{https://github.com/tesseract-ocr/} and Leptonica from
-\url{https://github.com/DanBloomberg/leptonica}. Additionally, users
-must have a trained language data set installed. Currently, there are
-pre-trained data sets for 140+ languages available from
+\url{https://github.com/DanBloomberg/leptonica}. Pre-compiled binaries
+are available for most platforms for the current stable version
+(v3.05). As previously mentioned \pkg{Rtesseract} also works with the
+development version of Tesseract (4.00alpha) currently available from
+\url{https://github.com/tesseract-ocr/tesseract/releases}. However, to
+build Tesseract from source requires many additional pieces of
+software, including leptonica v1.74+, automake, libtool, pkg-config,
+aclocal, autoheader, and
+autoconf-archive. Additionally, to use Tesseract users must have a
+trained language data set installed. Currently, there are pre-trained
+data sets for 140+ languages available from
 \url{https://github.com/tesseract-ocr}. Users are also able to provide
 their own trained data. For more information about training Tesseract,
 please see
 \url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}. \pkg{Rtesseract}
 includes some functions that assist with training, including
 \code{ReadBoxFile()}. Finally, \pkg{Rtesseract} can be installed from
-source at \url{https://github.com/duncantl/Rtesseract}.%%Expand
+source at \url{https://github.com/duncantl/Rtesseract}.
 
 \section{Advantages}
 
