@@ -93,7 +93,7 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
    Unset TESSDATA_PREFIX in ~/.cshrc and run Rtesseract.
    ```r
     api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
-	```
+   ```
    This is what did it - but not anymore.
    ```r
    Sys.setenv(TESSDATA_PREFIX= path.expand("~/Projects/OCR/tesseract-ocr"))
