@@ -158,7 +158,7 @@ applications (e.g., unusual fonts or languages, domain specific
 vocabulary, etc.).
 
 
-\section{Package Motivation}\label{desc}
+\section{Package Description}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient. \pkg{Rtesseract} provides simple
@@ -191,9 +191,11 @@ By default, it returns the words it finds in the image in the order they appear.
 <<>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 GetText(f)
-@ 
+@
+
 However, rather than words, we sometimes want individual characters, text-lines
 or entire paragraphs. We can specify this via the \code{level} parameter.
+
 <<>>=
 GetText(f, level = "textline")
 
@@ -335,14 +337,14 @@ for accessing and manipulating the results of running the OCR engine
 on an image. In complex cases, it might be desirable to manipulate the
 behavior of the OCR engine itself rather than merely the output. For
 these purposes, the \pkg{Rtesseract} packages exposes full access to
-the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR for
-specific cases.
+the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
+engine for specific cases.
 
 To continue the example above, on inspection of the results of the OCR
 there are some domain-specific terms that are not being recognized
 correctly. While it might be possible to correct these in
 post-processing, it is preferable to tweak the settings of the OCR
-engine to aid the correct recognition in the processing stage. The
+engine to alow the correct recognition in the processing stage. The
 above document includes the two terms that are consistently
 mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
 Paulo'' (a non-English place name). \code{Tesseract} allows
@@ -366,20 +368,22 @@ GetText(api, "textline")[34]
 
 @
 
-Using the bounding boxes or other coordinates as guides, we are able
-to adjust the OCRed area without leaving R. Typically, to do this
-would involve partitioning the image into subsets using an image
+Continuing the example, say we were primarily interested in the
+abstract. Using the bounding boxes or other coordinates as guides, we
+are able to adjust the OCRed area without leaving R. Typically, to do
+this would involve partitioning the image into subsets using an image
 editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
-OCR on each of these subset images. However, \pkg{Rtesseract} allows
+OCR on each of these subset images. This process involves leaving R
+and involves steps that may be difficult to replicate. However, \pkg{Rtesseract} allows
 the user to specify a rectangle of interest using the
-\code{SetRectangle} function, which takes the left, top, width and
+\code{SetRectangle} function. This function takes a
+\code{TesseractBaseAPI} object and the left, top, width and
 height of the sub-area as additional arguments. Once set, the next
-call to the \code{TesseractBaseAPI} will only OCR within this
-rectangle - no image manipulation required. Continuing the example,
-say we were primarily interested in the abstract. We know that the
-abstract is between the ``Abstract'' header and the ``Keywords''
-tagline. We can easily find the coordinates of these using the
-bounding boxes, and then only recognize text within this area:
+call to the \code{TesseractBaseAPI} will only recognize text within this
+rectangle - no external image manipulation required. Since we know that the abstract
+is between the ``Abstract'' header and the ``Keywords'' tagline, we
+can easily find the coordinates of these using the bounding boxes and
+then only recognize text within this area:
 
 <<>>=
 bb = GetBoxes(api)
@@ -396,18 +400,34 @@ GetImageDims(api)
 SetRectangle(api, 0, 0, 4013, 3210)
 @ 
 
-
 Many customizable variables which allow fine control of the OCR engine
 are accessible through R via the \pkg{Rtesseract} package, including
 pageSegMode, pageOrientation, language, white- and black-list
 characters, custom user-added patterns and words, alternative OCR
-engines, etc. Full documentation of user-adjustable variables is
+engines, etc. The current settings for the tesseract OCR engine are returned by
+\code{PrintVariables} (returns \Sexpr{length(PrintVariables())}
+variables at the time of writing). These variables can be adjusted via
+a call to \code{SetVariables}. By default, \pkg{Rtesseract} searches the
+/usr/bin/local directory for installed trained language files, but
+this can be overridden. The current location where the API is
+searching for language data is returned by \code{GetDataPath}.
+Full documentation of user-adjustable variables is
 available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
-As seen above, by creating persistent TesseractBaseAPI objects, two or
-more APIs can be created with differing customized variables and their
-results can be inspected without the need to constantly recreate and
-then destroy the TesseractBaseAPI.
+
+By creating persistent TesseractBaseAPI objects, two or
+more \code{TesseractBaseAPI}s can be created to compare the impact of
+various settings and fine tune OCR for individual cases. Once a
+suitable set of adjustments have been found, the settings can be
+exported using \code{PrintVariables} to be saved as an R list that can
+then be handed to \code{SetVariables}.
+
+% Looking at and changing options
+<<>>=
+#Querying the adjustable variables
+v = PrintVariables()
+v[grep("tessedit_char", names(v))]
+@ 
 
 %% Expand
 %\begin{figure}[htbp]
@@ -435,11 +455,19 @@ then destroy the TesseractBaseAPI.
 %\label{fig:spatial}
 %\end{figure}
 %
-\subsection{Meta data}
 
-Lastly, in addition to the base functions, meta data about the OCR
-engine and the input image can be retrieved using \pkg{Rtesseract}
-using a collection of functions. The current version of Tesseract can
+\subsection{Writing directly to file}
+
+\pkg{Rtesseract} includes funcitonality to export the results of OCR
+to many conventional file types, including BoxText, HOcr/HTML , OSD
+(Orientation and Script Detection), TSV (tab separated values), and
+PDF. Of these, \code{toPDF} is unique in that it creates a searchable
+PDF document, not a plain-text document.
+
+\subsection{Metadata}
+
+Lastly, \pkg{Rtesseract} allows users to access metadata about the OCR
+engine and the input image. The current version of Tesseract can
 be returned by \code{tesseractVersion}, while the capabilities for
 reading various image formats via leptonica is provided by
 \code{leptonicaImageFormates}. Information about the source image are
@@ -447,22 +475,6 @@ also accessible through R using the \code{GetInputName},
 \code{getImageInfo},\code{GetImageDims}, and
 \code{GetSourceResolution} functions.
 
-The current settings for the tesseract OCR engine are returned by
-\code{PrintVariables} (returns \Sexpr{length(PrintVariables())}
-variables at the time of writing). These variables can be adjusted via
-a call to \code{SetVariables}. Additionally, configurations of these
-variable options can be read in from a file with the function
-\code{ReadConfigFile}, allowing easy saving of configurations for
-sharing between computers. By default, \pkg{Rtesseract} searches the
-/usr/bin/local directory for installed trained language files, but
-this can be overridden. The current location where the API is
-searching for language data is returned by \code{GetDataPath}.
-
-% Looking at and changing options
-<<>>=
-v = PrintVariables()
-v[grep("tessedit_char", names(v))]
-@ 
 
 \section{Installation}
 
