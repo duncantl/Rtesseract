@@ -125,20 +125,6 @@ often able customize the trained behavior of the tool.
 There are a few issues with this arrangement. 
 \end{comment}
 
-% In contrast, the \pkg{Rtesseract} package has been developed to
-% provide both 
-
-% % not sure where to put this
-
-% In addition to extracting numeric data, OCR
-% allows the extraction of text, expanding corpus available for the
-% increasingly powerful capacity to analyze the contents of text
-% quantitatively (e.g., Natural Language Processing and Digital
-% Humanities). Lastly, these tools can be used to efficiently (compared
-% to human transcription) enter text from a simple image into a computer
-% representation.  Here, we describe a low-level and highly expandible
-% tool to extract text and data from images into R, an environment for
-% statistical computing.
 
 Here, we describe the \pkg{Rtesseract} package, which addresses many
 of the above concerns. \pkg{Rtesseract} provides an
@@ -234,6 +220,12 @@ the text, the confidences, the alternatives, \ldots.
 
 %XXX So I would show the code calling tesseract() and then GetText(), GetBoxes(), GetConfidences() right now
 % Then discuss why it is useful.
+<<>>=
+api = tesseract(f)
+GetText(api)
+GetBoxes(api)
+GetConfidences(api)
+@ 
 
 For these cases where the user is interested in multiple pieces of
 information from a single file, 
@@ -334,19 +326,11 @@ with spaces (e.g., the ``layout'' output of many other OCR
 engines).
 
 
-% BB are better than padding results with spaces to simulate
-% the layout
-
-% New Example - start with just getting text
-% Look for title - need bounding boxes
-% Then by lines - illustrates the need to build the api object
-% rather than call and destroy repeatedly
-
 \section{Advanced Use}
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 for accessing and manipulating the results of running the OCR engine
-on an image. In complex cases, it might be desirable to manipulate the
+on an image. In complex cases, you might want to manipulate the
 behavior of the OCR engine itself rather than merely the output. For
 these purposes, the \pkg{Rtesseract} packages exposes full access to
 the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
@@ -355,17 +339,20 @@ engine for specific cases.
 \subsection{Page Segmentation Mode and OCR Engine}
 
 Two variables, \code{pageSegMode} and \code{engineMode}, deserve
-special mention because these two can have large impact on the
-performance of the OCR. The first, the Page Segmentation Mode,
-adjusts how Tesseract recognizes lines of text in the image. The
-\pkg{Rtesseract} package reflects the defaults in the
-\code{TesseractAPI} and assumes the input is a single block of text
-(\code{PSM\_SINGLE\_BLOCK}) by default, though in our experience OCR
-can be significantly improved with changing the Page Segmentation
-Mode. For most problems, \code{PSM\_AUTO} is a good default, though
-any of the currently
+special mention because these two can have large impact on the results of the
+OCR. The first, the Page Segmentation Mode, adjusts how Tesseract
+recognizes lines of text in the image. By adjusting Page Segmentation
+Mode, the user can specify if the text is present in many different
+configurations, including (but not limited to) single block, sparce
+text, verticle or circular arrangement, etc. The \pkg{Rtesseract}
+package reflects the defaults in the \code{TesseractAPI} and assumes
+the input is a single block of text (\code{PSM\_SINGLE\_BLOCK}) by
+default, though in our experience OCR can be significantly improved
+with changing the Page Segmentation Mode. We have found for most
+problems \code{PSM\_AUTO}, which attempts to detect the correct page
+segmentation, is a good default, though any of the currently
 \Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))} available Page
-Segmentation modes might be best, depending on application (curiously,
+Segmentation modes might be best for different applications (curiously,
 \code{PSM\_AUTO} is the default for the tesseract command line tool
 but not for the API). Page Segmentation Mode can be set either in the
 call to \code{tesseract}, in the \code{...}  arguments for any of the
@@ -386,18 +373,20 @@ OCR functions.
 
 \subsection{Other Variables}
 
-To continue the example above, on inspection of the results of the OCR
-there are some domain-specific terms that are not being recognized
-correctly. While it might be possible to correct these in
-post-processing, it is preferable to tweak the settings of the OCR
-engine to alow the correct recognition in the processing stage. The
-above document includes the two terms that are consistently
+There are a plethera of variables that can be adjusted, so for space
+considerations we will highlight the ones we have found the most
+useful in our work. To continue the example above, on inspection of
+the results of the OCR there are some domain-specific terms that are
+not being recognized correctly. While it might be possible to correct
+these in post-processing, it is preferable to tweak the settings of
+the OCR engine to alow the correct recognition in the processing
+stage. The above document includes the two terms that are consistently
 mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
 Paulo'' (a non-English place name). \code{Tesseract} allows
 user-specified words to be added to the dictionary of correct matches
 through a ``user-words'' file. \pkg{Rtesseract} allows you to specify
 this file, which will then be used by the OCR engine to resolve
-ambiguities: 
+ambiguities:
 
 <<new>>=
 # Create a user-words file for English
@@ -414,6 +403,46 @@ GetText(api2, "textline")[34]
 GetText(api, "textline")[34]
 
 @
+
+Extending this idea, we can explore which characters have the lowest
+confidence and/or occurence in the text.
+
+<<>>=
+symbolBB = GetBoxes(api, level = "symbol")
+symbolConf = sort(tapply(symbolBB[,"confidence"], row.names(symbolBB), median))
+symbolConf
+@
+
+We can visually inspect these low-confidence characters to verify that
+they are correct using the \code{plotSubImage} function.
+
+<<>>=
+lowConfIdx = which(row.names(symbolBB) %in% names(symbolConf)[symbolConf < 80])
+par(mfrow = c(5,5),
+    omi = c(0,0,0,0),
+    mai = c(1,1,1,1))
+
+sapply(lowConfIdx, function(i, img, pad = 1)#c(0.99,1.02,1.02,0.99))
+    plotSubImage(box = symbolBB[i,1:4] * pad, img = img,
+                 xlab = "", ylab = "", xaxt = "n", yaxt = "n",
+                 main = paste("OCRed :", row.names(symbolBB)[i])),
+    img = png::readPNG(f))
+idx = which(symbolBB[,"confidence"] < 75)
+
+par(mfrow = c(7,7),
+    omi = c(0,0,0,0),
+    mar = c(1,1,1,1))
+
+
+sapply(idx, function(i, img, pad = 1)#c(0.99,1.02,1.02,0.99))
+    plotSubImage(box = symbolBB[i,1:4] * pad, img = img,
+                 xlab = "", ylab = "", xaxt = "n", yaxt = "n",
+                 main = paste("OCRed :", row.names(symbolBB)[i],
+                              ", conf: ", symbolBB[i,"confidence"])),
+    img = png::readPNG(f))
+
+@ 
+
 
 Continuing the example, say we were primarily interested in the
 abstract. Using the bounding boxes or other coordinates as guides, we
