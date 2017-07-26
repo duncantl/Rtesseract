@@ -144,7 +144,7 @@ development versions (v4.00.alpha) of Tesseract.
 % Might need to remove this? is it really needed?
 Tesseract development began at Hewlett
 Packard Laboratories Bristol and Hewlett Packard Co between 1985 to
-1994 \citep{Smith2007}. It was entered into 1995 UNLV Annual Test of
+1994~\citep{Smith2007}. It was entered into 1995 UNLV Annual Test of
 OCR Accuracy, where it scored well against commercial products. Little
 additional development occurred between 1995 and when the code base
 was released for Open Source in 2005. Since 2005, Tesseract has been
@@ -325,6 +325,14 @@ to attempting to simulate the layout of the page by padding the text
 with spaces (e.g., the ``layout'' output of many other OCR
 engines).
 
+% BB are better than padding results with spaces to simulate
+% the layout
+
+% New Example - start with just getting text
+% Look for title - need bounding boxes
+% Then by lines - illustrates the need to build the api object
+% rather than call and destroy repeatedly
+
 
 \section{Advanced Use}
 
@@ -470,6 +478,8 @@ Full documentation of user-adjustable variables is
 available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
 
+%XXX This seems a little arcane and not necessarily relevant for this article, i.e. not necessarily
+% correct level.
 By creating persistent TesseractBaseAPI objects, two or
 more \code{TesseractBaseAPI}s can be created to compare the impact of
 various settings and fine tune OCR for individual cases. Once a
@@ -525,7 +535,7 @@ Lastly, \pkg{Rtesseract} allows users to access metadata about the OCR
 engine and the input image. The current version of Tesseract can
 be returned by \code{tesseractVersion}, while the capabilities for
 reading various image formats via leptonica is provided by
-\code{leptonicaImageFormates}. Information about the source image are
+\code{leptonicaImageFormats}. Information about the source image are
 also accessible through R using the \code{GetInputName},
 \code{GetImageInfo},\code{GetImageDims}, and
 \code{GetSourceYResolution} functions.
