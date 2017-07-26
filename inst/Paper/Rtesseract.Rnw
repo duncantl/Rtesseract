@@ -416,31 +416,10 @@ symbolConf
 We can visually inspect these low-confidence characters to verify that
 they are correct using the \code{plotSubImage} function.
 
-<<>>=
-lowConfIdx = which(row.names(symbolBB) %in% names(symbolConf)[symbolConf < 80])
-par(mfrow = c(5,5),
-    omi = c(0,0,0,0),
-    mai = c(1,1,1,1))
+<<fig = TRUE>>=
+idx = which(symbolBB[,"confidence"] < 70)
 
-sapply(lowConfIdx, function(i, img, pad = 1)#c(0.99,1.02,1.02,0.99))
-    plotSubImage(box = symbolBB[i,1:4] * pad, img = img,
-                 xlab = "", ylab = "", xaxt = "n", yaxt = "n",
-                 main = paste("OCRed :", row.names(symbolBB)[i])),
-    img = png::readPNG(f))
-idx = which(symbolBB[,"confidence"] < 75)
-
-par(mfrow = c(7,7),
-    omi = c(0,0,0,0),
-    mar = c(1,1,1,1))
-
-
-sapply(idx, function(i, img, pad = 1)#c(0.99,1.02,1.02,0.99))
-    plotSubImage(box = symbolBB[i,1:4] * pad, img = img,
-                 xlab = "", ylab = "", xaxt = "n", yaxt = "n",
-                 main = paste("OCRed :", row.names(symbolBB)[i],
-                              ", conf: ", symbolBB[i,"confidence"])),
-    img = png::readPNG(f))
-
+plotSubsets(symbolBB[idx,], img = png::readPNG(f))
 @ 
 
 
