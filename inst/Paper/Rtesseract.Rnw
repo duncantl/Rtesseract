@@ -132,13 +132,21 @@ interface to Tesseract, a fully capable, highly flexible, and open
 source OCR engine. The design philosophy of the \pkg{Rtesseract}
 package is to provide convenience wrappers for the OCR engine in R,
 allowing ``out-of-the-box'' OCR capability while preserving access to
-the fine-scale controls for more advanced use cases. Development of
-\pkg{Rtesseract} began in Apr. 2015, and while there are other
-packages which provide wrappers of the Tesseract command line
-executable \citep{Hagmann2014}, or API \citep{ooms2016}, the
-\pkg{Rtesseract} package allows additional functionality and finer
-control by giving full access to the TesseractBaseAPI from within
-R. \pkg{Rtesseract} supports both the current release (v3.05.01) and
+the fine-scale controls for more advanced use cases.
+Since we initially created \pkg{Rtesseract} in April 2015, 
+two other R packages interfacing to Tesseract have been released.
+The \pkg{ocR} package~\citep{Hagmann2014} provides
+an interface to calling the Tesseract command line executible.
+Using the \pkg{ocR} package, the user specifies the image file and read the results that Tesseract writes to a file.
+The \pkg{tesseract} package~\citep{ooms2016}
+takes a similar approach to \pkg{Rtesseract} package 
+by interfacing to the C++ library.
+However, by design, it provides only functionality to 
+get the text results from the OCR process.
+\pkg{Rtesseract}, from its initial implementation,  provides 
+access to a most of the functionality in te Tesseract API
+and provides fine-grain control from R to the different steps in the OCR process.
+\pkg{Rtesseract} supports both the current release (v3.05.01) and
 development versions (v4.00.alpha) of Tesseract.
 
 % Might need to remove this? is it really needed?
