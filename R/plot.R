@@ -124,6 +124,26 @@ function(box, img, ...)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
 }
 
+plotSubsets =
+function(bbox, img, nrow = 4, ncol = 4,
+         titles = paste("OCR: ", row.names(bbox),
+                        ", conf: ", round(bbox[,"confidence"],0)),
+         ...)
+
+{
+    old.par = par()[c("mfrow","mar","oma")]
+    on.exit(par(old.par))
+    
+    par(mfrow = c(nrow, ncol),
+        mar = c(1,1,1,1),
+        oma = c(1,1,1,1))
+    
+    sapply(1:nrow(bbox), function(i)
+        plotSubImage(box = bbox[i,1:4], img,
+                     xlab = "", ylab = "", xaxt = "n", yaxt = "n",
+                     main = titles[i], ...))
+    return(invisible(bbox))        
+} 
 
 
 

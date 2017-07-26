@@ -54,7 +54,7 @@ export(leptonicaImageFormats)
 export(compareWord, compareWords) # collapse
 
 S3method(plot, ConfusionMatrix)
-export(plotSubImage)
+export(plotSubImage, plotSubsets)
 
 export(readBoxFile)
 
