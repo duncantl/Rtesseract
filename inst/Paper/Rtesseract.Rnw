@@ -86,42 +86,29 @@ controls, or are able customize the trained behavior of the
 tool. Importantly, the results often contain just the text.
 
 In response to our needs, we developed an interface to the open source
-Tesseract library, \pkg{Rtesseract}. Importantly, this interface provides us 1) a
-simple high-level function to extract the text from one or more
-images, 2) the ability to also obtain important auxiliary data (e.g.,
-the confidence in each prediction, the location within the image), and
-3) customization of how the OCR is done. The results are accessible
-directly within R as text and/or a data frame of locations and
-confidences.
-
-% Might need to remove this? is it really needed?
-Tesseract is a fully capable, highly flexible, and open source OCR
-engine. Tesseract development began at Hewlett Packard Laboratories Bristol
-and Hewlett Packard Co between 1985 to 1994~\citep{Smith2007}. It was
-entered into 1995 UNLV Annual Test of OCR Accuracy, where it scored
-well against commercial products. Little additional development
-occurred between 1995 and when the code base was released for Open
-Source in 2005. Since 2005, Tesseract has been maintained by Google
-and open-source developers. Tesseract depends on Leptonica, an open
-source program for image manipulation, processing, and
-analysis. Recent developments to Tesseract include the integration of
+Tesseract library, \pkg{Rtesseract}. Tesseract development began in
+1985, the code base was released for open source in 2005, and has
+since been developed and maintained by Google and open-source
+developers. Recent innovations in Tesseract include the integration of
 LSTM Deep Learning networks (versions >= 4.0) for increased speed and
-accuracy. An advantage of Tesseract over many commercial OCR products
-is that Tesseract allows user-training to custom fonts and languages
-and user-access to OCR engine control parameters, which allows users
-to custom tailor the OCR engine's behavior to specific applications
-(e.g., unusual fonts or languages, domain specific vocabulary, etc.).
+accuracy. By interfacing with Tesseract, the \pkg{Rtesseract}
+package provides us 1) a simple high-level function to extract the
+text from one or more images, 2) the ability to also obtain important
+auxiliary data (e.g., the confidence in each prediction, the location
+within the image), and 3) customization of how the OCR is done. The
+results are accessible directly within R as text and/or a data frame
+of locations and confidences.
 
-This approach using \pkg{Rtesseract} tightly integrates pre- and post-processing steps with
-the actual OCR. For example, we can focus on a sub-region of the
-image, or enhance the image with some computer vision techniques
-before performing the character recognition. We can specify a
-domain-specific vocabulary, or identify unconventional fonts. This
-tight integration simplifies workflows that otherwise rely on invoking
-stand-alone applications typically meant for human interactive use.
-Also, the metadata about the resulting text aids subsequent
-analyses. For example, the layout of the text into blocks, the
-presence of elements such as lines or other dividers, or even the
+This approach using \pkg{Rtesseract} tightly integrates pre- and
+post-processing steps with the actual OCR. For example, we can focus
+on a sub-region of the image, or enhance the image with some computer
+vision techniques before performing the character recognition. We can
+specify a domain-specific vocabulary, or identify unconventional
+fonts. This tight integration simplifies workflows that otherwise rely
+on invoking stand-alone applications typically meant for human
+interactive use.  Also, the metadata about the resulting text aids
+subsequent analyses. For example, the layout of the text into blocks,
+the presence of elements such as lines or other dividers, or even the
 relative size of the text can all be used to make sense of the
 resulting text. Diagnostic pieces of information such as the
 confidence in the matches, alternative matches, etc., can be essential
