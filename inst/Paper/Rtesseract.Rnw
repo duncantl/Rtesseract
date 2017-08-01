@@ -302,12 +302,12 @@ with spaces (e.g., the ``layout'' output of many other OCR engines).
 \section{Advanced Use}
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
-for accessing and manipulating the results of running the OCR engine
-on an image. In complex cases, you might want to manipulate the
-behavior of the OCR engine itself rather than merely the output. For
-these purposes, the \pkg{Rtesseract} packages exposes full access to
-the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
-engine for specific cases.
+accessing and manipulating the results of running the OCR engine on an
+image. In complex cases, you might want to manipulate the behavior of
+the OCR engine itself rather than merely the output. For these
+purposes, the \pkg{Rtesseract} packages exposes full access to the
+\code{TesseractBaseAPI}, which allows fine-tuning of the OCR engine
+for specific cases.
 
 \subsection{Page Segmentation Mode and OCR Engine}
 
@@ -317,13 +317,13 @@ OCR. The first, the Page Segmentation Mode, adjusts how Tesseract
 recognizes lines of text in the image. By adjusting Page Segmentation
 Mode, the user can specify if the text is present in many different
 configurations, including (but not limited to) single block, sparce
-text, verticle or circular arrangement, etc. The \pkg{Rtesseract}
-package reflects the defaults in the \code{TesseractAPI} and assumes
+text, vertical or circular arrangement, etc. The \pkg{Rtesseract}
+package preserves the defaults in the \code{TesseractAPI} and assumes
 the input is a single block of text (\code{PSM\_SINGLE\_BLOCK}) by
 default, though in our experience OCR can be significantly improved
 with changing the Page Segmentation Mode. We have found for most
 problems \code{PSM\_AUTO}, which attempts to detect the correct page
-segmentation, is a good default, though any of the currently
+segmentation automatically, is a good default, though any of the currently
 \Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))} available Page
 Segmentation modes might be best for different applications (curiously,
 \code{PSM\_AUTO} is the default for the tesseract command line tool
@@ -383,11 +383,14 @@ confidence and/or occurence in the text.
 <<>>=
 symbolBB = GetBoxes(api, level = "symbol")
 symbolConf = sort(tapply(symbolBB[,"confidence"], row.names(symbolBB), median))
+# Lowest eight 
 symbolConf[1:8]
 @
 
 We can visually inspect these low-confidence characters to verify that
-they are correct using the \code{plotSubImage} function.
+they are correct using the \code{plotSubImage} function for a single
+bounding box, or the \code{plotSubsets} function to create a panel
+plot of multiple bounding boxes (Fig. \ref{fig:subsets}.
 
 \begin{figure}
 <<fig = TRUE>>=
@@ -399,6 +402,7 @@ plotSubsets(symbolBB[idx,], img = png::readPNG(f))
   individual subsets of the image along with the associated OCR result
   and confidence. In this example, the ``ã'' character is oft
   mis-recognized.}
+\label{fig:subsets}
 \end{figure}
 
 Continuing the example, say we were primarily interested in the
@@ -407,16 +411,17 @@ are able to adjust the OCRed area without leaving R. Typically, to do
 this would involve partitioning the image into subsets using an image
 editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
 OCR on each of these subset images. This process involves leaving R
-and involves steps that may be difficult to replicate. However, \pkg{Rtesseract} allows
-the user to specify a rectangle of interest using the
-\code{SetRectangle} function. This function takes a
-\code{TesseractBaseAPI} object and the left, top, width and
-height of the sub-area as additional arguments. Once set, the next
-call to the \code{TesseractBaseAPI} will only recognize text within this
-rectangle - no external image manipulation required. Since we know that the abstract
-is between the ``Abstract'' header and the ``Keywords'' tagline, we
-can easily find the coordinates of these using the bounding boxes and
-then only recognize text within this area:
+and involves steps that may be difficult to replicate. However,
+\pkg{Rtesseract} allows the user to specify a rectangle of interest
+using the \code{SetRectangle} function. This function takes a
+\code{TesseractBaseAPI} object and the left, top, width and height of
+the sub-area as additional arguments (the dimensions of the full input
+image can be found with \code{GetImageDims}). Once set, the next call to the
+\code{TesseractBaseAPI} will only recognize text within this rectangle
+- no external image manipulation required. Since we know that the
+abstract is between the ``Abstract'' header and the ``Keywords''
+tagline, we can easily find the coordinates of these using the
+bounding boxes and then only recognize text within this area:
 
 <<>>=
 bb = GetBoxes(api)
@@ -444,22 +449,32 @@ writing). These variables can be adjusted via a call to
 \code{SetVariables}.  Full documentation of user-adjustable variables
 is available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
+
+Tesseract requires trained language files in order to operate. 
 By default, \pkg{Rtesseract} searches the /usr/bin/local directory for
 installed trained language files, but this can be overridden. The
 current location where the API is searching for language data is
-returned by \code{GetDataPath}.
+returned by \code{GetDataPath}. Since Tesseract allows users to create
+trained data files for custom languages, the ability to specify the
+path of the language files alleviates the need to place these language
+data files in the default search location. More information on
+training Tesseract and providing language files can be found at
+\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}. 
 
 %XXX This seems a little arcane and not necessarily relevant for this
 %article, i.e. not necessarily % correct level.
 % ME - I think it is OK for this paper
 
-By creating persistent TesseractBaseAPI objects, two or more
-\code{TesseractBaseAPI}s can be created for the same image, which
-allows you to compare the impact of various settings to fine tune the
-OCR for individual cases. Once a suitable set of adjustments have been
-found, these settings can be exported using \code{PrintVariables} to
-be saved as an R list that can then be handed to \code{SetVariables}
-or into the \code{opts} argument in the \code{tesseract} function.
+Lastly, we have found that some experimentation is required to settle
+on the best set of customized variables for more difficult cases. By
+creating persistent TesseractBaseAPI objects via the \code{tesseract}
+function, two or more \code{TesseractBaseAPI}s can be created for the
+same image, which allows you to compare the impact of various settings
+to fine tune the OCR for individual cases. Once a suitable set of
+adjustments have been found, these settings can be exported using
+\code{PrintVariables}. These custom variables can then be easily set
+using \code{SetVariables} or the \code{opts} argument in the
+\code{tesseract} function.
 
 % Looking at and changing options
 <<>>=
@@ -514,7 +529,7 @@ be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
 
 % Different section title
-\section{Conclusions}
+\section{Conclusion}
 
 \pkg{Rtesseract} provides both easy access to basic OCR functionality
 for simple use-cases as well as access to low-level control parameters
@@ -522,8 +537,7 @@ for more advanced uses. By allowing recovery of additional information
 generated by Tesseract, such as confidence levels and bounding boxes,
 \pkg{Rtesseract} supports novel applications of inputting data from
 images into R (e.g., spatial analysis of text). Leveraging free,
-open-source software allows full integration of the full work-flow of
-text from images into R. \pkg{Rtesseract} works with both the current
-stable release (3.05) and the alpha release (4.00alpha).
+open-source software allows full integration of the work-flow of
+text from images into R.
 
 \bibliography{Rtesseract.bib}
