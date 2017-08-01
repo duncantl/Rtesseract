@@ -2,7 +2,7 @@
 \alias{plotSubsets}
 \title{Plot a collection of individual a Bounding Boxes}
 \description{
-  This is a convience wrapper to apply the \code{plotSubImage}
+  This is a convenience wrapper to apply the \code{plotSubImage}
   function over a collection of bounding boxes. It takes
   a collection of bounding boxes from \code{GetBoxes} 
   and an image and displays the subset of the image
