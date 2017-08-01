@@ -86,9 +86,9 @@ controls, or are able customize the trained behavior of the
 tool. Importantly, the results often contain just the text.
 
 In response to our needs, we developed an interface to the open source
-Tesseract library, \pkg{Rtesseract}. Tesseract development began in
-1985, the code base was released for open source in 2005, and has
-since been developed and maintained by Google and open-source
+Tesseract library, \pkg{Rtesseract}. Although Tesseract development
+began in 1985, the code base was released for open source in 2005 and has
+since been actively developed and maintained by Google and other open-source
 developers. Recent innovations in Tesseract include the integration of
 LSTM Deep Learning networks (versions >= 4.0) for increased speed and
 accuracy. By interfacing with Tesseract, the \pkg{Rtesseract}
@@ -116,36 +116,6 @@ to improving OCR accuracy. If the OCR tool only returns the text
 results, OCR's usefulness is limited to cases where the problem is
 either simple or well-covered by the default setup.
 
-\begin{comment}
-
-Data are rarely in a form amenable to data analysis. At the extreme,
-data may be inaccessible in their current form, for example in images
-or scans of documents or other records. Optical Character Recognition
-(OCR) is a technique to infer strings or characters from an image, thereby
-converting images into a format that can be directly manipulated
-by a computer program. Typically OCR is used to convert a scanned
-image of a text to a digital copy, which can be of the form of a
-simple text file , a structured text file (e.g., XML or HOCR), a
-``search-able'' PDF document, etc.. While there are many pieces of
-software with the capability to convert images of data into
-computer-usable formats (e.g., Adobe Acrobat, PDFPen Pro, ABBY, etc.),
-these typically only output the result file. End-users are not often
-given access fine scale controls or intermedate outputs, and are not
-often able customize the trained behavior of the tool.
-
-There are a few issues with this arrangement. 
-
-% Doesn't work - need to re-work this
-Here, we describe the \pkg{Rtesseract} package, which addresses many
-of the above concerns. \pkg{Rtesseract} provides an interface to
-Tesseract, a fully capable, highly flexible, and open source OCR
-engine. The design philosophy of the \pkg{Rtesseract} package is to
-provide convenience wrappers for the OCR engine in R, allowing
-``out-of-the-box'' OCR capability while preserving access to the
-fine-scale controls for more advanced use cases.
-
-\end{comment}
-
 Since we initially created \pkg{Rtesseract} in April 2015, two other R
 packages interfacing to Tesseract have been released.  The \pkg{ocR}
 package~\citep{Hagmann2014} provides an interface to calling the
@@ -160,7 +130,6 @@ in te Tesseract API and provides fine-grain control from R to the
 different steps in the OCR process. \pkg{Rtesseract} supports both the
 current release (v3.05.01) and development versions (v4.00.alpha) of
 Tesseract.
-
 
 \section{Package Description}\label{desc}
 
@@ -417,12 +386,17 @@ symbolConf[1:8]
 We can visually inspect these low-confidence characters to verify that
 they are correct using the \code{plotSubImage} function.
 
+\begin{figure}
 <<fig = TRUE>>=
 idx = which(symbolBB[,"confidence"] < 70)
 
 plotSubsets(symbolBB[idx,], img = png::readPNG(f))
-@ 
-
+@
+\caption{An example of the \code{plotSubsets} function, which creates panel plots of
+  individual subsets of the image along with the associated OCR result
+  and confidence. In this example, the ``ã'' character is oft
+  mis-recognized.}
+\end{figure}
 
 Continuing the example, say we were primarily interested in the
 abstract. Using the bounding boxes or other coordinates as guides, we
@@ -464,21 +438,25 @@ engines, etc. The current settings for the tesseract OCR engine are
 returned by \code{PrintVariables} (returns
 \Sexpr{length(PrintVariables())} variables at the time of
 writing). These variables can be adjusted via a call to
-\code{SetVariables}. By default, \pkg{Rtesseract} searches the
-/usr/bin/local directory for installed trained language files, but
-this can be overridden. The current location where the API is
-searching for language data is returned by \code{GetDataPath}.  Full
-documentation of user-adjustable variables is available at
+\code{SetVariables}.  Full documentation of user-adjustable variables
+is available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
+By default, \pkg{Rtesseract} searches the /usr/bin/local directory for
+installed trained language files, but this can be overridden. The
+current location where the API is searching for language data is
+returned by \code{GetDataPath}.
 
-%XXX This seems a little arcane and not necessarily relevant for this article, i.e. not necessarily
-% correct level.
-By creating persistent TesseractBaseAPI objects, two or
-more \code{TesseractBaseAPI}s can be created to compare the impact of
-various settings and fine tune OCR for individual cases. Once a
-suitable set of adjustments have been found, the settings can be
-exported using \code{PrintVariables} to be saved as an R list that can
-then be handed to \code{SetVariables}.
+%XXX This seems a little arcane and not necessarily relevant for this
+%article, i.e. not necessarily % correct level.
+% ME - I think it is OK for this paper
+
+By creating persistent TesseractBaseAPI objects, two or more
+\code{TesseractBaseAPI}s can be created for the same image, which
+allows you to compare the impact of various settings to fine tune the
+OCR for individual cases. Once a suitable set of adjustments have been
+found, these settings can be exported using \code{PrintVariables} to
+be saved as an R list that can then be handed to \code{SetVariables}
+or into the \code{opts} argument in the \code{tesseract} function.
 
 % Looking at and changing options
 <<>>=
@@ -507,7 +485,6 @@ also accessible through R using the \code{GetInputName},
 \code{GetImageInfo},\code{GetImageDims}, and
 \code{GetSourceYResolution} functions.
 
-
 \section{Installation}
 
 In order to use \pkg{Rtesseract}, users must first have both Tesseract
@@ -534,7 +511,7 @@ be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
 
 % Different section title
-\section{Advantages}
+\section{Conclusions}
 
 \pkg{Rtesseract} provides both easy access to basic OCR functionality
 for simple use-cases as well as access to low-level control parameters
