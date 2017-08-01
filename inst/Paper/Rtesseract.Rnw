@@ -25,18 +25,20 @@
 
 \begin{abstract}
 
-  % Work on this after the rest is more or less where we want it
-  We describe \pkg{Rtesseract}, and R package that provides access to
-Tesseract, an Open Source C++ library for Optical Character
+We created the \pkg{Rtesseract} package to support working with text data
+present in images. \pkg{Rtesseract} is an R package that provides
+access to Tesseract, an Open Source C++ library for Optical Character
 Recognition (OCR), from within R.  At its simplest, \pkg{Rtesseract}
 allows an R user to recover of text from an image as lines, words or
 individual characters.  We can also obtain the location of these text
 elements, possible alternatives and the predictive ``confidence'' for
 each.  These are often necessary for interpreting the text, e.g., for
 multicolumn layout, or tables.  The package provides access to much of
-the TesseractBaseAPI, allowing full customization of OCR behavior and
-also exporting the results in various formats (e.g. PDF) and also
-visualizing them within R itself.
+the \code{TesseractBaseAPI}, allowing full customization of OCR
+behavior and also exporting the results in various formats (e.g. PDF)
+and also visualizing them within R itself. With the \pkg{Rtesseract}
+package, users are able to create a fully programmatic workflow to
+extract text data into R for subsequent analysis.
 
 \end{abstract}
 
@@ -85,19 +87,19 @@ results to a file. End-users are not often given access fine scale
 controls, or are able customize the trained behavior of the
 tool. Importantly, the results often contain just the text.
 
-In response to our needs, we developed an interface to the open source
-Tesseract library, \pkg{Rtesseract}. Although Tesseract development
-began in 1985, the code base was released for open source in 2005 and has
-since been actively developed and maintained by Google and other open-source
-developers. Recent innovations in Tesseract include the integration of
-LSTM Deep Learning networks (versions >= 4.0) for increased speed and
-accuracy. By interfacing with Tesseract, the \pkg{Rtesseract}
-package provides us 1) a simple high-level function to extract the
-text from one or more images, 2) the ability to also obtain important
-auxiliary data (e.g., the confidence in each prediction, the location
-within the image), and 3) customization of how the OCR is done. The
-results are accessible directly within R as text and/or a data frame
-of locations and confidences.
+In response to our needs, we developed the \pkg{Rtesseract} package,
+an interface to the open source OCR library Tesseract. Tesseract was
+created 1985, was released for open source in 2005, and has since been
+actively maintained and developed by the open source community
+(including developers at Google). Recent innovations in Tesseract
+include the integration of LSTM Deep Learning networks (versions >=
+4.0) for increased speed and accuracy. By interfacing with Tesseract,
+the \pkg{Rtesseract} package provides us 1) a simple high-level
+function to extract the text from one or more images, 2) the ability
+to also obtain important auxiliary data (e.g., the confidence in each
+prediction, the location within the image), and 3) customization of
+how the OCR is done. Additionally, the results are accessible directly
+within R as text and/or a data frame of locations and confidences.
 
 This approach using \pkg{Rtesseract} tightly integrates pre- and
 post-processing steps with the actual OCR. For example, we can focus
@@ -106,8 +108,8 @@ vision techniques before performing the character recognition. We can
 specify a domain-specific vocabulary, or identify unconventional
 fonts. This tight integration simplifies workflows that otherwise rely
 on invoking stand-alone applications typically meant for human
-interactive use.  Also, the metadata about the resulting text aids
-subsequent analyses. For example, the layout of the text into blocks,
+interactive use. Furthermore, metadata about the resulting text can
+aid and inform subsequent analyses. For example, the layout of the text into blocks,
 the presence of elements such as lines or other dividers, or even the
 relative size of the text can all be used to make sense of the
 resulting text. Diagnostic pieces of information such as the
@@ -138,7 +140,7 @@ reliable manner is sufficient. \pkg{Rtesseract} provides simple
 interfaces that allow users to provide the path to an image in a
 supported format (tiff, JPEG, and png on most systems), and OCR will be
 run on the image using the default settings. For example, say we had
-an image of the first page of a scientific publication:
+an image of the first page of a scientific publication (Fig. \ref{fig:base}).
 
 <<echo = FALSE>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
@@ -146,26 +148,26 @@ f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 
 \begin{figure}[h]
 \includegraphics[width=\textwidth]{\Sexpr{f}}
-\caption{An example image of a scientific paper.}
+\label{fig:base}
+\caption{An example image of a scientific paper which contains text we
+  would like to analyze.}
 \end{figure}
 
 \subsection{Base Functions}
 
-For the simplest task of retrieving the text contents of the image,
-we use the high-level function
-\code{GetText}. 
-We pass it the path to a file containing the image
-%this function will
-%create a \code{TesseractBaseAPI} object, run the OCR engine, destroy
-%the \code{TesseractBaseAPI} and then return the text. 
-By default, it returns the words it finds in the image in the order they appear.
+For the simplest task of retrieving the text contents of the image, we
+use the high-level function \code{GetText}.  We pass it the path to a
+file containing the image.  By default, it returns the words it finds
+in the image in the order they appear.
+
 <<>>=
 f = system.file("images", "Biological_YF_Risk-0_02.png", package = "Rtesseract")
 GetText(f)
 @
 
-However, rather than words, we sometimes want individual characters, text-lines
-or entire paragraphs. We can specify this via the \code{level} parameter.
+However, rather than words, we sometimes want the results arranged as
+individual characters, text-lines or entire paragraphs. We can specify
+this via the \code{level} parameter.
 
 <<>>=
 GetText(f, level = "textline")
@@ -184,13 +186,11 @@ argument.
 
 If we call \code{GetText} followed by another to, e.g.,
 \code{GetAlternatives} for the same file, we would repeat the OCR
-twice on that same file.  Since this is reasonably computationally
+twice on that same file. Since this is reasonably computationally
 intensive, we want to perform the OCR once and then query each of the
-results we want, i.e., the text, the confidences, the alternatives,
-\ldots.
+results we want (i.e., the text, the confidences, the alternatives,
+\ldots).
 
-%XXX So I would show the code calling tesseract() and then GetText(), GetBoxes(), GetConfidences() right now
-% Then discuss why it is useful.
 <<>>=
 api = tesseract(f)
 GetText(api)
@@ -201,15 +201,14 @@ GetConfidences(api)
 For these cases where the user is interested in multiple pieces of
 information from a single file, we use the \code{tesseract} function
 to create an instance of the OCR engine (an object of class
-\code{TesseractBaseAPI} in R).  We specify the path to the file and
-any other options controlling how the OCR will be performed.  We then
-pass this to each of the four high level functions rather than the
-file name.  % It is not lazy evaluation.  By default, the call to
-\code{tesseract} doesn't perform the OCR immediately.  Instead, it is
-only done when we request any results, e.g., calling any of the four
-functions above, or explicitly calling the \code{Recognize} function
-with the .
-
+\code{TesseractBaseAPI} in R). We specify the path to the file and any
+other options controlling how the OCR will be performed. We then pass
+this to each of the four high level functions rather than the file
+name. By default, the call to \code{tesseract} doesn't perform the OCR
+immediately.  Instead, it is only done when we request any results,
+e.g., calling any of the four functions above, or explicitly calling
+the \code{Recognize} function with the \code{TesseractBaseAPI} object
+as an argument.
 
 For example, say we wanted to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
@@ -221,7 +220,7 @@ statistically and/or visually.
 % a look at the confidences at the word or character level to see
 % which are causing the most issues.
 
-%XXX Need to explain pageSegMode.  Different from level.
+%XXX Need to explain pageSegMode.  Different from level. - Moved to later
 
 <<echo = FALSE>>=
 api = tesseract(f)
@@ -230,6 +229,10 @@ api = tesseract(f)
 bb = GetBoxes(api, level = "symbol")
 @
 
+We can get the locations and associated confidences for each
+individual symbol recognized by Tesseract. Then these can be
+manipulated in R to explore the relationships between location and
+confidence (See Fig. \ref{conf_by_loc} for an example).
 
 <<>>=
 # Group words by the center of their bounding box left to right
@@ -251,23 +254,17 @@ axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
 \caption{An example how visualizing the confidences from the OCR
   allows investigation of how location on the page influences
   the results of the OCR engine.}
+\label{fig:conf_by_loc}
 \end{figure}
 
 Furthermore, \pkg{Rtesseract} includes a default plotting function for
 OCR output for users to visually inspecting the results. We have found
-these plots, which by default include the bounding boxes colored by
-relative confidence overlaid over the original image (see
-Fig. \ref{fig:rtess_plot} for an example), helpful in diagnosing OCR
-behavior and inaccuracies. Plotting the results is especially helpful
-when adjusting the OCR configuration settings (discussed below under
-``Advanced Use'').
-
-Similarly, by allowing access to information regarding the bounding
-boxes, \pkg{Rtesseract} enables users to use location or size specific
-information manipulate the results of the OCR. For example,
-identifying the title in the above image from plain text results would
-involve using context-based heuristics, but the task is far simpler
-with access to information about the text size:
+these plots, which by default include the bounding boxes colored (and
+optionally filled) by relative confidence overlaid over the original
+image (see Fig. \ref{fig:rtess_plot} for an example), helpful in
+diagnosing OCR behavior and inaccuracies. Plotting the results is
+especially helpful when adjusting the OCR configuration settings
+(discussed below under ``Advanced Use'').
 
 \begin{figure}[h]
 <<echo = FALSE>>=
@@ -278,6 +275,13 @@ plot(api, fillBoxes = TRUE)
   confidences.}
 \label{fig:rtess_plot}
 \end{figure}
+
+Similarly, by allowing access to information regarding the bounding
+boxes, \pkg{Rtesseract} enables users to use location or size specific
+information manipulate the results of the OCR. For example,
+identifying the title in the above image from plain text results would
+involve using context-based heuristics, but the task is far simpler
+with access to information about the text size:
 
 <<>>=
 # To locate the title, first get the text-line level bounding boxes
@@ -294,7 +298,6 @@ reconstruct text arranged in columns, separating by unrelated elements
 content. In our use, we have found using the bounding boxes preferable
 to attempting to simulate the layout of the page by padding the text
 with spaces (e.g., the ``layout'' output of many other OCR engines).
-
 
 \section{Advanced Use}
 
