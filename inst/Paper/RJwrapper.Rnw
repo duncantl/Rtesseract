@@ -9,6 +9,7 @@
 \usepackage{comment}
 
 %% load any required packages here
+\usepackage{float}
 
 \begin{document}
 

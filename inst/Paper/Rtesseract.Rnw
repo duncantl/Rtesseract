@@ -281,36 +281,62 @@ For example, say we wanted to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
 performance from left to right. Since the confidences for each match
 are available to us, we can easily explore this relationship
-statistically and/or visually.
-
-% this is a bit contrived since I added shadow to the image. We could also take
-% a look at the confidences at the word or character level to see
-% which are causing the most issues.
-
-%XXX Need to explain pageSegMode.  Different from level. - Moved to later
+statistically and/or visually. For example, we have a print out of an
+old dot-matrix print out of data that we would like to add to an
+analysis in R,
 
 <<echo = FALSE>>=
-api = tesseract(f)
-
-# See if the shadow is affecting the OCR
-bb = GetBoxes(api, level = "symbol")
-@
-
-We can get the locations and associated confidences for each
-individual symbol recognized by Tesseract. Then these can be
-manipulated in R to explore the relationships between location and
-confidence (See Fig. \ref{conf_by_loc} for an example).
-
-<<>>=
-# Group words by the center of their bounding box left to right
-gg = cut(rowMeans(bb[,c(1,3)]), breaks = seq(0, max(bb[,3]), length.out = 7))
-tapply(bb[,"confidence"], gg, summary)
-@
+f2 = system.file("images", "IMG_1234.png", package = "Rtesseract")
+@ 
 
 \begin{figure}[h]
-<<fig=TRUE, echo = FALSE>>=
+\includegraphics[width=\textwidth]{\Sexpr{f2}}
+\caption{An example image of old data that we would like to recover
+  and analyze in R.}
+\label{fig:old_data}
+\end{figure}
 
-scatter.smooth(bb[,5] ~ rowMeans(bb[,c(1,3)]),
+Rather than transcribing these data by hand, we would like to
+programmatically extract them into R using \pkg{Rtesseract}. However,
+the accuracy is not great:
+
+<<echo = FALSE>>=
+api2 = tesseract(f2)
+
+GetText(api2)
+@
+
+An immediate question rises: Is the image quality affecting the
+results of the OCR. From inspecting the image
+(Fig. \ref{fig:old_data}), the text on the right side of the page
+appears to be darker than that on the left side. Since we can get the
+locations and associated confidences for each individual symbol
+recognized by Tesseract, we can handle these just as any other data
+problem. We can extract the bounding box information at the symbol
+level,
+
+<<>>=
+bb = GetBoxes(api2, level = "symbol")
+@
+
+group the symbols by location on the page, left to right,
+
+<<>>=
+left2right = cut(bb[,"left"], breaks = seq(0, max(bb[,"left"]), length.out = 7))
+@ 
+
+and finally inspect the relationship between confidence and location
+left to right numerically,
+
+<<>>=
+tapply(bb[,"confidence"], left2right, mean)
+@
+
+or visually,
+
+\begin{figure}[H]
+<<fig=TRUE, echo = FALSE, width = 4, height = 4>>=
+scatter.smooth(bb[,"confidence"] ~ bb[,"left"],
      xlab = "Position of character bounding box on page",
      ylab = "Confidence (higher is more confident)",
      xaxt = "n",
@@ -324,15 +350,20 @@ axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
 \label{fig:conf_by_loc}
 \end{figure}
 
-% Adjust this - 
-Furthermore, \pkg{Rtesseract} includes a default plotting function for
-OCR output for users to visually inspecting the results. We have found
-these plots, which by default include the bounding boxes colored (and
-optionally filled) by relative confidence overlaid over the original
-image (see Fig. \ref{fig:rtess_plot} for an example), helpful in
-diagnosing OCR behavior and inaccuracies. Plotting the results is
-especially helpful when adjusting the OCR configuration settings
-(discussed below under ``Advanced Use'').
+It is clear that there is a trend, with the left side of the page
+being recognized with less confidence than the right side. We can use
+this information to improve the image quality using photo-editing
+software or even computer-vision techniques such as OpenCV.
+
+Furthermore, \pkg{Rtesseract} includes a plotting method for OCR
+output. By default calling \code{plot} on a \code{TesseractBaseAPI}
+object will create a plot which includes original image overlaid with
+the bounding boxes colored (and optionally filled) by relative
+confidence (see Fig. \ref{fig:rtess_plot} for an example). We have
+found these plots to helpful in diagnosing OCR behavior and
+inaccuracies. Plotting the results is especially helpful when
+adjusting the OCR configuration settings (discussed below under
+``Advanced Use'').
 
 \begin{figure}[h]
 <<echo = FALSE>>=
@@ -347,15 +378,19 @@ plot(api, fillBoxes = TRUE)
 Similarly, by allowing access to information regarding the bounding
 boxes, \pkg{Rtesseract} enables users to use location or size specific
 information manipulate the results of the OCR. For example,
-identifying the title in the above image from plain text results would
-involve using context-based heuristics, but the task is far simpler
-with access to information about the text size:
+identifying the title in the image of the scientific paper from plain
+text results would involve using context-based heuristics, but the
+task is far simpler with access to information about the text
+size. First, we need to extract the bounding boxes at the text-line
+level,
 
 <<>>=
-# To locate the title, first get the text-line level bounding boxes
 bb = GetBoxes(api, level = "textline")
+@
 
-# Find the tallest box for a single text line
+And then identify the set of boxes which are the tallest,
+
+<<>>=
 rownames(bb)[which.max(bb[,4] - bb[,2])]
 
 @ 
