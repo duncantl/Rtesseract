@@ -1,0 +1,199 @@
+Comments:
+Needs more motivation rather than just a list of features.
+Why would we want to use these.
+For example, the confidences.  It doesn't say what we would do this with information.
+
+I'd consider adding something like the following (needs rephrasing and perhaps reordering of locations first and the confidences)
+ In OCR, we'll check the results make sense.  In some cases, it is obvious
+ that some words or characters are nonsense.  But in other cases, e.g.,
+ when we are dealing with numbers, we may not be able to easily programmatically
+ identify incorrect values. So we use the confidences to direct our attention to
+ the words or characters that are most likely to be incorrect.
+ For low confidences, we might re-run the OCR to compute alternatives at the character 
+ level (since we cannot do it at the word level?) and then see if any combinations of these
+ lead to a more reasonable result.
+    (Too much detail, but a made up example.)
+    Suppose tesseract returns i0.21 for a word. If the i has a very low confidence and we know
+    from the context (e.g. a column in the page) that we should have numbers, then we would
+    probably change the i to 1.  But we would check the confidences and the alternatives to confirm
+    this is reasonable.
+
+    Similarly, if we see a value of 82 and all the other values are between 20 and 40, we might
+    suspect that the 8 should be a 3. Again, checking the confidences gives us a mechanism to
+    make informed decisions programmatically.
+
+  [another example] In the SMITHBURN image, the first 5 words are 
+  [1] "442"       "K."        "c."        "SMITHBURN" "Zz'ka"    
+  The "c." seems odd. Looking at the alternatives, we see
+  ```r
+  alts[[6]]
+         c        C        o        e        0        G        a 
+  91.66203 88.43170 84.12754 82.45089 81.63687 80.50803 79.51438 
+  ```
+  The second alternative is C and is reasonably likely.  Given that the other words on this line are all capitalized
+  (or the page number), we should replace the 'c' with its first alternative, 'C'.
+
+   When we get lines from an image via GetText(, level = "textline"), the lines are typically ordered in a
+   way that we want to process them.  However, when we get words or characters, they often are not organized appropriately.
+   And even if they are, when we are dealing with tables, we need to collect the words into rows and columns. For this
+   we need their locations, not just their order.  At its simplest, we need to be able to recognize the two words
+   West Nile as being in the same column and not two separate columns.  Matters become more complex when some cells are
+   empty/missing and we need to associate the terms with the correct column and not just their order.
+
+   In the third page of SMITHBURN, we get a word "used.1". This is actually  "used." followed by the number 1 which identifies
+   a footnote 
+ 
+   
+ These are examples of the tight coupling of the steps in the extended OCR pipeline
+ where we use both tesseract and R.
+ 
+
+This should go somewhere early in the paper
+ OCR tools are increasingly more accurate. However, the often get some 
+ elements wrong.  We may not care about these as they may be inconsequential to subsequent
+ steps in the data analysis.  However, we often do care. We need to be able to arrange the words
+ or characters based on their locations on the page into structured data, e.g., tables
+ or by column, or in to lists
+ We also 
+
+
+Needs more details about the functionality, e.g.,
+what are "any other options" at the end of age 4..
+
+
+
+
+
+The rotated text on the right of the page may cause problems for the OCR.
+Certainly we want to ignore these - they are not part of the actual text.
+This is when we want to restrict the OCR to a sub-region.
+We may know the sub-region a priori, or alternatively we can plot the page using
+`plot(sm)` and identifying the regions.
+Another approach is to do an initial scan and then look at the confidences/certainties
+for the diffrent
+```r
+sm = tesseract("~/SMITHBURN 1952-1-3 (dragged).tiff")
+sm.bb = GetBoxes(sm)
+sm.bb[, "conf"] = GetConfidences(sm)
+
+GetConfidences(sm)[sm.bb[, "left"] > 3800]
+```
+
+```r
+table(GetConfidences(sm)[sm.bb[, "left"] > 3800] < quantile(sm.conf, .2)) 
+table(GetConfidences(sm)[sm.bb[, "left"] > 3800] < quantile(sm.conf, .75))
+```
+
+
+Let's read the table from SMITHBURN
+
+Find the word TABLE
+```r
+sm = tesseract("~/SMITHBURN 1952-1-3 (dragged).tiff")
+sm.bb = GetBoxes(sm)
+```
+
+We would like to use the horizontal and vertical  lines in the table.
+For this, we can try "psm_auto" as the `pageSegMode` argument.
+But in the absence of these lines being detected, we'll use knowledge
+we dtermine visually.
+
+Let's find the word TABLE and the final Haemagogus in the document
+which mark the beginning and the end of the 
+```
+s = grep("TABLE", rownames(sm.bb))
+s2 = grep("Bwamba", rownames(sm.bb))
+e = grep("Haemagogus", rownames(sm.bb))
+```
+We want the last (second) of the values in e.
+So the top and bottom coordinates 
+```
+top = sm.bb[s2, "bottom"]
+bot = sm.bb[e[length(e)], "top"]
+```
+
+We'll display these lines on the page:
+```
+plot(sm)
+sz = GetImageDims(sm)
+abline(h = GetImageDims(sm)["height"] - c(top, bot), col = "red")
+```
+
+We now can compute the elements that are in the table.
+```
+w = sm.bb[, "top"] >= top & sm.bb[, "top"] <= bot
+```
+We check the words
+```
+rownames(sm.bb)[w]
+```
+We see some strange ones, e.g., "{sf", "ii:", "§-".
+These most likely come from the rotated text on the right.
+So we will exclude those whose left values are aboe 3800 which we read from the plot.
+```
+w.rot = sm.bb[, "left"] > 3800
+w = w & !w.rot
+```
+
+We are now ready to arrange these words into columns.
+There are various approaches to doing this.
+We'll start by arranging them by column.
+We could compute the column breaks by detecting the positions of the vertical lines via OCR,
+or visually.
+Alternatively, we can compute the locations.
+
+```
+tb = sm.bb[w,]
+ll = sort(table(tb[, "left"]), decreasing = TRUE)
+```
+We can take the 8 most frequent locations and then use 95% of these distances to back up to the left a little.
+This will include the center-aligned values in the third column (Year Isolated) and also
+ensure that we capture characters that are just a little to the left of others in the same column.
+
+Displaying these as lines
+```
+abline(v = as.integer(names(ll[1:8]))*.95, col = "red", lwd = 3)
+```
+we see that these do split the content of each column.
+
+```
+tb1 = as.data.frame(tb)
+tb1$text = rownames(tb)
+```
+
+```
+colPos = as.integer(names(ll[1:8]))*.95
+cols = split(tb1, cut(tb1[, "left"], c(colPos, Inf)))
+```
+
+Within each column, we arrange the entries by line.
+Again, the top and bottom may be slightly different  for words on the same line.
+So find break points to group these words for each line.
+One way to do this is to determine how big characters are typically.
+We compute this with 
+```
+charHeight = max(tb1$top - tb1$bottom)
+```
+So we break
+```
+y = seq(min(tb1$bottom), max(tb1$top), by = charHeight * 1.1)
+```
+
+Alternatively, we can look at any of the
+```
+tmp = cols[[2]]
+y = c( tmp[1, "bottom"], (tmp[-1, "bottom"] + tmp[ -nrow(tmp), "top"])/2, Inf)
+```
+
+```
+colVals = lapply(cols, function(x) split(x$text, cut(x$top, y)))
+```
+
+
+
+Left over:
+```
+q = quantile(tb[, "left"], seq(0, 1, length = 9))
+g = cut(tb[, "left"], q)
+split(rownames(tb), g)
+```
