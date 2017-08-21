@@ -107,15 +107,66 @@ work with from social media, reports, scholarly articles, job
 applications, etc. These often come as plain text or structured documents
 such as word-processing files, HTML, PDF. However, there are many
 documents of interest that are only available as scanned or
-photographic images (e.g., old books, newspapers). Optical Character
+photographic images (e.g., old books, newspapers).
+%we want tables of data or text for NLP, lists of entries
+Optical Character
 Recognition (OCR) is a technique to infer characters, words or lines
 of text from an image, thereby making it accessible for data
 analysis. There are many OCR software tools available (e.g., Adobe
-Acrobat, PDFPen Pro, ABBY), though these typically only output the
-results to a file. End-users are not often given access fine scale
-controls, or are able customize the trained behavior of the
-tool. Importantly, the results often contain just the text.
+Acrobat, PDFPen Pro, ABBY), though these typically only output text results
+to a file on disk.
 
+Although OCR technology has steadily improved over the years, OCR
+results are rarely perfect. We may not care about these errors if they
+are inconsequential to subsequent analysis. However, often these error
+do impact our analysis and we need to correct them before
+preceding. Therefore, OCR is commonly part of a workflow that involves
+pre- and post-processing steps to verify and increase the accuracy of
+the text extraction. For example, an image might manipulated (e.g.,
+cropped, increased contrast, decreased noise, etc.) using image
+editing software to make the text ``stand out'' prior to OCR. Then
+after OCR has been run we will check if the results make sense. In
+some cases there are obvious issues, such as nonsense words or garbled
+text, but in other cases we might want to focus our attention on the
+areas where the OCR engine had the least confidence. When we have
+prior contextual knowledge about the correct matches, such as only
+numbers or certain characters or words occur in the text, we can
+leverage this information to correct errors in the post-processing
+steps. When the text is arranged in columns or blocks, we will want to
+rearrange the text into the correct order. Finally, we will analyze
+the text results using methods such as NLP. Using OCR software which
+only returns text results, our full OCR workflow would involve 1)
+multiple platforms to perform pre-processing, OCR, post-processing,
+and analysis, 2) using pre- and post-processing steps to overcome
+limited control over the OCR process itself, 3) limited options to
+programmatically control and reproduce each step in the workflow, and
+4) no access to OCR intermediate products, such as confidences,
+alternative matches, location on the page, etc., which are helpful for
+assessing the certainty in the each returned result.
+
+In our work extracting and analyzing text data present in images from
+R, we desired a tool which would overcome the limitations above. In our
+search for solutions, we found Tesseract, a long-standing open source
+OCR library originally created in 1985 and currently under active
+development. Accessing the Tesseract API from R provides us with the
+ability to bring pre-processing, OCR, post-processing, and analysis
+under complete programmatic control within R. The \pkg{Rtesseract}
+package provides 1) a simple high-level function to extract the text
+from one or more images, 2) the ability to also obtain important
+auxiliary data (e.g., the confidence in each prediction, the location
+within the image), and 3) customization of how the OCR is done.
+
+% OCR is improving, but it is not perfect. What is pipeline - concrete examples:
+% Why pre-process?
+% Why post-process?
+%
+% 1. We picked tesseract
+% 2. so did ...
+% 3. why ours is better for workflow
+
+% Use the term certainty/uncertainty
+
+\begin{comment}
 In response to our needs, we developed the \pkg{Rtesseract} package,
 an interface to the open source OCR library Tesseract. Tesseract was
 created 1985, was released for open source in 2005, and has since been
@@ -129,54 +180,62 @@ to also obtain important auxiliary data (e.g., the confidence in each
 prediction, the location within the image), and 3) customization of
 how the OCR is done. Additionally, the results are accessible directly
 within R as text and/or a data frame of locations and confidences.
+\end{comment}
 
 This approach using \pkg{Rtesseract} tightly integrates pre- and
 post-processing steps with the actual OCR. For example, we can focus
 on a sub-region of the image, or enhance the image with some computer
 vision techniques before performing the character recognition. We can
 specify a domain-specific vocabulary, or identify unconventional
-fonts. This tight integration simplifies workflows that otherwise rely
-on invoking stand-alone applications typically meant for human
-interactive use. Furthermore, metadata about the resulting text can
-aid and inform subsequent analyses. For example, the layout of the text into blocks,
-the presence of elements such as lines or other dividers, or even the
-relative size of the text can all be used to make sense of the
-resulting text. Diagnostic pieces of information such as the
-confidence in the matches, alternative matches, etc., can be essential
-to improving OCR accuracy. If the OCR tool only returns the text
-results, OCR's usefulness is limited to cases where the problem is
-either simple or well-covered by the default setup.
+fonts. We can adjust the OCR behavior via configuration variables to
+correct errors in the recognition step rather than relying on
+post-processing. This tight integration simplifies workflows that
+otherwise rely on invoking stand-alone applications typically meant
+for human interactive use. Furthermore, metadata about the resulting
+text can aid and inform subsequent analyses. For example, the layout
+of the text into blocks, the presence of elements such as lines or
+other dividers, or even the relative size of the text can all be used
+to make sense of the resulting text. Diagnostic pieces of information
+such as the confidence in the matches, alternative matches, etc., can
+be essential assessing certainty and improving OCR accuracy. If the
+OCR tool only returns the text results, as is the case with many OCR
+tools, OCR's usefulness is limited to cases where the problem is
+either simple or well-covered by the default configuration.
 
-Since we initially created \pkg{Rtesseract} in April 2015, two other R
-packages interfacing to Tesseract have been released.  The \pkg{ocR}
+We have not been alone in recognizing the utility of Tesseract. Since
+we initially created \pkg{Rtesseract} in April 2015, two other R
+packages interfacing to Tesseract have been released. The \pkg{ocR}
 package~\citep{Hagmann2014} provides an interface to calling the
-Tesseract command line executable.  Using the \pkg{ocR} package, the
-user specifies the image file and the results that Tesseract writes to
-a file are read into R. The \pkg{tesseract} package~\citep{ooms2016}
-takes a similar approach to \pkg{Rtesseract} package by interfacing to
-the C++ library. However, by design, it provides only functionality to
-get the text results from the OCR process. \pkg{Rtesseract}, from its
-initial implementation, provides access to a most of the functionality
-in the Tesseract API and provides fine-grain control from R to the
-different steps in the OCR process. \pkg{Rtesseract} supports both the
-current release (v3.05.01) and development versions (v4.00.alpha) of
-Tesseract.
+Tesseract command line executable. Using the \pkg{ocR} package, the
+user specifies the image file and command-line options, Tesseract is
+called and writes the results to a file which is then read back into
+R. The \pkg{tesseract} package~\citep{ooms2016} takes a similar
+approach to \pkg{Rtesseract} package by interfacing to the Tesseract
+C\texttt{++} library. However, by design, it provides only
+functionality to get the text results from the OCR
+process. \pkg{Rtesseract}, from its initial implementation, provides
+access to most of the functionality in the Tesseract API and
+provides fine-grain control from R to the different steps in the OCR
+process. Additionally, \pkg{Rtesseract} provides primative tools which
+allow users to easily extend functionality. \pkg{Rtesseract} supports
+both the current release (v3.05.01) and development versions
+(v4.00.alpha) of Tesseract.
 
-\section{Package Description}\label{desc}
+\section{Optical Character Recognition using Rtesseract}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient. \pkg{Rtesseract} provides simple
 interfaces that allow users to provide the path to an image in a
 supported format (tiff, JPEG, and png on most systems), and OCR will be
 run on the image using the default settings. For example, say we had
-an image of the first page of a scientific publication which we wanted
-to extract information from (Fig. \ref{fig:base}). We will use this
+an image from an older scientific publication from which we wanted
+to extract information (Fig. \ref{fig:base}). We will use this
 image to highlight the functionality and common use-cases of the
-\pkg{Rtesseract} package.
+\pkg{Rtesseract} package. % AWK
 
 % Fix this
 <<echo = FALSE>>=
-f = system.file("images", "Biological_YF_Risk-0_01.png", package = "Rtesseract")
+f = system.file("images", "SMITHBURN_1952_p3.tiff", package = "Rtesseract")
 @ 
 
 \begin{figure}[h]
@@ -230,7 +289,7 @@ how confident the OCR engine is in each match,
 GetConfidences(f)
 @
 
-and what alternatives exist for the returned match,
+and what alternatives exist for each character,
 
 <<>>=
 GetAlternatives(f)
@@ -240,19 +299,20 @@ GetAlternatives(f)
 (\code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives})
 to extend the information accessible by the user. Similar to
 \code{GetText}, these functions can take the path of the image file
-and the optional \code{level} argument, except \code{GetAlternatives}
-which only operates at the symbol level.
+and the optional \code{level} argument (except \code{GetAlternatives}
+which only operates at the ``symbol'' level).
 
 This practice of calling \code{GetText} followed by another to, e.g.,
-\code{GetBoxes} for the same file is a common occurrence. Yet, it has a
-distinct inefficiency - we repeat the OCR recognition the same file
-merely to record a different product from the OCR engine. Since OCR is
+\code{GetBoxes} for the same file is a common occurrence when working
+interactively with \pkg{Rtesseract}. Yet, it has a distinct
+inefficiency - we repeat the OCR recognition the same file merely to
+record a different product from the OCR engine. Since OCR is
 reasonably computationally intensive, we would like to perform the OCR
 once and then query each aspect we want (i.e., the text, the
 confidences, the alternatives, \ldots) from this single OCR operation,
 
-This process of creating a persistent object which can be repeatedly
-queried is the preferred method when multiple piece of information are
+Creating a \code{TesseractBaseAPI} object once which can be repeatedly
+queried is the preferred method when multiple pieces of information are
 needed from the same file. The \code{tesseract} function creates an
 instance of the OCR engine (an object of class \code{TesseractBaseAPI}
 in R),
@@ -335,7 +395,7 @@ tapply(bb[,"confidence"], left2right, mean)
 or visually,
 
 \begin{figure}[H]
-<<fig=TRUE, echo = FALSE, width = 4, height = 4>>=
+<<fig=TRUE, echo = FALSE, width = 4, height = 4, out.width = '0.8\\linewidth'>>=
 scatter.smooth(bb[,"confidence"] ~ bb[,"left"],
      xlab = "Position of character bounding box on page",
      ylab = "Confidence (higher is more confident)",
@@ -355,7 +415,7 @@ being recognized with less confidence than the right side. We can use
 this information to improve the image quality using photo-editing
 software or even computer-vision techniques such as OpenCV.
 
-Furthermore, \pkg{Rtesseract} includes a plotting method for OCR
+\pkg{Rtesseract} includes a plotting method for OCR
 output. By default calling \code{plot} on a \code{TesseractBaseAPI}
 object will create a plot which includes original image overlaid with
 the bounding boxes colored (and optionally filled) by relative
