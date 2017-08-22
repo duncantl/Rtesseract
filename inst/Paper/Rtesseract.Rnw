@@ -253,12 +253,13 @@ file containing the image.  By default, it returns the words it finds
 in the image in the order they appear,
 
 <<>>=
-f = system.file("images", "Biological_YF_Risk-0_01.png", package = "Rtesseract")
+#f = system.file("images", "Biological_YF_Risk-0_01.png", package = "Rtesseract")
+f = system.file("images", "SMITHBURN_1952_p3.tiff", package = "Rtesseract")
+
 GetText(f)
 @
 
-However, rather than words, we sometimes want the results returned as
-individual characters (symbols),
+We sometimes want the results returned as individual characters (symbols),
 
 
 <<>>=
@@ -276,20 +277,49 @@ All of which are easy to achieve with the \code{levels} argument in
 \code{GetText}. Thereby, the functionality of most basic OCR
 applications is provided by the \code{GetText} function. 
 
-However, merely retrieving text can be of limited usefulness. Users
-might wish to know the location of the match,
+However, merely retrieving text can be of limited usefulness. We would
+like to check the results, but checking by eye, word by word is both
+tedious and error-prone. Rather, we would like focus our attention
+initially at those words with the lowest confidences:
 
 <<>>=
-GetBoxes(f)
+confs = GetConfidences(f)
+sort(confs)[1:10]
 @ 
 
-how confident the OCR engine is in each match,
+Clearly, some of these do not look correct. To further investigate
+these, we might want to see where they occur on the page:
 
 <<>>=
-GetConfidences(f)
+bbox = GetBoxes(f)
+bbox[order(bbox[,"confidence"])[1:10],]
 @
 
-and what alternatives exist for each character,
+It appears the low confidence words might be grouped together in
+similar areas on the page. Since we have access to the confidences in
+R, we can treat these just like any other data. For example, we can
+group the words into 10 bins by their location left to right,
+
+<<>>=
+lrGroups = cut(bbox[,"left"], breaks = seq(min(bbox[,"left"]),
+                                           max(bbox[,"left"]),
+                                           length.out = 11))
+               
+@ 
+
+And then find the median confidence inside each group,
+
+<<>>=
+tapply(bbox[,"confidence"], lrGroups, median)
+@
+
+Clearly there are issues with the right side of the page. Looking
+at the image, we can see there is text in the margin at a different
+orientation which is not being recognized well by the OCR.
+
+This example highlights both the workflow of using OCR to extract
+text and why having access to information beyond just the text is so
+crucial.
 
 <<>>=
 GetAlternatives(f)
@@ -323,21 +353,17 @@ api = tesseract(f)
 
 We specify the path to the file and any other options controlling how
 the OCR will be performed. We then pass this to each of the four high
-level functions rather than the file name,
+level functions rather than the file name, e.g., \code{GetText(api)},
+\code{GetBoxes(api)}, \code{GetConfidences(api)}. By default, the call
+to \code{tesseract} doesn't perform the OCR immediately. Instead, it
+is only done when we request any results, e.g., calling any of the
+functions above, or explicitly calling the \code{Recognize} function
+with the \code{TesseractBaseAPI} object as an argument.
 
-<<>>=
-GetText(api)
-GetBoxes(api)
-GetConfidences(api)
-@ 
- 
-By default, the call to \code{tesseract} doesn't perform the OCR
-immediately. Instead, it is only done when we request any results,
-e.g., calling any of the functions above, or explicitly calling
-the \code{Recognize} function with the \code{TesseractBaseAPI} object
-as an argument.
+For example, say we wanted explore the results of OCR on the image
+above. 
 
-For example, say we wanted to OCR the previous image, but also were
+to OCR the previous image, but also were
 interested if the shadow on edges of the image affected the OCR
 performance from left to right. Since the confidences for each match
 are available to us, we can easily explore this relationship
@@ -345,6 +371,7 @@ statistically and/or visually. For example, we have a print out of an
 old dot-matrix print out of data that we would like to add to an
 analysis in R,
 
+\begin{comment}
 <<echo = FALSE>>=
 f2 = system.file("images", "IMG_1234.png", package = "Rtesseract")
 @ 
@@ -355,6 +382,7 @@ f2 = system.file("images", "IMG_1234.png", package = "Rtesseract")
   and analyze in R.}
 \label{fig:old_data}
 \end{figure}
+\end{comment}
 
 Rather than transcribing these data by hand, we would like to
 programmatically extract them into R using \pkg{Rtesseract}. However,
