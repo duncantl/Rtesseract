@@ -11,6 +11,11 @@
 %% load any required packages here
 \usepackage{float}
 
+%% Need to declair the unicode ligature here so LaTeX does not
+%% complain
+\DeclareUnicodeCharacter{FB01}{fi}
+\DeclareUnicodeCharacter{FB02}{fl}
+
 \begin{document}
 
 %% do not edit, for illustration only

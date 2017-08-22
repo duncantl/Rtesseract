@@ -235,7 +235,7 @@ image to highlight the functionality and common use-cases of the
 
 % Fix this
 <<echo = FALSE>>=
-f = system.file("images", "SMITHBURN_1952_p3.tiff", package = "Rtesseract")
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 @ 
 
 \begin{figure}[h]
@@ -254,7 +254,7 @@ in the image in the order they appear,
 
 <<>>=
 #f = system.file("images", "Biological_YF_Risk-0_01.png", package = "Rtesseract")
-f = system.file("images", "SMITHBURN_1952_p3.tiff", package = "Rtesseract")
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 
 GetText(f)
 @
@@ -276,54 +276,6 @@ GetText(f, level = "textline")
 All of which are easy to achieve with the \code{levels} argument in
 \code{GetText}. Thereby, the functionality of most basic OCR
 applications is provided by the \code{GetText} function. 
-
-However, merely retrieving text can be of limited usefulness. We would
-like to check the results, but checking by eye, word by word is both
-tedious and error-prone. Rather, we would like focus our attention
-initially at those words with the lowest confidences:
-
-<<>>=
-confs = GetConfidences(f)
-sort(confs)[1:10]
-@ 
-
-Clearly, some of these do not look correct. To further investigate
-these, we might want to see where they occur on the page:
-
-<<>>=
-bbox = GetBoxes(f)
-bbox[order(bbox[,"confidence"])[1:10],]
-@
-
-It appears the low confidence words might be grouped together in
-similar areas on the page. Since we have access to the confidences in
-R, we can treat these just like any other data. For example, we can
-group the words into 10 bins by their location left to right,
-
-<<>>=
-lrGroups = cut(bbox[,"left"], breaks = seq(min(bbox[,"left"]),
-                                           max(bbox[,"left"]),
-                                           length.out = 11))
-               
-@ 
-
-And then find the median confidence inside each group,
-
-<<>>=
-tapply(bbox[,"confidence"], lrGroups, median)
-@
-
-Clearly there are issues with the right side of the page. Looking
-at the image, we can see there is text in the margin at a different
-orientation which is not being recognized well by the OCR.
-
-This example highlights both the workflow of using OCR to extract
-text and why having access to information beyond just the text is so
-crucial.
-
-<<>>=
-GetAlternatives(f)
-@
 
 \pkg{Rtesseract} includes these three other high-level functions
 (\code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives})
@@ -352,24 +304,89 @@ api = tesseract(f)
 @
 
 We specify the path to the file and any other options controlling how
-the OCR will be performed. We then pass this to each of the four high
-level functions rather than the file name, e.g., \code{GetText(api)},
+the OCR will be performed (explained in more detail in ``Advanced
+Use''). We then pass this to each of the four high level functions
+rather than the file name, e.g., \code{GetText(api)},
 \code{GetBoxes(api)}, \code{GetConfidences(api)}. By default, the call
 to \code{tesseract} doesn't perform the OCR immediately. Instead, it
 is only done when we request any results, e.g., calling any of the
 functions above, or explicitly calling the \code{Recognize} function
 with the \code{TesseractBaseAPI} object as an argument.
 
-For example, say we wanted explore the results of OCR on the image
-above. 
+To show how merely retrieving text can be of limited usefulness, we
+continue the example above. After extracting the text from the
+scientific publication, we would like to check the results. However,
+checking word by word manually is both tedious and
+error-prone. Rather, we might want to focus our attention initially at
+those words with the lowest confidences:
 
-to OCR the previous image, but also were
-interested if the shadow on edges of the image affected the OCR
-performance from left to right. Since the confidences for each match
-are available to us, we can easily explore this relationship
-statistically and/or visually. For example, we have a print out of an
-old dot-matrix print out of data that we would like to add to an
-analysis in R,
+<<>>=
+confs = GetConfidences(api)
+sort(confs)[1:10]
+@ 
+
+Clearly, some of these do not look correct. To further investigate, we
+might want to see where these low-confidence words occur on the page
+with,
+
+<<>>=
+bbox = GetBoxes(api)
+bbox[order(bbox[,"confidence"])[1:10],]
+@
+
+\code{GetBoxes} extends the information returned by
+\code{GetConfidences} by including the left, top, right, and bottom of
+the bounding box around the word, symbol, textline, etc.
+
+It appears the low confidence words might be grouped together in
+similar areas on the page. Since we have access to the confidences and
+bounding boxes in R, we can treat these just like any other data. For
+example, we can group the words into bins by their location left to
+right,
+
+<<>>=
+lrGroups = cut(bbox[,"left"], breaks = seq(min(bbox[,"left"]),
+                                           max(bbox[,"left"]),
+                                           length.out = 11))
+               
+@ 
+
+And then find the median confidence inside each group,
+
+<<out.lines=8>>=
+tapply(bbox[,"confidence"], lrGroups, median)
+@
+
+We can see there are issues with the right side of the page. Looking
+at the image, we can see there is rotated text in the margin which is
+not being recognized well by the OCR. Because of this text crosses
+several lines, post-processing without location information would
+involve searching for ``junk'' at the end of each text lines. However,
+we can easily exclude this text with location information in
+hand. Additionally, while we could crop this image using editing
+software outside of R, later we will show how this area can be
+excluded from the OCR using \pkg{Rtesseract} without leaving R.
+
+To continue, suppose we also wanted to extract the author's name, knowing
+that this information is present at the top of each page,
+
+<<>>=
+GetText(api, level = "textline")[1]
+@ 
+
+We know that the lower case letter in ``c.'' is a mistake, but we might
+not be sure what the correct letter should be. Helpfully, we can
+inspect the alternative matches,
+
+<<>>=
+GetAlternatives(api)[6]
+@ 
+
+which reveals that ``C'' was a close second in this case.
+
+This example illustrates both the workflow of using OCR to extract
+text and highlights why having access to information beyond just the text is so
+crucial.
 
 \begin{comment}
 <<echo = FALSE>>=
@@ -382,7 +399,6 @@ f2 = system.file("images", "IMG_1234.png", package = "Rtesseract")
   and analyze in R.}
 \label{fig:old_data}
 \end{figure}
-\end{comment}
 
 Rather than transcribing these data by hand, we would like to
 programmatically extract them into R using \pkg{Rtesseract}. However,
@@ -442,6 +458,7 @@ It is clear that there is a trend, with the left side of the page
 being recognized with less confidence than the right side. We can use
 this information to improve the image quality using photo-editing
 software or even computer-vision techniques such as OpenCV.
+\end{comment}
 
 \pkg{Rtesseract} includes a plotting method for OCR
 output. By default calling \code{plot} on a \code{TesseractBaseAPI}
