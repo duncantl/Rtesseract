@@ -238,7 +238,7 @@ image to highlight the functionality and common use-cases of the
 f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 @ 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \includegraphics[width=\textwidth]{\Sexpr{f}}
 \caption{An example image of a scientific paper which contains text we
   would like to analyze.}
@@ -253,24 +253,20 @@ file containing the image.  By default, it returns the words it finds
 in the image in the order they appear,
 
 <<>>=
-#f = system.file("images", "Biological_YF_Risk-0_01.png", package = "Rtesseract")
 f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
-
 GetText(f)
 @
 
 We sometimes want the results returned as individual characters (symbols),
 
-
 <<>>=
 GetText(f, level = "symbol")
 @ 
 
-or sometimes as textlines,
+or sometimes as lines (textlines),
 
 <<>>=
 GetText(f, level = "textline")
-
 @
 
 All of which are easy to achieve with the \code{levels} argument in
@@ -304,8 +300,8 @@ api = tesseract(f)
 @
 
 We specify the path to the file and any other options controlling how
-the OCR will be performed (explained in more detail in ``Advanced
-Use''). We then pass this to each of the four high level functions
+the OCR will be performed (explained in more detail below in ``Advanced
+Use''). We then pass this object to each of the four high level functions
 rather than the file name, e.g., \code{GetText(api)},
 \code{GetBoxes(api)}, \code{GetConfidences(api)}. By default, the call
 to \code{tesseract} doesn't perform the OCR immediately. Instead, it
@@ -327,18 +323,22 @@ sort(confs)[1:10]
 
 Clearly, some of these do not look correct. To further investigate, we
 might want to see where these low-confidence words occur on the page
-with,
+by extracting the bounding boxes,
 
 <<>>=
 bbox = GetBoxes(api)
-bbox[order(bbox[,"confidence"])[1:10],]
 @
 
 \code{GetBoxes} extends the information returned by
 \code{GetConfidences} by including the left, top, right, and bottom of
-the bounding box around the word, symbol, textline, etc.
+the bounding box around the word, symbol, textline, etc. Using these,
+we can sort by the confidence,
 
-It appears the low confidence words might be grouped together in
+<<>>=
+bbox[order(bbox[,"confidence"])[1:10],]
+@
+
+On first glance, it appears the low confidence words might be grouped together in
 similar areas on the page. Since we have access to the confidences and
 bounding boxes in R, we can treat these just like any other data. For
 example, we can group the words into bins by their location left to
@@ -358,17 +358,21 @@ tapply(bbox[,"confidence"], lrGroups, median)
 @
 
 We can see there are issues with the right side of the page. Looking
-at the image, we can see there is rotated text in the margin which is
-not being recognized well by the OCR. Because of this text crosses
-several lines, post-processing without location information would
-involve searching for ``junk'' at the end of each text lines. However,
-we can easily exclude this text with location information in
-hand. Additionally, while we could crop this image using editing
-software outside of R, later we will show how this area can be
-excluded from the OCR using \pkg{Rtesseract} without leaving R.
+at the image (Fig. \ref{fig:base}), we can see there is rotated text
+in the margin that identifies when and where the PDF was
+downloaded. This text is not being recognized well by the OCR, but is
+also not part of the journal article we are interested in. Because of
+this text crosses several textlines, post-processing without location
+information would involve searching for ``junk'' at the end of each
+text lines. However, we can easily exclude this text in
+post-processing with location information in hand. Additionally, while
+we could crop this image using editing software outside of R, we will
+show later how this area can be excluded from the OCR recognition step
+using \pkg{Rtesseract} without leaving R.
 
-To continue, suppose we also wanted to extract the author's name, knowing
-that this information is present at the top of each page,
+To continue, suppose we also wanted to extract the author's
+name. Using some prior knowledge that this information is present at
+the top of each page, we can focus on the first text line,
 
 <<>>=
 GetText(api, level = "textline")[1]
@@ -386,7 +390,7 @@ which reveals that ``C'' was a close second in this case.
 
 This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the text is so
-crucial.
+crucial to a full OCR workflow.
 
 \begin{comment}
 <<echo = FALSE>>=
@@ -460,17 +464,17 @@ this information to improve the image quality using photo-editing
 software or even computer-vision techniques such as OpenCV.
 \end{comment}
 
-\pkg{Rtesseract} includes a plotting method for OCR
-output. By default calling \code{plot} on a \code{TesseractBaseAPI}
-object will create a plot which includes original image overlaid with
-the bounding boxes colored (and optionally filled) by relative
-confidence (see Fig. \ref{fig:rtess_plot} for an example). We have
-found these plots to helpful in diagnosing OCR behavior and
-inaccuracies. Plotting the results is especially helpful when
-adjusting the OCR configuration settings (discussed below under
-``Advanced Use'').
+We found that visualizing the confidences was essential to inspecting
+\pkg{Rtesseract} results. Therefore, \pkg{Rtesseract} includes a
+plotting method for OCR output. By default calling \code{plot} on a
+\code{TesseractBaseAPI} object will create a plot which includes
+original image overlaid with the bounding boxes colored (and
+optionally filled) by relative confidence (see
+Fig. \ref{fig:rtess_plot} for an example). Plotting the
+results is especially helpful when adjusting the OCR configuration
+settings (discussed below under ``Advanced Use'').
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<echo = FALSE>>=
 plot(api, fillBoxes = TRUE)
 @
@@ -480,6 +484,7 @@ plot(api, fillBoxes = TRUE)
 \label{fig:rtess_plot}
 \end{figure}
 
+\begin{comment}
 Similarly, by allowing access to information regarding the bounding
 boxes, \pkg{Rtesseract} enables users to use location or size specific
 information manipulate the results of the OCR. For example,
@@ -506,6 +511,7 @@ reconstruct text arranged in columns, separating by unrelated elements
 content. In our use, we have found using the bounding boxes preferable
 to attempting to simulate the layout of the page by padding the text
 with spaces (e.g., the ``layout'' output of many other OCR engines).
+\end{comment}
 
 \section{Advanced Use}
 
@@ -571,17 +577,19 @@ ambiguities:
 
 <<new>>=
 # Create a user-words file for English
-writeLines(c("aegypti", "São"), "eng.user-words")
+writeLines(c("2\tz'\t1\t1\0"), "eng.unicharambigs")
+writeLines(c("Zika", "Anopheles"), "eng.user-words")
 
 # Create a new API for comparison
-api2 = tesseract(f, pageSegMode="psm_auto", 
-                 opts = list(user_words_file = "eng.user-words"))
+api2 = tesseract(f, pageSegMode="psm_auto", engineMode=2,
+                 datapath = path.expand("~/DSI/tessdata/"))#,
+                 opts = list(user_words_file = "eng.user-words",
+                             tessedit_enable_dict_correction = "1"))
 
-# path.expand("~/DSI/Rtesseract/inst/Paper/")))
 
 #Fixed error in OCR engine rather than post-process results
-GetText(api2, "textline")[34]
-GetText(api, "textline")[34]
+grep("^An", GetText(api2), value = TRUE)
+GetText(api, "textline")[2]
 
 @
 
