@@ -2,6 +2,10 @@
 
 1. Document build issues for tesseract 4.0 on different platforms.
 
+1. Get Pix from tesseract as R array
+
+1. Set Pix from R array to tesseract.
+
 1. Get this working on Windows.
 
 1. Example for GetSmudges
@@ -94,7 +98,7 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
  ```r
     api = tesseract("inst/trainingSample/eng.tables.exp0.png", 0L)
  ```
-   This is what did it - but not anymore.
+  <br/> This is what did it - but not anymore.
  ```r
    Sys.setenv(TESSDATA_PREFIX= path.expand("~/Projects/OCR/tesseract-ocr"))
    library(Rtesseract)
