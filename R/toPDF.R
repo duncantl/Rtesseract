@@ -7,7 +7,8 @@ function(imgFile, outFile = removeExtension(imgFile),
      # ensure the finalizer for the render object is run now.
      # This calls the C++ destructor (inherited one from TessResultRender) which flushes and closes the file.
    #rm(render); gc()
-   gc()
+   rm(renderer)
+   gc(); gc()
    paste0(outFile, ".pdf")   
 }
 
