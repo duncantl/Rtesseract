@@ -1,9 +1,13 @@
 # How to install Rtesseract 
 
 Rtesseract requires Tesseract to be installed, either 3.0X or 4.0X
-versions. 
+versions. For general notes on installing Tesseract, please
+see [Installing Tesseract](https://github.com/duncantl/Rtesseract/blob/master/InstallingTesseract.md).
 
 # Tested installs:
+
+These are platforms where Rtesseract has been confirmed to install on,
+along with any notes or special instructions.
 
 ## General notes:
 
@@ -17,7 +21,7 @@ versions.
 
 ## Linux
 
-### CentOS
+### CentOS 7
 
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
@@ -26,6 +30,8 @@ Tesseract version | R version | Compiler | Notes
 
 
 ### Arch Linux
+
+kernel 4.12.8.2
 
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
@@ -42,13 +48,13 @@ Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
 3.05.0X | 3.4.1 | g++ 6.3.0 | OK 
 4.00.00dev | 3.4.1 | g++ 6.3.0 | OK 
-
+	
 ## OS X
 
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
-3.05.0X | 3.4.1 | g++ 6.3.0 | Cannot compile tesseract 
-4.00.00dev | 3.4.1 | g++ 6.3.0 | Cannot compile tesseract
+3.05.0X | 3.4.? | Apple clang | Cannot compile tesseract 
+4.00.00dev | 3.4.? | Apple clang | Cannot compile tesseract
  
 ## MS Windows
 
