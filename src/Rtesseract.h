@@ -1,10 +1,14 @@
 #ifndef RTESSERACT_H
 #define RTESSERACT_H
 
+#include <string>
 #include <baseapi.h>
 #include <Rdefines.h>
 
 #include <allheaders.h>
+
+
+using namespace std;
 
 void R_pixDestroy(SEXP obj);
 

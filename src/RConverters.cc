@@ -495,7 +495,7 @@ IS_S4_INSTANCE(SEXP  obj, const char *className)
 	SETCAR(CDR(e), obj);
 	SETCAR(CDR(CDR(e)), mkString(className));
 	ans = eval(e, R_GlobalEnv);
-	status = LOGICAL(ans)[0];
+	status = (Rboolean) LOGICAL(ans)[0];
 	UNPROTECT(1);
 	return(status);
 }
