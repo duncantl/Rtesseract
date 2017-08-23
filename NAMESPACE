@@ -11,6 +11,8 @@ importFrom("stats", dist, median, quantile)
 
 export(GetConfidenceColors)
 
+export(getImageLibs, leptonicaVersion)
+
 export(tesseractVersion)
 
 #export(ocr)
@@ -72,6 +74,7 @@ exportMethods("GetConfidences", "GetBoxes", "GetAlternatives")
 
 export(GetImageDims, GetImageInfo)
 
+export(GetImage)
 
 #, GetImage, GetInputImage)
 #export(GetThresholdedImage)
