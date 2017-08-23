@@ -2,7 +2,12 @@
 
 Rtesseract requires Tesseract to be installed, either 3.0X or 4.0X
 versions. For general notes on installing Tesseract, please
-see [Installing Tesseract](https://github.com/duncantl/Rtesseract/blob/master/InstallingTesseract.md).
+see
+[Compiling Tesseract](https://github.com/tesseract-ocr/tesseract/wiki/Compiling) for
+information from the Tesseract devs
+and
+[Installing Tesseract](https://github.com/duncantl/Rtesseract/blob/master/InstallingTesseract.md) for
+our notes.
 
 # Tested installs:
 
