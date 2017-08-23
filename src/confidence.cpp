@@ -1,8 +1,9 @@
+/*
 #include <baseapi.h>
 #include <allheaders.h>
 
 #include <Rdefines.h>
-
+*/
 #include "Rtesseract.h"
 
 

@@ -1,3 +1,5 @@
+#include <string>
+using std::string;
 #include <tesseract/osdetect.h>
 #include "Rtesseract.h"
 

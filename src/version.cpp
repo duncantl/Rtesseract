@@ -1,5 +1,4 @@
-#include <baseapi.h>
-#include <Rdefines.h>
+#include "Rtesseract.h"
 
 extern "C"
 SEXP

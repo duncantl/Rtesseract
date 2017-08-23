@@ -1,3 +1,6 @@
+#include <string>
+using std::string;
+
 #include <baseapi.h>
 #include <allheaders.h>
 

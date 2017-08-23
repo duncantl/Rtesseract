@@ -32,7 +32,9 @@ echo "$TESS_CFLAGS"
 AC_LANG(C++)
 
 AC_TRY_COMPILE(
- [ 
+ [
+   #include <string>
+   using std::string; 
    #include <baseapi.h> 
  ],
  [
@@ -45,8 +47,10 @@ AC_TRY_COMPILE(
 
 
 AC_TRY_COMPILE(
- [ 
-    #include <baseapi.h> 
+ [
+   #include <string>
+   using std::string; 
+   #include <baseapi.h> 
  ],
  [
     tesseract::TessBaseAPI * api;
@@ -57,7 +61,10 @@ AC_TRY_COMPILE(
  )
 
 AC_TRY_COMPILE(
- [ #include <baseapi.h> 
+ [
+  #include <string>
+  using std::string; 
+  #include <baseapi.h> 
  ],
  [
     tesseract::TessBaseAPI * api;
@@ -70,7 +77,10 @@ AC_TRY_COMPILE(
 
 
 AC_TRY_COMPILE(
- [ #include <tesseract/baseapi.h>
+ [
+   #include <string>
+   using std::string;
+   #include <tesseract/baseapi.h>
    #include <tesseract/renderer.h>
  ],
  [

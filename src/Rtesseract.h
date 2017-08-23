@@ -2,13 +2,15 @@
 #define RTESSERACT_H
 
 #include <string>
-#include <baseapi.h>
-#include <Rdefines.h>
+//typedef std::string string;
+using std::string;
 
+#include <baseapi.h>
 #include <allheaders.h>
 
-
 using namespace std;
+#include <Rdefines.h>
+
 
 void R_pixDestroy(SEXP obj);
 
