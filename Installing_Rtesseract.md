@@ -16,13 +16,13 @@ along with any notes or special instructions.
 
 ## General notes:
 
-  + Requires PKG\_CONFIG\_VAR set to the appropriate location so the
+  + Requires the environment variable PKG\_CONFIG\_PATH set to include the appropriate location so the
     installer knows where to find tesseract and leptonica, e.g.,
-    /usr/local/lib/pkgconfig.
+    /usr/local/lib/pkgconfig.  This is a colon-separated collection of paths identifying directories
+	that contain the .pc files specifying the information for an installed package.
 	
-  + Compilation requires C++11 standards, on clang (and some versions
-    of gcc <= 4.8.5?) this means setting the --std=C++11 flag
-	
+  + Compilation should use the C++11 standard. This means setting the --std=C++11 flag in CXXFLAGS.
+	Otherwise, the compiler will issue warnings. 
 
 ## Linux
 
@@ -32,6 +32,7 @@ Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
 3.05.0X | 3.4.1 | g++ 6.2 | OK 
 4.00.00dev | 3.4.1 | g++ 6.2 | OK 
+4.00.00dev | 3.4.0 | g++ 4.8.5 | OK 
 
 
 ### Arch Linux
@@ -65,5 +66,5 @@ Tesseract version | R version | Compiler | Notes
 
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
-3.05.0X | 3.4.1 | g++ 6.3.0 | Have not attempted
-4.00.00dev | 3.4.1 | g++ 6.3.0 | Have not attempted
+3.05.0X | 3.4.1 | g++ 6.3.0 | Have not attempted yet
+4.00.00dev | 3.4.1 | g++ 6.3.0 | Have not attempted yet
