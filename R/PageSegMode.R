@@ -116,6 +116,7 @@ OcrEngineModeValues = structure(c(0L, 1L, 2L, 3L), .Names = c('OEM_TESSERACT_ONL
  setAs("character", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
  setAs("integer", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
  setAs("numeric", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
+ setAs("AsIs", "OcrEngineMode", function(from) as.integer(from))
 setClass("StrongScriptDirection", contains = "EnumValue")
 
 StrongScriptDirectionValues = structure(c(0L, 1L, 2L, 3L), .Names = c('DIR_NEUTRAL', 'DIR_LEFT_TO_RIGHT', 'DIR_RIGHT_TO_LEFT', 'DIR_MIX'))

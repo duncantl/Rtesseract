@@ -31,6 +31,11 @@ function(api, lang = "eng", configs = character(), vars = character(), datapath 
   if(!is.na(datapath) && (!file.exists(datapath) || !file.info(datapath)[1, "isdir"])) 
       stop("No such directory ", datapath)
 
+    #  datapath may not be specified,  so if we want to do the test, we need to
+    #    datapath Sys.getenv("TESSDATA_PREFIX")
+    # if(engineMode == 2 && !file.exists( sprintf("%s/%s.traineddata", datapath, lang) ))
+    #     stop("This will probably segfault")
+  
   if(length(configs) == 0 && length(vars) == 0 && engineMode == OEM_DEFAULT && !force2) # so nothing special
      ok = .Call("R_TessBaseAPI_Init", as(api, "TesseractBaseAPI"), as.character(lang), as.character(datapath))
   else
