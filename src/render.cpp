@@ -44,7 +44,7 @@ R_Tesseract_RenderAsPDF(SEXP r_api, SEXP r_file, SEXP r_datadir, SEXP r_textOnly
             ERROR;
     }
 
-    // should make adding r_textOnly optional depending on a configure check.
+
     tesseract::TessPDFRenderer renderer(CHAR(STRING_ELT(r_file, 0)), CHAR(STRING_ELT(r_datadir, 0))
 #ifdef PDF_RENDER_HAS_TEXT_ONLY
 					, LOGICAL(r_textOnly)[0]
