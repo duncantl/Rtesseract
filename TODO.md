@@ -1,5 +1,14 @@
 # Todo Items
 
+1. Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
+   avoid segfaulting.
+   Do this in Init()
+
+1. Make ~ expand for datapath.  Also allow relative paths by completing them, i.e making them full
+   ```r
+   a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
+   ```
+
 1. Document build issues for tesseract 4.0 on different platforms.
 
 1. Get this working on Windows.
