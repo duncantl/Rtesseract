@@ -33,3 +33,26 @@ R_pixWrite(SEXP r_pix, SEXP r_file, SEXP r_format)
     return(ScalarInteger(ans));
 }
 
+
+
+
+extern "C"
+SEXP
+R_getImagelibVersions()
+{
+    char *x = getImagelibVersions();
+    return(ScalarString(Rf_mkChar(x ? x : "")));
+}
+
+
+extern "C"
+SEXP
+R_getLeptonicaVersion()
+{
+    SEXP ans = NEW_INTEGER(3);
+    INTEGER(ans)[0] = LIBLEPT_MAJOR_VERSION;
+    INTEGER(ans)[1] = LIBLEPT_MINOR_VERSION;
+    INTEGER(ans)[2] = LIBLEPT_PATCH_VERSION;
+        
+    return(ans);
+}
