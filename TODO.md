@@ -1,5 +1,7 @@
 # Todo Items
 
+## A. Required to get package on CRAN
+
 1. Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
    avoid segfaulting.
    Do this in Init()
@@ -11,13 +13,7 @@
 
 1. Document build issues for tesseract 4.0 on different platforms.
 
-1. Get Pix from tesseract as R array
-
-1. Set Pix from R array to tesseract.
-
 1. Get this working on Windows.
-
-1. Example for GetSmudges
 
 1. Check GetBoxes returns what BoundingBoxes used to.
 
@@ -29,6 +25,40 @@
 1. tprintf() and messages on console.
 
 1. Be able to interrupt in OCR computations with Ctrl-c.
+
+1. Update documentation/NAMESPACE to reflect current functions and functionality.
+
+1. [Mostly done]   Color code the rectangles for the bboxes according
+   to the confidence. ME - add legend for colors.
+   
+## B. Required to submit paper (assumes all A resolved)
+
+1. Example for GetSmudges
+
+1. Work up one example for each major aspect/function in package:
+
+ - Location on page
+ - Augment dictionary/patterns
+ - access confidences/alternatives, treat as data.
+ - subset/"zoom" within R
+ - Set variables - fully customize
+
+## Nice to haves (not strictly needed for A or B)
+
+1. Get Pix from tesseract as R array
+
+1. Set Pix from R array to tesseract.
+
+1. GetInputImage() - figure out how to convert the Pix to an array() in R 
+     deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
+     [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
+
+1. [low] Get components - leptonica objects Boxa and Pixa
+   How about identifying lines.  Done in bounding box if we use psm_auto for PageSegmentationMode
+
+1. Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
+
+## Misc
 
 1. [Verify sane] Get alternatives is returning different output between:
  ```r
@@ -48,17 +78,12 @@
  b = lapply(ri, getNativeSymbolInfo("getAlts"), "word")
  ```
 
-
-1. [yes] Does the ResultIterator get released?
-
 1. Do we need to delete the choice object
 
 1. Test that plot/other helper functions are still functioning with output from the getXXX functions.
 Fix the names on the bounding boxes to be consistent within the package and with the PDF tables code.
 Clean up ocr() so that the bounding box is returned, is consistent with that from BoundingBoxes
  and creates a data frame/matrix.
-
-1. Update documentation/NAMESPACE to reflect current functions and functionality.
 
 1. ? Other methods form the baseapi.h ?
 
@@ -74,12 +99,6 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
 1. [change name of function] How can we query whether we have to call Recognize() or not?
               hasRecognized() function - Change name
                  Ask for a ResultIterator and if it returns NULL, then call Recognize().
-
-
-1. GetInputImage() - figure out how to convert the Pix to an array() in R 
-     deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
-     [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
-
 
 1. [very low priority] Sort out the R renderer class.
   Why do we want to have our own?  If we have to use ProcessPages() we don't want to write to disk unnecessarily.
@@ -145,10 +164,6 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
    i.e. implement not in C but in R code to assemble the different pieces.
    Can do now.
 
-1. [Mostly done]   Color code the rectangles for the bboxes according to the confidence.
-
-1. Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
-
 1. [Feature Request] When find an error in the OCR, get the subset of the image for that bounding box and 
    then see if we can cluster them.
     Need to know if it is an error, so presumably need to know truth.
@@ -159,8 +174,6 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
 
 1. [ok] error rates and confusion matrix when know the actual values.
 
-1. [low] Get components - leptonica objects Boxa and Pixa
-   How about identifying lines.  Done in bounding box if we use psm_auto for PageSegmentationMode
 
 1. [Check] Get alternatives via R interface to API, not the R_tesseract_ alternatives routine.
    Is this in the ocr() routine? e.g. ocr(, alternatives = TRUE)
@@ -169,6 +182,8 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
 _______________________________________
 
 # Done
+
++ [yes] Does the ResultIterator get released?
 
 + [done] ProcessPages in render.cpp
 
