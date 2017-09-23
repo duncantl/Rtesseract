@@ -9,7 +9,14 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
      warning("forcing a call to Init() since setting the image and/or variables.")
      init = TRUE
   }
-      
+
+  if(!is.na(datapath)) {
+      datapath = normalizePath(datapath)
+#      datapath = path.expand(datapath)
+#      if(!grepl(paste0("^", .Platform$file.sep), datapath)) # XXX check for drive on windows , e.g., C:
+#         datapath = paste(path.expand(getwd()), datapath, sep = .Platform$file.sep)
+  }
+  
   if(init)
      Init(api, lang, datapath = datapath, configs = configs, vars = vars, engineMode = engineMode, debugOnly = debugOnly)
 
