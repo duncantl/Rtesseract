@@ -284,12 +284,12 @@ setMethod("GetConfidences",
 
 
 setGeneric("GetBoxes",
-           function(obj, level = 3L, keepConfidence = TRUE, asMatrix = TRUE, ...)
+           function(obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, ...)
              standardGeneric("GetBoxes"))
 
 setMethod("GetBoxes",
           "TesseractBaseAPI",
-          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = TRUE, ...) {
+          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, ...) {
               if(!hasRecognized(obj))
                  Recognize(obj)
               
@@ -310,7 +310,7 @@ setMethod("GetBoxes",
 
 setMethod("GetBoxes",
            "character",
-          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = TRUE, ...) {
+          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, ...) {
               ts = tesseract(obj, ...)
               Recognize(ts) # Want to avoid doing this twice if possible
               GetBoxes(ts, level, keepConfidence, asMatrix)
@@ -319,7 +319,7 @@ setMethod("GetBoxes",
 
 setMethod("GetBoxes",
           "Pix",
-          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = TRUE, ...) {
+          function(obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, ...) {
               api = tesseract(...)
               SetImage(api, obj)
               GetBoxes(api, level, keepConfidence, asMatrix)
