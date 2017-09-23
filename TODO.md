@@ -6,31 +6,37 @@
    avoid segfaulting.
    Do this in Init()
 
-1. Make ~ expand for datapath.  Also allow relative paths by completing them, i.e making them full
-   ```r
-   a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
-   ```
-
 1. Document build issues for tesseract 4.0 on different platforms.
+
+1. Enums for tesseract 4.0
 
 1. Get this working on Windows.
 
 1. Check GetBoxes returns what BoundingBoxes used to.
 
 1. ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
-  try sliding in definition of exit() in Rexit/exit.c
-
-  library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
-
+   try sliding in definition of exit() in Rexit/exit.c
+   ```r
+   library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
+   ```
 1. tprintf() and messages on console.
-
-1. Be able to interrupt in OCR computations with Ctrl-c.
 
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
 
 1. [Mostly done]   Color code the rectangles for the bboxes according
    to the confidence. ME - add legend for colors.
-   
+
+1. [done] Make ~ expand for datapath.  Also allow relative paths by completing them, i.e making them full
+   ```r
+   a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
+   ```
+1. Reporting of memory leaks at the end of the R session.
+   Need to force the garbage collection of the R tesseract objects before the actual exit.
+   ```
+   library(Rtesseract); tesseract();  gc(); gc(); q("no")
+    ```
+	Need 2 gc() calls.
+
 ## B. Required to submit paper (assumes all A resolved)
 
 1. Example for GetSmudges
@@ -41,9 +47,12 @@
  - Augment dictionary/patterns
  - access confidences/alternatives, treat as data.
  - subset/"zoom" within R
- - Set variables - fully customize
+ - Set variables - fully customize - 
+   ??? IN WHAT SENSE "fully customize"
 
 ## Nice to haves (not strictly needed for A or B)
+
+1. Be able to interrupt in OCR computations with Ctrl-c.
 
 1. Get Pix from tesseract as R array
 
