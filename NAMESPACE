@@ -76,6 +76,8 @@ export(GetImageDims, GetImageInfo)
 
 export(GetImage)
 
+export(GetStrips, GetRegions)
+
 #, GetImage, GetInputImage)
 #export(GetThresholdedImage)
 
@@ -97,3 +99,6 @@ export(PSM_OSD_ONLY, PSM_AUTO_OSD, PSM_AUTO_ONLY, PSM_AUTO, PSM_SINGLE_COLUMN, P
 export(RIL_BLOCK, RIL_PARA, RIL_TEXTLINE, RIL_WORD, RIL_SYMBOL)
 
 export(OEM_TESSERACT_ONLY, OEM_CUBE_ONLY, OEM_TESSERACT_CUBE_COMBINED, OEM_DEFAULT)
+
+
+exportMethods("$", "$<-", "[[", "[", "names")
