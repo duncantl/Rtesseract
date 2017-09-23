@@ -49,3 +49,45 @@ setClass("TessOsdRenderer", contains = "TessResultRenderer")
 setClass("TessUnlvRenderer", contains = "TessResultRenderer")
 setClass("TessTextRenderer", contains = "TessResultRenderer")
 setClass("TessBoxTextRenderer", contains = "TessResultRenderer")
+
+
+
+setMethod("$", "TesseractBaseAPI",
+          function(x, name)
+             GetVariables(x)[[name]]
+          )
+
+setMethod("$<-", "TesseractBaseAPI",
+          function(x, name, value) {
+              SetVariables(x, opts = structure(list(value), names = name))
+              x
+          })
+
+setMethod("[[", c("TesseractBaseAPI", "character"),
+          function(x, i, ...) {
+              GetVariables(x, i)[[1]]
+          })
+
+setMethod("[[<-", c("TesseractBaseAPI", "character"),
+          function(x, i, ..., value) {
+              SetVariables(x, opts = structure(list(value), names = i))
+              x
+          })
+
+setMethod("[", c("TesseractBaseAPI", "character"),
+          function(x, i, j, ...) {
+              GetVariables(x)[i]
+          })
+
+setMethod("[<-", c("TesseractBaseAPI", "character"),
+          function(x, i, j, ..., value) {
+              if(length(value) != length(i))
+                  value = rep(value, length = length(i))
+              opts = structure(value, names = i)
+              SetVariables(x, opts = opts)
+              x
+          })
+
+setMethod("names", "TesseractBaseAPI",
+          function(x)
+             names(GetVariables(x)))
