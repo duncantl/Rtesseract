@@ -163,9 +163,11 @@ switch(val) {
    case tesseract::PSM_SPARSE_TEXT_OSD:
 	elName = "tesseract::PSM_SPARSE_TEXT_OSD";
 	break;
+#ifdef HAVE_PSM_RAW_LINE        
    case tesseract::PSM_RAW_LINE:
 	elName = "tesseract::PSM_RAW_LINE";
 	break;
+#endif
    case tesseract::PSM_COUNT:
 	elName = "tesseract::PSM_COUNT";
 	break;
