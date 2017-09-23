@@ -2424,6 +2424,32 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+   #include <string>
+   using std::string;
+   #include <tesseract/baseapi.h>
+
+int
+main ()
+{
+
+    tesseract::DetectOrientationScript;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  CPPDEFS="$CPPDEFS -DHAS_DETECT_ORIENTATION_SCRIPT=1"; echo "Has DetectOrientatinScript() method"
+else
+  echo "NO DetectOrientationScript() method"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
 
 
 PNG_FILES="NA"

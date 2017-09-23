@@ -91,6 +91,20 @@ AC_TRY_COMPILE(
 )
 
 
+AC_TRY_COMPILE(
+ [
+   #include <string>
+   using std::string;
+   #include <tesseract/baseapi.h>
+ ],
+ [
+    tesseract::DetectOrientationScript;
+ ],
+ [CPPDEFS="$CPPDEFS -DHAS_DETECT_ORIENTATION_SCRIPT=1"; echo "Has DetectOrientatinScript() method"],
+ [echo "NO DetectOrientationScript() method"]
+)
+
+
 
 
 PNG_FILES="NA"
