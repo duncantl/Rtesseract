@@ -827,7 +827,6 @@ R_TessBaseAPI_oem(SEXP r_api)
             ERROR;
     }
     return(Renum_convert_OcrEngineMode( api->oem()));
-    
 }
 
 
@@ -903,9 +902,9 @@ R_TessBaseAPI_GetTextDirection(SEXP r_api)
   int offset;
   float slope;
   bool ans = api->GetTextDirection(&offset, &slope);
-  if(!ans) {
+  if(!ans) 
       return(R_NilValue);
-  }
+
   SEXP r_ans = NEW_NUMERIC(2);
   REAL(r_ans)[0] = offset;
   REAL(r_ans)[1] = slope;
@@ -986,6 +985,50 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
 
   return(r_ans) ;
 }
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_DetectOrientationScript(SEXP r_api)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+  
+  float scconf, oconf;
+  const char * scname;
+  int odeg;
+  
+  if(api->DetectOrientationScript(&odeg, &oconf, &scname, &scconf)) {
+      SEXP ans;
+      PROTECT(ans = NEW_LIST(4));
+      SET_VECTOR_ELT(ans, 0, ScalarInteger(odeg));
+      SET_VECTOR_ELT(ans, 1, ScalarReal(oconf));
+      SET_VECTOR_ELT(ans, 2, ScalarString(mkChar(scname ? scname : "")));      
+      SET_VECTOR_ELT(ans, 3, ScalarReal(scconf));
+      UNPROTECT(1);
+      return(ans);
+  } else
+      return(R_NilValue);
+}
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_set_min_orientation_margin(SEXP r_api, SEXP r_val)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+  api->set_min_orientation_margin(REAL(r_val)[0]);
+  return(R_NilValue);
+}
+
 
 
 
