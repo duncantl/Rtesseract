@@ -21,7 +21,7 @@ PolyBlockTypeValues = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 1
 `PT_NOISE` = GenericEnumValue('PT_NOISE', 14L, 'PolyBlockType')
 `PT_COUNT` = GenericEnumValue('PT_COUNT', 15L, 'PolyBlockType')
 
- setAs("character", "PolyBlockType", function(from) asEnumValue(from, PolyBlockTypeValues, "PolyBlockType", prefix = NA) )
+ setAs("character", "PolyBlockType", function(from) asEnumValue(from, PolyBlockTypeValues, "PolyBlockType", prefix = "PT_") )
  setAs("integer", "PolyBlockType", function(from) asEnumValue(from, PolyBlockTypeValues, "PolyBlockType", prefix = NA) )
  setAs("numeric", "PolyBlockType", function(from) asEnumValue(from, PolyBlockTypeValues, "PolyBlockType", prefix = NA) )
 setClass("Orientation", contains = "EnumValue")
@@ -33,7 +33,7 @@ OrientationValues = structure(c(0L, 1L, 2L, 3L), .Names = c('ORIENTATION_PAGE_UP
 `ORIENTATION_PAGE_DOWN` = GenericEnumValue('ORIENTATION_PAGE_DOWN', 2L, 'Orientation')
 `ORIENTATION_PAGE_LEFT` = GenericEnumValue('ORIENTATION_PAGE_LEFT', 3L, 'Orientation')
 
- setAs("character", "Orientation", function(from) asEnumValue(from, OrientationValues, "Orientation", prefix = NA) )
+ setAs("character", "Orientation", function(from) asEnumValue(from, OrientationValues, "Orientation", prefix = "ORIENTATION_") )
  setAs("integer", "Orientation", function(from) asEnumValue(from, OrientationValues, "Orientation", prefix = NA) )
  setAs("numeric", "Orientation", function(from) asEnumValue(from, OrientationValues, "Orientation", prefix = NA) )
 setClass("WritingDirection", contains = "EnumValue")
@@ -44,7 +44,7 @@ WritingDirectionValues = structure(c(0L, 1L, 2L), .Names = c('WRITING_DIRECTION_
 `WRITING_DIRECTION_RIGHT_TO_LEFT` = GenericEnumValue('WRITING_DIRECTION_RIGHT_TO_LEFT', 1L, 'WritingDirection')
 `WRITING_DIRECTION_TOP_TO_BOTTOM` = GenericEnumValue('WRITING_DIRECTION_TOP_TO_BOTTOM', 2L, 'WritingDirection')
 
- setAs("character", "WritingDirection", function(from) asEnumValue(from, WritingDirectionValues, "WritingDirection", prefix = NA) )
+ setAs("character", "WritingDirection", function(from) asEnumValue(from, WritingDirectionValues, "WritingDirection", prefix = "WRITING_DIRECTION_") )
  setAs("integer", "WritingDirection", function(from) asEnumValue(from, WritingDirectionValues, "WritingDirection", prefix = NA) )
  setAs("numeric", "WritingDirection", function(from) asEnumValue(from, WritingDirectionValues, "WritingDirection", prefix = NA) )
 setClass("TextlineOrder", contains = "EnumValue")
@@ -55,7 +55,7 @@ TextlineOrderValues = structure(c(0L, 1L, 2L), .Names = c('TEXTLINE_ORDER_LEFT_T
 `TEXTLINE_ORDER_RIGHT_TO_LEFT` = GenericEnumValue('TEXTLINE_ORDER_RIGHT_TO_LEFT', 1L, 'TextlineOrder')
 `TEXTLINE_ORDER_TOP_TO_BOTTOM` = GenericEnumValue('TEXTLINE_ORDER_TOP_TO_BOTTOM', 2L, 'TextlineOrder')
 
- setAs("character", "TextlineOrder", function(from) asEnumValue(from, TextlineOrderValues, "TextlineOrder", prefix = NA) )
+ setAs("character", "TextlineOrder", function(from) asEnumValue(from, TextlineOrderValues, "TextlineOrder", prefix = "TEXTLINE_ORDER_") )
  setAs("integer", "TextlineOrder", function(from) asEnumValue(from, TextlineOrderValues, "TextlineOrder", prefix = NA) )
  setAs("numeric", "TextlineOrder", function(from) asEnumValue(from, TextlineOrderValues, "TextlineOrder", prefix = NA) )
 setClass("PageSegMode", contains = "EnumValue")
@@ -78,7 +78,7 @@ PageSegModeValues = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L
 `PSM_RAW_LINE` = GenericEnumValue('PSM_RAW_LINE', 13L, 'PageSegMode')
 `PSM_COUNT` = GenericEnumValue('PSM_COUNT', 14L, 'PageSegMode')
 
- setAs("character", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )
+ setAs("character", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = "PSM_") )
  setAs("integer", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )
  setAs("numeric", "PageSegMode", function(from) asEnumValue(from, PageSegModeValues, "PageSegMode", prefix = NA) )
 setClass("PageIteratorLevel", contains = "EnumValue")
@@ -91,7 +91,7 @@ PageIteratorLevelValues = structure(c(0L, 1L, 2L, 3L, 4L), .Names = c('RIL_BLOCK
 `RIL_WORD` = GenericEnumValue('RIL_WORD', 3L, 'PageIteratorLevel')
 `RIL_SYMBOL` = GenericEnumValue('RIL_SYMBOL', 4L, 'PageIteratorLevel')
 
- setAs("character", "PageIteratorLevel", function(from) asEnumValue(from, PageIteratorLevelValues, "PageIteratorLevel", prefix = NA) )
+ setAs("character", "PageIteratorLevel", function(from) asEnumValue(from, PageIteratorLevelValues, "PageIteratorLevel", prefix = "RIL_") )
  setAs("integer", "PageIteratorLevel", function(from) asEnumValue(from, PageIteratorLevelValues, "PageIteratorLevel", prefix = NA) )
  setAs("numeric", "PageIteratorLevel", function(from) asEnumValue(from, PageIteratorLevelValues, "PageIteratorLevel", prefix = NA) )
 setClass("ParagraphJustification", contains = "EnumValue")
@@ -103,7 +103,7 @@ ParagraphJustificationValues = structure(c(0L, 1L, 2L, 3L), .Names = c('JUSTIFIC
 `JUSTIFICATION_CENTER` = GenericEnumValue('JUSTIFICATION_CENTER', 2L, 'ParagraphJustification')
 `JUSTIFICATION_RIGHT` = GenericEnumValue('JUSTIFICATION_RIGHT', 3L, 'ParagraphJustification')
 
- setAs("character", "ParagraphJustification", function(from) asEnumValue(from, ParagraphJustificationValues, "ParagraphJustification", prefix = NA) )
+ setAs("character", "ParagraphJustification", function(from) asEnumValue(from, ParagraphJustificationValues, "ParagraphJustification", prefix = "JUSTIFICATION") )
  setAs("integer", "ParagraphJustification", function(from) asEnumValue(from, ParagraphJustificationValues, "ParagraphJustification", prefix = NA) )
  setAs("numeric", "ParagraphJustification", function(from) asEnumValue(from, ParagraphJustificationValues, "ParagraphJustification", prefix = NA) )
 setClass("OcrEngineMode", contains = "EnumValue")
@@ -115,10 +115,10 @@ OcrEngineModeValues = structure(c(0L, 1L, 2L, 3L), .Names = c('OEM_TESSERACT_ONL
 `OEM_TESSERACT_CUBE_COMBINED` = GenericEnumValue('OEM_TESSERACT_CUBE_COMBINED', 2L, 'OcrEngineMode')
 `OEM_DEFAULT` = GenericEnumValue('OEM_DEFAULT', 3L, 'OcrEngineMode')
 
- setAs("character", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
+ setAs("character", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = "OEM_") )
  setAs("integer", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
  setAs("numeric", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = NA) )
- setAs("AsIs", "OcrEngineMode", function(from) as.integer(from))
+# setAs("AsIs", "OcrEngineMode", function(from) as.integer(from))
 setClass("StrongScriptDirection", contains = "EnumValue")
 
 StrongScriptDirectionValues = structure(c(0L, 1L, 2L, 3L), .Names = c('DIR_NEUTRAL', 'DIR_LEFT_TO_RIGHT', 'DIR_RIGHT_TO_LEFT', 'DIR_MIX'))
@@ -128,7 +128,7 @@ StrongScriptDirectionValues = structure(c(0L, 1L, 2L, 3L), .Names = c('DIR_NEUTR
 `DIR_RIGHT_TO_LEFT` = GenericEnumValue('DIR_RIGHT_TO_LEFT', 2L, 'StrongScriptDirection')
 `DIR_MIX` = GenericEnumValue('DIR_MIX', 3L, 'StrongScriptDirection')
 
- setAs("character", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
+ setAs("character", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = "DIR_") )
  setAs("integer", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
  setAs("numeric", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
 
