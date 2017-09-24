@@ -5,8 +5,8 @@ import(methods)
 
 importFrom("utils", read.table)
 import(graphics)
-importFrom("grDevices", "rgb", "colorRampPalette")
-importFrom("stats", dist, median, quantile)
+importFrom("grDevices", "rgb", "colorRampPalette", "col2rgb")
+importFrom("stats", dist, median, quantile, density)
 
 #import(RAutoGenRunTime)
 
@@ -75,9 +75,12 @@ exportMethods("GetConfidences", "GetBoxes", "GetAlternatives")
 
 export(GetImageDims, GetImageInfo)
 
+if(FALSE) {
+     # Don't export yet.
 export(GetImage)
-
 export(GetStrips, GetRegions)
+}
+
 
 #, GetImage, GetInputImage)
 #export(GetThresholdedImage)
