@@ -107,6 +107,8 @@ function(def, className = class(def), where = globalenv())
           }))
 }  
 
+
+if(FALSE) {
 cumBitOr = bitlist =
 function(...)
 {
@@ -120,7 +122,7 @@ function(...)
   }
   ans
 }
-
+}
 
 
 
@@ -130,16 +132,17 @@ asEnumValue =
   # for all of the possible values that were specified slightly incorrectly.
   #
 function(val, values, class = values@EnumName, fromString = NA,
-         fixCloseMatches = TRUE, prefix = character(), S3 = is.null(getClassDef(class)))
+         fixCloseMatches = is.character(val), prefix = character(), S3 = is.null(getClassDef(class)))
 {
    # handle multiple entries.
   if(length(val) > 1) {
     tmp = sapply(val, asEnumValue, values, class, fromString, fixCloseMatches, prefix, USE.NAMES = FALSE)
       # if we have multiple values and they relate to a BitwiseValue enumeration,
       # collapse them into a single value.
-          # class was getClass(class)
-    if(extends(class, "BitwiseValue")) #XXX augment for S3
-       return(bitlist(tmp))
+      # class was getClass(class)
+#XXX Comment out since no Bitwise enums in this package.  
+#    if(extends(class, "BitwiseValue")) #XXX augment for S3
+#       return(bitlist(tmp))
     if(S3)
       class(tmp) = c(class, "EnumValue")
     else
@@ -193,7 +196,7 @@ function(name, val, class = "EnumValue", S3 = FALSE)
 
 
 raiseEnumError =
-function(val, values, fromString = is(fromString, "character"), fixCloseMatches = TRUE,
+function(val, values, fromString = is(fromString, "character"), fixCloseMatches = is.character(val),
           index = match(val, if(fromString) names(values) else values))
 {
         # see if we can find values that were close to the ones the user gave us incorrectly.
