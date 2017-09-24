@@ -10,13 +10,7 @@
 	1.  [Removed]  coerce,AsIs,OcrEngineMode-method. It was a way to be able to overcome
 	    the missing enums for 4.0
 
-
 1. Reduce the sizes of the directories in inst/
-
-1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
-   avoid segfaulting.
-   Do this in Init()
-   [Check]! This should be implicit when we add the enums for 4.0 as the coercion to that value will fail.
 
 1. Document build issues for tesseract 4.0 on different platforms.
 
@@ -25,14 +19,24 @@
 
 1. tprintf() and messages on console.
 
-1. ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
+1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to avoid segfaulting.
+   1.  Do this in Init()
+   1.  [Check]! This should be implicit when we add the enums for 4.0 as the coercion to that value will fail.
+
+
+<hr/>
+
+1. [check] ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
    try sliding in definition of exit() in Rexit/exit.c
    ```r
    library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
    ```
    LD_PRELOAD works. But not practical (needs to be specified before starting R).
+   I've implemented a mechanism to avoid exit()ing the process. However, it relies on something
+   (atexit with a longjmp) that has undefined behavior in the POSIX specification. However, it
+   works.
+   Really want to either change the tesseract library or get the linkking to slide a new version of exit.
    
-	
 1. [Probably not vital] Reporting of memory leaks at the end of the R session.
    Need to force the garbage collection of the R tesseract objects before the actual exit.
    ```
