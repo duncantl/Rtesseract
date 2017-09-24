@@ -1,4 +1,5 @@
-useDynLib(Rtesseract, R_ResultIterator_Confidence)
+useDynLib(Rtesseract)
+# , R_ResultIterator_Confidence)
 
 import(methods)
 
