@@ -136,14 +136,15 @@ function(bbox, img, nrow = 4, ncol = 4,
     on.exit(par(old.par))
     
     par(mfrow = c(nrow, ncol),
-        mar = c(1,1,1,1),
-        oma = c(1,1,1,1))
+        mar = c(1, 1, 1, 1),
+        oma = c(1, 1, 1, 1))
     
     sapply(1:nrow(bbox), function(i)
-        plotSubImage(box = bbox[i,1:4], img,
+        plotSubImage(box = bbox[i, 1:4], img,
                      xlab = "", ylab = "", xaxt = "n", yaxt = "n",
                      main = titles[i], ...))
-    return(invisible(bbox))        
+    
+    invisible(bbox)        
 } 
 
 
