@@ -2,26 +2,39 @@
 
 ## A. Required to get package on CRAN
 
-1. Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
+1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
    avoid segfaulting.
    Do this in Init()
+   [Check]! This should be implicit when we add the enums for 4.0 as the coercion to that value will fail.
 
 1. Document build issues for tesseract 4.0 on different platforms.
 
-1. Enums for tesseract 4.0
-
 1. Get this working on Windows.
+   And substitute exit() and tprintf() definitions there.
 
-1. Check GetBoxes returns what BoundingBoxes used to.
+1. tprintf() and messages on console.
 
 1. ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
    try sliding in definition of exit() in Rexit/exit.c
    ```r
    library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
    ```
-1. tprintf() and messages on console.
-
+   LD_PRELOAD works. But not practical (needs to be specified before starting R).
+   
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
+
+1. Reporting of memory leaks at the end of the R session.
+   Need to force the garbage collection of the R tesseract objects before the actual exit.
+   ```
+   library(Rtesseract); tesseract();  gc(); gc(); q("no")
+    ```
+	Need 2 gc() calls.
+	
+1. [verify] Enums for tesseract 4.0. 
+    May need to build separate files for 4.00.00 and 4.00.00alpha within the git repos.
+    See TU/tu.R for the code.
+  
+1. [believe so] Confirm GetBoxes returns what BoundingBoxes used to.
 
 1. [Mostly done]   Color code the rectangles for the bboxes according
    to the confidence. ME - add legend for colors.
@@ -30,16 +43,15 @@
    ```r
    a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
    ```
-1. Reporting of memory leaks at the end of the R session.
-   Need to force the garbage collection of the R tesseract objects before the actual exit.
-   ```
-   library(Rtesseract); tesseract();  gc(); gc(); q("no")
-    ```
-	Need 2 gc() calls.
+1. [done] When fail to recognize the value of an enum, fail rather than return 0.
+
 
 ## B. Required to submit paper (assumes all A resolved)
 
 1. Example for GetSmudges
+
+1. Get line information.
+   Via leptonica, opencv, imager, ...
 
 1. Work up one example for each major aspect/function in package:
 
