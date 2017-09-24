@@ -988,6 +988,7 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
 
 
 
+#if HAS_DETECT_ORIENTATION_SCRIPT
 extern "C"
 SEXP
 R_TessBaseAPI_DetectOrientationScript(SEXP r_api)
@@ -1014,6 +1015,7 @@ R_TessBaseAPI_DetectOrientationScript(SEXP r_api)
   } else
       return(R_NilValue);
 }
+#endif
 
 
 extern "C"
