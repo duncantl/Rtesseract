@@ -19,19 +19,20 @@
 
 1. tprintf() and messages on console.
 
+<hr/>
+
+### Check/Confirm
+
 1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to avoid segfaulting.
    1.  Do this in Init()
    1.  [Check]! This should be implicit when we add the enums for 4.0 as the coercion to that value will fail.
-
-
-<hr/>
 
 1. [check] ReadConfigFile(api, "tests/debug_config") terminates if the file has errors.
    try sliding in definition of exit() in Rexit/exit.c
    ```r
    library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
    ```
-   LD_PRELOAD works. But not practical (needs to be specified before starting R).
+   LD_PRELOAD works. But not practical (needs to be specified before starting R). <br/>
    I've implemented a mechanism to avoid exit()ing the process. However, it relies on something
    (atexit with a longjmp) that has undefined behavior in the POSIX specification. However, it
    works.
@@ -43,7 +44,6 @@
    library(Rtesseract); tesseract();  gc(); gc(); q("no")
     ```
 	Need 2 gc() calls.
-
 
 1. [verify] Enums for tesseract 4.0. 
     May need to build separate files for 4.00.00 and 4.00.00alpha within the git repos.
@@ -100,6 +100,9 @@
      [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
 
 1. [low] Get components - leptonica objects Boxa and Pixa
+   <br/>
+   See GetRegions(), GetStrips() to et the Boxa and Pixa. Not exported yet. 
+   <br/>
    How about identifying lines.  Done in bounding box if we use psm_auto for PageSegmentationMode
 
 1. Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
