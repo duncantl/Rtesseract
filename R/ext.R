@@ -99,6 +99,8 @@ function(api, pix)
 Recognize =
 function(api)
 {
+   setAtExitFlag(TRUE)
+   on.exit(setAtExitFlag(FALSE))    
    .Call("R_TessBaseAPI_Recognize", as(api, "TesseractBaseAPI"))
 }
 
@@ -374,7 +376,10 @@ function(api, files, debug = FALSE, ok = FALSE)
      # We can use GetDatapath() and add /configs/ to that 
    if(!ok && !all(ok <- file.exists(ff)))
       stop("some files don't exist: ", paste( ff[!ok], collapse = ", "))
-
+   
+   setAtExitFlag(TRUE)
+   on.exit(setAtExitFlag(FALSE))
+   
    .Call("R_tesseract_ReadConfigFile", as(api, "TesseractBaseAPI"), ff, as.logical(debug))
 }
 

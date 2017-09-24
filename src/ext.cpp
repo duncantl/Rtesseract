@@ -255,7 +255,7 @@ R_TessBaseAPI_Recognize(SEXP r_api)
       PROBLEM "NULL value for api reference"
       ERROR;
   }
-  return(ScalarLogical(api->Recognize(NULL) == 0));
+  return( ScalarLogical(api->Recognize(NULL) == 0) );
 }
 
 
