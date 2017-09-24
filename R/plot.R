@@ -124,6 +124,7 @@ function(box, img, ...)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
 }
 
+
 plotSubsets =
 function(bbox, img, nrow = 4, ncol = 4,
          titles = paste("OCR: ", row.names(bbox),
