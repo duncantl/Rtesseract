@@ -302,6 +302,7 @@ setMethod("GetBoxes",
               } else {
                   m = as.data.frame(m)
                   m$text = names(ans)
+                  rownames(m) = NULL
                   cols = 2:6
               }
 
