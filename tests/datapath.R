@@ -1,8 +1,11 @@
 library(Rtesseract)
-a = tesseract(datapath = "~/Projects/OCR/")
-GetDatapath(a)
-a = tesseract(datapath = "../")
-GetDatapath(a)
-a = tesseract(datapath = "..")
-GetDatapath(a)
+
+d = c("~/Projects/OCR", "../", "..")
+sapply(d, function(x)
+            if(file.exists(paste(x, "tessdata", sep = .Platform$file.sep))) {
+                a = tesseract(datapath = x)
+                GetDatapath(a)
+            })
+
+
 
