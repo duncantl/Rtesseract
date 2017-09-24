@@ -1,5 +1,3 @@
 library(Rtesseract)
-.C("R_setAtExitFlag", 1L)
 api = tesseract()
 ReadConfigFile(api, "Experiments/bad_config")
-.C("R_setAtExitFlag", 0L)
