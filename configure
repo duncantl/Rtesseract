@@ -2457,7 +2457,7 @@ JPG_FILES="NA"
 TIFF_FILES="NA"
 
 echo "Compiling readImage"
-$CXX $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
+$CXX $CPPFLAGS $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
 
 if test "$?" = "0" ; then
   echo "testing leptonica can read different image formats"
@@ -2479,6 +2479,8 @@ if test "$?" = "0" ; then
     echo "png support"
     PNG_FILES="TRUE"
   fi
+else
+  echo "Failed to create readImage.  Problems with compilation and/or linking."
 fi
 
 
