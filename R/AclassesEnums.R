@@ -76,6 +76,7 @@ setMethod("show", "SymbolicConstant", function(object)
 
 
 
+if(FALSE)
 setMethod("[", "EnumDef",
             function(x, i, j, ..., drop = TRUE) {
               vals = get(paste(x@EnumName, "Values", sep = ""))
@@ -83,6 +84,7 @@ setMethod("[", "EnumDef",
             })
 
 
+if(FALSE)
 makeSymbolicVariables =
   #
   # For element in the def, create a corresponding R variable with that name
