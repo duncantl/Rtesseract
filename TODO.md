@@ -2,6 +2,17 @@
 
 ## A. Required to get package on CRAN
 
+1. Update documentation/NAMESPACE to reflect current functions and functionality.
+    1.  Documentation
+    1.  [check correct] Need to do document  @titles in plotSubsets
+	1.  [not exported] GetImage’ ‘GetRegions’ ‘GetStrips’
+	1.  [Removed] [,EnumDef,ANY-method
+	1.  [Removed]  coerce,AsIs,OcrEngineMode-method. It was a way to be able to overcome
+	    the missing enums for 4.0
+
+
+1. Reduce the sizes of the directories in inst/
+
 1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to
    avoid segfaulting.
    Do this in Init()
@@ -21,15 +32,15 @@
    ```
    LD_PRELOAD works. But not practical (needs to be specified before starting R).
    
-1. Update documentation/NAMESPACE to reflect current functions and functionality.
-
-1. Reporting of memory leaks at the end of the R session.
+	
+1. [Probably not vital] Reporting of memory leaks at the end of the R session.
    Need to force the garbage collection of the R tesseract objects before the actual exit.
    ```
    library(Rtesseract); tesseract();  gc(); gc(); q("no")
     ```
 	Need 2 gc() calls.
-	
+
+
 1. [verify] Enums for tesseract 4.0. 
     May need to build separate files for 4.00.00 and 4.00.00alpha within the git repos.
     See TU/tu.R for the code.
@@ -39,11 +50,21 @@
 1. [Mostly done]   Color code the rectangles for the bboxes according
    to the confidence. ME - add legend for colors.
 
+1. [done] Compute prefix for enums in TU/tu.R.  In RCodeGen::makeEnumClass
+
 1. [done] Make ~ expand for datapath.  Also allow relative paths by completing them, i.e making them full
    ```r
    a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
    ```
 1. [done] When fail to recognize the value of an enum, fail rather than return 0.
+
+1. [fixed] 2 examples/tests now fail in R CMD check. Due to raiseEnumError() now throwing an error.
+    GetText and tests/1990.R.
+	It is GetBoxes(, "word"). We are not recognizing the prefix RIL_.
+	If we manually add that to the setAs() method for  setAs("character", "PageIteratorLevel",..
+    it works.  So we need to compute the prefix in the TU/tu.R code. Look at RCodeGen (and other
+    "original" code)
+
 
 
 ## B. Required to submit paper (assumes all A resolved)
