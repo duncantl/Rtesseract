@@ -1,3 +1,5 @@
+if( tesseractVersion(runTime = FALSE ) == c('3.05')) {
+
 setClass("PolyBlockType", contains = "EnumValue")
 
 PolyBlockTypeValues = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L, 11L, 12L, 13L, 14L, 15L), .Names = c('PT_UNKNOWN', 'PT_FLOWING_TEXT', 'PT_HEADING_TEXT', 'PT_PULLOUT_TEXT', 'PT_EQUATION', 'PT_INLINE_EQUATION', 'PT_TABLE', 'PT_VERTICAL_TEXT', 'PT_CAPTION_TEXT', 'PT_FLOWING_IMAGE', 'PT_HEADING_IMAGE', 'PT_PULLOUT_IMAGE', 'PT_HORZ_LINE', 'PT_VERT_LINE', 'PT_NOISE', 'PT_COUNT'))
@@ -129,3 +131,5 @@ StrongScriptDirectionValues = structure(c(0L, 1L, 2L, 3L), .Names = c('DIR_NEUTR
  setAs("character", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
  setAs("integer", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
  setAs("numeric", "StrongScriptDirection", function(from) asEnumValue(from, StrongScriptDirectionValues, "StrongScriptDirection", prefix = NA) )
+
+}

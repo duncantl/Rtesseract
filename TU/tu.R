@@ -1,15 +1,27 @@
 library(RCIndex)
 library(RCodeGen)
-tu = createTU("tess.cc", include = "/usr/local/include/tesseract")
+inc = "/usr/local/include/tesseract"
+version = "3.05"
+
+
+inc = "~/Projects/OCR/tess4/api"
+version = "4.0"
+
+tu = createTU("tess.cc", include = inc)
+
 
 e = getEnums(tu)
 
-k = getCppClasses(tu)
+# k = getCppClasses(tu)
 
-
+zfile = sprintf("../R/z_enumDefs_%s.R", version)
 #cat(makeEnumClass(e$PageSegMode), file = "../R/PageSegMode.R", sep = "\n")
-cat(unlist(lapply(e, makeEnumClass)), file = "../R/PageSegMode.R", sep = "\n")
+cat(paste("if(tesseractVersion(runTime = FALSE) == c('", version[1], "')) {\n", sep = ""),
+    unlist(lapply(e, makeEnumClass)),
+    "\n\n\n}\n\n",
+    file = zfile, sep = "\n")
 
+if(FALSE) {
 # makeEnumDef(e$PageSegMode, namespace = "tesseract"),
 ccode = lapply(e, function(e) {
                     p = getCursorSemanticParent(e@def)
@@ -19,3 +31,4 @@ cat('#include "Rtesseract.h"',
     '#include "RConverters.h"', "",
     unlist(ccode),
    sep = "\n", file = "../src/PageSegMode.cc")
+}

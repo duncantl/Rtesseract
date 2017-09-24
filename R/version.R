@@ -1,6 +1,15 @@
 tesseractVersion =
-function()
-   .Call("R_tesseract_Version")
+function(patch = FALSE, runTime = TRUE)
+{
+    ans = if(runTime)
+             .Call("R_tesseract_Version")
+          else
+             configInfo$tesseractVersion
+
+    if(!patch)
+        ans = paste(strsplit(ans, "\\.")[[1]][1:2], collapse = ".")
+    ans
+}
 
 
 leptonicaVersion =
