@@ -72,16 +72,17 @@ We may know the sub-region a priori, or alternatively we can plot the page using
 Another approach is to do an initial scan and then look at the confidences/certainties
 for the diffrent
 ```r
-sm = tesseract("~/SMITHBURN 1952-1-3 (dragged).tiff")
+sm = tesseract("../images/SMITHBURN_1952_p3.tiff")
 sm.bb = GetBoxes(sm)
-sm.bb[, "conf"] = GetConfidences(sm)
+sm.conf = GetConfidences(sm)
+sm.bb[, "conf"] = sm.conf
 
-GetConfidences(sm)[sm.bb[, "left"] > 3800]
+sm.conf[sm.bb[, "left"] > 3800]
 ```
 
 ```r
-table(GetConfidences(sm)[sm.bb[, "left"] > 3800] < quantile(sm.conf, .2)) 
-table(GetConfidences(sm)[sm.bb[, "left"] > 3800] < quantile(sm.conf, .75))
+table(sm.conf[sm.bb[, "left"] > 3800] < quantile(sm.conf, .2)) 
+table(sm.conf[sm.bb[, "left"] > 3800] < quantile(sm.conf, .75))
 ```
 
 
@@ -89,7 +90,6 @@ Let's read the table from SMITHBURN
 
 Find the word TABLE
 ```r
-sm = tesseract("~/SMITHBURN 1952-1-3 (dragged).tiff")
 sm.bb = GetBoxes(sm)
 ```
 
@@ -150,15 +150,16 @@ We can take the 8 most frequent locations and then use 95% of these distances to
 This will include the center-aligned values in the third column (Year Isolated) and also
 ensure that we capture characters that are just a little to the left of others in the same column.
 
-Displaying these as lines
+Displaying these as vertical lines
 ```
-abline(v = as.integer(names(ll[1:8]))*.95, col = "red", lwd = 3)
+abline(v = as.numeric(names(ll[1:8]))*.95, col = "red", lwd = 3)
 ```
 we see that these do split the content of each column.
 
 ```
 tb1 = as.data.frame(tb)
 tb1$text = rownames(tb)
+tb1 = tb1[tb1$left < 3800,]
 ```
 
 ```
@@ -179,7 +180,9 @@ So we break
 y = seq(min(tb1$bottom), max(tb1$top), by = charHeight * 1.1)
 ```
 
-Alternatively, we can look at any of the
+Alternatively, we can look at any of the columns except the first.
+Each of these consist of single word cells.
+So we can find the location vertical between each of these words
 ```
 tmp = cols[[2]]
 y = c( tmp[1, "bottom"], (tmp[-1, "bottom"] + tmp[ -nrow(tmp), "top"])/2, Inf)
