@@ -27,7 +27,8 @@ plotSubsets(bbox, img, nrow = 4, ncol = 4,
   the appropriate package for the image type. See \code{png},
   \code{rjpeg}, or \code{tiff}.}
   \item{nrow}{the number of rows in the panel.}
-  \item{ncol}{the number of columns in the panel.} 
+  \item{ncol}{the number of columns in the panel.}
+  \item{titles}{character vector of plot titles for the different panels/plots.}
   \item{\dots}{additional arguments passed to the inherited \code{plotSubImage} methods.}
 }
 \value{
@@ -40,7 +41,7 @@ Matthew Espe
 
 \seealso{
   \code{\link{GetBoxes}}
-  \code{\link{plotSubImages}}
+  \code{\link{plotSubImage}}
 }
 \examples{
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")

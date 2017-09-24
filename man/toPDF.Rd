@@ -49,6 +49,7 @@ toBoxText(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUT
   override the rendering class. Also, it is essential that the renderer
   is garbage collected so that the contents of the generated file are
   flushed to the file and it is closed.}
+  \item{\dots}{additional arguments passed to \code{PDFRenderer}}
 }
 \details{
 These work by creating a renderer object of  an appropriate C++ class
