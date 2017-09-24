@@ -28,7 +28,10 @@ if(FALSE) {
    setClass("CStruct", contains = "VIRTUAL")
    setClass("RC++StructReference", contains = "RCStructReference") 
 }
- 
+
+
+if(FALSE) {
+    
 setClass("RNativeRoutineReference", contains = "RNativeReference")
 
 setAs("externalptr", "RNativeRoutineReference",
@@ -358,3 +361,4 @@ setClass("size_t", contains = "numeric")
 setAs("integer", "size_t", function(from) new("size_t", as.numeric(from))) # what about the names.
 setAs("numeric", "size_t", function(from) new("size_t", from))
 
+}
