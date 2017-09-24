@@ -2,6 +2,13 @@
 \alias{tesseract}
 \alias{TesseractBaseAPI-class}
 \alias{Recognize}
+\alias{$,TesseractBaseAPI-method}
+\alias{$<-,TesseractBaseAPI-method}
+\alias{[,TesseractBaseAPI,character-method}
+\alias{[<-,TesseractBaseAPI,character-method}
+\alias{[[,TesseractBaseAPI,character-method}
+\alias{[[<-,TesseractBaseAPI,character-method}
+\alias{names,TesseractBaseAPI-method}
 \alias{Init}
 
 \title{Creating a Tesseract Object}

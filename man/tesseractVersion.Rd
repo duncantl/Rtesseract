@@ -6,7 +6,15 @@ This returns the version information for the tesseract library
 that is in use in this package.
 }
 \usage{
-tesseractVersion()
+tesseractVersion(patch = FALSE, runTime = TRUE)
+}
+\arguments{
+\item{patch}{a logical value. If \code{FALSE}, the information
+  identifying the patch version is removed, e.g., 3.05.01 is returned as
+  3.05.}
+\item{runTime}{a logical value.  If \code{TRUE}, we query the version
+  at run-time via the Tesseract API. If \code{FALSE}, we use the version
+ information computed when the package was built from source.}
 }
 \value{
  A character string (i.e., with a single element)

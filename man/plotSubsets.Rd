@@ -14,10 +14,13 @@
   for examining the region of the image in R.
 }
 \usage{
-plotSubsets(bbox, img, nrow = 4, ncol = 4, ...)
+plotSubsets(bbox, img, nrow = 4, ncol = 4,
+            titles = paste("OCR: ", row.names(bbox),
+                            ", conf: ", round(bbox[,"confidence"],0)),
+             ...)
 }
 \arguments{
-  \item{box}{ bounding boxes as created by \code{GetBoxes}, with columns
+  \item{bbox}{ bounding boxes as created by \code{GetBoxes}, with columns
 	left, bottom, right, top, and confidences and rownames of the
 	recognized characters.}
   \item{img}{the image object read using the appropriate function in

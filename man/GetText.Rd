@@ -30,7 +30,7 @@
 %  detected elements in the image.
 }
 \usage{
-GetBoxes(obj, level = 3L, keepConfidence = TRUE, ...)
+GetBoxes(obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, ...)
 GetConfidences(obj, level = 3L, ...)
 GetText(obj, level = 3L, ...)
 GetAlternatives(obj, ...)
@@ -49,6 +49,11 @@ GetAlternatives(obj, ...)
   \item{keepConfidence}{a logical value. If \code{TRUE}, the final
     column of the matrix returned by \code{GetBoxes} is the confidence associated with the text as
     determined by the OCR.}
+  \item{asMatrix}{a logical value that controls whether the bounding box
+    information is returned as a matrix or a data frame.
+    The matrix has the text corresponding to the box as the row names.
+    The data frame has the text as an additional column.
+  }
   \item{\dots}{other arguments that are currently ignored.}
 }
 \value{

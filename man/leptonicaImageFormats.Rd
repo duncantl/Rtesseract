@@ -20,7 +20,8 @@ Tesseract \url{https://code.google.com/p/tesseract-ocr/}
 Duncan Temple Lang
 }
 \seealso{
-\code{\link{pixRead}}
+  \code{\link{pixRead}}
+  \code{\link{leptonicaVersion}}
 }
 \examples{
 leptonicaImageFormats()

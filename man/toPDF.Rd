@@ -43,6 +43,12 @@ toBoxText(imgFile, outFile = removeExtension(imgFile), api = tesseract(, PSM_AUT
       }
   \item{fontInfo}{a logical value which if \code{TRUE} specifies that
     information about the fonts is included in the output.}
+  \item{renderer}{an object of class PDFRenderer.
+        It is almost always true that this should not be
+  passed by the caller. However, it is available if one wants to
+  override the rendering class. Also, it is essential that the renderer
+  is garbage collected so that the contents of the generated file are
+  flushed to the file and it is closed.}
 }
 \details{
 These work by creating a renderer object of  an appropriate C++ class
