@@ -15,7 +15,7 @@ function(patch = FALSE, runTime = TRUE)
 leptonicaVersion =
 function()
 {
-    .Call("R_getLeptonicaVersion")
+    structure(.Call("R_getLeptonicaVersion"), names = c("major", "minor", "patch"))
 }
 
 getImageLibs =
