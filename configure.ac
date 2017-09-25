@@ -12,7 +12,7 @@ LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
 
 if ! test "$?" = "0" ; then
   echo "Failed to get compilation flags for leptonica via pkg-config"
-  echo "$LEPT_CFLAGS"
+  echo "LEPT_CFLAGS = $LEPT_CFLAGS"
 fi
 
 LEPT_LIBS=`$PKG_CONFIG --libs lept`
