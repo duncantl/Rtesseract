@@ -2511,9 +2511,11 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 
 
 
+USE_REXIT="FALSE"
 
 echo "Building libRexit.a"
 (cd src/Rexit; make)
+if test $? = 0 ; then
 ac_config_files="$ac_config_files testRexit/Makevars"
 
 cat >confcache <<\_ACEOF
@@ -3678,11 +3680,16 @@ echo "Compiling testRexit/tmp.so"
 echo "Checking testRexit/tmp.so"
 STR=`Rscript -e 'dyn.load("testRexit/tmp.so"); .C("R_check")' 2>&1 | grep '<tesseract>'`
 echo "output: $STR"
-USE_REXIT="FALSE"
 if test -n "$STR" ; then
   USE_REXIT="TRUE"
   REXIT_LIB="-LRexit -lRexit"
+  echo "Using libRexit mechanism"
+else
+   echo "libRexit didn't seem to work. Using atexit() mechanism"
 fi
+else
+  echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
+fi  # end of test for building libRexit.a
 
 
 
