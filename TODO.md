@@ -12,7 +12,7 @@
 
 1. Reduce the sizes of the directories in inst/
 
-1. Document build issues for tesseract 4.0 on different platforms.
+1. Document build issues for tesseract 4.0 on different platforms. In InstallingTesseract.md
 
 1. Get this working on Windows.
    And substitute exit() and tprintf() definitions there.
@@ -23,7 +23,7 @@
 
 ### Check/Confirm
 
-1. [check] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to avoid segfaulting.
+1. [does not segfault] Add tests in the R code for tesseract 4.0 that does not support CUBE engine mode in order to avoid segfaulting.
    1.  Do this in Init()
    1.  [Check]! This should be implicit when we add the enums for 4.0 as the coercion to that value will fail.
 
@@ -49,10 +49,10 @@
     May need to build separate files for 4.00.00 and 4.00.00alpha within the git repos.
     See TU/tu.R for the code.
   
-1. [believe so] Confirm GetBoxes returns what BoundingBoxes used to.
+1. [confirmed] Confirm GetBoxes returns what BoundingBoxes used to.
 
 1. [Mostly done]   Color code the rectangles for the bboxes according
-   to the confidence. ME - add legend for colors.
+   to the confidence. ME - add legend for colors [done].
 
 1. [done] Compute prefix for enums in TU/tu.R.  In RCodeGen::makeEnumClass
 
@@ -73,8 +73,6 @@
 
 ## B. Required to submit paper (assumes all A resolved)
 
-1. Example for GetSmudges
-
 1. Get line information.
    Via leptonica, opencv, imager, ...
 
@@ -84,10 +82,12 @@
  - Augment dictionary/patterns
  - access confidences/alternatives, treat as data.
  - subset/"zoom" within R
- - Set variables - fully customize - 
+ - Set variables - fully customize all 680+ variables through API- 
    ??? IN WHAT SENSE "fully customize"
 
 ## Nice to haves (not strictly needed for A or B)
+
+1. Example for GetSmudges
 
 1. Be able to interrupt in OCR computations with Ctrl-c.
 
