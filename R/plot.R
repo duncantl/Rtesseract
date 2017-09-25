@@ -85,7 +85,7 @@ function(x, y = "word",
          ...)
 
     if(legend){
-        leg = border[unique(names(border))]
+        leg = border[sort(unique(names(border)), decreasing = TRUE)]
         legend("topright", legend = names(leg), fill = leg)
     }
         # And now the outer containing rectangle enclosing all the bounding boxes
