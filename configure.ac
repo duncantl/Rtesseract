@@ -139,6 +139,10 @@ else
 fi
 
 
+
+
+
+
 AC_SUBST(CPPDEFS)
 
 AC_SUBST(LEPT_LIBS)
@@ -159,5 +163,23 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 
 AC_SUBST(TESSERACT_VERSION)
 AC_SUBST(LEPTONICA_VERSION)
+
+
+echo "Building libRexit.a"
+(cd src/Rexit; make)
+AC_OUTPUT(tmp/Makevars)
+
+echo "Compiling testRexit/tmp.so"
+(cd testRexit; R CMD SHLIB -o tmp.so main.cc)
+
+echo "Checking testRexit/tmp.so"
+STR=`Rscript -e 'dyn.load("testRexit/tmp.so"); .C("R_check")' 2>&1 | grep '<tesseract>'`
+echo "output: $STR"
+USE_REXIT="FALSE"
+if test -n "$STR" ; then
+  USE_REXIT="TRUE"
+fi
+
+AC_SUBST(USE_REXIT)
 
 AC_OUTPUT(src/Makevars R/imageCapabilities.R R/config.R)
