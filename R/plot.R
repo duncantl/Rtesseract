@@ -15,6 +15,7 @@ function(x, y = "word",
          confidence = TRUE, fillBoxes = FALSE,
          alpha = 0.4,
          dims = NULL,
+         legend = FALSE,
          ...)
 {
     if(!is.matrix(bbox) && !is.data.frame(bbox))
@@ -82,7 +83,11 @@ function(x, y = "word",
     rect(m[,1],  m[,2], m[,3],  m[,4], border = border,
         col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
          ...)
-    
+
+    if(legend){
+        leg = border[sort(unique(names(border)), decreasing = TRUE)]
+        legend("topright", legend = names(leg), fill = leg)
+    }
         # And now the outer containing rectangle enclosing all the bounding boxes
     rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
 
@@ -158,7 +163,7 @@ function(bbox, confidences = bbox[, "confidence"],
 {
     # prevent cut from returning NAs
     intervals[1] = 0
-    intervals[numColors] = 1
+    intervals[numColors+1] = 100
     
     i = cut(confidences, intervals )
     structure(colors[ i ], names = as.character(i))
