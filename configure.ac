@@ -167,7 +167,7 @@ AC_SUBST(LEPTONICA_VERSION)
 
 echo "Building libRexit.a"
 (cd src/Rexit; make)
-AC_OUTPUT(tmp/Makevars)
+AC_OUTPUT(testRexit/Makevars)
 
 echo "Compiling testRexit/tmp.so"
 (cd testRexit; R CMD SHLIB -o tmp.so main.cc)
@@ -178,8 +178,10 @@ echo "output: $STR"
 USE_REXIT="FALSE"
 if test -n "$STR" ; then
   USE_REXIT="TRUE"
+  REXIT_LIB="-LRexit -lRexit"
 fi
 
 AC_SUBST(USE_REXIT)
+AC_SUBST(REXIT_LIB)
 
 AC_OUTPUT(src/Makevars R/imageCapabilities.R R/config.R)

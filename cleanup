@@ -1,4 +1,5 @@
 #!/bin/sh
 
 rm src/*.o src/*.so src/Makevars src/config.R
-
+make -C src/Rexit clean
+rm testRexit/*.o rm testRexit/*.so rm testRexit/Makevars

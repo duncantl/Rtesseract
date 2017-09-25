@@ -582,7 +582,8 @@ PACKAGE_BUGREPORT=
 PACKAGE_URL=
 
 ac_unique_file="src/ext.cpp"
-ac_subst_vars='USE_REXIT
+ac_subst_vars='REXIT_LIB
+USE_REXIT
 LTLIBOBJS
 LIBOBJS
 LEPTONICA_VERSION
@@ -2513,7 +2514,7 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 
 echo "Building libRexit.a"
 (cd src/Rexit; make)
-ac_config_files="$ac_config_files tmp/Makevars"
+ac_config_files="$ac_config_files testRexit/Makevars"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3220,7 +3221,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "tmp/Makevars") CONFIG_FILES="$CONFIG_FILES tmp/Makevars" ;;
+    "testRexit/Makevars") CONFIG_FILES="$CONFIG_FILES testRexit/Makevars" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -3680,7 +3681,9 @@ echo "output: $STR"
 USE_REXIT="FALSE"
 if test -n "$STR" ; then
   USE_REXIT="TRUE"
+  REXIT_LIB="-LRexit -lRexit"
 fi
+
 
 
 
@@ -4391,7 +4394,7 @@ cat >>$CONFIG_STATUS <<\_ACEOF || ac_write_fail=1
 for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
-    "tmp/Makevars") CONFIG_FILES="$CONFIG_FILES tmp/Makevars" ;;
+    "testRexit/Makevars") CONFIG_FILES="$CONFIG_FILES testRexit/Makevars" ;;
     "src/Makevars") CONFIG_FILES="$CONFIG_FILES src/Makevars" ;;
     "R/imageCapabilities.R") CONFIG_FILES="$CONFIG_FILES R/imageCapabilities.R" ;;
     "R/config.R") CONFIG_FILES="$CONFIG_FILES R/config.R" ;;
