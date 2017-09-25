@@ -84,12 +84,13 @@ function(x, y = "word",
         col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
          ...)
 
+        # And now the outer containing rectangle enclosing all the bounding boxes
+    rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
+
     if(legend){
         leg = border[sort(unique(names(border)), decreasing = TRUE)]
         legend("topright", legend = names(leg), fill = leg)
     }
-        # And now the outer containing rectangle enclosing all the bounding boxes
-    rect(min(m[,1]),  min(m[,4]), max(m[,3]),  max(m[,2]), border = outer.border)
 
     title(main)
 
