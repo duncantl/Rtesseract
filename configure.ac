@@ -166,6 +166,8 @@ AC_SUBST(LEPTONICA_VERSION)
 
 USE_REXIT="FALSE"
 
+echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
+
 echo "Building libRexit.a"
 (cd src/Rexit; make)
 if test $? = 0 ; then
