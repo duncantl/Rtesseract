@@ -4,7 +4,7 @@
 
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
     1.  Documentation
-    1.  [check correct] Need to do document  @titles in plotSubsets
+    1.  [correct] Need to do document  @titles in plotSubsets
 	1.  [not exported] GetImage’ ‘GetRegions’ ‘GetStrips’
 	1.  [Removed] [,EnumDef,ANY-method
 	1.  [Removed]  coerce,AsIs,OcrEngineMode-method. It was a way to be able to overcome

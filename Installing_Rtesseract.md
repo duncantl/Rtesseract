@@ -45,6 +45,8 @@ Tesseract version | R version | Compiler | Notes
 4.00.00dev | 3.4.1 | g++ 7.1 | OK 
 3.05.0X | 3.4.1 | clang 4.0.1 | OK 
 4.00.00dev | 3.4.1 | clang 4.0.1 | OK 
+3.05.0X | 3.4.1 | clang 5.0 | OK 
+4.00.00dev | 3.4.1 | clang 5.0 | OK 
 
 ### Debian
 
@@ -64,7 +66,20 @@ Tesseract version | R version | Compiler | Notes
  
 ## MS Windows
 
+
+
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
-3.05.0X | 3.4.1 | g++ 6.3.0 | Have not attempted yet
-4.00.00dev | 3.4.1 | g++ 6.3.0 | Have not attempted yet
+3.05.0X | 3.4.1 |  | Have not attempted yet
+4.00.00dev | 3.4.1 |  | Have not attempted yet
+
+### libRexit.a
+
+Required to stop Tesseract from terminating the R process when Tesseract hits
+an error. 
+
+Tesseract version | R version | Compiler | Linker| Notes 
+------------------|-----------|----------|-------| ------
+3.05.0X | 3.4.1 | g++ 7.2.0 | GNU ld 2.29 | 
+4.00.00dev | 3.4.1 | clang 5.00 | GNU ld 2.29 | OK
+
