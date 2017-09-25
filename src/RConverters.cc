@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+
 int
 R_isVariableReference(SEXP arg)
 {
@@ -726,3 +727,5 @@ copyRVectorToDoubleArray(SEXP r_vec, double *dest, int numEls)
     for(i = 0 ; i < num; i++)
 	dest[i] = els[i];
 }
+
+

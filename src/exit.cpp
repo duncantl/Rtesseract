@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <Rdefines.h>
 
+
 static int interceptExit = 0;
 void ourExitInterceptor()
 {
@@ -30,6 +31,7 @@ R_getAtExitFlag()
 {
     return(ScalarInteger(interceptExit));
 }
+
 
 
 

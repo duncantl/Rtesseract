@@ -1,6 +1,7 @@
 #include "Rtesseract.h"
 #include "RConverters.h"
 
+
 SEXP
 Renum_convert_PolyBlockType(PolyBlockType val)
 {
@@ -267,3 +268,5 @@ switch(val) {
 }
 return(R_makeEnumValue(val, elName, "StrongScriptDirection"));
 }
+
+

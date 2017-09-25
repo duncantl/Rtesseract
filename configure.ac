@@ -12,7 +12,7 @@ LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
 
 if ! test "$?" = "0" ; then
   echo "Failed to get compilation flags for leptonica via pkg-config"
-  echo "$LEPT_CFLAGS"
+  echo "LEPT_CFLAGS = $LEPT_CFLAGS"
 fi
 
 LEPT_LIBS=`$PKG_CONFIG --libs lept`
@@ -139,6 +139,10 @@ else
 fi
 
 
+
+
+
+
 AC_SUBST(CPPDEFS)
 
 AC_SUBST(LEPT_LIBS)
@@ -159,5 +163,25 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 
 AC_SUBST(TESSERACT_VERSION)
 AC_SUBST(LEPTONICA_VERSION)
+
+
+echo "Building libRexit.a"
+(cd src/Rexit; make)
+AC_OUTPUT(testRexit/Makevars)
+
+echo "Compiling testRexit/tmp.so"
+(cd testRexit; R CMD SHLIB -o tmp.so main.cc)
+
+echo "Checking testRexit/tmp.so"
+STR=`Rscript -e 'dyn.load("testRexit/tmp.so"); .C("R_check")' 2>&1 | grep '<tesseract>'`
+echo "output: $STR"
+USE_REXIT="FALSE"
+if test -n "$STR" ; then
+  USE_REXIT="TRUE"
+  REXIT_LIB="-LRexit -lRexit"
+fi
+
+AC_SUBST(USE_REXIT)
+AC_SUBST(REXIT_LIB)
 
 AC_OUTPUT(src/Makevars R/imageCapabilities.R R/config.R)

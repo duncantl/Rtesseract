@@ -1,5 +1,6 @@
 .onAttach =
 function(...)
 {
-  .C("R_atexit")
+    if(!configInfo$useRexit)
+       .C("R_atexit")
 }

@@ -1,6 +1,7 @@
 #include "Rtesseract.h"
 #include "RtesseractBoxRenderer.h"
 
+
 bool 
 RTessBoxTextRenderer::BeginDocument(const char* title)
 {
@@ -35,6 +36,7 @@ void RTessBoxTextRenderer::AppendString(const char* s) {
     SET_STRING_ELT(ans, count++, mkChar(s));
     Rf_PrintValue(ans);
 }
+
 
 
 
