@@ -11,7 +11,7 @@ libRexit.so: exit.o
 
 #R_HOME=/Library/Frameworks/R.framework/Resources
 exit.o: exit.c
-	$(CXX) -c -fPIC -I${R_HOME}/include exit.c 
+	$(CXX) -c -fPIC -I${R_HOME}/include exit.c  -DR_USE_C99_IN_CXX=1
 
 clean: 
 	rm exit.o libRexit.so libRexit.a
