@@ -1,6 +1,7 @@
 #include <tesseract/osdetect.h>
 #include "Rtesseract.h"
 
+
 SEXP BoxaAToR(Boxa *boxes);
 SEXP PixaAToR(Pixa *pixes);
 SEXP retPixaBoxa(Pixa *pix, Boxa *boxes);
@@ -112,3 +113,5 @@ retPixaBoxa(Pixa *pix, Boxa *boxes)
   UNPROTECT(1);
   return(ans);
 }
+
+

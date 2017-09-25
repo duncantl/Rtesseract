@@ -346,6 +346,3 @@ getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *a
 
  */
 
-
-
-

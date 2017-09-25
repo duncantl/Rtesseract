@@ -3,6 +3,8 @@ using std::string;
 #include <tesseract/osdetect.h>
 #include "Rtesseract.h"
 
+
+
 extern "C"
 SEXP
 R_TessBaseAPI_new()
@@ -1043,3 +1045,24 @@ Rexit()
     exit(101);
 }
 #endif
+
+
+
+#if 0
+void
+TestSetSourceRes()
+{
+    tesseract::TessBaseAPI api;
+    api.SetSourceResolution(200);
+//    api.ReadConfigFile("bob");
+}
+
+extern "C"
+void
+R_check()
+{
+    TestSetSourceRes();
+}
+#endif
+
+
