@@ -1,8 +1,6 @@
 # @LEPT_CFLAGS@
 PKG_CXXFLAGS=@TESS_CFLAGS@ @CPPDEFS@
-#PKG_CPPFLAGS=-I${HOME}/local/include -g
-REXIT_DIR=$(HOME)/LinkExpt/LinkExpt/Rexit
 REXIT_DIR=Rexit
-PKG_LIBS=@TESS_LIBS@ @LEPT_LIBS@ -L$(REXIT_DIR) -lRexit
+PKG_LIBS=@TESS_LIBS@ @LEPT_LIBS@ @REXIT_LIB@
 
-##   -Wl,-rpath,$(HOME)/installed/lib
+##  -Wl,-rpath,$(HOME)/installed/lib
