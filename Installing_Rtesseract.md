@@ -66,8 +66,6 @@ Tesseract version | R version | Compiler | Notes
  
 ## MS Windows
 
-
-
 Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
 3.05.0X | 3.4.1 | g++ 6.3.0  | Have not attempted yet
@@ -82,5 +80,9 @@ Tesseract version | R version | Compiler | Linker| Notes
 ------------------|-----------|----------|-------| ------
 3.05.0X | 3.4.1 | g++ 7.2.0 | GNU ld 2.29 | 
 4.00.00dev | 3.4.1 | clang 5.00 | GNU ld 2.29 | OK
+4.00.00alpha | 3.4.1 | clang 3.4.2 | GNU ld 2.25 | OK
+4.00.00alpha | 3.4.1 | g++ 4.8.5 | GNU ld 2.25 | OK
+4.00.00alpha | 3.4.1 | g++ 6.3.1 | GNU ld 2.27 | OK
+
 
 
