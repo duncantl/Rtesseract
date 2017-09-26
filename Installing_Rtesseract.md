@@ -68,3 +68,6 @@ Tesseract version | R version | Compiler | Notes
 ------------------|-----------|----------|-------
 3.05.0X | 3.4.1 | g++ 6.3.0 | Have not attempted yet
 4.00.00dev | 3.4.1 | g++ 6.3.0 | Have not attempted yet
+
+
+

@@ -17,7 +17,7 @@
 1. Get this working on Windows.
    And substitute exit() and tprintf() definitions there.
 
-1. tprintf() and messages on console.
+1. [Check carefully on different plaforms] tprintf() and messages on console and exit.
 
 <hr/>
 
