@@ -2,9 +2,11 @@
 
 ## A. Required to get package on CRAN
 
+1. Fix some new errors.
+
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
     1.  Documentation
-    1.  [correct] Need to do document  @titles in plotSubsets
+    1.  [make corrections @mespe] Need to do document  @titles in plotSubsets
 	1.  [not exported] GetImage’ ‘GetRegions’ ‘GetStrips’
 	1.  [Removed] [,EnumDef,ANY-method
 	1.  [Removed]  coerce,AsIs,OcrEngineMode-method. It was a way to be able to overcome
@@ -17,8 +19,10 @@
    This is not necessarily essential to getting the package on CRAN. As long as it builds on their
    systems (not plural).
 	
-1. Get this working on Windows.
-   And substitute exit() and tprintf() definitions there.
+1. [done] Get this working on Windows.  
+    Works for 3.05.01 with Jeroen's build.
+
+1.  Windows: And substitute exit() and tprintf() definitions there.
 
 1. [Check carefully on different plaforms] tprintf() and messages on console.
    <br/>
