@@ -1,14 +1,25 @@
-# @LEPT_CFLAGS@
+ifeq ($(HOMEDIR),)
+ HOMEDIR="$(SYSTEMDRIVE)$(subst \,/,$(strip $(HOMEPATH)))"
+ #HOMEDIR=$(USERPROFILE)
+endif
 
-RWINLIB_DIR=C:/Users/matth/tess-rwinlib/tesseract-master/include
+ifeq ($(RWINLIB_DIR),)
+RWINLIB_DIR=$(HOMEDIR)/tess-rwinlib/tesseract-master/include
+endif
 
-DEP_LIB_DIR=c:/Users/matth/tess-rwinlib/tesseract-master/lib/x64
+ifeq ($(DEP_LIB_DIR),)
+DEP_LIB_DIR=$(HOMEDIR)/tess-rwinlib/tesseract-master/lib/x64
+endif
+
+ifeq ($(TESS_LIB_DIR),)
+TESS_LIB_DIR=$(HOMEDIR)/tess-rwinlib/tesseract-master/lib-4.9.3/x64
+endif
 
 LEPT_INC_DIR=$(RWINLIB_DIR)/leptonica
+# Assume liblept.a is in DEP_LIB_DIR. Change if not.
 LEPT_LIB_DIR=
 TESS_INC_DIR=$(RWINLIB_DIR)/tesseract
-TESS_LIB_DIR=c:/Users/matth/tess-rwinlib/tesseract-master/lib-4.9.3/x64
+
 PKG_CXXFLAGS=-I$(LEPT_INC_DIR) -I$(TESS_INC_DIR)
 PKG_LIBS=-L$(TESS_LIB_DIR) -ltesseract -llept -L$(DEP_LIB_DIR) -ljpeg -lgif -lopenjp2 -lpng16 -ltiff -lwebp -llzma -lz -lws2_32
 
-##  -Wl,-rpath,$(HOME)/installed/lib
