@@ -1,0 +1,7 @@
+Build/Get tesseract 4.00
+
+Low priorities
+1. Error check the configure.win
+1. Check the supported images formats in leptonica programmatically.
+
+
