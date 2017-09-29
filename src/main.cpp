@@ -12,8 +12,11 @@ int
 main(int argc, char *argv[])
 {
     TestSetSourceRes();
+#if 0    
     fprintf(stderr, "back again\n");
     exit(101);
+#endif
+    return(0);
 }
 
 
