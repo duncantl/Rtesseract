@@ -1,0 +1,6 @@
+#!/bin/sh
+
+echo "Configuring for Windows"
+
+cp config.R.win R/config.R
+cp imageCapabilities.R.win R/imageCapabilities.R
