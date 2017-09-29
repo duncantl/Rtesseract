@@ -1,0 +1,11 @@
+You need to download the git respository
+   rwinlib/tesseract-ocr
+which contains the include header files and the compiled library files (.a)
+Put this somewhere. Set the environment variable
+ RWIN_LIB_DIR
+to the full path for the directory tesseract-master, e.g.
+ set RWIN_LIB_DIR=C:/Users/matth/tess-rwinlib/tesseract-master
+or in bash
+ export RWIN_LIB_DIR=C:/Users/matth/tess-rwinlib/tesseract-master
+ 
+   
