@@ -19,3 +19,12 @@ config.status
 ^src/Expt
 ^mywords$
 ^Notes$
+IMG_1236_crop.tiff
+IMG_1234.tiff
+IMG_1234.png
+IMG_1234_crop.tiff
+SMITHBURN_1952_p3.tiff
+Paper/*.log
+Paper/*.log
+Paper/Rtesseract.pdf
+Paper/figure
