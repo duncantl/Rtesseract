@@ -1,6 +1,23 @@
-#!/bin/sh
+#!/bin/sh 
 
 echo "Configuring for Windows"
 
 cp config.R.win R/config.R
 cp imageCapabilities.R.win R/imageCapabilities.R
+
+if test -z "$RWIN_LIB_DIR" ; then
+    echo "Looking for tess-rwinlib location"
+    for DIR in ../tess-rwinlib $USERPROFILE/tess-rwinlib ; do
+	if test -d $DIR && test -d $DIR/tesseract-master ; then
+	    echo "Using $DIR as RWINLIB"
+	    export RWIN_LIB_DIR="$DIR"
+	    break
+	fi
+    done
+
+    if test -z "$RWIN_LIB_DIR" ; then
+	echo "Did not find tesseract rwinlib. Please specify the location using the environment variable RWIN_LIB_DIR and run the package installation again"
+	exit 2
+    fi
+fi    
+
