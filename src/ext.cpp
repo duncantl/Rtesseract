@@ -1,6 +1,6 @@
 #include <string>
 using std::string;
-#include <tesseract/osdetect.h>
+#include <osdetect.h>
 #include "Rtesseract.h"
 
 
@@ -49,7 +49,7 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 #undef error
 #endif
 
-#include <tesseract/genericvector.h>
+#include <genericvector.h>
 
 #define error Rf_error
 
@@ -959,7 +959,6 @@ R_TessBaseAPI_DetectOS(SEXP r_api)
 #undef error
 #endif
 
-#include <tesseract/genericvector.h>
 
 #define error Rf_error
 #undef length

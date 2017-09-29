@@ -1,6 +1,6 @@
 #include <string>
 using std::string;
-#include <tesseract/baseapi.h>
+#include <baseapi.h>
 
 void TestSetSourceRes();
 

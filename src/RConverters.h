@@ -110,12 +110,13 @@ void *R_asFunctionPointer(SEXP r_val, void *defaultFun, void *stack);
 #define copy_int_array_to_R convertIntArrayToR
 
 
+#
 /* XXX This must be kept in synchronization with C++CastValues in R/classes.R in this package */
 typedef enum {
     STATIC = 1,
     DYNAMIC,
     REINTERPRET,
-    CONST
+    XCONST
 } CastType;
 
 SEXP R_bitwise_enum_convert(int, int*, const char *const*, int num, const char *className);

@@ -1,0 +1,14 @@
+# @LEPT_CFLAGS@
+
+RWINLIB_DIR=C:/Users/matth/tess-rwinlib/tesseract-master/include
+
+DEP_LIB_DIR=c:/Users/matth/tess-rwinlib/tesseract-master/lib/x64
+
+LEPT_INC_DIR=$(RWINLIB_DIR)/leptonica
+LEPT_LIB_DIR=
+TESS_INC_DIR=$(RWINLIB_DIR)/tesseract
+TESS_LIB_DIR=c:/Users/matth/tess-rwinlib/tesseract-master/lib-4.9.3/x64
+PKG_CXXFLAGS=-I$(LEPT_INC_DIR) -I$(TESS_INC_DIR)
+PKG_LIBS=-L$(TESS_LIB_DIR) -ltesseract -llept -L$(DEP_LIB_DIR) -ljpeg -lgif -lopenjp2 -lpng16 -ltiff -lwebp -llzma -lz -lws2_32
+
+##  -Wl,-rpath,$(HOME)/installed/lib

@@ -1,5 +1,5 @@
 #include "Rtesseract.h"
-#include <tesseract/osdetect.h>
+#include <osdetect.h>
 
 
 SEXP BoxaAToR(Boxa *boxes);

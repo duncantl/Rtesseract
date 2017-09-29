@@ -1,4 +1,4 @@
-#include <tesseract/renderer.h>
+#include <renderer.h>
 
 class RTessBoxTextRenderer : public tesseract::TessResultRenderer /* BoxTextRenderer */ {
 
