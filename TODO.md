@@ -13,12 +13,21 @@
 1. Reduce the sizes of the directories in inst/
 
 1. Document build issues for tesseract 4.0 on different platforms.
-
+   This is not necessarily essential to getting the package on CRAN. As long as it builds on their
+   systems (not plural).
+	
 1. Get this working on Windows.
    And substitute exit() and tprintf() definitions there.
 
 1. tprintf() and messages on console.
-
+   <br/>
+   See experiments on dsi machine in `LinkExpt/`.
+   <br/>
+   If using g++ and on Linux, we can get the linking to work using libRexit.a at least for a
+   stand-alone application.  Have to check when load into R.
+   <br/>
+   Appears tprinf_internal() doesn't work on Linux/g++ with a shared library (libRexit.so), but
+   exit() does.
 <hr/>
 
 ### Check/Confirm
@@ -33,10 +42,10 @@
    library(Rtesseract); api = tesseract(); ReadConfigFile(api, "Experiments/bad_config")
    ```
    LD_PRELOAD works. But not practical (needs to be specified before starting R). <br/>
-   I've implemented a mechanism to avoid exit()ing the process. However, it relies on something
+   <b>I've implemented a mechanism to avoid exit()ing the process. However, it relies on something
    (atexit with a longjmp) that has undefined behavior in the POSIX specification. However, it
    works.
-   Really want to either change the tesseract library or get the linkking to slide a new version of exit.
+   Really want to either change the tesseract library or get the linkking to slide a new version of exit.</b>
    
 1. [Probably not vital] Reporting of memory leaks at the end of the R session.
    Need to force the garbage collection of the R tesseract objects before the actual exit.
@@ -60,6 +69,7 @@
    ```r
    a = tesseract("DifferentFonts.png",  datapath = "~/OCR/tessdata")
    ```
+   See [tests/datapath.R](`tests/datapath.R`)
 1. [done] When fail to recognize the value of an enum, fail rather than return 0.
 
 1. [fixed] 2 examples/tests now fail in R CMD check. Due to raiseEnumError() now throwing an error.
@@ -73,13 +83,16 @@
 
 ## B. Required to submit paper (assumes all A resolved)
 
-1. Example for GetSmudges
-
 1. Get line information.
    Via leptonica, opencv, imager, ...
-
+   <br/>
+   I think this is more important than smudges as we know it is vital for tables.
+	
+1. Example for GetSmudges
+   <br/>
+   Is this vital to submitting the paper? I don't think so.
+	
 1. Work up one example for each major aspect/function in package:
-
  - Location on page
  - Augment dictionary/patterns
  - access confidences/alternatives, treat as data.
@@ -87,7 +100,7 @@
  - Set variables - fully customize - 
    ??? IN WHAT SENSE "fully customize"
 
-## Nice to haves (not strictly needed for A or B)
+## C. Nice to haves (not strictly needed for A or B)
 
 1. Be able to interrupt in OCR computations with Ctrl-c.
 
