@@ -1,0 +1,80 @@
+Using Hough transform:
+
+Accuracy not great - need to figure out if the parameters need to be tweaked, or if it is better to try something else.
+
+----------------------------------------
+Using Leptonica:
+
+Seems to be working better. Can clean up, e.g., threshold image before handing to Tesseract.
+Can recover lines using Leptonica.
+
+Vertical lines - look at Tesseract code.
+
+linefind.cpp l.618
+
+in GetLineMask
+
+----------------------------------------
+Other routines we might need from Leptonica:
+
+pixAddPix
+pixOr
+pixXor
+
+pixOpenBrink
+pixCloseBrick
+
+pixGetWpl l.724
+pixConnComp l.738 (might be exactly what we need)
+
+boxCreate (lept)
+boxDestroy (lept)
+
+FindLineVectors
+
+pixClearInRect
+pixSubtract
+pixDilateBrick
+pixSeedfillBinary
+pixDistanceFunction
+pixClipRectangle
+pixCountPixels
+pixZero
+pixErodeBrick
+
+Leptonica is writing to console - need to capture tprintf()
+
+pixGetPixel expects x, y
+matrix in R is written y, x - so code needs to be clear
+
+----------------------------------------
+Using test image
+
+ThresholdtoBinary = inverts values, low values -> 1
+
+Out of pixThresholdToBinary():
+1 = white
+0 = black
+
+out of getLines(..., asLines = TRUE, invert = !asLines):
+1 = black
+0 = white
+
+pixGetPixels:
+1 = black
+0 = white
+
+pixWrite() + readPNG():
+1 = white
+0 = black
+
+Appears that readPNG and pixGetPixels are in the same order - there does not appear to be any flipping.
+
+in ConvertTo8, colormap = FALSE, might cause issues with the color map
+
+----------------------------------------
+
+Look at linefind.cpp, see what they are doing -
+
+Pre-cleaning is difficult, avoid cmdline, avoid mixing computational models
+
