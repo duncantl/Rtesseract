@@ -2,6 +2,23 @@
 
 ## A. Required to get package on CRAN
 
+1. Add "[" for Pix
+
+1. Check plot.OCR(, croptoBoxes = TRUE)
+
+1. plot.OCR calls Recognize() again.
+
+1. Add method for tesseract() and plot.OCR() to be called with a PIX, 
+   (otherwise,
+	   tess = tesseract()
+	   SetImage(tess, pix)
+   )
+   
+1. remove dependencies on readPNG from plot.OCR()
+
+1. Add showPix() to package, allow to work off the matrix/array directly.
+	
+
 1. Fix some new errors.
 
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
