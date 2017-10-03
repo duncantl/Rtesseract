@@ -24,42 +24,22 @@ p1 = pixConvertTo8(p1)
 
 # Need to go to binary image for detecting skew.
 bin = pixThresholdToBinary(p1, 150)
-
 # Now detect skew and rotate the image appropriately.
 angle = pixFindSkew(bin)
 p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 #pixWrite(p2, "p2.png", IFF_PNG); Open("p2.png")
-
-getLines = 
-function(pix, hor, vert, asLines = FALSE, invert = TRUE)
-{
-   p3 = pixCloseGray(pix, hor, vert)
-   p4 = pixErodeGray(p3, 3, 5)
-
-   p5 = pixThresholdToValue(p4, 210, 255, p4)
-   p6 = pixThresholdToValue(p4, 210, 0, p4)
-
-   # We don't use this again in these computations, but we want it to get the actual lines.
-   if(asLines)
-      return(pixThresholdToBinary(p6, 210))
-   
-   if(invert)
-       pixInvert(p6)
-   else
-       p6
-}
 
 #pixWrite(bin, "horLines.png", IFF_PNG); #Open("horLines.png")
 
 # Turn "black" lines white.
 #pixInvert(p6, p6)
 
-p6 = getLines(p2, 51, 5) # horizontal lines
-p7 = getLines(p2, 1, 51) # vertical lines
+p6 = Rtesseract:::getLines(p2, 51, 5) # horizontal lines
+p7 = Rtesseract:::getLines(p2, 1, 151) # vertical lines
 p8 = pixAddGray(p2, p6)
 p8 = pixAddGray(p8, p7)
 
-pixWrite(p8, "page3.png", IFF_PNG); #Open("page3.png")
+pixWrite(p8, "page3.png", IFF_PNG); Open("page3.png")
 
 
 m = matrix(ff, , 2, byrow = TRUE)
