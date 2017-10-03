@@ -46,7 +46,7 @@ function(pix, horiz, vert)
 
 pixErodeGray =
 function(pix, horiz, vert)
-    .Call("R_pixCloseGray", pix, as.integer(horiz), as.integer(vert))
+    .Call("R_pixErodeGray", pix, as.integer(horiz), as.integer(vert))
 
 
 pixRotateAMGray =
@@ -104,3 +104,6 @@ function(s1, s2, target = NULL)
 {
    .Call("R_pixSubtract", s1, s2, target)
 }
+
+
+#setMethod("[", "PIX"
