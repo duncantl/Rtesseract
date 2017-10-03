@@ -555,7 +555,7 @@ function(pix, file, format)
    if(!file.exists(dirname(file)) && file.info(dirname(file))[1, "isdir"])
        stop("no such directory ", dirname(file))
    
-   .Call("R_pixWrite", as(pix, "Pix"), as.character(file), as(format, "InputFileFormatValues"))
+   .Call("R_pixWrite", as(pix, "Pix"), as.character(file), as(format, "InputFileFormat"))
 }
 
 
