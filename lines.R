@@ -1,4 +1,5 @@
 library(Rtesseract)
+f = "inst/images/SMITHBURN_1952_p3.png"
 # .Call("R_leptLines", "inst/images/SMITHBURN_1952_p3.png", "sm_p3.png")
 #source("R/leptonica.R")
 
@@ -17,34 +18,48 @@ ff = c("pixs.png", "cpixs.png",
 
 
 p1 = pixRead("inst/images/SMITHBURN_1952_p3.png")
+# ?? Do we need to go to 8 bit.
 p1 = pixConvertTo8(p1)
 #pixWrite(p1, "pixs.png", IFF_PNG);# Open("pixs.png")
 
+# Need to go to binary image for detecting skew.
 bin = pixThresholdToBinary(p1, 150)
-#pixWrite(bin, "bin1.png", IFF_PNG); #Open("bin1.png")
 
+# Now detect skew and rotate the image appropriately.
 angle = pixFindSkew(bin)
-p2 = pixRotateAMGray(p1, angle[1]*pi/180)
-#pixWrite(p2, "p2.png", IFF_PNG); #Open("p2.png")
+p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
+#pixWrite(p2, "p2.png", IFF_PNG); Open("p2.png")
 
-p3 = pixCloseGray(p2, 51L, 1L)
-#pixWrite(p3, "p3.png", IFF_PNG); #Open("p3.png")
+getLines = 
+function(pix, hor, vert, asLines = FALSE, invert = TRUE)
+{
+   p3 = pixCloseGray(pix, hor, vert)
+   p4 = pixErodeGray(p3, 3, 5)
 
-p4 = pixErodeGray(p3, 5L, 2L) # vert should be odd.
-#pixWrite(p4, "p4.png", IFF_PNG); #Open("p4.png")
+   p5 = pixThresholdToValue(p4, 210, 255, p4)
+   p6 = pixThresholdToValue(p4, 210, 0, p4)
 
-p5 = pixThresholdToValue(p4, 210, 255, p4)
-#pixWrite(p5, "p5.png", IFF_PNG); #Open("p5.png")
-p6 = pixThresholdToValue(p4, 200, 0, p4)
-#pixWrite(p6, "p6.png", IFF_PNG); #Open("p6.png")
+   # We don't use this again in these computations, but we want it to get the actual lines.
+   if(asLines)
+      return(pixThresholdToBinary(p6, 210))
+   
+   if(invert)
+       pixInvert(p6)
+   else
+       p6
+}
 
-bin = pixThresholdToBinary(p6, 210)
 #pixWrite(bin, "horLines.png", IFF_PNG); #Open("horLines.png")
 
-pixInvert(p6, p6)
-p8 = pixAddGray(p2, p6)
+# Turn "black" lines white.
+#pixInvert(p6, p6)
 
-#pixWrite(p8, "page3.png", IFF_PNG); #Open("page3.png")
+p6 = getLines(p2, 51, 5) # horizontal lines
+p7 = getLines(p2, 1, 51) # vertical lines
+p8 = pixAddGray(p2, p6)
+p8 = pixAddGray(p8, p7)
+
+pixWrite(p8, "page3.png", IFF_PNG); #Open("page3.png")
 
 
 m = matrix(ff, , 2, byrow = TRUE)
