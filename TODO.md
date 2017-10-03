@@ -94,10 +94,6 @@
    <br/>
    I think this is more important than smudges as we know it is vital for tables.
 	
-1. Example for GetSmudges
-   <br/>
-   Is this vital to submitting the paper? I don't think so.
-	
 1. Work up one example for each major aspect/function in package:
  - Location on page
  - Augment dictionary/patterns
