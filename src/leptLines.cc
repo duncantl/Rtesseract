@@ -202,7 +202,7 @@ R_pixGetPixels(SEXP r_pix)
 {
     PIX *pix = GET_REF(r_pix, PIX);
     int r, c;
-    pixGetDimensions(pix, &r, &c, NULL);
+    pixGetDimensions(pix, &c, &r, NULL);
     SEXP ans = NEW_NUMERIC(r * c);
     double *p = REAL(ans);
 
@@ -210,8 +210,8 @@ R_pixGetPixels(SEXP r_pix)
     int i, j;    
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
-            pixGetPixel(pix, i, j, &val);
-            p[j + i*r] = val;
+            pixGetPixel(pix, j, i, &val);
+            p[i + j*r] = val;
         }
     }
     
@@ -226,14 +226,14 @@ R_pixSetPixels(SEXP r_pix, SEXP r_vals)
 {
     PIX *pix = GET_REF(r_pix, PIX);
     int r, c;
-    pixGetDimensions(pix, &r, &c, NULL);
+    pixGetDimensions(pix, &c, &r, NULL);
     double *p = REAL(r_vals);
 
     l_uint32 val;
     int i, j;
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
-            pixSetPixel(pix, i, j, p[j + i*r]);
+            pixSetPixel(pix, j, i, p[i + j*r]);
         }
     }
     
@@ -247,14 +247,14 @@ R_pixSetRGBPixels(SEXP r_pix, SEXP r_vals)
 {
     PIX *pix = GET_REF(r_pix, PIX);
     int r, c;
-    pixGetDimensions(pix, &r, &c, NULL);
+    pixGetDimensions(pix, &c, &r, NULL);
     int *p = INTEGER(r_vals);
 
     l_uint32 val;
     int i, j;
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
-            pixSetRGBPixel(pix, i, j, p[j + i*r], p[j + i*r + r*c], p[j + i*r + 2*r*c]);
+            pixSetRGBPixel(pix, j, i, p[i + j*r], p[i + j*r + r*c], p[i + j*r + 2*r*c]);
         }
     }
     
@@ -268,7 +268,7 @@ R_pixGetRGBPixels(SEXP r_pix)
 {
     PIX *pix = GET_REF(r_pix, PIX);
     int r, c;
-    pixGetDimensions(pix, &r, &c, NULL);
+    pixGetDimensions(pix, &c, &r, NULL);
     SEXP ans = NEW_NUMERIC(r * c * 3);
     double *p = REAL(ans);
 
@@ -276,7 +276,7 @@ R_pixGetRGBPixels(SEXP r_pix)
     int i, j;    
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
-            pixGetRGBPixel(pix, i, j, &R, &G, &B);
+            pixGetRGBPixel(pix, j, i, &R, &G, &B);
             p[j + i*r] = R;
             p[j + i*r + r*c] = G;
             p[j + i*r + r*c*2] = B;
