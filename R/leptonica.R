@@ -1,5 +1,7 @@
 setClass("PIX", contains = "Pix")
 
+setAs("character", "PIX", function(from) readPix(from))
+
 pixAddGray =
 function(pix1, pix2, target = NULL)
 {
@@ -72,6 +74,14 @@ function(pix, dims = pixGetDims(pix))
     ans
 }
 
+pixGetRGBPixels =
+function(pix, dims = pixGetDims(pix))
+{
+    ans = .Call("R_pixGetPixels", pix)
+    dim(ans) = dims[1:2]
+    ans
+}
+
 pixSetPixels =
 function(pix, vals, dims = pixGetDims(pix))
 {
@@ -79,8 +89,18 @@ function(pix, vals, dims = pixGetDims(pix))
     if(!all(dims == dim(vals)))
         stop("dimensions are not equal to the image's dimensions")
 
-    if(typeof(vals) == "double")
-       vals = 
+    if(typeof(vals) != "integer") {
+        tmp = as.integer(vals)
+        attributes(tmp) = attributes(vals)
+        vals = tmp
+    }
 
-    .Call("R_pixSetPixels", pix, vals, 
+    .Call("R_pixSetRGBPixels", pix, vals)
+}
+
+
+pixSubtract =
+function(s1, s2, target = NULL)
+{
+   .Call("R_pixSubtract", s1, s2, target)
 }

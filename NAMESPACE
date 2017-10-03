@@ -106,3 +106,13 @@ export(OEM_TESSERACT_ONLY, OEM_CUBE_ONLY, OEM_TESSERACT_CUBE_COMBINED, OEM_DEFAU
 
 
 exportMethods("$", "$<-", "[[", "[", "names")
+
+
+
+export(pixRead, pixWrite)
+export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConvertTo8, pixFindSkew ,
+       pixCloseGray, pixErodeGray, pixRotateAMGray, pixGetRes, pixGetDims, pixGetPixels,
+       pixGetRGBPixels, pixSetPixels, pixSubtract)
+
+
+
