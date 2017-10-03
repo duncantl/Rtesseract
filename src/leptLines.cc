@@ -26,37 +26,37 @@ R_leptLines(SEXP r_img, SEXP r_outfile)
 {
     PIX *pixs = pixRead(CHAR(STRING_ELT(r_img, 0)));
     pixs = pixConvertTo8(pixs, 0); // 0 - no color map
-pixWrite("cpixs.png", pixs, IFF_PNG);            
+//pixWrite("cpixs.png", pixs, IFF_PNG);            
     PIX *pix1, *pix2, *pix3, *pix4, *pix5, *pix6, *pix7, *pix8;
 
     pix1 = pixThresholdToBinary(pixs, 150);
-pixWrite("cbin1.png", pix1, IFF_PNG);            
+//pixWrite("cbin1.png", pix1, IFF_PNG);            
     l_float32 angle, conf, deg2rad = 3.141592653589793/180.;
     pixFindSkew(pix1, &angle, &conf);
     
 //    Rprintf("angle = %lf  (pixs=%p  pix1=%p) L_HORIZ=%d, L_VERT=%d\n", (double) angle, pixs, pix1, L_HORIZ, L_VERT);
        // 0 color to add for pixels that are brought in to picture by rotation, . 0 for black, 255 for WHITE
      pix2 = pixRotateAMGray(pixs, deg2rad * angle, 0);
-  pixWrite("cpix2.png", pix2, IFF_PNG);                
+//  pixWrite("cpix2.png", pix2, IFF_PNG);                
      pix3 = pixCloseGray(pix2, 51, 1L /*L_HORIZ*/);
-  pixWrite("cpix3.png", pix3, IFF_PNG);            
+//  pixWrite("cpix3.png", pix3, IFF_PNG);            
      pix4 = pixErodeGray(pix3, 5, 2 /*L_VERT*/);
-  pixWrite("cpix4.png", pix4, IFF_PNG);        
+//  pixWrite("cpix4.png", pix4, IFF_PNG);        
 /*
     pix4 = pixCloseGray(pix4, 1, 51);
     pix4 = pixErodeGray(pix4, 1, 5);
 */
 
     pix5 = pixThresholdToValue(pix4, pix4, 210, 255);
-  pixWrite("cpix5.png", pix5, IFF_PNG);    
+//  pixWrite("cpix5.png", pix5, IFF_PNG);    
     pix6 = pixThresholdToValue(pix4, pix4, 200, 0);
-  pixWrite("cpix6.png", pix6, IFF_PNG);
+//  pixWrite("cpix6.png", pix6, IFF_PNG);
     
     pix7 = pixThresholdToBinary(pix6, 210);
-  pixWrite("cpix7.png", pix7, IFF_PNG);
+//  pixWrite("cpix7.png", pix7, IFF_PNG);
     
     pixInvert(pix6, pix6);
-    pixWrite("cpixInvert.png", pix6, IFF_PNG);    
+//    pixWrite("cpixInvert.png", pix6, IFF_PNG);    
     pix8 = pixAddGray(NULL, pix2, pix6);
 
     pixWrite(CHAR(STRING_ELT(r_outfile, 0)), pix8, IFF_PNG); // IFF_LPDF
