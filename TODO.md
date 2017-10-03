@@ -126,6 +126,8 @@
 
 ## Misc
 
+1. Reference counts for Pix.
+
 1. [Verify sane] Get alternatives is returning different output between:
  ```r
  library(Rtesseract)
