@@ -1,0 +1,63 @@
+
+Consider the image
+
+[missing]:../images/SMITHBURN_1952_p3.png
+
+When we perform OCR on this,
+tesseract treats the highlighted text in "yellow" as a dark rectangular
+block and ignores it.
+Let's see what we get from `tesseract()` with this image:
+```
+t0 = tesseract("../images/SMITHBURN_1952_p3.png")
+w0 = GetText(t0)
+```
+Some of the words in the highlighted text are `lot`, `65` and `arboreal`.
+Are these in the words returned by tesseract:
+```
+c("lot", "65", "arboreal") %in% w0
+```
+The word `lot` is.  This is found in the fourth line, e.g. "a lot of 86 Aedes"
+
+This suggests counting the number of occurences of each word:
+```
+tt0 = table(w0)
+tt0[c("lot", "65", "arboreal")]
+```
+So we did  get one instance of lot, but not the one under the highlighted text.
+
+Of course, there is text under this highlight.
+We need to pre-process the image before we pass it to tesseract to have the possibility of
+recovering this text.
+We do this using some of the functions that interface to the leptonica library.
+In this case, we need only convert the image from color to gray-scale or 8 bits per pixel.
+We do this with the  `pixConvertTo8()` function.
+So we read the image and convert it with
+```
+pix = pixRead("../images/SMITHBURN_1952_p3.png")
+pix1 = pixConvertTo8(pix)
+```
+We can then pass the modified image  to the `tesseract()` function:
+```
+t1 = tesseract(pix1)
+```
+Then we call, e.g., `GetText()` as before, e.g.,
+```
+w1 = GetText(t1)
+```
+We then check whether the words we see under the highlighted text are in the words
+returned by tesseract for this modified image:
+```
+c("lot", "65", "arboreal") %in% w1
+```
+Indeed all three are there.
+However
+```
+table(w1)[c("lot", "65", "arboreal")]
+```
+Here we see that we get a count of 1 for "65" and "arboreal" and 2 for lot.
+So we got both "lot" words.
+
+Of course, there is no guarantee that tesseract will correctly identify
+the words in general.  We know that it did this correctly for our image.
+It could of course recognize arboreal as something slightly different and so
+not appear in the table of words.

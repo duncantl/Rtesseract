@@ -1,0 +1,125 @@
+
+
+A primary motivation underlying the Rtesseract package is that we need
+context from the rendered page to make sense of the results of the
+OCR.  Generally, we want the full location and size data for each word
+or line identified by tesseract so that we can use it to intelligently
+interpret the content. This includes identifying document and section
+titles in the document based on the size of the text.  In this
+example, we'll just look at the locations of lines on the page in
+order to be able to interpret data within tables.  Again, consider the
+image:
+
+[missing]:../images/SMITHBURN_1952_p3.png
+
+We can clearly see the data in TABLE 1 arranged by row and column.
+The column headers are separated by two lines spanning the width of the text on the page.
+The final 4 columns have two column headers that span all 4 columns.
+The header in column 4 (NO. STRAINS ISOLATED) is on 3 separate lines but
+clearly differentiated from the other data rows in the table due to the
+horizontal line separating the header from the data rows.
+
+Firstly, the tesseract() function allows us to get the horizontal and vertical locations of the words
+on the page. So we could use these to attempt to recover the tabular nature of this data.
+In this particular example, we can do this effectively and relatively simply. However,
+in images with tables that have center-aligned columns, this is much more complicated and can
+lead to ambiguity about to which column a cell belongs.
+Instead, we can separate the values into their respective columns much more effectively
+if we can identify the vertical lines between columns.
+Similarly, we can separate the column header  cells from the data cells below
+if we know the locations of the horizontal line(s) that divide them.
+Furthermore, we can determine the end of the table and the continuation
+of the regular text below it if we can find the final horizontal line in this example.
+
+
+Given the motivation of finding the vertical and horizontal lines on the page,
+let's explore how we can do this with Rtesseract.
+Unfortunately, this is done outside of the OCR functionality of Rtesseract.
+The OCR process tesseract performs actually identifies and removes the lines from the
+image before it recognizes the remaining text on the image. This aids the accuracy of the OCR.
+Unfortunately, it does not allow us to query the locations of the lines it removed.
+Accordingly, we must replicate  approximately the same computations it performs to identify the
+lines and their locations.
+Fortunately, the basic ideas of this process are described 
+(here)[http://www.leptonica.com/line-removal.html]
+The Rtesseract  package provides corresponding (and higher-level convenience) functions 
+to effect the same computations.
+
+Note that we will pass the original/raw image to OCR without modifying
+it. tesseract will do many of the same computations we do.
+So our aim is to simply identify the locations of the horizontal and vertical lines in the
+image. 
+ 
+
+We start by reading the image:
+```
+library(Rtesseract)
+f = "inst/images/SMITHBURN_1952_p3.png"
+
+p1 = pixRead(f)
+```
+
+We immediately convert the image to gray-scale with `pixConvertTo9()`:
+```
+p1 = pixConvertTo8(p1)
+```
+(Note that this creates a new Pix and allows the previous one to be garbage collected
+as we assign the new image to the same R variable.)
+
+The next step is to correct any skew or orientation in the image.
+To do this, we must first create a separate binary image using
+`pixThresholdToBinary()`.
+Then we call `pixFindSkew()` and then rotate the original image
+by the skew angle:
+```
+bin = pixThresholdToBinary(p1, 150)
+angle = pixFindSkew(bin)
+p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
+```
+The 255 in the call to `pixRotateAMGray` corresponds to white
+and means that any pixels that are "revealed" by rotating the
+"page" are colored white.  We can specify any color we want here between 0 (black) and 255 (white).
+
+It is useful to look at the resulting image:
+```
+pixWrite(p2, tmp <- tempfile(), IFF_PNG)
+```
+and then open the file named in the variable `tmp`, or
+```
+plot(p2)
+```
+(We're working on making this plot() method more general.)
+
+
+With the reoriented image, we call the Rtesseract function
+`getLines()`.  This performs several operations on the image
+to return an image that contains either the horizontal or vertical lines.
+```
+h = getLines(p2, 51, 3)
+```
+Currently, this returns an image (Pix object).
+Recall that we converted the original image to a gray-scale image.
+So we can then get the two-dimensional table of pixels as a matrix
+```
+m = pixGetPixels(h)
+```
+
+We can view this image with `plot(m)` or
+by writing the Pix object to a file and viewing that.
+
+However, we can work with the matrix of pixel values.
+We are looking for horizontal lines.
+We can find the rows of this matrix that  have 1000 or more
+black pixels.  We do this with
+```
+w = rowSums(m) > 1000
+```
+The value 1000 is context-specific.  It includes lines
+that span 1000 pixels or several smaller segments whose length adds up to 1000 pixels.
+
+How many rows of the matrix satisfy this criterion:
+```
+table(w)
+```
+
+We can see where these horizontal lines
