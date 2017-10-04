@@ -3,4 +3,10 @@ check.cc
 readImage
 readImage.dSYM
 Makevars-
+*.a
+Rexit-old
+*-
+*.rds
+
+
 
