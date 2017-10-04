@@ -10,6 +10,7 @@
    Apparently (when stepping through the code) GetInputName(), is.na(img) before rasterImage() call take time.
 
 1. [improved] Add "[" for Pix
+    + Implement RGB.
 	+ logical, numeric and matrix
 	+ Fast versions now implemented, except for matrix.
     + [no longer true for most cases.] For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
