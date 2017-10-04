@@ -18,7 +18,7 @@
 \alias{IFF_LPDF}
 \alias{IFF_DEFAULT}
 \alias{IFF_SPIX}
-\docType{data}
+
 \title{File Format Symbolic Constants}
 \description{
 These variables are symbolic constants used to identify different image
@@ -28,18 +28,12 @@ These are better than strings, e.g. "PNG", or simple numbers, e.g. 3.
 However, one can use either of these forms also. However, \code{IFF_PNG}
 is preferred to "PNG" and both are  much preferred to 3.
 }
-\usage{data("IFF_PNG")}
-\format{
-  The format is:
-Formal class 'InputFileFormat' [package "Rtesseract"] with 2 slots
-  ..@ .Data: int 3
-  ..@ names: chr "IFF_PNG"
-}
+\usage{IFF_PNG}
 \source{
 Leptonica imageio.h heade file.
 }
 \references{
-\url{http://www.leptonica.org}
+\url{http://www.leptonica.com}
 }
 \seealso{
   \code{\link{pixWrite}}
