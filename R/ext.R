@@ -5,17 +5,13 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
 {
   api = .Call("R_TessBaseAPI_new")
 
-  if(!init && ((length(image) && file.exists(image)) || length(opts))) {
+  if(!init && ((length(image) && (is.character(image) && file.exists(image))) || length(opts))) {
      warning("forcing a call to Init() since setting the image and/or variables.")
      init = TRUE
   }
 
-  if(!is.na(datapath)) {
+  if(!is.na(datapath)) 
       datapath = normalizePath(datapath)
-#      datapath = path.expand(datapath)
-#      if(!grepl(paste0("^", .Platform$file.sep), datapath)) # XXX check for drive on windows , e.g., C:
-#         datapath = paste(path.expand(getwd()), datapath, sep = .Platform$file.sep)
-  }
   
   if(init)
      Init(api, lang, datapath = datapath, configs = configs, vars = vars, engineMode = engineMode, debugOnly = debugOnly)
@@ -550,14 +546,45 @@ function(api)
 }
 
 pixWrite =
-function(pix, file, format)
+function(pix, file, format = guessImageFormatByExt(file))
 {
    if(!file.exists(dirname(file)) && file.info(dirname(file))[1, "isdir"])
        stop("no such directory ", dirname(file))
+
+   if(is.na(format) || format == "")
+       stop("Don't recognize the image file format") 
    
    .Call("R_pixWrite", as(pix, "Pix"), as.character(file), as(format, "InputFileFormat"))
 }
 
+guessImageFormatByExt =
+# Rtesseract:::guessImageFormat("foo.jpeg")
+#<NA> 
+#  NA 
+#[22:21] 3> Rtesseract:::guessImageFormat("foo.jpg")
+#<NA> 
+#  NA 
+#Rtesseract:::guessImageFormat("foo.tiff")
+#IFF_TIFF 
+#       4 
+#Rtesseract:::guessImageFormat("foo.gif")
+#IFF_GIF 
+#     13 
+# Rtesseract:::guessImageFormat("foo.jp2")
+#IFF_JP2 
+    #     14
+# Rtesseract:::guessImageFormat("foo.png")
+#IFF_PNG 
+#     3     
+#[22:55] 7> Rtesseract:::guessImageFormat("foo.webp")    
+function(filename, values = InputFileFormatValues)
+{
+    ext = gsub(".*\\.", "", filename)
+       #XXX  May want to determine most appropriate/supported version for tiff.
+    ext = switch(ext, pdf = "lpdf", jpg=, jpeg = "jp2", tiff = "tiff_lzw", ext)
+    i = pmatch(tolower(ext), gsub("iff_", "", tolower(names(values))))
+    values[i]
+}
 
 AdaptToWordStr =
 function(api, word, segMode = GetPageSegMode(api))
