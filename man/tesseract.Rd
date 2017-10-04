@@ -10,6 +10,8 @@
 \alias{[[,TesseractBaseAPI,character-method}
 \alias{[[<-,TesseractBaseAPI,character-method}
 \alias{names,TesseractBaseAPI-method}
+\alias{GetImage}
+\alias{GetInputImage}
 \alias{Init}
 
 \title{Creating a Tesseract Object}

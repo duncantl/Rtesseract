@@ -14,6 +14,14 @@
 \alias{[,Pix,missing,missing-method}
 \alias{coerce,character,Pix-method}
 \alias{plot,Pix-method}
+\alias{pixGetDims}
+\alias{pixGetDepth}
+\alias{pixGetRes}
+\alias{pixGetInputFormat}
+\alias{pixZero}
+\alias{pixEqual}
+\alias{pixClone}
+\alias{pixRotateAMGray}
 \title{Read an Image for use with Tesseract}
 \description{
   This function reads an image, determining what format it is
