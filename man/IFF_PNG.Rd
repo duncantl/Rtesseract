@@ -41,6 +41,9 @@ Leptonica imageio.h heade file.
 \references{
 \url{http://www.leptonica.org}
 }
+\seealso{
+  \code{\link{pixWrite}}
+}
 \examples{
 \dontrun{
   f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
@@ -49,6 +52,8 @@ Leptonica imageio.h heade file.
   pixWrite(p, "foo.tiff", IFF_TIFF_LZW)
   pixWrite(p, "foo.webp", "WEBP")
   pixWrite(p, "foo.tiff", "TIFF_LZW")
+
+  pixWrite(p, "foo.webp")
 }
 }
 \keyword{datasets}
