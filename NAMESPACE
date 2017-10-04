@@ -31,7 +31,7 @@ export(toPDF, toTSV, toHTML, toHOcr, toOSD, toBoxText) # toUNLV,
 export(lapply)
 exportMethods(lapply)
 
-export(SetImage, Recognize, Init, End, SetVariables, pixRead)
+export(SetImage, Recognize, Init, End, SetVariables)
 
 # We 
 # export(GetIterator)
@@ -81,7 +81,7 @@ export(GetImage)
 export(GetStrips, GetRegions)
 }
 
-
+export(GetImage)
 #, GetImage, GetInputImage)
 #export(GetThresholdedImage)
 
@@ -107,12 +107,18 @@ export(OEM_TESSERACT_ONLY, OEM_CUBE_ONLY, OEM_TESSERACT_CUBE_COMBINED, OEM_DEFAU
 
 exportMethods("$", "$<-", "[[", "[", "names")
 
+exportMethods("nrow", "ncol", "dim")
 
 
 export(pixRead, pixWrite)
 export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConvertTo8, pixFindSkew ,
        pixCloseGray, pixErodeGray, pixRotateAMGray, pixGetRes, pixGetDims, pixGetPixels,
-       pixGetRGBPixels, pixSetPixels, pixSubtract)
+       pixGetRGBPixels, pixSetPixels, pixSubtract, pixAnd, pixOr, pixXor, pixClone, pixGetInputFormat,
+       pixZero)
 
 
+exportPattern("IFF_.*")
+
+S3method(as.raster, Pix)
+S3method(as.raster, PIX)
 
