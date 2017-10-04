@@ -5,6 +5,7 @@
 \alias{$,TesseractBaseAPI-method}
 \alias{$<-,TesseractBaseAPI-method}
 \alias{[,TesseractBaseAPI,character-method}
+\alias{[,TesseractBaseAPI,character,ANY-method}
 \alias{[<-,TesseractBaseAPI,character-method}
 \alias{[[,TesseractBaseAPI,character-method}
 \alias{[[<-,TesseractBaseAPI,character-method}

@@ -1,6 +1,19 @@
 \name{pixRead}
 \alias{pixRead}
 \alias{Pix-class}
+\alias{nrow,Pix-method}
+\alias{ncol,Pix-method}
+\alias{dim,Pix-method}
+\alias{[,Pix,logical,logical-method}
+\alias{[,Pix,missing,logical-method}
+\alias{[,Pix,logical,missing-method}
+\alias{[,Pix,numeric,numeric-method}
+\alias{[,Pix,missing,numeric-method}
+\alias{[,Pix,numeric,missing-method}
+\alias{[,Pix,matrix,ANY-method}
+\alias{[,Pix,missing,missing-method}
+\alias{coerce,character,Pix-method}
+\alias{plot,Pix-method}
 \title{Read an Image for use with Tesseract}
 \description{
   This function reads an image, determining what format it is
