@@ -123,3 +123,8 @@ table(w)
 ```
 
 We can see where these horizontal lines
+```
+tess = tesseract(f)
+plot(tess)
+abline(h = nrow(m) - which(w), col = "red")
+```
