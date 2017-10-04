@@ -34,8 +34,8 @@ p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 # Turn "black" lines white.
 #pixInvert(p6, p6)
 
-p6 = Rtesseract:::getLines(p2, 51, 5, FALSE) # horizontal lines
-p7 = Rtesseract:::getLines(p2, 1, 151, FALSE) # vertical lines
+p6 = Rtesseract:::findLines(p2, 51, 5, FALSE) # horizontal lines
+p7 = Rtesseract:::findLines(p2, 1, 151, FALSE) # vertical lines
 p8 = pixAddGray(p2, p6)
 p8 = pixAddGray(p8, p7)
 

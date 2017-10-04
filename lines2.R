@@ -7,6 +7,7 @@ function(pix, file = tempfile())
 
 library(Rtesseract)
 f = "inst/images/SMITHBURN_1952_p3.png"
+f = "../images/SMITHBURN_1952_p3.png"
 
 p1 = pixRead(f)
 p1 = pixConvertTo8(p1)
@@ -17,20 +18,24 @@ p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 
 #debug(Rtesseract:::getLines)
 # Horizontal lines
-h = Rtesseract:::getLines(p2, 51, 3, TRUE)
+h = Rtesseract:::findLines(p2, 51, 3, TRUE, erode = integer())
 m = pixGetPixels(h)
 r = rowSums(m)
 w = r > 1000
 table(w)
+diff(which(w))
 
 tess = tesseract(f)
 plot(tess)
 abline(h = nrow(m) - which(w), col = "red")
 
-
+if(FALSE) {
+    z = apply(m[w,], 1, rle)
+    points(1:ncol(m), rep(which(w)[1], ncol(m)), col = c("white", "red")[m[, which(w)[1]] + 1])
+}
 # Vertical lines
 
-v = Rtesseract:::getLines(p2, 1, 101, TRUE) # vertical lines
+v = Rtesseract:::findLines(p2, 1, 101, TRUE) # vertical lines
 m = pixGetPixels(v)
 r = colSums(m)
 w = r > 1000
