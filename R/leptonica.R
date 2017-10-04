@@ -193,17 +193,21 @@ setMethod("[", c("Pix", "numeric", "numeric"), pixNumericSubset)
 setMethod("[", c("Pix", "logical", "logical"),
           function(x, i, j, ...) {
               ix = which(i)
-              if(length(ij) == 0)
-                  return(matrix(0, nrow(x), 0))              
+              if(length(ix) == 0)
+                  return(matrix(0, nrow(x), 0))
+              
               jx = which(j)
-              if(length(ij) == 0)
+              if(length(jx) == 0)
                   return(matrix(0, 0, ncol(x)))
               
               pixNumericSubset(x, ix, jx, ...)
         })
 setMethod("[", c("Pix", "logical", "missing"),
           function(x, i, j, ...) {
-              ix = which(i)              
+              ix = which(i)
+              if(length(ix) == 0)
+                  return(matrix(0, nrow(x), 0))
+              
               pixNumericSubset(x, ix, integer(), ...)              
         })
 
