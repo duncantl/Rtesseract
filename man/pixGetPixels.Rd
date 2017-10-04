@@ -43,10 +43,10 @@ Duncan Temple Lang
   f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
   p = pixRead(f)
   m = pixGetPixels(p)
-  m = pix[,]
+  m = p[,]
 
   p2 = pixConvertTo8(p)
-  m2 = pix[,]
+  m2 = p[,]
 
   a = pixGetRGBPixels(p)
   dim(a)

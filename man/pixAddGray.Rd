@@ -45,6 +45,13 @@ Duncan Temple Lang
   \code{\link{pixAnd}}  
 }
 \examples{
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+p1 = pixRead(f)
+p2 = pixConvertTo8(p1)
+p2 = deskew(p2)
+p6 = Rtesseract:::findLines(p2, 51, 5, FALSE)
+p = pixAddGray(p2, p6)
+plot(p)
 }
 \keyword{manip}
 \concept{image processing}

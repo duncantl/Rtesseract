@@ -38,8 +38,7 @@ Duncan Temple Lang
   \code{\link{pixConvertTo8}}
   \code{\link{pixThresholdToValue}}
 }
-\examples{
-}
+%\examples{}
 
 \keyword{manip}
 \concept{image processing}

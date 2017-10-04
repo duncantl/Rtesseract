@@ -1,5 +1,7 @@
 # Todo Items
 
+1. findLines() and getLines() functions.
+
 1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
    from a file.
@@ -15,9 +17,9 @@
 	+ Fast versions now implemented, except for matrix.
     + [no longer true for most cases.] For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
 
-1. nrow, ncol, dim methods for the tesseract object itself?
+1. [low] nrow, ncol, dim methods for the tesseract object itself?
 
-1. remove dependencies on readPNG() from plot.OCR()
+1. [low] remove dependencies on readPNG() from plot.OCR()
     Not necessary. They are just suggests. May be faster than plotting from the Pix??
 	
 1. [test] pixZero
@@ -62,7 +64,7 @@
 1. Fix some new errors.
 
 1. Update documentation/NAMESPACE to reflect current functions and functionality.
-    1.  Documentation
+    1.  [passes R CMD check now but needs additions to make it more informative] Documentation
     1.  [make corrections @mespe] Need to do document  @titles in plotSubsets
 	1.  [not exported] GetImage’ ‘GetRegions’ ‘GetStrips’
 	1.  [Removed] [,EnumDef,ANY-method

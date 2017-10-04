@@ -45,6 +45,16 @@ plot(p2)
 # Now deskew it.
 p3 = deskew(p2)
 plot(p3)
+
+
+ # This is an example of where it matters.
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+p1 = pixRead(f)
+p2 = pixConvertTo8(p1)
+p2 = deskew(p2)
+p6 = Rtesseract:::findLines(p2, 51, 5, FALSE)
+p = pixAddGray(p2, p6)
+plot(p)
 }
 \concept{image processing}
 \keyword{manip}

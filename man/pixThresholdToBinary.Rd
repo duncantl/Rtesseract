@@ -48,6 +48,12 @@ Duncan Temple Lang
   \code{\link{GetInputImage}}
   \code{\link{pixAnd}}    
 }
-\examples{}
+\examples{
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+p1 = pixRead(f)
+p1 = pixConvertTo8(p1)
+bin = pixThresholdToBinary(p1, 150)
+angle = pixFindSkew(bin)
+}
 \keyword{manip}
 \concept{image processing}
