@@ -218,3 +218,10 @@ function(x, rgb = pixGetDepth(x) > 8, maxPixel = NA, ...)
     pixels[] = pixels/maxPixel
     pixels
 }
+
+
+pixEqual =
+function(pix1, pix2, useAlpha = TRUE, useCMap = FALSE)
+{
+  .Call("R_pixEqual", pix1, pix2, as.logical(useAlpha), as.logical(useCMap))
+}

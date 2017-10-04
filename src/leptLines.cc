@@ -303,6 +303,10 @@ R_pixZero(SEXP r_pix)
     PIX *pix = GET_REF(r_pix, PIX);
     l_int32 empty = 0;
     l_int32 fmt = pixZero(pix, &empty);
+    if(fmt) {
+        PROBLEM  "error in pixZero()"
+           ERROR; 
+    }
     return(ScalarLogical(empty));
 }
 
@@ -350,51 +354,28 @@ R_pixCountRGBColors(SEXP r_pixs)
 }
 
 
-#if 0
+
+extern "C"
 SEXP
-R_pixSubstract(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
+R_pixEqual(SEXP r_pixs1, SEXP r_pixs2, SEXP r_useAlpha, SEXP r_useCMap)
 {
     PIX *pixs1 = GET_REF(r_pixs1, PIX);
     PIX *pixs2 = GET_REF(r_pixs2, PIX);
+    l_int32 val = -1;
+    l_int32 ans;
+    if(LOGICAL(r_useAlpha)[0])
+       ans = pixEqualWithAlpha(pixs1, pixs2, 1, &val);        
+    else {
+       if(LOGICAL(r_useAlpha)[0])
+          ans = pixEqualWithCmap(pixs1, pixs2, &val);            
+       else
+          ans = pixEqual(pixs1, pixs2, &val);
+    }
     
-    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL;
-    PIX *ans = pixSubtract(pixd, pixs1, pixs1);
+    if(ans) {
+        PROBLEM "pixEqual() error"
+            ERROR;
+    }
     
-    if(r_pixd == R_NilValue)
-       return(createRef(ans, "PIX", R_pixDestroy));    
-    else
-        return(r_pixd);
+    return(ScalarLogical(val));
 }
-
-
-SEXP
-R_pixOr(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
-{
-    PIX *pixs1 = GET_REF(r_pixs1, PIX);
-    PIX *pixs2 = GET_REF(r_pixs2, PIX);
-    
-    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL;
-    PIX *ans = pixOr(pixd, pixs1, pixs1);
-    
-    if(r_pixd == R_NilValue)
-       return(createRef(ans, "PIX", R_pixDestroy));    
-    else
-        return(r_pixd);
-}
-
-
-SEXP
-R_pixXor(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
-{
-    PIX *pixs1 = GET_REF(r_pixs1, PIX);
-    PIX *pixs2 = GET_REF(r_pixs2, PIX);
-    
-    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL;
-    PIX *ans = pixXor(pixd, pixs1, pixs1);
-    
-    if(r_pixd == R_NilValue)
-       return(createRef(ans, "PIX", R_pixDestroy));    
-    else
-        return(r_pixd);
-}
-#endif

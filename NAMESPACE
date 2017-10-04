@@ -116,7 +116,7 @@ export(pixRead, pixWrite)
 export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConvertTo8, pixFindSkew ,
        pixCloseGray, pixErodeGray, pixRotateAMGray, pixGetRes, pixGetDims, pixGetPixels,
        pixGetRGBPixels, pixSetPixels, pixSubtract, pixAnd, pixOr, pixXor, pixClone, pixGetInputFormat,
-       pixZero, pixGetDepth)
+       pixZero, pixGetDepth, pixEqual)
 
 
 exportPattern("IFF_.*")
