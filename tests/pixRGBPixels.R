@@ -1,5 +1,6 @@
 library(Rtesseract)
-p = pixRead("inst/images/DifferentFonts.png")
+f = system.file("images", "DifferentFonts.png", package = "Rtesseract")
+p = pixRead(f)
 z = pixGetRGBPixels(p)
 class(z)
 dim(z)

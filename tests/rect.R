@@ -1,6 +1,6 @@
 library(Rtesseract)
 
-f = system.file("images", "OCRSample.tiff", package = "Rtesseract")
+f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 api = tesseract()
 pix = pixRead(f)
 SetImage(api, pix)
