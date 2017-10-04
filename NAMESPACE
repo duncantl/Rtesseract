@@ -5,7 +5,7 @@ import(methods)
 
 importFrom("utils", read.table)
 import(graphics)
-importFrom("grDevices", "rgb", "colorRampPalette", "col2rgb")
+importFrom("grDevices", "rgb", "colorRampPalette", "col2rgb", "as.raster")
 importFrom("stats", dist, median, quantile, density)
 
 #import(RAutoGenRunTime)
