@@ -11,7 +11,7 @@
 \usage{
 SetInputName(api, name, check = TRUE, load = TRUE)
 GetInputName(api)
-SetImage(api, pix) 
+SetImage(api, pix, filename = NA) 
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -24,6 +24,10 @@ SetImage(api, pix)
   \item{load}{a logical value indicating whether to actually read the image}
   \item{pix}{a \code{\link{Pix-class}} object, typically created via
     \code{\link{pixRead}}. This is the contents of the image.
+  \item{filename}{the name associated with the \code{pix} being set. If
+    the \code{pix} was created anonymously, i.e., separately from a
+    file, this is an opportunity to give it a name. This can occur when
+    we read from a file and then modify the image and then pass it to \code{SetImage}.}
   }
 }
 \value{
@@ -40,6 +44,7 @@ Duncan Temple Lang
 
 \seealso{
   \code{\link{tesseract}}, \code{\link{GetText}}
+  \code{\link{pixRead}}
 }
 \examples{
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")

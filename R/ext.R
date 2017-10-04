@@ -77,17 +77,19 @@ function(filename, ...)
 }
 
 SetImage = 
-function(api, pix)
+function(api, pix, filename = NA)
 {
   if(is.character(pix)) {
      if(!file.exists(pix))
         stop("No such file ", pix)
-     filename = pix
+     if(is.na(filename))
+        filename = pix
      pix = pixRead(pix)
-      # Do this second in case pixRead() fails.
-     SetInputName(api, filename, load = FALSE)
-  }
+ }
   
+  if(!is.na(filename))
+     SetInputName(api, filename, load = FALSE)
+
   .Call("R_TessBaseAPI_SetImage", as(api, "TesseractBaseAPI"), pix)
   pix
 }
