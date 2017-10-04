@@ -1,42 +1,32 @@
 # Todo Items
 
-1. Add webp, jp2, etc. to the image formats supported (TRUE/FALSE)
-   Do this by adding examples to the configuration that calls the readImage application we compile.
-
 1. plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
    from a file.
    Calling as.raster, so need to provide S3 method for that for pix.
    
-1.  [see & finish plot.Pix] Method for plot for Pix, i.e. plot(pix). So equivalent to showPix but in R.
+1. [see & finish plot.Pix] Method for plot for Pix, i.e. plot(pix). So equivalent to showPix but in R.
 	Not necessarily going to a file. But may want this so that we don't have to deal with color issue. 
     Deal with colors for rasterImage().
     For now, don't handle RGB.
 
-
-
-1. [check & improve] Add "[" for Pix
-	+ logical, numeric and matrix
-    + For now, Implementations using pixGetPixels(), so they do not take advantage of wanting less
-   	   than the full matrix. 
-	+ Make faster later, maybe.
-	
 1. Does plot.OCR call Recognize() again? No
    rasterImage() takes time, calling rgb() which profiling indicates takes the longest time - 27%
    Apparently (when stepping through the code) GetInputName(), is.na(img) before rasterImage() call take time.
 
-	 
-1. remove dependencies on readPNG() from plot.OCR()
+1. [check & improve] Add "[" for Pix
+	+ logical, numeric and matrix
+    + For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
+	+ Make faster later, maybe.
 
-1. pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better
+1. remove dependencies on readPNG() from plot.OCR()
 
 1. [test] pixZero
 
+1. [low] pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better.
 1. [low] pixOpenBrick()  or do we implement pixOpenGeneral()??
 1. [low] pixConnComp - need?
-1.  [low] pixSeedfill
-
-1.  ??Make nrow and ncol generics and export??
+1. [low] pixSeedfill
 
 1. [okay - could do more] pixWrite should guess the format from the extension.	
     Can guess png, webp, jp2, jpeg, jpg, lpdf
@@ -48,14 +38,16 @@
 	   tess = tesseract()
 	   SetImage(tess, pix)
    )
-   
+1. [done] Make nrow and ncol generics and export??
+1. [done] Add webp, jp2, etc. to the image formats supported (TRUE/FALSE)
+     Do this by adding examples to the configuration that calls the readImage application we compile.
 1. [done] pixGetInputFormat(), pixGetDepth()
 1. [done] nrow, ncol, dim method for PIX/Pix	
 1. [done] Check if a Pix is already in 8bpp
     pixGetDims(pix)[3] or pixGetDepth()
 1. [done] Check plot.OCR(, cropToBoxes = TRUE)   
-	
-
+1. [done] Add IFF_ prefix to asEnumValue() for InputFileFormat so can do pixWrite(,, "PNG") w/o the IFF_
+    But of course can use IFF_PNG w/o the quotes.
 
 ## A. Required to get package on CRAN
 
