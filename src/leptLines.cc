@@ -286,7 +286,70 @@ R_pixGetRGBPixels(SEXP r_pix)
     return(ans);
 }
 
+extern "C"
+SEXP
+R_pixGetInputFormat(SEXP r_pix)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    l_int32 fmt = pixGetInputFormat(pix);
+    return(ScalarInteger(fmt));
+}
 
+extern "C"
+SEXP
+R_pixZero(SEXP r_pix)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    l_int32 empty = 0;
+    l_int32 fmt = pixZero(pix, &empty);
+    return(ScalarLogical(empty));
+}
+
+extern "C"
+SEXP
+R_pixClone(SEXP r_pix)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixClone(pix);
+    if(ans)
+       return createRef(ans, "PIX", R_pixDestroy);
+    else
+       return(R_NilValue);
+}
+
+#define PIX_FUN2(name) \
+extern "C" \
+SEXP                                             \
+R_##name(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd) \
+{ \
+    PIX *pixs1 = GET_REF(r_pixs1, PIX); \
+    PIX *pixs2 = GET_REF(r_pixs2, PIX); \
+     \
+    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL; \
+    PIX *ans = name(pixd, pixs1, pixs1); \
+     \
+    if(r_pixd == R_NilValue) \
+       return(createRef(ans, "PIX", R_pixDestroy));     \
+    else \
+        return(r_pixd); \
+}
+
+PIX_FUN2(pixSubtract)
+PIX_FUN2(pixAnd)
+PIX_FUN2(pixOr)
+PIX_FUN2(pixXor)
+
+
+extern "C"
+SEXP
+R_pixCountRGBColors(SEXP r_pixs)
+{
+   PIX *pixs = GET_REF(r_pixs, PIX);
+   return ( ScalarInteger( pixCountRGBColors(pixs)    ));
+}
+
+
+#if 0
 SEXP
 R_pixSubstract(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
 {
@@ -301,3 +364,36 @@ R_pixSubstract(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
     else
         return(r_pixd);
 }
+
+
+SEXP
+R_pixOr(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
+{
+    PIX *pixs1 = GET_REF(r_pixs1, PIX);
+    PIX *pixs2 = GET_REF(r_pixs2, PIX);
+    
+    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL;
+    PIX *ans = pixOr(pixd, pixs1, pixs1);
+    
+    if(r_pixd == R_NilValue)
+       return(createRef(ans, "PIX", R_pixDestroy));    
+    else
+        return(r_pixd);
+}
+
+
+SEXP
+R_pixXor(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd)
+{
+    PIX *pixs1 = GET_REF(r_pixs1, PIX);
+    PIX *pixs2 = GET_REF(r_pixs2, PIX);
+    
+    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL;
+    PIX *ans = pixXor(pixd, pixs1, pixs1);
+    
+    if(r_pixd == R_NilValue)
+       return(createRef(ans, "PIX", R_pixDestroy));    
+    else
+        return(r_pixd);
+}
+#endif
