@@ -107,6 +107,7 @@ export(OEM_TESSERACT_ONLY, OEM_CUBE_ONLY, OEM_TESSERACT_CUBE_COMBINED, OEM_DEFAU
 
 exportMethods("$", "$<-", "[[", "[", "names")
 
+export(nrow, ncol)
 exportMethods("nrow", "ncol", "dim")
 
 

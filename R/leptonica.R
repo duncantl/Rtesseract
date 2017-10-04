@@ -180,6 +180,11 @@ setMethod("[", c("PIX", "matrix"),
           })
 
 
+if(!isGeneric("nrow"))
+    setGeneric("nrow", function(x) standardGeneric("nrow"))
+if(!isGeneric("ncol"))
+    setGeneric("ncol", function(x) standardGeneric("ncol"))
+
 setMethod("nrow", "Pix",
           function(x)
             pixGetDims(x)[1])
