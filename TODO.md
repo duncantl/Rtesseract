@@ -1,17 +1,7 @@
 # Todo Items
 
-1. Add web, jp2, etc. to the image formats supported (TRUE/FALSE)
+1. Add webp, jp2, etc. to the image formats supported (TRUE/FALSE)
    Do this by adding examples to the configuration that calls the readImage application we compile.
-
-1. [check & improve] Add "[" for Pix
-	+ logical, numeric and matrix
-    + For now, Implementations using pixGetPixels(), so they do not take advantage of wanting less
-   	   than the full matrix. 
-	+ Make faster later, maybe.
-	
-1. Check plot.OCR(, cropToBoxes = TRUE)
-
-1. plot.OCR calls Recognize() again.
 
 1. plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
@@ -22,6 +12,19 @@
 	Not necessarily going to a file. But may want this so that we don't have to deal with color issue. 
     Deal with colors for rasterImage().
     For now, don't handle RGB.
+
+
+
+1. [check & improve] Add "[" for Pix
+	+ logical, numeric and matrix
+    + For now, Implementations using pixGetPixels(), so they do not take advantage of wanting less
+   	   than the full matrix. 
+	+ Make faster later, maybe.
+	
+1. Does plot.OCR call Recognize() again? No
+   rasterImage() takes time, calling rgb() which profiling indicates takes the longest time - 27%
+   Apparently (when stepping through the code) GetInputName(), is.na(img) before rasterImage() call take time.
+
 	 
 1. remove dependencies on readPNG() from plot.OCR()
 
@@ -32,7 +35,6 @@
 1. [low] pixOpenBrick()  or do we implement pixOpenGeneral()??
 1. [low] pixConnComp - need?
 1.  [low] pixSeedfill
-
 
 1.  ??Make nrow and ncol generics and export??
 
@@ -51,7 +53,7 @@
 1. [done] nrow, ncol, dim method for PIX/Pix	
 1. [done] Check if a Pix is already in 8bpp
     pixGetDims(pix)[3] or pixGetDepth()
-   
+1. [done] Check plot.OCR(, cropToBoxes = TRUE)   
 	
 
 
