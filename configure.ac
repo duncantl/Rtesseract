@@ -105,11 +105,17 @@ AC_TRY_COMPILE(
 )
 
 
-
-
 PNG_FILES="NA"
 JPG_FILES="NA"
 TIFF_FILES="NA"
+WEBP_FILES="NA"
+JP2_FILES="NA"
+PNM_FILES="NA"
+GIF_FILES="NA"
+BMP_FILES="NA"
+PS_FILES="NA"
+PDF_FILES="NA"
+SPIX_FILES="NA"
 
 echo "Compiling readImage"
 $CXX $CPPFLAGS $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
@@ -134,6 +140,50 @@ if test "$?" = "0" ; then
     echo "png support"
     PNG_FILES="TRUE"
   fi
+  WEBP_FILES="FALSE"
+  ./readImage sampleImage.webp
+  if test $? -eq 0 ; then
+    echo "webp support"
+    WEBP_FILES="TRUE"
+  fi
+  JP2_FILES="FALSE"
+  ./readImage sampleImage.jp2
+  if test $? -eq 0 ; then
+    echo "jp2 support"
+    JP2_FILES="TRUE"
+  else
+    echo "** no jp2 suppport"
+  fi
+  GIF_FILES="FALSE"
+  ./readImage sampleImage.gif
+  if test $? -eq 0 ; then
+    echo "gif support"
+    GIF_FILES="TRUE"
+  fi  
+  BMP_FILES="FALSE"
+  ./readImage sampleImage.bmp
+  if test $? -eq 0 ; then
+    echo "bmp support"
+    BMP_FILES="TRUE"
+  fi
+  PNM_FILES="FALSE"
+  ./readImage sampleImage.pnm
+  if test $? -eq 0 ; then
+    echo "pnm support"
+    PNM_FILES="TRUE"
+  fi
+  PS_FILES="FALSE"
+  ./readImage sampleImage.ps
+  if test $? -eq 0 ; then
+    echo "ps support"
+    PS_FILES="TRUE"
+  fi
+  SPIX_FILES="FALSE"
+  ./readImage sampleImage.spix
+  if test $? -eq 0 ; then
+    echo "spix support"
+    SPIX_FILES="TRUE"
+  fi            
 else
   echo "Failed to create readImage.  Problems with compilation and/or linking."
 fi
@@ -154,6 +204,13 @@ AC_SUBST(TESS_LIBS)
 AC_SUBST(PNG_FILES)
 AC_SUBST(JPG_FILES)
 AC_SUBST(TIFF_FILES)
+AC_SUBST(WEBP_FILES)
+AC_SUBST(JP2_FILES)
+AC_SUBST(PNM_FILES)
+AC_SUBST(BMP_FILES)
+AC_SUBST(GIF_FILES)
+AC_SUBST(PS_FILES)
+AC_SUBST(SPIX_FILES)
 
 TESSERACT_VERSION=`$PKG_CONFIG --modversion tesseract`
 LEPTONICA_VERSION=`$PKG_CONFIG --modversion lept`

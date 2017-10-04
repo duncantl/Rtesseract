@@ -588,6 +588,13 @@ LTLIBOBJS
 LIBOBJS
 LEPTONICA_VERSION
 TESSERACT_VERSION
+SPIX_FILES
+PS_FILES
+GIF_FILES
+BMP_FILES
+PNM_FILES
+JP2_FILES
+WEBP_FILES
 TIFF_FILES
 JPG_FILES
 PNG_FILES
@@ -1783,19 +1790,19 @@ fi
 
 
 
-if ! test "$PKG_CONFIG" = "" ; then
+if test -n "$PKG_CONFIG" ; then
 
-LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
+  LEPT_CFLAGS=`${PKG_CONFIG} --cflags lept`
 
-if ! test "$?" = "0" ; then
-  echo "Failed to get compilation flags for leptonica via pkg-config"
-  echo "LEPT_CFLAGS = $LEPT_CFLAGS"
-fi
+  if ! test "$?" = "0" ; then
+    echo "Failed to get compilation flags for leptonica via pkg-config"
+    echo "LEPT_CFLAGS = $LEPT_CFLAGS"
+  fi
 
-LEPT_LIBS=`$PKG_CONFIG --libs lept`
+  LEPT_LIBS=`$PKG_CONFIG --libs lept`
 
-TESS_CFLAGS=`${PKG_CONFIG} --cflags tesseract`
-TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
+  TESS_CFLAGS=`${PKG_CONFIG} --cflags tesseract`
+  TESS_LIBS=`${PKG_CONFIG} --libs tesseract`
 
 fi
 
@@ -2452,11 +2459,17 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
-
-
 PNG_FILES="NA"
 JPG_FILES="NA"
 TIFF_FILES="NA"
+WEBP_FILES="NA"
+JP2_FILES="NA"
+PNM_FILES="NA"
+GIF_FILES="NA"
+BMP_FILES="NA"
+PS_FILES="NA"
+PDF_FILES="NA"
+SPIX_FILES="NA"
 
 echo "Compiling readImage"
 $CXX $CPPFLAGS $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
@@ -2481,9 +2494,60 @@ if test "$?" = "0" ; then
     echo "png support"
     PNG_FILES="TRUE"
   fi
+  WEBP_FILES="FALSE"
+  ./readImage sampleImage.webp
+  if test $? -eq 0 ; then
+    echo "webp support"
+    WEBP_FILES="TRUE"
+  fi
+  JP2_FILES="FALSE"
+  ./readImage sampleImage.jp2
+  if test $? -eq 0 ; then
+    echo "jp2 support"
+    JP2_FILES="TRUE"
+  else
+    echo "no jp2 suppport"
+  fi
+  GIF_FILES="FALSE"
+  ./readImage sampleImage.gif
+  if test $? -eq 0 ; then
+    echo "gif support"
+    GIF_FILES="TRUE"
+  fi
+  BMP_FILES="FALSE"
+  ./readImage sampleImage.bmp
+  if test $? -eq 0 ; then
+    echo "bmp support"
+    BMP_FILES="TRUE"
+  fi
+  PNM_FILES="FALSE"
+  ./readImage sampleImage.pnm
+  if test $? -eq 0 ; then
+    echo "pnm support"
+    PNM_FILES="TRUE"
+  fi
+  PS_FILES="FALSE"
+  ./readImage sampleImage.ps
+  if test $? -eq 0 ; then
+    echo "ps support"
+    PS_FILES="TRUE"
+  fi
+  SPIX_FILES="FALSE"
+  ./readImage sampleImage.spix
+  if test $? -eq 0 ; then
+    echo "spix support"
+    SPIX_FILES="TRUE"
+  fi
 else
   echo "Failed to create readImage.  Problems with compilation and/or linking."
 fi
+
+
+
+
+
+
+
 
 
 
@@ -2518,7 +2582,8 @@ echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
 echo "Building libRexit.a"
 (cd src/Rexit; make)
 if test $? = 0 ; then
-ac_config_files="$ac_config_files testRexit/Makevars"
+
+   ac_config_files="$ac_config_files testRexit/Makevars"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -3676,19 +3741,19 @@ $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
 
-echo "Compiling testRexit/tmp.so"
-(cd testRexit; R CMD SHLIB -o tmp.so main.cc)
+   echo "Compiling testRexit/tmp.so"
+   (cd testRexit; R CMD SHLIB -o tmp.so main.cc)
 
-echo "Checking testRexit/tmp.so"
-STR=`Rscript -e 'dyn.load("testRexit/tmp.so"); .C("R_check")' 2>&1 | grep '<tesseract>'`
-echo "output: $STR"
-if test -n "$STR" ; then
-  USE_REXIT="TRUE"
-  REXIT_LIB="-LRexit -lRexit"
-  echo "Using libRexit mechanism"
-else
-   echo "libRexit didn't seem to work. Using atexit() mechanism"
-fi
+   echo "Checking testRexit/tmp.so"
+   STR=`Rscript -e 'dyn.load("testRexit/tmp.so"); .C("R_check")' 2>&1 | grep '<tesseract>'`
+   echo "output: $STR"
+   if test -n "$STR" ; then
+     USE_REXIT="TRUE"
+     REXIT_LIB="-LRexit -lRexit"
+     echo "Using libRexit mechanism"
+   else
+     echo "libRexit didn't seem to work. Using atexit() mechanism"
+   fi
 else
   echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
 fi  # end of test for building libRexit.a

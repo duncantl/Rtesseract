@@ -1,4 +1,6 @@
-imageFormats = c(png = @PNG_FILES@, tiff = @TIFF_FILES@, jpg = @JPG_FILES@)
+imageFormats = c(png = @PNG_FILES@, tiff = @TIFF_FILES@, jpg = @JPG_FILES@, webp = @WEBP_FILES@,
+                 jp2 = @JP2_FILES@, gif = @GIF_FILES@, bmp = @BMP_FILES@, pnm = @PNM_FILES@,
+                 ps = @PS_FILES@, spix = @SPIX_FILES@)
 
 leptonicaImageFormats =
 function ()   
