@@ -110,6 +110,7 @@ exportMethods("$", "$<-", "[[", "[", "names")
 export(nrow, ncol)
 exportMethods("nrow", "ncol", "dim")
 
+export(deskew)
 
 export(pixRead, pixWrite)
 export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConvertTo8, pixFindSkew ,
