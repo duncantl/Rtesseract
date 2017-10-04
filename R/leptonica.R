@@ -1,5 +1,5 @@
 
-setAs("character", "PIX", function(from) readPix(from))
+setAs("character", "Pix", function(from) pixRead(from))
 
 pixAddGray =
 function(pix1, pix2, target = NULL)
@@ -205,7 +205,15 @@ function(x)
 
 
 as.raster.Pix = as.raster.PIX =
-function(x, ...)    
+function(x, rgb = pixGetDepth(x) > 8, maxPixel = NA, ...)    
 {
-  pixGetPixels(x)
+    pixels = if(rgb)
+                pixGetRGBPixels(x)
+             else
+                pixGetPixels(x)
+
+    if(is.na(maxPixel))
+        maxPixel = max(pixels)
+    pixels[] = pixels/maxPixel
+    pixels
 }

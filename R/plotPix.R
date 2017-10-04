@@ -3,14 +3,9 @@ plot.Pix =
     # p = pixRead("inst/images/DifferentFonts.png")
     # p2 = pixConvertTo8(p)
     #
-function(x, y, rgb = pixGetDepth(x) > 8, pixMax = max(pix), ...)   
+function(x, y, rgb = pixGetDepth(x) > 8, pixMax = NA, ...)   
 {
-    pix = if(rgb)
-             pixGetRGBPixels(x)
-          else
-             pixGetPixels(x) # 
-
-    pix[] = pix/pixMax
+    pix = as.raster.Pix(x, rgb, pixMax)
 
 #    opar = par(no.readonly = TRUE)
 #    on.exit(par(opar))
