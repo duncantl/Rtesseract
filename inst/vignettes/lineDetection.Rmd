@@ -94,10 +94,22 @@ plot(p2)
 With the reoriented image, we call the Rtesseract function
 `getLines()`.  This performs several operations on the image
 to return an image that contains either the horizontal or vertical lines.
+We'll first get the horizontal lines with
 ```
-h = getLines(p2, 51, 3)
+h = findLines(p2, 51, 3)
 ```
-Currently, this returns an image (Pix object).
+We specify the Pix to process and then the horizontal width
+and vertical height (in pixels) that define a window or a region.
+This fills in gaps in potential lines within the region.
+Leptonica moves this around and fills in gaps within it if the
+rest of the pixels within the region are not white.
+findLines() uses the function pixCloseGray() to do this.
+
+Currently, findLines() returns an image (Pix object).
+By default, this shows the potential lines and removes everything else.
+(We can also return the image with the lines removed and the text remaining.)
+
+With the image 
 Recall that we converted the original image to a gray-scale image.
 So we can then get the two-dimensional table of pixels as a matrix
 ```
