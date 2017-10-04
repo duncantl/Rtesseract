@@ -1,6 +1,6 @@
 getLines =
     # Could reuse all the pixmaps
-function(pix, hor, vert, asLines = FALSE, invert = !asLines)
+function(pix, hor, vert, asLines = TRUE, invert = !asLines)
 {
    p3 = pixCloseGray(pix, hor, vert)
    p4 = pixErodeGray(p3, 3, 5)
