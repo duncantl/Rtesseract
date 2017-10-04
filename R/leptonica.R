@@ -1,4 +1,3 @@
-setClass("PIX", contains = "Pix")
 
 setAs("character", "PIX", function(from) readPix(from))
 
@@ -105,5 +104,102 @@ function(s1, s2, target = NULL)
    .Call("R_pixSubtract", s1, s2, target)
 }
 
+pixOr =
+function(s1, s2, target = NULL)
+{
+   .Call("R_pixOr", s1, s2, target)
+}
 
-#setMethod("[", "PIX"
+pixXor =
+function(s1, s2, target = NULL)
+{
+   .Call("R_pixOr", s1, s2, target)
+}
+
+pixAnd =
+function(s1, s2, target = NULL)
+{
+   .Call("R_pixAnd", s1, s2, target)
+}
+
+
+pixGetInputFormat =
+function(pix, format)
+{
+   as(.Call("R_pixGetInputFormat", pix), "InputFileFormat")
+}
+
+pixClone =
+function(pix)    
+{
+   .Call("R_pixClone", pix)
+}
+
+pixZero =
+    # This does not zero the pixels in pix, but returns whether the pix is 'empty'
+    # TRUE return indicates if all the values were 0
+    #  meaning no black pixels in a binary image
+    #  all pixels are black in a grayscale image
+    #  all colors in all RGB pixels are 0.
+function(pix)    
+  .Call("R_pixZero", pix)
+
+setMethod("[", c("PIX", "numeric", "missing"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[i, ...]
+          })
+
+    
+setMethod("[", c("PIX", "missing", "numeric"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[, j, ...]
+          })
+
+setMethod("[", c("PIX", "numeric", "numeric"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[i, j, ...]
+        })
+
+setMethod("[", c("PIX", "logical", "logical"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[i, j, ...]
+        })
+setMethod("[", c("PIX", "logical", "missing"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[i, ...]
+        })
+
+setMethod("[", c("PIX", "missing", "logical"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[, j, ...]
+        })
+
+setMethod("[", c("PIX", "matrix"),
+          function(x, i, j, ...) {
+            pixGetPixels(x)[ i, ... ]
+          })
+
+
+setMethod("nrow", "Pix",
+          function(x)
+            pixGetDims(x)[1])
+
+setMethod("ncol", "Pix",
+          function(x)
+          pixGetDims(x)[2])
+
+setMethod("dim", "Pix",
+          function(x)
+            pixGetDims(x)[1:2])
+
+pixGetDepth =
+    # This doesn't call the C routine, but just accesses the value via the dimensions.
+function(x)
+ pixGetDims(x)[3]    
+
+
+as.raster.Pix = as.raster.PIX =
+function(x, ...)    
+{
+  pixGetPixels(x)
+}
