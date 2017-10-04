@@ -18,7 +18,6 @@ function(x, y = "word",
          legend = FALSE,
          ...)
 {
-browser()    
     if(!is.matrix(bbox) && !is.data.frame(bbox))
        m = do.call(rbind, bbox)
     else
