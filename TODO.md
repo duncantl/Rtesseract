@@ -1,23 +1,61 @@
 # Todo Items
 
-## A. Required to get package on CRAN
+1. Add web, jp2, etc. to the image formats supported (TRUE/FALSE)
+   Do this by adding examples to the configuration that calls the readImage application we compile.
 
-1. Add "[" for Pix
-
-1. Check plot.OCR(, croptoBoxes = TRUE)
+1. [check & improve] Add "[" for Pix
+	+ logical, numeric and matrix
+    + For now, Implementations using pixGetPixels(), so they do not take advantage of wanting less
+   	   than the full matrix. 
+	+ Make faster later, maybe.
+	
+1. Check plot.OCR(, cropToBoxes = TRUE)
 
 1. plot.OCR calls Recognize() again.
 
-1. Add method for tesseract() and plot.OCR() to be called with a PIX, 
+1. plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
+   If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
+   from a file.
+   Calling as.raster, so need to provide S3 method for that for pix.
+   
+1.  [see & finish plot.Pix] Method for plot for Pix, i.e. plot(pix). So equivalent to showPix but in R.
+	Not necessarily going to a file. But may want this so that we don't have to deal with color issue. 
+    Deal with colors for rasterImage().
+    For now, don't handle RGB.
+	 
+1. remove dependencies on readPNG() from plot.OCR()
+
+1. pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better
+
+1. [test] pixZero
+
+1. [low] pixOpenBrick()  or do we implement pixOpenGeneral()??
+1. [low] pixConnComp - need?
+1.  [low] pixSeedfill
+
+
+1.  ??Make nrow and ncol generics and export??
+
+1. [okay - could do more] pixWrite should guess the format from the extension.	
+    Can guess png, webp, jp2, jpeg, jpg, lpdf
+	
+1.  [test] pixOr, pixAnd, pixXor, 
+
+1. [test more] Add method for tesseract() to be called with a Pix, 
    (otherwise,
 	   tess = tesseract()
 	   SetImage(tess, pix)
    )
    
-1. remove dependencies on readPNG from plot.OCR()
-
-1. Add showPix() to package, allow to work off the matrix/array directly.
+1. [done] pixGetInputFormat(), pixGetDepth()
+1. [done] nrow, ncol, dim method for PIX/Pix	
+1. [done] Check if a Pix is already in 8bpp
+    pixGetDims(pix)[3] or pixGetDepth()
+   
 	
+
+
+## A. Required to get package on CRAN
 
 1. Fix some new errors.
 
@@ -39,7 +77,10 @@
 1. [done] Get this working on Windows.  
     Works for 3.05.01 with Jeroen's build.
 
+1.  Build on windows with tess4.
+
 1.  Windows: And substitute exit() and tprintf() definitions there.
+    And leptonica's  output to console.
 
 1. [Check carefully on different plaforms] tprintf() and messages on console.
    <br/>
@@ -106,12 +147,13 @@
 
 ## B. Required to submit paper (assumes all A resolved)
 
-1. Get line information.
+1. [finish up] Get line information.
    Via leptonica, opencv, imager, ...
    <br/>
    I think this is more important than smudges as we know it is vital for tables.
 	
 1. Work up one example for each major aspect/function in package:
+ - remove the highlight
  - Location on page
  - Augment dictionary/patterns
  - access confidences/alternatives, treat as data.
@@ -125,15 +167,15 @@
 
 1. Be able to interrupt in OCR computations with Ctrl-c.
 
-1. Get Pix from tesseract as R array
-
-1. Set Pix from R array to tesseract.
-
-1. GetInputImage() - figure out how to convert the Pix to an array() in R 
+1. [working/finish] Get Pix from tesseract as R array
+   GetInputImage() - figure out how to convert the Pix to an array() in R 
      deal with the bits and mapping them back to what we expect from, e.g., readPNG(),
      [fixed] an array is returning 32 deep, whereas readPNG() is just 4.  The depth is in bits in Pix (leptonica).
+     Get rid of code that does this the wrong way.
+	 
+1. [implement with pixSetPixels()] Set Pix from R array to tesseract.
 
-1. [low] Get components - leptonica objects Boxa and Pixa
+1. [somewhat implemented] Get components - leptonica objects Boxa and Pixa
    <br/>
    See GetRegions(), GetStrips() to et the Boxa and Pixa. Not exported yet. 
    <br/>
