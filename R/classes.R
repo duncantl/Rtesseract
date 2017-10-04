@@ -3,7 +3,7 @@ setClass("TesseractBaseAPI", contains = "TesseractRef")
 setClass("ResultIterator", contains = "TesseractRef")
 
 setClass("Pix", contains = "TesseractRef")
-
+setClass("PIX", contains = "Pix")
 
 PageIteratorLevel = c(block = 0L, para = 1L, textline = 2L, word = 3L, symbol = 4L)
 
