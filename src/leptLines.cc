@@ -277,9 +277,10 @@ R_pixGetRGBPixels(SEXP r_pix)
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
             pixGetRGBPixel(pix, j, i, &R, &G, &B);
-            p[j + i*r] = R;
-            p[j + i*r + r*c] = G;
-            p[j + i*r + r*c*2] = B;
+            p[i + j*r] = R;
+            p[i + j*r + r*c] = G;
+            p[i + j*r + r*c*2] = B;
+
         }
     }
     

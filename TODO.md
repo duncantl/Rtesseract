@@ -19,6 +19,8 @@
     + For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
 	+ Make faster later, maybe.
 
+1. nrow, ncol, dim methods for the tesseract object itself?
+
 1. remove dependencies on readPNG() from plot.OCR()
 
 1. [test] pixZero
@@ -48,6 +50,13 @@
 1. [done] Check plot.OCR(, cropToBoxes = TRUE)   
 1. [done] Add IFF_ prefix to asEnumValue() for InputFileFormat so can do pixWrite(,, "PNG") w/o the IFF_
     But of course can use IFF_PNG w/o the quotes.
+1. [fixed] Segfault for pixGetRGBPixels()
+  ```
+  library(Rtesseract)
+  p = pixRead("inst/images/SMITHBURN_1952_p3.png")
+  pixGetRGBPixels(p)
+  ```
+   Wrong indexing into the R matrix!
 
 ## A. Required to get package on CRAN
 
