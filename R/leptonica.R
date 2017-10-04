@@ -76,8 +76,9 @@ function(pix, dims = pixGetDims(pix))
 pixGetRGBPixels =
 function(pix, dims = pixGetDims(pix))
 {
-    ans = .Call("R_pixGetPixels", pix)
-    dim(ans) = dims[1:2]
+    ans = .Call("R_pixGetRGBPixels", pix)
+    dims[3] = 3L
+    dim(ans) = dims # [1:2]
     ans
 }
 
