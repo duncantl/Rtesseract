@@ -159,11 +159,11 @@ function(val, values, class = values@EnumName, fromString = NA,
      i = pmatch(val, names(values))  # allowing pmatch, but should type it explicitly in code.
        # deal with lowercase matches for covenience
      if(is.na(i))
-       i = pmatch(val, tolower(names(values)))
+       i = pmatch(tolower(val), tolower(names(values)))
 
        # and if still not there, remove the prefix.
      if(is.na(i) && length(prefix))
-       i = pmatch(val, tolower(gsub(paste("^", prefix, sep = ""), "",  names(values))))
+       i = pmatch(tolower(val), tolower(gsub(paste("^", prefix, sep = ""), "",  names(values))))
   } else
      i = match(val, values)
 
