@@ -9,15 +9,16 @@
    rasterImage() takes time, calling rgb() which profiling indicates takes the longest time - 27%
    Apparently (when stepping through the code) GetInputName(), is.na(img) before rasterImage() call take time.
 
-1. [check & improve] Add "[" for Pix
+1. [improved] Add "[" for Pix
 	+ logical, numeric and matrix
-    + For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
-	+ Make faster later, maybe.
+	+ Fast versions now implemented, except for matrix.
+    + [no longer true for most cases.] For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
 
 1. nrow, ncol, dim methods for the tesseract object itself?
 
 1. remove dependencies on readPNG() from plot.OCR()
-
+    Not necessary. They are just suggests. May be faster than plotting from the Pix??
+	
 1. [test] pixZero
 1. [low] pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better.
 1. [low] pixOpenBrick()  or do we implement pixOpenGeneral()??

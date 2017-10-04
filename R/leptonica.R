@@ -146,37 +146,80 @@ pixZero =
 function(pix)    
   .Call("R_pixZero", pix)
 
-setMethod("[", c("PIX", "numeric", "missing"),
+setMethod("[", c("Pix", "missing", "missing"),
+          function(x, i, j, ...)  {
+              pixGetPixels(x)
+          })
+
+setMethod("[", c("Pix", "numeric", "missing"),
           function(x, i, j, ...) {
-            pixGetPixels(x)[i, ...]
+              pixNumericSubset(x, i, seq(1, ncol(x)), ...)              
           })
 
     
-setMethod("[", c("PIX", "missing", "numeric"),
+setMethod("[", c("Pix", "missing", "numeric"),
           function(x, i, j, ...) {
-            pixGetPixels(x)[, j, ...]
+              pixNumericSubset(x, seq(1, nrow(x)), j, ...)
           })
 
-setMethod("[", c("PIX", "numeric", "numeric"),
+
+pixNumericSubset =
+function(x, i, j, ...)
+{
+    d = dim(x)
+    if(length(i) == 0)
+        i = seq(1, d[1])
+    else {
+        i = as.integer(i)        
+        if(any(i < 0))
+            i = seq(1, d[1])[i]
+    }
+
+    if(length(j) == 0)
+        j = seq(1, d[1])
+    else {
+        j = as.integer(j)    
+        if(any(j < 0))
+            j = seq(1, d[2])[j]
+    }
+    
+    ans = .Call("R_pixGetSubsetPixels", x, i, j)
+
+    dim(ans) = c(length(i), length(j))
+    ans
+}
+setMethod("[", c("Pix", "numeric", "numeric"), pixNumericSubset)
+
+setMethod("[", c("Pix", "logical", "logical"),
           function(x, i, j, ...) {
-            pixGetPixels(x)[i, j, ...]
+              ix = which(i)
+              if(length(ij) == 0)
+                  return(matrix(0, nrow(x), 0))              
+              jx = which(j)
+              if(length(ij) == 0)
+                  return(matrix(0, 0, ncol(x)))
+              
+              pixNumericSubset(x, ix, jx, ...)
+        })
+setMethod("[", c("Pix", "logical", "missing"),
+          function(x, i, j, ...) {
+              ix = which(i)              
+              pixNumericSubset(x, ix, integer(), ...)              
         })
 
-setMethod("[", c("PIX", "logical", "logical"),
+setMethod("[", c("Pix", "missing", "logical"),
           function(x, i, j, ...) {
-            pixGetPixels(x)[i, j, ...]
-        })
-setMethod("[", c("PIX", "logical", "missing"),
-          function(x, i, j, ...) {
-            pixGetPixels(x)[i, ...]
-        })
-
-setMethod("[", c("PIX", "missing", "logical"),
-          function(x, i, j, ...) {
-            pixGetPixels(x)[, j, ...]
+              ij = which(j)
+              if(length(ij) == 0)
+                  return(matrix(0, 0, ncol(x)))
+              
+              pixNumericSubset(x, integer(), ij, ...)                            
         })
 
-setMethod("[", c("PIX", "matrix"),
+# Should do the cross over combinations, e.g., numeric, integer; numeric, logical
+# no methods for character indexing.
+
+setMethod("[", c("Pix", "matrix"),
           function(x, i, j, ...) {
             pixGetPixels(x)[ i, ... ]
           })
@@ -184,6 +227,7 @@ setMethod("[", c("PIX", "matrix"),
 
 if(!isGeneric("nrow"))
     setGeneric("nrow", function(x) standardGeneric("nrow"))
+
 if(!isGeneric("ncol"))
     setGeneric("ncol", function(x) standardGeneric("ncol"))
 

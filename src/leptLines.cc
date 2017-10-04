@@ -322,28 +322,6 @@ R_pixClone(SEXP r_pix)
        return(R_NilValue);
 }
 
-#define PIX_FUN2(name) \
-extern "C" \
-SEXP                                             \
-R_##name(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd) \
-{ \
-    PIX *pixs1 = GET_REF(r_pixs1, PIX); \
-    PIX *pixs2 = GET_REF(r_pixs2, PIX); \
-     \
-    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL; \
-    PIX *ans = name(pixd, pixs1, pixs1); \
-     \
-    if(r_pixd == R_NilValue) \
-       return(createRef(ans, "PIX", R_pixDestroy));     \
-    else \
-        return(r_pixd); \
-}
-
-PIX_FUN2(pixSubtract)
-PIX_FUN2(pixAnd)
-PIX_FUN2(pixOr)
-PIX_FUN2(pixXor)
-
 
 extern "C"
 SEXP
@@ -378,4 +356,59 @@ R_pixEqual(SEXP r_pixs1, SEXP r_pixs2, SEXP r_useAlpha, SEXP r_useCMap)
     }
     
     return(ScalarLogical(val));
+}
+
+
+
+
+#define PIX_FUN2(name) \
+extern "C" \
+SEXP                                             \
+R_##name(SEXP r_pixs1, SEXP r_pixs2, SEXP r_pixd) \
+{ \
+    PIX *pixs1 = GET_REF(r_pixs1, PIX); \
+    PIX *pixs2 = GET_REF(r_pixs2, PIX); \
+     \
+    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL; \
+    PIX *ans = name(pixd, pixs1, pixs1); \
+     \
+    if(r_pixd == R_NilValue) \
+       return(createRef(ans, "PIX", R_pixDestroy));     \
+    else \
+        return(r_pixd); \
+}
+
+PIX_FUN2(pixSubtract)
+PIX_FUN2(pixAnd)
+PIX_FUN2(pixOr)
+PIX_FUN2(pixXor)
+
+
+
+extern "C"
+SEXP
+R_pixGetSubsetPixels(SEXP r_pix, SEXP r_i, SEXP r_j)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    
+    size_t r = Rf_length(r_i);
+    size_t c = Rf_length(r_j);    
+    
+    SEXP ans = NEW_NUMERIC(r * c);
+    double *p = REAL(ans);
+
+    int *pi, *pj;
+    pi = INTEGER(r_i);
+    pj = INTEGER(r_j);
+    
+    l_uint32 val;
+    int i, j;    
+    for(j = 0; j < c; j++) {
+        for(i = 0; i < r; i++) {
+            pixGetPixel(pix, pj[j] - 1 , pi[i] - 1, &val);
+            p[i + j*r] = val;
+        }
+    }
+    
+    return(ans);
 }
