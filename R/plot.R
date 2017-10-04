@@ -18,6 +18,7 @@ function(x, y = "word",
          legend = FALSE,
          ...)
 {
+browser()    
     if(!is.matrix(bbox) && !is.data.frame(bbox))
        m = do.call(rbind, bbox)
     else
@@ -76,8 +77,8 @@ function(x, y = "word",
 
     plot(0, type = "n", xlab = "", ylab = "", xlim = mx, ylim = my, ..., xaxs = "i", yaxs = "i")
            
-    if(!is.null(img) && !is.na(img))
-        rasterImage(img, mx[1], my[1], mx[2], my[2])    
+    if(!is.null(img)) # && !is.na(img))
+       rasterImage(as.raster(img), mx[1], my[1], mx[2], my[2])    
 
         # Draw the bounding boxes for the detected elements.
     rect(m[,1],  m[,2], m[,3],  m[,4], border = border,

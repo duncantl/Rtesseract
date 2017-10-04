@@ -1,6 +1,6 @@
 # Todo Items
 
-1. plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
+1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
    from a file.
    Calling as.raster, so need to provide S3 method for that for pix.
