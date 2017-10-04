@@ -7,6 +7,6 @@ Makevars-
 Rexit-old
 *-
 *.rds
-
-
-
+inst/Paper/figure/
+*.brf
+*.tex
