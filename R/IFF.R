@@ -22,6 +22,6 @@ InputFileFormatValues = structure(c(0L, 1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L, 9L, 10L,
 `IFF_DEFAULT` = GenericEnumValue('IFF_DEFAULT', 17L, 'InputFileFormat')
 `IFF_SPIX` = GenericEnumValue('IFF_SPIX', 18L, 'InputFileFormat')
 
- setAs("character", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = NA) )
- setAs("integer", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = NA) )
- setAs("numeric", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = NA) )
+ setAs("character", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = "IFF_") )
+ setAs("integer", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = "IFF_") )
+ setAs("numeric", "InputFileFormat", function(from) asEnumValue(from, InputFileFormatValues, "InputFileFormat", prefix = "IFF_") )
