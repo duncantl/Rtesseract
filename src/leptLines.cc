@@ -198,6 +198,16 @@ R_pixGetRes(SEXP r_pix)
 
 extern "C"
 SEXP
+R_pixSetRes(SEXP r_pix, SEXP r_vals)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    l_int32 ans = pixSetResolution(pix, INTEGER(r_vals)[0], INTEGER(r_vals)[1]);
+    return(ScalarInteger(ans));
+}
+
+
+extern "C"
+SEXP
 R_pixGetPixels(SEXP r_pix)
 {
     PIX *pix = GET_REF(r_pix, PIX);

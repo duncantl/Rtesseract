@@ -60,6 +60,13 @@ function(pix)
    structure(.Call("R_pixGetRes", pix), names = c("rows", "columns"))
 }
 
+pixSetRes =
+function(pix, h, v = h)
+{
+  res = as.integer(c(h, v))
+  .Call("R_pixSetRes", pix, res)
+}
+
 pixGetDims =
 function(pix)
 {    
