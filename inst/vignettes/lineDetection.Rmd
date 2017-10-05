@@ -67,7 +67,10 @@ p1 = pixConvertTo8(p1)
 as we assign the new image to the same R variable.)
 
 The next step is to correct any skew or orientation in the image.
-To do this, we must first create a separate binary image using
+There is a function deskew() to do this. However, we will show the steps
+as they illustrate some of the leptonica functions.
+
+To detect the skew, we must first create a separate binary image using
 `pixThresholdToBinary()`.
 Then we call `pixFindSkew()` and then rotate the original image
 by the skew angle:
@@ -109,34 +112,213 @@ Currently, findLines() returns an image (Pix object).
 By default, this shows the potential lines and removes everything else.
 (We can also return the image with the lines removed and the text remaining.)
 
-With the image 
-Recall that we converted the original image to a gray-scale image.
-So we can then get the two-dimensional table of pixels as a matrix
+`findLines()` returns a binary image containing the potential lines.
+We convert this to a matrix of 0s and 1s in R:
 ```
 m = pixGetPixels(h)
 ```
 
-We can view this image with `plot(m)` or
+We can view this image with `plot(h)` or
 by writing the Pix object to a file and viewing that.
 
-However, we can work with the matrix of pixel values.
-We are looking for horizontal lines.
-We can find the rows of this matrix that  have 1000 or more
+We can see 4 long horizontal lines the original image that span the width of the text,
+and we also see two shorter line segments above and below the text
+"No. of strains isolated from".
+
+We can find the rows of this matrix that have 1000 or more
 black pixels.  We do this with
 ```
 w = rowSums(m) > 1000
 ```
 The value 1000 is context-specific.  It includes lines
-that span 1000 pixels or several smaller segments whose length adds up to 1000 pixels.
+that span 1000 pixels or more,  and also lines that have several smaller segments whose length adds up to 1000 pixels.
+1000 is about 25% of the columns.  This might be too large to detect the
+shorter line segments on the right of the table header.
 
 How many rows of the matrix satisfy this criterion:
 ```
 table(w)
 ```
+So we have 46 which is a lot more than the 6 we see in the original image.
 
 We can see where these horizontal lines
 ```
-tess = tesseract(f)
-plot(tess)
+plot(h)
 abline(h = nrow(m) - which(w), col = "red")
 ```
+Note that the rows in the matrix go from 1 to nrow, while on the plot,
+they go down the page. This is why we get the height with  nrow(m) - which(w).
+
+We can see we get the 4 lines that span the width of the text area, but not the two shorter line segments.
+So let's relax the threshold. We'll use 10% of the columns
+```
+w = rowSums(m) > .1 * ncol(m)
+abline(h = nrow(m) - which(w), col = "red")
+```
+So we detect these two shorter lines and no others.
+However, now we have 74 rows in the matrix that satisfy this criterion.
+Yet we see only 6 lines on the plot.
+
+Let's look at the row numbers for these 74 rows:
+```
+which(w)
+```
+It may not be clear, but these are grouped together.
+Each of the red lines we see on the plot ise actually a collection of multiple lines.
+This is clearer if we compute the different between the row numbers
+```
+diff(which(w))
+```
+We see a collection of 1s meaning that these are adjacent rows, then a large
+jump between row numbers, followed by a collection of 1s and on.
+So it is clear these are grouped.
+We can group these lines in various ways.
+One way is run length encoding (RLE):
+```
+rle(diff(which(w)))
+```
+Another way is very similar but more explicit and gives us a little more control.
+We find where the differences between successive row numbers is greater than 2
+and then we run a cumulative sum which gives us group labels:
+```
+g = cumsum( diff(which(w)) > 2 )
+```
+
+We can use g to split the rows into groups
+```
+rowNums = which(w)
+ll = tapply(seq(along = rowNums), c(0, g), function(i) m[rowNums[i], ])
+names(ll) = tapply(seq(along = rowNums), c(0, g), function(i) as.integer(mean(rowNums[i])))
+```
+(Note that we added 0 to the start of the vector g since g has one less element than
+w since we were computing pairwise differences.)
+The computation is a little akward. We split the indices of rowNums and then have
+to use those to index back into rowNums to find out which rows of m we need to extract for this group.
+
+The third line puts the average of the row numbers of each group as the name of that element.
+This will be convenient for mapping this back to the general vertical area.
+
+Each element of ll is a matrix. For each of these, we  want to combine them
+to identify the start and end of a line. Each may have several separate line segments.
+
+Lets consider the first element of ll. It has 14 rows and 4050 columns.
+It is useful to query how many 0s and 1s there are?
+```
+table(ll[[1]])
+```
+These are about equal:  27000 0s and 30000 1s.
+(In this setup, 1 is black.)
+So there are many white pixels eventhough these appear as solid line on our plot.
+But that was because we just drew a straight line at these vertical positions, regardless how how
+many pixels were white. Of course, we selected these rows because they had many black pixels.
+
+Since we think these rows make up a single line, let's aggregate them into a single row with colSums:
+```
+rr = colSums(ll[[1]])
+```
+
+If this is a solid line across most of the page, we'd expect most pixels to be filled with perhaps a few short
+gaps.
+Each element of rr contains the number of rows in this group that had a black pixel.
+This might be 1 or 14, with only one row or all of them having a black pixel.
+We might look at these counts or just consider whether any row has a black pixel in this column.
+
+If we look at the vector rr, we see a lot of 0s at the beginning and the end. These are the margins where the
+line is not present.
+If we just threshold this to have any of the columns has a black pixel,
+```
+rle(rr > 0)
+```
+we get the two margins and a long run of 2895 pixels.
+If we require at least half of the 14 rows to have a black pixel in a column,
+we get the same groups:
+```
+rle(rr >= 7)
+```
+
+
+Let's consider one of the shorter lines.
+These are elements 2 and 3 of ll. 
+Again, we compute the column sums
+```
+rr = colSums(ll[[2]])
+table(rr)
+```
+Most are 0.
+There are 9 rows in this group.
+So we see no columns that have at least one black pixel but less than half the number of rows.
+Let's draw points at each of the columns that have a black pixel in at least half the rows
+```
+z = which(rr >= 4.5)
+points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)), col = "green", pch = 16)
+```
+
+
+So this appears to be a reasonable approach
+
+
+
+## Vertical Lines
+We can follow the same process to identify the locations
+of the vertical lines. We've already deskewed  the original image,
+so we don't have to do that.
+We can call findLines() and this time specify a window that is tall and narrow
+to capture the vertical parts.
+We should experiment  with these values.
+One thing to note is that characters have vertical components more than horizontal components,
+e.g. 1, L, M.  If we make the height of the window too small, we'll pick up more false positives.
+```
+v = findLines(p2, 3, 101)
+```
+Again, we can plot this and see where the lines are.
+
+
+
+
+
+# Removing the Lines
+We don't have to remove the lines before we pass the image to tesseract
+as tesseract will remove them for us.
+However, it is interesting to see how well we can do.
+Instead of finding the locations of the lines, we'll remove them from the image.
+This uses the same approach, but doesn't analyze the line images, their inverse,
+i.e. with the lines removed.
+
+```
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+p1 = pixRead(f)
+p2 = pixConvertTo8(p1)
+p2 = deskew(p2)
+p3 = findLines(p2, 51, 1, FALSE)
+p4 = findLines(p2, 3, 101, FALSE)
+p = pixAddGray(p2, p3)
+p = pixAddGray(p, p4)
+plot(p)
+```
+
+Let's compare this to the original image.
+```
+dev.new()
+plot(p2)
+```
+
+We can certainly see light grey "smudges" in some places where the vertical lines were.
+We also see some short horizontal line segments remaining.
+
+We can experiment with the horizontal and vertical values we pass to findLines().
+Increasing the horizontal width from 51 to 75 cleans up the horizontal lines.
+
+We can also change the thresholds for creating the binary images.
+
+We can also threshold the final image (p) at this point.
+We set any value 50 or above to 255, i.e., white, with
+```
+pp = pixThresholdToValue(p, 50, 255)
+```
+and when we plot the resulting image
+```
+plot(pp)
+```
+the gray marks on the vertical lines have disappeared.
+Note however that it removed some of the text, specifically the rotated text on the right
+and the URL within that text that is colored blue in the original image
