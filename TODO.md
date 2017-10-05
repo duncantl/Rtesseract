@@ -21,7 +21,10 @@
 
 1. [low] remove dependencies on readPNG() from plot.OCR()
     Not necessary. They are just suggests. May be faster than plotting from the Pix??
-	
+
+
+1. Methods for pixOrientDetect", pixUpDownDetect, pixUpDownDetectGeneral
+
 1. [test] pixZero
 1. [low] pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better.
 1. [low] pixOpenBrick()  or do we implement pixOpenGeneral()??
