@@ -1,3 +1,10 @@
+---
+title: Cleaning an Image Before OCR
+date: \today{}
+geometry: margin=1in
+output: html_document
+---
+
 
 Consider the image
 

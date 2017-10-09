@@ -321,4 +321,12 @@ plot(pp)
 ```
 the gray marks on the vertical lines have disappeared.
 Note however that it removed some of the text, specifically the rotated text on the right
-and the URL within that text that is colored blue in the original image
+and the URL within that text that is colored blue in the original image.
+
+We can compare the image we created with the lines removed to
+the one tesseract creates.  We do this with
+```
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+tesseract(f, pageSegMode = "psm_auto", textord_tabfind_show_vlines = 1)
+```
+This creates a PDF file named vhlinefinding.pdf.
