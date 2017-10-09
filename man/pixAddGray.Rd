@@ -3,7 +3,14 @@
 \alias{pixInvert}
 \alias{pixErodeGray}
 \alias{pixCloseGray}
+\alias{pixOpenGray}
+\alias{pixDilateGray}
 \alias{pixConvertTo8}
+\alias{pixErodeBrick}
+\alias{pixOpenBrick}
+\alias{pixCloseBrick}
+\alias{pixDilateBrick}
+
 \title{Pix Operations}
 \description{
   This is one collection of functions useful for manipulating

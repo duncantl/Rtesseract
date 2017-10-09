@@ -6,7 +6,7 @@
 \alias{$<-,TesseractBaseAPI-method}
 \alias{[,TesseractBaseAPI,character-method}
 \alias{[,TesseractBaseAPI,character,ANY-method}
-\alias{[<-,TesseractBaseAPI,character-method}
+\alias{[<-,TesseractBaseAPI,character,missing-method}
 \alias{[[,TesseractBaseAPI,character-method}
 \alias{[[<-,TesseractBaseAPI,character-method}
 \alias{names,TesseractBaseAPI-method}
