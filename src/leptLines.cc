@@ -506,11 +506,14 @@ R_pixSetMatrixVals(SEXP r_pix, SEXP r_i, SEXP r_j, SEXP r_vals)
 
     int r = Rf_length(r_i);
     int c = Rf_length(r_j);
+    int ctr = 0;
+    int nvals = Rf_length(r_vals);
     for(i = 0; i < r; i++)
-        for(j = 0; j < c ; j++) {
+        for(j = 0; j < c ; j++, ctr++) {
             x = p_j[j] - 1;
             y = p_i[i] - 1;
-            pixSetPixel(pix, x, y, pv[ 0 ]); //XXX
+//            Rprintf("%d, %d  (%d)  %d\n", x, y,  ctr % nvals,  pv[ ctr % nvals ]);
+            pixSetPixel(pix, x, y, pv[ ctr % nvals ]); //XXX
     }
     
     return(r_pix);
