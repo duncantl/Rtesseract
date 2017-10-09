@@ -30,18 +30,18 @@ function(pix, hor, vert, lineThreshold = .1, fraction = .5, gap = .02,
   idx = which(w)
   g = cumsum( diff(idx) > 2 )
     # collect the rows   Fix for columns too.
-  ll = tapply(seq(along = idx), c(0, g), function(i) if(horizontal) img[idx[i], ] else img[, idx[i]]) 
-  names(ll) = tapply(seq(along = idx), c(0, g), function(i) as.integer(mean(idx[i])))
+  ll = lapply(split(seq(along = idx), c(0, g)), function(i) if(horizontal) img[idx[i], ] else img[, idx[i]])
+  names(ll) = pos = tapply(seq(along = idx), c(0, g), function(i) as.integer(mean(idx[i])))
 
     # Next, for each of these vectors, process the groups to find where they agree
 
-  z = lapply(ll, getHLine, horizontal = horizontal, fraction = fraction, gap = gap)
+  z = mapply(getHLine, ll, pos, MoreArgs = list(horizontal = horizontal, fraction = fraction, gap = gap), SIMPLIFY = FALSE)
 }
 
 getHLine =
     #  x is a matrix of (in the horizontal case) rows that are close together that make up a single line on the image but consist of multiple lines in the matrix.
     # fraction  proportion of the "rows" that have to have a black pixel for that column to be considered black/on
-function(x, horizontal = TRUE, fraction = .5, gap = .02)
+function(x, coord, horizontal = TRUE, fraction = .5, gap = .02)
 {
     if(horizontal) {
         on = colSums(x) > nrow(x) * fraction
@@ -60,7 +60,19 @@ function(x, horizontal = TRUE, fraction = .5, gap = .02)
     i = which(r$values)
     pos = cumsum(r$length)
     ans = cbind(pos[i-1], pos[i])
-    connectGap(ans, gap)
+    ans = connectGap(ans, gap)
+
+    m = matrix(0, nrow(ans), 4, dimnames = list(NULL, c("x0", "y0", "x1", "y1")))
+    if(horizontal) {
+        m[, c(1, 3)] = ans
+        m[, c(2, 4)] = coord        
+    } else {
+        m[, c(2, 4)] = ans
+        m[, c(1, 3)] = coord        
+    }
+
+    m
+    
 #    idx = sort(c(i-1,i))
 #    matrix(cumsum(r$length)[idx],, 2, byrow = TRUE)
 }
