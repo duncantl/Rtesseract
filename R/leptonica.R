@@ -47,6 +47,31 @@ pixErodeGray =
 function(pix, horiz, vert)
     .Call("R_pixErodeGray", pix, as.integer(horiz), as.integer(vert))
 
+pixDilateGray =
+function(pix, horiz, vert)
+    .Call("R_pixDilateGray", pix, as.integer(horiz), as.integer(vert))
+
+pixOpenGray =
+function(pix, horiz, vert)
+    .Call("R_pixOpenGray", pix, as.integer(horiz), as.integer(vert))
+
+
+pixCloseBrick =
+function(pix, horiz, vert, target = NULL)
+    .Call("R_pixCloseBrick", pix, target, as.integer(horiz), as.integer(vert))
+
+pixOpenBrick =
+function(pix, horiz, vert, target = NULL)
+    .Call("R_pixOpenBrick", pix, target, as.integer(horiz), as.integer(vert))
+
+pixErodeBrick =
+function(pix, horiz, vert, target = NULL)
+    .Call("R_pixErodeBrick", pix, target, as.integer(horiz), as.integer(vert))
+
+pixDilateBrick =
+function(pix, horiz, vert, target = NULL)
+    .Call("R_pixDilateBrick", pix, target, as.integer(horiz), as.integer(vert))
+
 
 pixRotateAMGray =
     # AM = Area Mapping, i.e. interpolation. See docs in leptonica code.
@@ -233,6 +258,59 @@ setMethod("[", c("Pix", "missing", "logical"),
 setMethod("[", c("Pix", "matrix"),
           function(x, i, j, ...) {
             pixGetPixels(x)[ i, ... ]
+          })
+
+
+setMethod("[<-", c("Pix", "matrix", "missing"),
+          function(x, i, j, ..., value) {
+              if(ncol(i) == 2) {
+                  i = matrix(as.integer(i), , 2)
+                  if(length(value) < nrow(i))
+                     value = rep(value, length = nrow(i))
+
+                  .Call("R_pixSet2DMatrixVals", x, i, value)
+                  return(x)
+              }
+
+              stop('not implemented yet')
+          })
+
+setMethod("[<-", c("Pix", "missing", "numeric"),
+          function(x, i, j, ..., value) {
+              x[seq(1L, length = nrow(x)), j, ...] = value
+              x
+          })
+
+setMethod("[<-", c("Pix", "numeric"),
+          function(x, i, j, ..., value) {
+              i = as.integer(i)
+              if(missing(j))
+                  j = seq(1L, length = ncol(x))
+              else
+                  j = as.integer(j)
+              # check for negative values.
+              vals = as.integer(value)
+              .Call("R_pixSetMatrixVals", x, i, j, vals)
+              x
+          })
+
+
+setMethod("[<-", c("Pix", "logical", "missing"),
+          function(x, i, j, ..., value) {
+              x[which(i), seq(1L, length = ncol(x))] = value
+              x
+          })
+
+setMethod("[<-", c("Pix", "missing", "logical"),
+          function(x, i, j, ..., value) {
+              x[seq(1L, length = nrow(x)), which(j)] = value
+              x
+          })
+
+setMethod("[<-", c("Pix", "logical", "logical"),
+          function(x, i, j, ..., value) {
+              x[which(i), which(j)] = value
+              x
           })
 
 
