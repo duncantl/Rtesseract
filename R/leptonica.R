@@ -281,13 +281,14 @@ setMethod("[<-", c("Pix", "missing", "numeric"),
               x
           })
 
-setMethod("[<-", c("Pix", "numeric"),
+setMethod("[<-", c("Pix", "numeric", "missing"),
           function(x, i, j, ..., value) {
               i = as.integer(i)
               if(missing(j))
                   j = seq(1L, length = ncol(x))
               else
                   j = as.integer(j)
+              
               # check for negative values.
               vals = as.integer(value)
               .Call("R_pixSetMatrixVals", x, i, j, vals)
