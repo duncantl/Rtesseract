@@ -281,7 +281,8 @@ setMethod("[<-", c("Pix", "missing", "numeric"),
               x
           })
 
-setMethod("[<-", c("Pix", "numeric", "missing"),
+
+tmp =
           function(x, i, j, ..., value) {
               i = as.integer(i)
               if(missing(j))
@@ -293,7 +294,10 @@ setMethod("[<-", c("Pix", "numeric", "missing"),
               vals = as.integer(value)
               .Call("R_pixSetMatrixVals", x, i, j, vals)
               x
-          })
+          }
+
+setMethod("[<-", c("Pix", "numeric", "missing"), tmp)
+setMethod("[<-", c("Pix", "numeric", "numeric"), tmp)
 
 
 setMethod("[<-", c("Pix", "logical", "missing"),
