@@ -35,7 +35,7 @@ if(FALSE) {
 }
 # Vertical lines
 
-v = Rtesseract:::findLines(p2, 1, 101, TRUE) # vertical lines
+v = findLines(p2, 1, 101, TRUE) # vertical lines
 m = pixGetPixels(v)
 r = colSums(m)
 w = r > 1000
