@@ -1,6 +1,6 @@
 # Todo Items
 
-1. findLines() and getLines() functions.
+1. [verify] findLines() and getLines() functions.
 
 1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
@@ -61,6 +61,14 @@
   pixGetRGBPixels(p)
   ```
    Wrong indexing into the R matrix!
+
+1. [Yes] Check tesseract(config = ...) and tesseract(vars = ...) are working correctly.
+  Calling tesseract on the command line creates vhlinfinding.pdf in 
+  ```
+  tesseract SMITHBURN_1952_p3.png foo   config 
+  ```
+  but not tesseract("", configs = "config")
+  Need pageSegMode = "psm_auto".
 
 ## A. Required to get package on CRAN
 
