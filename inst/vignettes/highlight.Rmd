@@ -36,9 +36,11 @@ Of course, there is text under this highlight.
 We need to pre-process the image before we pass it to tesseract to have the possibility of
 recovering this text.
 We do this using some of the functions that interface to the leptonica library.
-In this case, we need only convert the image from color to gray-scale or 8 bits per pixel.
-We do this with the  `pixConvertTo8()` function.
-So we read the image and convert it with
+In this case,
+it turns out we need only convert the image from color to gray-scale or 8 bits per pixel.
+The tesseract will be able to recover the text.
+We covert the image to gray-scale with the  `pixConvertTo8()` function.
+We read the image and convert it with
 ```
 pix = pixRead("../images/SMITHBURN_1952_p3.png")
 pix1 = pixConvertTo8(pix)
@@ -57,14 +59,17 @@ returned by tesseract for this modified image:
 c("lot", "65", "arboreal") %in% w1
 ```
 Indeed all three are there.
-However
+And if we cound the number of occurrences of each
 ```
 table(w1)[c("lot", "65", "arboreal")]
 ```
-Here we see that we get a count of 1 for "65" and "arboreal" and 2 for lot.
+we see that we get a count of 1 for "65" and "arboreal" and 2 for "lot".
 So we got both "lot" words.
 
 Of course, there is no guarantee that tesseract will correctly identify
 the words in general.  We know that it did this correctly for our image.
 It could of course recognize arboreal as something slightly different and so
 not appear in the table of words.
+But the lesson here is that preprocessing the image can help, and sometimes
+it is quite simple.
+
