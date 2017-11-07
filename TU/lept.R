@@ -1,9 +1,11 @@
 library(RCIndex)
 library(RCodeGen)
 tu = createTU("leptonica.cc", include = "/usr/local/include")
+tu = createTU("leptonica.cc", include = "~/local/include/leptonica")
 
 e = getEnums(tu)
 
+r = getRoutines(tu)
 
 iff = e[[ which(sapply(e, function(x) all(grepl("^IFF", names(x@values))))) ]]
 iff@name = "InputFileFormat"
