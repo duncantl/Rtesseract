@@ -21,7 +21,7 @@ pixAddPix
 pixOr
 pixXor
 
-pixOpenBrink
+pixOpenBrick
 pixCloseBrick
 
 pixGetWpl l.724

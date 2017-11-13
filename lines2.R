@@ -18,7 +18,7 @@ p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 
 #debug(Rtesseract:::getLines)
 # Horizontal lines
-h = Rtesseract:::findLines(p2, 51, 3, TRUE, erode = integer())
+h = findLines(p2, 51, 3, TRUE, erode = integer())
 m = pixGetPixels(h)
 r = rowSums(m)
 w = r > 1000
@@ -35,7 +35,7 @@ if(FALSE) {
 }
 # Vertical lines
 
-v = Rtesseract:::findLines(p2, 1, 101, TRUE) # vertical lines
+v = findLines(p2, 1, 101, TRUE) # vertical lines
 m = pixGetPixels(v)
 r = colSums(m)
 w = r > 1000

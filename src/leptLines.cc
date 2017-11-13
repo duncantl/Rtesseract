@@ -154,6 +154,27 @@ R_pixErodeGray(SEXP r_pix, SEXP r_horiz, SEXP r_vert)
 
 extern "C"
 SEXP
+R_pixDilateGray(SEXP r_pix, SEXP r_horiz, SEXP r_vert)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixDilateGray(pix, INTEGER(r_horiz)[0], INTEGER(r_vert)[0]);
+    return(createRef(ans, "PIX", R_pixDestroy));    
+}
+
+extern "C"
+SEXP
+R_pixOpenGray(SEXP r_pix, SEXP r_horiz, SEXP r_vert)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixOpenGray(pix, INTEGER(r_horiz)[0], INTEGER(r_vert)[0]);
+    return(createRef(ans, "PIX", R_pixDestroy));    
+}
+
+
+
+
+extern "C"
+SEXP
 R_pixRotateAMGray(SEXP r_pix, SEXP r_angle, SEXP r_grayval)
 {
     PIX *pix = GET_REF(r_pix, PIX);
@@ -195,6 +216,16 @@ R_pixGetRes(SEXP r_pix)
     INTEGER(ans)[0] = pixGetYRes(pix);
     return(ans);
 }
+
+extern "C"
+SEXP
+R_pixSetRes(SEXP r_pix, SEXP r_vals)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    l_int32 ans = pixSetResolution(pix, INTEGER(r_vals)[0], INTEGER(r_vals)[1]);
+    return(ScalarInteger(ans));
+}
+
 
 extern "C"
 SEXP
@@ -411,4 +442,79 @@ R_pixGetSubsetPixels(SEXP r_pix, SEXP r_i, SEXP r_j)
     }
     
     return(ans);
+}
+
+
+
+#define PIX_PIXD_HOR_VER(name) \
+extern "C" \
+SEXP  \
+R_##name(SEXP r_pix, SEXP r_pixd, SEXP r_horiz, SEXP r_vert) \
+{ \
+    PIX *pix = GET_REF(r_pix, PIX); \
+    PIX *pixd = (r_pixd != R_NilValue) ? GET_REF(r_pixd, PIX) : NULL; \
+ \
+    PIX *ans = name(pixd, pix, INTEGER(r_horiz)[0], INTEGER(r_vert)[0]); \
+\
+    if(r_pixd == R_NilValue)                             \
+       return(createRef(ans, "PIX", R_pixDestroy));      \
+    else  \
+       return(r_pixd);      \
+}
+
+PIX_PIXD_HOR_VER(pixOpenBrick)
+PIX_PIXD_HOR_VER(pixCloseBrick)
+PIX_PIXD_HOR_VER(pixDilateBrick)
+PIX_PIXD_HOR_VER(pixErodeBrick)
+
+
+
+
+extern "C"
+SEXP
+R_pixSet2DMatrixVals(SEXP r_pix, SEXP r_midx, SEXP r_vals)
+{
+    int *pv = INTEGER(r_vals), *pidx = INTEGER(r_midx);
+    int i, j, r, c, depth, row, x, y;
+    PIX *pix = GET_REF(r_pix, PIX);
+    pixGetDimensions(pix, &c, &r, &depth);
+
+    int nr = Rf_nrows(r_midx);
+    for(row = 0; row < nr;  row++) {
+        // column 1 of r_midx is the rows, col 2 is the columns
+        y = pidx[row] - 1;
+        x = pidx[row + nr] -1;
+        l_uint32 tmp;
+        pixGetPixel(pix, x, y, &tmp);
+        Rprintf("%d, %d (%d) -> %d\n", x, y, tmp, pv[row]);
+        pixSetPixel(pix, x, y, pv[row]);
+    }
+    
+    return(R_NilValue);
+}
+
+
+
+extern "C"
+SEXP
+R_pixSetMatrixVals(SEXP r_pix, SEXP r_i, SEXP r_j, SEXP r_vals)
+{
+    int *pv = INTEGER(r_vals), *p_i = INTEGER(r_i), *p_j = INTEGER(r_j);
+    int i, j, depth, x, y;
+    PIX *pix = GET_REF(r_pix, PIX);
+//    pixGetDimensions(pix, &c, &r, &depth);
+
+    int r = Rf_length(r_i);
+    int c = Rf_length(r_j);
+    int ctr = 0;
+    int nvals = Rf_length(r_vals);
+    for(i = 0; i < r; i++)
+        for(j = 0; j < c ; j++, ctr++) {
+            x = p_j[j] - 1;
+            y = p_i[i] - 1;
+//            Rprintf("%d, %d  (%d)  %d\n", x, y,  ctr % nvals,  pv[ ctr % nvals ]);
+            pixSetPixel(pix, x, y, pv[ ctr % nvals ]); //XXX
+    }
+    
+    return(r_pix);
 }

@@ -79,7 +79,7 @@ setMethod("[", c("TesseractBaseAPI", "character"),
               GetVariables(x)[i]
           })
 
-setMethod("[<-", c("TesseractBaseAPI", "character"),
+setMethod("[<-", c("TesseractBaseAPI", "character", "missing"),
           function(x, i, j, ..., value) {
               if(length(value) != length(i))
                   value = rep(value, length = length(i))

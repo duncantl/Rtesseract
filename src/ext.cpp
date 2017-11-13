@@ -99,10 +99,9 @@ R_TessBaseAPI_SetVariables(SEXP r_api, SEXP r_vars)
   SEXP r_optNames = GET_NAMES(r_vars), ans;
   int i;
   PROTECT(ans = NEW_LOGICAL(Rf_length(r_vars)));
-  for(i = 0; i < Rf_length(r_vars); i++)  {
-//      Rprintf("set var: %s = %s\n", CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
+  for(i = 0; i < Rf_length(r_vars); i++)  
       LOGICAL(ans)[i] = api->SetVariable(CHAR(STRING_ELT(r_optNames, i)), CHAR(STRING_ELT(r_vars, i)));
-  }
+
   SET_NAMES(ans, r_optNames);
   UNPROTECT(1);
 

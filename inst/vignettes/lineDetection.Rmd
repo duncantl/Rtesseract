@@ -1,67 +1,72 @@
 ---
+title: Identifying Line Positions in an Image
+date: \today{}
 geometry: margin=1in
+output: html_document
 ---
 
 A primary motivation underlying the Rtesseract package is that we need
 context from the rendered page to make sense of the results of the
-OCR.  Generally, we want the full location and size data for each word
-or line identified by tesseract so that we can use it to intelligently
-interpret the content. This includes identifying document and section
-titles in the document based on the size of the text.  In this
-example, we'll just look at the locations of lines on the page in
-order to be able to interpret data within tables.  Again, consider the
-image:
+OCR.  Rather than just getting the text back, generally, we want
+information about the location and size for each character, word or line identified by
+tesseract so that we can use it to intelligently interpret the
+content. This includes identifying document and section titles in the
+document based on the size of the text.  In this example, we'll 
+look at the locations of lines on the page in order to be able to
+interpret data within tables.  Again, consider the image:
 
 [missing]:../images/SMITHBURN_1952_p3.png
 
-We can clearly see the data in TABLE 1 arranged by row and column.
-The column headers are separated by two lines spanning the width of the text on the page.
+We can clearly see the data in TABLE 1 are arranged by row and column.
+The column headers are separated by two horizontal lines spanning the width of the text on the page.
 The final 4 columns have two column headers that span all 4 columns.
 The header in column 4 (NO. STRAINS ISOLATED) is on 3 separate lines but
 clearly differentiated from the other data rows in the table due to the
 horizontal line separating the header from the data rows.
 
-Firstly, the tesseract() function allows us to get the horizontal and vertical locations of the words
-on the page. So we could use these to attempt to recover the tabular nature of this data.
-In this particular example, we can do this effectively and relatively simply. However,
-in images with tables that have center-aligned columns, this is much more complicated and can
-lead to ambiguity about to which column a cell belongs.
-Instead, we can separate the values into their respective columns much more effectively
-if we can identify the vertical lines between columns.
-Similarly, we can separate the column header  cells from the data cells below
-if we know the locations of the horizontal line(s) that divide them.
-Furthermore, we can determine the end of the table and the continuation
-of the regular text below it if we can find the final horizontal line in this example.
+Firstly, the tesseract() function allows us to get the horizontal and
+vertical locations of the words on the page. So we could use these to
+attempt to recover the tabular nature of this data.  In this
+particular example, we can do this effectively and relatively
+simply. However, in images with tables that have center-aligned
+columns (e.g. the "Year Isolated" column), this is much more
+complicated and can lead to ambiguity regarding to which column a cell
+belongs.  Instead, we can separate the values into their respective
+columns much more effectively if we can identify the vertical lines
+between columns.  Similarly, we can separate the column header cells
+from the data cells below if we know the locations of the horizontal
+line(s) that divide them.  Furthermore, we can determine the end of
+the table and the continuation of the regular text below it if we can
+find the final horizontal line in this example.
 
 
-Given the motivation of finding the vertical and horizontal lines on the page,
-let's explore how we can do this with Rtesseract.
-Unfortunately, this is done outside of the OCR functionality of Rtesseract.
-The OCR process tesseract performs actually identifies and removes the lines from the
-image before it recognizes the remaining text on the image. This aids the accuracy of the OCR.
-Unfortunately, it does not allow us to query the locations of the lines it removed.
-Accordingly, we must replicate  approximately the same computations it performs to identify the
-lines and their locations.
-Fortunately, the basic ideas of this process are described 
-(here)[http://www.leptonica.com/line-removal.html]
-The Rtesseract  package provides corresponding (and higher-level convenience) functions 
-to effect the same computations.
+Given the motivation of finding the vertical and horizontal lines on
+the page, let's explore how we can do this with Rtesseract.
+Unfortunately, we have to do  this outside or separately from the  OCR
+stage of recognizing the text.
+The OCR process tesseract performs actually identifies
+and removes the lines from the image before it recognizes the
+remaining text on the image. This aids the accuracy of the OCR.
+However, it does not allow us to query the locations of the
+lines it removed.  Accordingly, we must replicate approximately the
+same computations it performs to identify the lines and their
+locations.  Fortunately, the basic ideas of this process are described
+(here)[http://www.leptonica.com/line-removal.html]. The Rtesseract
+package provides corresponding (and higher-level convenience)
+functions to effect the same computations.
 
 Note that we will pass the original/raw image to OCR without modifying
-it. tesseract will do many of the same computations we do.
-So our aim is to simply identify the locations of the horizontal and vertical lines in the
-image. 
+it. tesseract will do many of the same computations we do.  So our aim
+here is to simply identify the locations of the horizontal and
+vertical lines in the image before or after we perform the OCR.
  
-
 We start by reading the image:
 ```
 library(Rtesseract)
-f = "inst/images/SMITHBURN_1952_p3.png"
-
+f = "../images/SMITHBURN_1952_p3.png"
 p1 = pixRead(f)
 ```
-
-We immediately convert the image to gray-scale with `pixConvertTo9()`:
+We immediately convert the image to gray-scale with `pixConvertTo8()`:
 ```
 p1 = pixConvertTo8(p1)
 ```
@@ -69,10 +74,17 @@ p1 = pixConvertTo8(p1)
 as we assign the new image to the same R variable.)
 
 The next step is to correct any skew or orientation in the image.
-To do this, we must first create a separate binary image using
+This can be important in detecting horizontal and vertical lines that may be at an angle
+because the scan was done with a slight rotation.
+There is a function deskew() to do this. However, we will show the steps
+as they illustrate some of the leptonica functions available in the
+Rtesseract package.
+
+To detect the skew, we must first create a separate binary image using
 `pixThresholdToBinary()`.
-Then we call `pixFindSkew()` and then rotate the original image
-by the skew angle:
+Then we call `pixFindSkew()` to determine the actual angle of the skew.
+Then we rotate the original image
+by that skew angle:
 ```
 bin = pixThresholdToBinary(p1, 150)
 angle = pixFindSkew(bin)
@@ -80,21 +92,68 @@ p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 ```
 The 255 in the call to `pixRotateAMGray` corresponds to white
 and means that any pixels that are "revealed" by rotating the
-"page" are colored white.  We can specify any color we want here between 0 (black) and 255 (white).
+"page" are colored white. These occur in the corners.
+We can specify any gray-scale color value we want here between 0 (black) and 255 (white).
 
 It is useful to look at the resulting image:
 ```
-pixWrite(p2, tmp <- tempfile(), IFF_PNG)
-```
-and then open the file named in the variable `tmp`, or
-```
 plot(p2)
 ```
-(We're working on making this plot() method more general.)
-
 
 With the reoriented image, we call the Rtesseract function
-`getLines()`.  This performs several operations on the image
+`getLines()` to get the coordinates of the lines in the image.
+We'll first extract the horizontal lines.
+For this, we pass the image and then desribe a "mask" or box
+that helps to identify contiguous regions in the image corresponding
+to the lines we want. For  horizontal lines, we want wide and vertically short boxes.
+We describe this box with the width and height of the box, e.g., 
+```
+hlines = getLines(p2, 51, 3)
+```
+```
+$`2059`
+      x0   y0   x1   y1
+[1,] 582 2059 3475 2059
+
+$`2192`
+       x0   y0   x1   y1
+[1,] 2494 2192 3473 2192
+
+$`2308`
+       x0   y0   x1   y1
+[1,] 2493 2308 3475 2308
+
+$`2527`
+      x0   y0   x1   y1
+[1,] 577 2527 3468 2527
+
+$`4035`
+      x0   y0   x1   y1
+[1,] 572 4035 3468 4035
+
+$`4786`
+      x0   y0   x1   y1
+[1,] 579 4786 3470 4786
+```
+This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates
+describing a single line. 
+
+We can add these lines to the display of the image to verify they appear where
+we expect:
+```
+plot(p2)
+lapply(hlines,
+        function(tmp) {
+	   lines(tmp[c(1, 3)], nrow(p2) - tmp[c(2, 4)], col = "red", lty = 3, lwd = 2)
+        })
+```
+Note that we had to subtract the y coordinates from the number of rows of the image
+as R plots from bottom up and the coordinates for the lines are relative to
+row 1 and go down.
+
+
+getLines() performs several operations on the image.
+It first uses the findLines() function
 to return an image that contains either the horizontal or vertical lines.
 We'll first get the horizontal lines with
 ```
@@ -107,38 +166,250 @@ Leptonica moves this around and fills in gaps within it if the
 rest of the pixels within the region are not white.
 findLines() uses the function pixCloseGray() to do this.
 
-Currently, findLines() returns an image (Pix object).
+Currently, `findLines()` returns an image (Pix object).
 By default, this shows the potential lines and removes everything else.
 (We can also return the image with the lines removed and the text remaining.)
 
-With the image 
-Recall that we converted the original image to a gray-scale image.
-So we can then get the two-dimensional table of pixels as a matrix
+
+Let's look at the resulting image to see what lines it detected:
+```
+plot(h)
+```
+Note that the background is black, corresponding to values of 0 in the Pix.
+We see the 4 primary lines that span most of the width of the image.
+The second one down (at y = 3600) has several short gaps.
+We also see many short line segments above the first line and to the right of the image.
+The ones on the right correspond to parts of the letters in the rotated text
+in the image indicating "Downloaded from http://www.....".
+If we made the vertical height of our mask larger, we may discard these but at the risk
+of including other elements.
+
+`findLines()` returns a binary image containing the potential lines.
+We convert this to a matrix of 0s and 1s in R:
 ```
 m = pixGetPixels(h)
 ```
+(or simply h[,])
 
-We can view this image with `plot(m)` or
-by writing the Pix object to a file and viewing that.
 
-However, we can work with the matrix of pixel values.
-We are looking for horizontal lines.
-We can find the rows of this matrix that  have 1000 or more
+We can see 4 long horizontal lines the original image that span the width of the text,
+and we also see two shorter line segments above and below the text
+"No. of strains isolated from".
+
+We are looking for rows in the image that have many black pixels
+(with value 1).
+We find the rows of this matrix that have 1000 or more
 black pixels.  We do this with
 ```
 w = rowSums(m) > 1000
 ```
 The value 1000 is context-specific.  It includes lines
-that span 1000 pixels or several smaller segments whose length adds up to 1000 pixels.
+that span 1000 pixels or more,  and also lines that have several smaller segments whose length adds up to 1000 pixels.
+1000 is about 25% of the columns.  This might be too large to detect the
+shorter line segments on the right of the table header, but it is probably
+enough to ignore the small line segments that don't interest us.
 
 How many rows of the matrix satisfy this criterion:
 ```
 table(w)
 ```
+So we have 46 which is a lot more than the 6 we see in the original image.
 
-We can see where these horizontal lines
+We can see these horizontal lines on the image with
 ```
-tess = tesseract(f)
-plot(tess)
+plot(h)
 abline(h = nrow(m) - which(w), col = "red")
 ```
+Note again that the rows in the matrix go from 1 to nrow, while on the plot,
+they go down the page. This is why we get the height with  nrow(m) - which(w).
+
+We can see we get the 4 lines that span the width of the text area, but not the two shorter line segments.
+So let's relax the threshold of requiring 1000 black pixels. We'll use 10% of the columns:
+```
+w = rowSums(m) > .1 * ncol(m)
+abline(h = nrow(m) - which(w), col = "red")
+```
+So we detect these two shorter lines and no other additional lines (except the original 4 longer lines).
+However, now we have 74 rows in the matrix that satisfy this criterion.
+Yet we see only 6 lines on the plot.
+
+Let's look at the row numbers for these 74 rows:
+```
+which(w)
+```
+It may not be clear, but these are grouped together.  Each of the red
+lines we see on the plot is actually a collection of multiple adjacent
+lines.  This is clearer if we compute the difference between the row
+numbers:
+```
+diff(which(w))
+```
+We see a collection of 1s meaning that these are adjacent rows, then a large
+jump between row numbers, followed by a collection of 1s and on.
+So it is clear these are grouped.
+We want to combine adjacent lines into a single group
+and have a group for each conceptually separate line on the image.
+One way to do this is run length encoding (RLE):
+```
+rle(diff(which(w)))
+```
+Another way is very similar but more explicit and gives us a little more control.
+We find where the differences between successive row numbers is greater than 2
+and then we run a cumulative sum which gives us group labels:
+```
+g = cumsum( diff(which(w)) > 2 )
+```
+
+We can use g to split the rows into groups
+```
+rowNums = which(w)
+ll = tapply(seq(along = rowNums), c(0, g), function(i) m[rowNums[i], ])
+names(ll) = tapply(seq(along = rowNums), c(0, g), function(i) as.integer(mean(rowNums[i])))
+```
+(Note that we added 0 to the start of the vector g since g has one less element than
+w since we were computing pairwise differences.)
+The computation is a little akward. We split the indices of rowNums and then have
+to use those to index back into rowNums to find out which rows of m we need to extract for this group.
+
+The third line puts the average of the row numbers of each group as
+the name of that element.  This will be convenient for mapping this
+back to the general vertical area.
+
+Each element of `ll` is a matrix. For each of these, we  want to combine them
+to identify the start and end of a line. Each may have several separate line segments.
+
+Lets consider the first element of `ll`. It has 14 rows and 4050 columns.
+It is useful to query how many 0s and 1s there are?
+```
+table(ll[[1]])
+```
+These are about equal:  27000 0s and 30000 1s.
+(In this setup, 1 is black.)
+So there are many white pixels eventhough the black pixels appear as solid line on our plot.
+But that was because we just drew a straight line at these vertical positions, regardless how many pixels were white. Of course, we selected these rows because they had many black pixels.
+
+Since we think these rows make up a single line, let's aggregate across the adjacent
+rows to form a single aggregate row using colSums():
+```
+rr = colSums(ll[[1]])
+```
+
+If this is a solid line across most of the page, we'd expect most pixels to be filled,
+perhaps with a few short gaps.
+Each element of rr contains the number of rows in this group that had a black pixel.
+This might be 1 or 14, with only one row or all of them having a black pixel.
+We might look at these counts or just consider whether any row has a black pixel in this column. We are looking for a rule to mark a pixel in the aggregated line as black or white.
+
+If we look at the vector rr, we see a lot of 0s at the beginning and the end. These are the margins where the line is not present.
+
+If we want to threshold this aggregate line to have a black pixel in a column
+if *any* of the pixels in the adjacent rows defininig it
+has a black pixel, we can do this with
+```
+rle(rr > 0)
+```
+We get the two margins and a long run of 2895 pixels.
+If we require at least half of the 14 rows to have a black pixel in a column,
+we get the same groups:
+```
+rle(rr >= 7)
+```
+
+
+Let's consider one of the shorter lines.
+These are elements 2 and 3 of ll. 
+Again, we compute the column sums for the adjacent lines in this group:
+```
+rr = colSums(ll[[2]])
+table(rr)
+```
+Most are 0.
+There are 9 adjacent rows in this group.
+We see no columns that have at least one black pixel but less than half the number of rows.
+Let's draw points at each of the columns that have a black pixel in at least half the rows:
+```
+z = which(rr >= 4.5)
+points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)), col = "green", pch = 16)
+```
+This appears to capture the short horizontal line spanning the four columns
+on the right of the table. So this appears to be a reasonable approach,
+at least for this image.
+
+
+
+## Vertical Lines
+
+We can follow the same process to identify the
+locations of the vertical lines. We've already deskewed the original
+image, so we don't have to do that.  We can call findLines() and this
+time specify a window that is tall and narrow to capture the vertical
+parts.  We should experiment with these values.  One thing to note is
+that characters have vertical components more than horizontal
+components, e.g. 1, L, M.  If we make the height of the window too
+small, we'll pick up more false positives.
+```
+v = findLines(p2, 3, 101)
+```
+Again, we can plot this and see where the lines are.
+
+
+
+# Removing the Lines
+We don't have to remove the lines before we pass the image to tesseract
+as tesseract will remove them for us.
+However, it is interesting to see how well we can do.
+Instead of finding the locations of the lines (with getLines()),
+we'll remove them from the image.
+This uses the same basic approach and sequence of steps.
+However, rather than extract the line coordinates,
+we use `pixAddGray` to overlay the images with the horizontal and then
+the vertical lines onto the original image.
+This removes the lines from the original image.
+We do this directly from the image file with
+```
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+p1 = pixRead(f)
+p2 = pixConvertTo8(p1)
+p2 = deskew(p2)
+p3 = findLines(p2, 51, 1, FALSE)
+p4 = findLines(p2, 3, 101, FALSE)
+p = pixAddGray(p2, p3)
+p = pixAddGray(p, p4)
+plot(p)
+```
+
+Let's compare this to the original image.
+```
+dev.new()
+plot(p2)
+```
+
+The horizontal and vertical lines are essentially gone. 
+We can certainly see light grey "smudges" in some places where the vertical lines were.
+We also see some short horizontal line segments remaining.
+
+We can experiment with the horizontal and vertical values we pass to findLines().
+Increasing the horizontal width from 51 to 75 cleans up the horizontal lines.
+
+We can also change the thresholds for creating the binary images.
+We can also threshold the final image (p) at this point.
+We set any value 50 or above to 255, i.e., white, with
+```
+pp = pixThresholdToValue(p, 50, 255)
+```
+and when we plot the resulting image
+```
+plot(pp)
+```
+the gray marks on the vertical lines have disappeared.
+Note however that it removed some of the text, specifically the rotated text on the right
+and the URL within that text that is colored blue in the original image.
+Fortunately, we don't care about this text for our application. 
+
+We can compare the image we created with the lines removed to
+the one tesseract creates.  We do this with
+```
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+tesseract(f, pageSegMode = "psm_auto", textord_tabfind_show_vlines = 1)
+```
+This creates a PDF file named vhlinefinding.pdf.
