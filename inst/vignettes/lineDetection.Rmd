@@ -1,4 +1,6 @@
-
+---
+geometry: margin=1in
+---
 
 A primary motivation underlying the Rtesseract package is that we need
 context from the rendered page to make sense of the results of the
