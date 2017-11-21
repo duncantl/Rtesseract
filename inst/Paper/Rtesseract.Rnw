@@ -558,6 +558,67 @@ computational load (between 6--10x) and require appropriately trained
 language files, so they are not used by default by \pkg{Rtesseract}'s
 OCR functions. 
 
+\subsection{Image Pre-processing}
+
+Consider the image previous image. When we perform OCR on this,
+tesseract treats the highlighted text in "yellow" as a dark rectangular
+block and ignores it.
+
+Let's see what we get from `tesseract()` with this image:
+
+<<>>=
+t0 = tesseract(f)
+w0 = GetText(t0, "RIL_TEXTLINE")
+@
+
+Some of the words in the highlighted text are `Drs. Dick and Haddow`.
+Are these in the words returned by tesseract:
+
+<<>>=
+grep("Drs. Dick and Haddow", w0, value = TRUE)
+@ 
+
+Of course, there is text under this highlight.
+We need to pre-process the image before we pass it to Tesseract to have the possibility of
+recovering this text.
+There are many options for pre-processing images, including
+Imagemagick, OpenCV, or Leptonica. Leptonica is already used by
+Tesseract to do some processing of the image, e.g., de-skew, remove
+lines, etc. Since Leptonica is already interfaced with Tesseract
+(i.e., Tesseract works off the \code{Pix} object created by
+Leptonica), we include some bindings to the Leptonica library in the
+\pkg{Rtesseract} package for basic image processing.
+
+In this case, we need only convert the image from color to gray-scale or 8 bits per pixel.
+We do this with the  `pixConvertTo8()` function.
+So we read the image and convert it with
+
+<<>>=
+pix = pixRead("../images/SMITHBURN_1952_p3.png")
+pix1 = pixConvertTo8(pix)
+@
+
+We can then pass the modified image  to the `tesseract()` function:
+
+<<>>=
+t1 = tesseract(pix1)
+@
+
+Then we call, e.g., `GetText()` as before, e.g.,
+
+<<>>=
+w1 = GetText(t1, "RIL_TEXTLINE")
+@
+
+We then check whether the words we see under the highlighted text are in the words
+returned by tesseract for this modified image:
+
+<<>>=
+grep("Drs. Dick and Haddow", w1, value = TRUE)
+@ 
+
+Indeed all three are there.
+
 \subsection{Other Variables}
 
 There are a plethora of variables that can be adjusted, so for space
@@ -581,8 +642,8 @@ writeLines(c("2\tz'\t1\t1\0"), "eng.unicharambigs")
 writeLines(c("Zika", "Anopheles"), "eng.user-words")
 
 # Create a new API for comparison
-api2 = tesseract(f, pageSegMode="psm_auto", engineMode=2,
-                 datapath = path.expand("~/DSI/tessdata/"))#,
+api2 = tesseract(f, pageSegMode="psm_auto",# engineMode=2,
+                 # datapath = path.expand("~/DSI/tessdata/"))#,
                  opts = list(user_words_file = "eng.user-words",
                              tessedit_enable_dict_correction = "1"))
 
@@ -659,6 +720,8 @@ are accessible through R via the \pkg{Rtesseract} package, including
 pageSegMode, pageOrientation, language, white- and black-list
 characters, custom user-added patterns and words, alternative OCR
 engines, etc. The current settings for the tesseract OCR engine are
+
+%% Treat the API as a list, names(api) 
 returned by \code{PrintVariables} (returns
 \Sexpr{length(PrintVariables())} variables at the time of
 writing). These variables can be adjusted via a call to
