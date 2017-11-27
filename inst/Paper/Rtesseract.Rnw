@@ -247,16 +247,18 @@ f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 
 \subsection{Base Functions}
 
-For the simplest task of retrieving the text contents of the image, we
-use the high-level function \code{GetText}.  We pass it the path to a
-file containing the image.  By default, it returns the words it finds
-in the image in the order they appear,
+The most fundamental task for OCR is to convert an image into text.
+For this simple task, we
+use the high-level function \code{GetText},
 
 <<>>=
 f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 GetText(f)
 @
 
+We pass it the path to a
+file containing the image.  By default, it returns the words it finds
+in the image in the order they appear,
 We sometimes want the results returned as individual characters (symbols),
 
 <<>>=
@@ -578,7 +580,7 @@ Are these in the words returned by tesseract:
 grep("Drs. Dick and Haddow", w0, value = TRUE)
 @ 
 
-Of course, there is text under this highlight.
+It seems not. Of course, there is text under this highlight.
 We need to pre-process the image before we pass it to Tesseract to have the possibility of
 recovering this text.
 There are many options for pre-processing images, including
