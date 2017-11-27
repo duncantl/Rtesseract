@@ -5,7 +5,6 @@ geometry: margin=1in
 output: html_document
 ---
 
-
 Consider the image
 
 [missing]:../images/SMITHBURN_1952_p3.png
@@ -70,6 +69,24 @@ Of course, there is no guarantee that tesseract will correctly identify
 the words in general.  We know that it did this correctly for our image.
 It could of course recognize arboreal as something slightly different and so
 not appear in the table of words.
+
 But the lesson here is that preprocessing the image can help, and sometimes
 it is quite simple.
 
+## Notes
+
+Preprocessing: why is it important, how you diagnose, what do/can you
+do?
+
+1. Process of showing that the results of interest is not in the
+   output - process of debugging results.
+   
+1. Issue: How do you know what preprocessing is needed? Point to the
+   wiki. You need to know the image. Grey scale, binary/thresholding,
+   subsetting/cropping, deskew/rotation, set pixels to certain values.
+   
+1. Can read in image in Leptonica, process, and then hand directly to
+   Tesseract. 
+   
+Removing at the correct level separates text from background -
+Tesseract is filling in gaps, creating box.
