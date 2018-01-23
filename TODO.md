@@ -1,5 +1,11 @@
 # Todo Items
 
+1. getInputName is taking a long time
+
+1. get dev. version if that is being used, e.g. tesseractVersion()
+
+1. don't use LIB_R_EXIT
+   
 1. [verify] findLines() and getLines() functions.
 
 1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
