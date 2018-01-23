@@ -226,10 +226,10 @@ both the current release (v3.05.01) and development versions
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient. \pkg{Rtesseract} provides simple
 interfaces that allow users to provide the path to an image in a
-supported format (tiff, JPEG, and png on most systems), and OCR will be
-run on the image using the default settings. For example, say we had
-an image from an older scientific publication from which we wanted
-to extract information (Fig. \ref{fig:base}). We will use this
+supported format (tiff, JPEG, and png on most systems), and to perform OCR
+on the image using the default settings. For example, suppose we have
+an image from an older scientific publication from which we want
+to extract information, e.g., Fig. \ref{fig:base}. We will use this
 image to highlight the functionality and common use-cases of the
 \pkg{Rtesseract} package. % AWK
 
@@ -252,14 +252,14 @@ For this simple task, we
 use the high-level function \code{GetText},
 
 <<>>=
-f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
 GetText(f)
 @
 
-We pass it the path to a
+We pass \code{GetText} the path to a
 file containing the image.  By default, it returns the words it finds
 in the image in the order they appear,
-We sometimes want the results returned as individual characters (symbols),
+We sometimes want the results returned as individual characters (symbols), % Motivate why
+% For grammar reasons (i.e. the "All of which" below), we probably want to rephrase this.
 
 <<>>=
 GetText(f, level = "symbol")
@@ -271,51 +271,55 @@ or sometimes as lines (textlines),
 GetText(f, level = "textline")
 @
 
+% All here is capitalized yet part of sentence.
 All of which are easy to achieve with the \code{levels} argument in
 \code{GetText}. Thereby, the functionality of most basic OCR
 applications is provided by the \code{GetText} function. 
 
-\pkg{Rtesseract} includes these three other high-level functions
-(\code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives})
+\pkg{Rtesseract} includes three other high-level functions –
+(\code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives} –
 to extend the information accessible by the user. Similar to
 \code{GetText}, these functions can take the path of the image file
 and the optional \code{level} argument (except \code{GetAlternatives}
 which only operates at the ``symbol'' level).
 
-This practice of calling \code{GetText} followed by another to, e.g.,
+This practice of calling \code{GetText} followed by another, e.g.,
 \code{GetBoxes} for the same file is a common occurrence when working
 interactively with \pkg{Rtesseract}. Yet, it has a distinct
-inefficiency - we repeat the OCR recognition the same file merely to
-record a different product from the OCR engine. Since OCR is
+inefficiency - we repeat the OCR recognition for the same file merely to
+obtain a different output from the OCR engine. Since OCR is
 reasonably computationally intensive, we would like to perform the OCR
 once and then query each aspect we want (i.e., the text, the
-confidences, the alternatives, \ldots) from this single OCR operation,
+confidences, the alternatives, \ldots) from this single OCR operation.
 
-Creating a \code{TesseractBaseAPI} object once which can be repeatedly
-queried is the preferred method when multiple pieces of information are
-needed from the same file. The \code{tesseract} function creates an
+The \code{tesseract} function creates an
 instance of the OCR engine (an object of class \code{TesseractBaseAPI}
-in R),
+in R).  We can repeatedly
+query this for the text, boxes, confidences and alternatives without repeating
+the OCR.  This is the preferred method when multiple pieces of information are
+needed from the same file. 
 
+We typically call \code{tesseract} by specifying the path to the file and any other options
+controlling how the OCR will be performed (explained in more detail below in ``Advanced
+Use''): 
 <<>>=
 api = tesseract(f)
 @
 
-We specify the path to the file and any other options controlling how
-the OCR will be performed (explained in more detail below in ``Advanced
-Use''). We then pass this object to each of the four high level functions
+We then pass the object returned by \code{tesseract} to each of the four high level functions
 rather than the file name, e.g., \code{GetText(api)},
-\code{GetBoxes(api)}, \code{GetConfidences(api)}. By default, the call
+\code{GetBoxes(api)}, \code{GetConfidences(api)}. 
+By default, the call
 to \code{tesseract} doesn't perform the OCR immediately. Instead, it
 is only done when we request any results, e.g., calling any of the
-functions above, or explicitly calling the \code{Recognize} function
+four functions above, or explicitly calling the \code{Recognize} function
 with the \code{TesseractBaseAPI} object as an argument.
 
 To show how merely retrieving text can be of limited usefulness, we
 continue the example above. After extracting the text from the
 scientific publication, we would like to check the results. However,
 checking word by word manually is both tedious and
-error-prone. Rather, we might want to focus our attention initially at
+error-prone. Rather, we might want to focus our attention initially on
 those words with the lowest confidences:
 
 <<>>=
