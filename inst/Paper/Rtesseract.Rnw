@@ -778,7 +778,7 @@ findLines() uses the function pixCloseGray() to do this.
 Let's look at the resulting image to see what lines it detected:
 
 <<>>=
-plot(h)
+plot(h, invert = TRUE)
 @
 
 Note that the background is black, corresponding to values of 0 in the Pix.
@@ -830,7 +830,7 @@ We can see these horizontal lines on the image with
 
 \begin{figure}[H]
 <<figure = TRUE>>=
-plot(h)
+plot(h, invert = TRUE)
 abline(h = nrow(m) - which(w), col = "red")
 @
 \caption{}
@@ -853,7 +853,7 @@ So let's relax the threshold of requiring 1000 black pixels. We'll use 10\% of t
 \begin{figure}[H]
 <<>>=
 w = rowSums(m) > 0.1 * ncol(m)
-plot(h)
+plot(h, invert = TRUE)
 abline(h = nrow(m) - which(w), col = "red")
 @
 \caption{}
@@ -978,7 +978,7 @@ Let's draw points at each of the columns that have a black pixel in at least hal
 \begin{figure}[H]
 <<>>=
 z = which(rr >= 4.5)
-plot(h)
+plot(h, invert = TRUE)
 points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)), col = "green", pch = 16, cex = 0.5)
 @
 \caption{}
