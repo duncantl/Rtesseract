@@ -414,88 +414,17 @@ which reveals that ``C'' was a close second in this case.
 This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the text is so
 helpful to a full OCR workflow if not crucial for increased accuracy.
-
-\begin{comment}
-<<echo = FALSE>>=
-f2 = system.file("images", "IMG_1234.png", package = "Rtesseract")
-@ 
-
-\begin{figure}[h]
-\includegraphics[width=\textwidth]{\Sexpr{f2}}
-\caption{An example image of old data that we would like to recover
-  and analyze in R.}
-\label{fig:old_data}
-\end{figure}
-
-Rather than transcribing these data by hand, we would like to
-programmatically extract them into R using \pkg{Rtesseract}. However,
-the accuracy is not great:
-
-<<echo = FALSE>>=
-api2 = tesseract(f2)
-
-GetText(api2)
-@
-
-An immediate question rises: Is the image quality affecting the
-results of the OCR. From inspecting the image
-(Fig. \ref{fig:old_data}), the text on the right side of the page
-appears to be darker than that on the left side. Since we can get the
-locations and associated confidences for each individual symbol
-recognized by Tesseract, we can handle these just as any other data
-problem. We can extract the bounding box information at the symbol
-level,
-
-<<>>=
-bb = GetBoxes(api2, level = "symbol")
-@
-
-group the symbols by location on the page, left to right,
-
-<<>>=
-left2right = cut(bb[,"left"], breaks = seq(0, max(bb[,"left"]), length.out = 7))
-@ 
-
-and finally inspect the relationship between confidence and location
-left to right numerically,
-
-<<>>=
-tapply(bb[,"confidence"], left2right, mean)
-@
-
-or visually,
-
-\begin{figure}[H]
-<<fig=TRUE, echo = FALSE, width = 4, height = 4, out.width = '0.8\\linewidth'>>=
-scatter.smooth(bb[,"confidence"] ~ bb[,"left"],
-     xlab = "Position of character bounding box on page",
-     ylab = "Confidence (higher is more confident)",
-     xaxt = "n",
-     pch = 16, col = rgb(0,0,0,0.25))
-axis(1, at = c(500,2000,3500), labels = c("left", "center", "right"))
-
-@ 
-\caption{An example how visualizing the confidences from the OCR
-  allows investigation of how location on the page influences
-  the results of the OCR engine.}
-\label{fig:conf_by_loc}
-\end{figure}
-
-It is clear that there is a trend, with the left side of the page
-being recognized with less confidence than the right side. We can use
-this information to improve the image quality using photo-editing
-software or even computer-vision techniques such as OpenCV.
-\end{comment}
-
-We found that visualizing the confidences was essential to inspecting
-\pkg{Rtesseract} results. Therefore, \pkg{Rtesseract} includes a
-plotting method for OCR output. By default calling \code{plot} on a
+ 
+In this OCR workflow, we find that visualizing
+the confidences is helpful for quickly inspecting \pkg{Rtesseract}
+results for issues. Therefore, \pkg{Rtesseract} includes a plotting method for
+OCR output. By default calling \code{plot} on a
 \code{TesseractBaseAPI} object will create a plot which includes
 original image overlaid with the bounding boxes colored (and
-optionally filled) by relative confidence (see
-Fig. \ref{fig:rtess_plot} for an example). Plotting the
-results is especially helpful when adjusting the OCR configuration
-settings (discussed below under ``Advanced Use'').
+optionally filled) by relative confidence. See
+Fig. \ref{fig:rtess_plot} for an example. Plotting the results is
+especially helpful when adjusting the OCR configuration settings to
+improve accuracy (discussed further below under ``Advanced Use'').
 
 \begin{figure}[H]
 <<echo = FALSE>>=
