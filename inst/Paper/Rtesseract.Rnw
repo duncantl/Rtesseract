@@ -77,9 +77,9 @@ extract text data into R for subsequent analysis.
 library(Rtesseract)
 library(knitr)
 
-# Globally set output to be limited to 4 lines
+# Globally set output to be limited to 6 lines
 knit_theme$set("print")
-opts_chunk$set(out.lines = 4)
+opts_chunk$set(out.lines = 6)
 opts_chunk$set(highlight = FALSE, background = "white", prompt = TRUE,
                comment = '')
 
@@ -361,9 +361,9 @@ often in the lowest cofidence results.
 
 Since we have access to the confidences and
 bounding boxes in R, we can explore this theory by treating these
-objects just like any other data. For
-example, we can group the words into bins by their location left to
-right,
+objects just like any other data. To explore our hypothesis that these
+terms are grouped left to right, we can group the words into bins by their location left to
+right using the \code{cut} function,
 
 <<>>=
 lrGroups = cut(bbox[,"left"], breaks = seq(min(bbox[,"left"]),
@@ -372,20 +372,22 @@ lrGroups = cut(bbox[,"left"], breaks = seq(min(bbox[,"left"]),
                
 @ 
 
-And then find the median confidence inside each group,
+And then calculate the median confidence inside each group,
 
 <<out.lines=8>>=
 tapply(bbox[,"confidence"], lrGroups, median)
 @
 
-Doing this verifies our suspicion that there are issues with the right side of the page. Looking
+Doing this verifies our suspicion that there are issues with the right
+side of the page. Looking
 at the image (Fig. \ref{fig:base}), we can see there is rotated text
 in the margin that identifies when and where the PDF was
 downloaded. This text is not being recognized well by the OCR, but is
-also not part of the journal article we are interested in. Because of
+also not part of the journal article in which we are interested. Because
 this text crosses several textlines, post-processing without location
-information would involve searching for ``junk'' at the end of each
-text lines. However, we can easily exclude this text in
+information would involve searching for ``junk'', e.g. non-valid
+words such as ``Isosziim'', at the end of each
+text line. However, we can easily exclude this text in
 post-processing with location information in hand. Additionally, while
 we could crop this image using editing software outside of R, we will
 show later how this area can be excluded from the OCR recognition step
@@ -411,7 +413,7 @@ which reveals that ``C'' was a close second in this case.
 
 This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the text is so
-crucial to a full OCR workflow.
+helpful to a full OCR workflow if not crucial for increased accuracy.
 
 \begin{comment}
 <<echo = FALSE>>=
