@@ -71,6 +71,8 @@ extract text data into R for subsequent analysis.
 
 \end{abstract}
 
+\pagenumbering{arabic}
+
 \section{Introduction}\label{intro}
 
 <<setup, echo=FALSE, message=FALSE, warning=FALSE>>=
@@ -403,7 +405,7 @@ GetText(api, level = "textline")[1]
 
 We know that the lower case letter in ``c.'' is a mistake, but we might
 not be sure what the correct letter should be. Helpfully, we can
-inspect the alternative matches,
+inspect the alternative matches for the sixth character,
 
 <<>>=
 GetAlternatives(api)[6]
@@ -519,7 +521,7 @@ block and ignores it.
 Let's see what we get from `tesseract()` with this image:
 
 <<>>=
-t0 = tesseract(f)
+t0 = tesseract(smithburn)
 w0 = GetText(t0, "RIL_TEXTLINE")
 @
 
@@ -546,7 +548,7 @@ We do this with the  \code{pixConvertTo8()} function.
 So we read the image and convert it with
 
 <<>>=
-pix = pixRead("../images/SMITHBURN_1952_p3.png")
+pix = pixRead(smithburn)
 pix1 = pixConvertTo8(pix)
 @
 
@@ -628,9 +630,7 @@ vertical lines in the image before or after we perform the OCR.
 We start by reading the image:
 
 <<>>=
-library(Rtesseract)
-f = "../images/SMITHBURN_1952_p3.png"
-p1 = pixRead(f)
+p1 = pixRead(smithburn)
 @
 
 We immediately convert the image to gray-scale with `pixConvertTo8()`:
