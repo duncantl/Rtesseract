@@ -101,7 +101,8 @@ knit_hooks$set(output = function(x, options) {
     hook_output(x, options)
 })
 
-          
+# Put this in here to avoid issues with it not being defined later
+smithburn = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")          
 @ 
 
 There has been an enormous increase in the amount of text data that we
@@ -247,7 +248,7 @@ image to highlight the functionality and common use-cases of the
 
 
 \begin{figure}[H]
-\includegraphics[width=\textwidth]{\Sexpr{f}}
+\includegraphics[width=\textwidth]{\Sexpr{smithburn}}
 \caption{An example image of a scientific paper which contains text we
   would like to extract and analyze.}
 \label{fig:base}
@@ -430,10 +431,11 @@ improve accuracy (discussed further below under ``Advanced Use'').
 
 \begin{figure}[H]
 <<echo = FALSE>>=
-plot(api, fillBoxes = TRUE)
+plot(api, fillBoxes = TRUE, main = "") # Check style manual
 @
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
-  overlay the original image with the bounding boxes and associated
+  overlay the original image with the bounding boxes surrounding the
+  recognized element optionally colored according to the boxes' associated
   confidences.}
 \label{fig:rtess_plot}
 \end{figure}
@@ -467,25 +469,27 @@ to attempting to simulate the layout of the page by padding the text
 with spaces (e.g., the ``layout'' output of many other OCR engines).
 \end{comment}
 
-\section{Advanced Use}
+\section{Controlling the OCR engine behavior}
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 accessing and manipulating the results of running the OCR engine on an
-image. In complex cases, you might want to manipulate the behavior of
-the OCR engine itself rather than merely the output. For these
-purposes, the \pkg{Rtesseract} packages exposes full access to the
+image. In many non-trivial cases, you might want to manipulate the behavior of
+the OCR engine itself rather than only the output. For these
+purposes, the \pkg{Rtesseract} package exposes full access to the
 \code{TesseractBaseAPI}, which allows fine-tuning of the OCR engine
 for specific cases.
 
-\subsection{Page Segmentation Mode and OCR Engine}
+\subsection{Page Segmentation Mode and OCR engine}
 
-Two variables, \code{pageSegMode} and \code{engineMode}, deserve
+Two variables controlling the OCR engine, \code{pageSegMode} and \code{engineMode}, deserve
 special mention because these two can have large impact on the results of the
 OCR. The first, the Page Segmentation Mode, adjusts how Tesseract
 recognizes lines of text in the image. By adjusting Page Segmentation
-Mode, the user can specify if the text is present in many different
-configurations, including (but not limited to) single block, sparse
-text, vertical or circular arrangement, etc. The \pkg{Rtesseract}
+Mode, the user can tell Tesseract how to expect the text to be
+arranged, e.g. as a single block of text, sparse
+text, arranged top to bottom (e.g., the verticle arrangement of
+many Asian texts) or even in
+a circle (e.g., the text on the rim of a coin), etc. The \pkg{Rtesseract}
 package preserves the defaults in the \code{TesseractAPI} and assumes
 the input is a single block of text (\code{PSM\_SINGLE\_BLOCK}) by
 default, though in our experience OCR can be significantly improved
@@ -493,11 +497,11 @@ with changing the Page Segmentation Mode. We have found for most
 problems \code{PSM\_AUTO}, which attempts to detect the correct page
 segmentation automatically, is a good default, though any of the currently
 \Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))} available Page
-Segmentation modes might be best for different applications (curiously,
+Segmentation modes might be best for different applications. Curiously,
 \code{PSM\_AUTO} is the default for the tesseract command line tool
-but not for the API). Page Segmentation Mode can be set either in the
+but not for the API. Page Segmentation Mode can be set either in the
 call to \code{tesseract}, in the \code{...}  arguments for any of the
-high-level functions (e.g., \code{GetText(f, pageSegMode =
+high-level functions (e.g., \code{GetText(smithburn, pageSegMode =
 "PSM\_AUTO")}), or by using \code{SetPageSegMode} on an existing
 \code{TesseractBaseAPI} object.
 
