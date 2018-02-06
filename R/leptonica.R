@@ -76,7 +76,13 @@ function(pix, horiz, vert, target = NULL)
 pixRotateAMGray =
     # AM = Area Mapping, i.e. interpolation. See docs in leptonica code.
 function(pix, angle, grayVal = 0L)
-  .Call("R_pixRotateAMGray", pix, as.numeric(angle), as.integer(grayVal))
+    .Call("R_pixRotateAMGray", pix, as.numeric(angle), as.integer(grayVal))
+
+pixRotate =
+    # type - L_ROTATE_AREA_MAP
+    # incolor  defaults to L_BRING_IN_WHITE. XXX Use this symbolic version.
+function(pix, angle = -pi/2, type = 1L, incolor = 1L, width = 0L, height = 0L)
+  .Call("R_pixRotate", pix, as.numeric(angle), as.integer(type), as.integer(incolor), as.integer(width), as.integer(height))
 
 
 pixGetRes =

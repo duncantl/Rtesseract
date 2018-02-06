@@ -114,7 +114,7 @@ export(deskew)
 
 export(pixRead, pixWrite)
 export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConvertTo8, pixFindSkew ,
-       pixCloseGray, pixErodeGray, pixRotateAMGray, pixGetRes, pixGetDims, pixGetPixels,
+       pixCloseGray, pixErodeGray, pixRotate, pixRotateAMGray, pixGetRes, pixGetDims, pixGetPixels,
        pixGetRGBPixels, pixSetPixels, pixSubtract, pixAnd, pixOr, pixXor, pixClone, pixGetInputFormat,
        pixZero, pixGetDepth, pixEqual, pixSetRes,
        pixOpenGray, pixDilateGray, pixOpenBrick, pixCloseBrick, pixErodeBrick, pixDilateBrick)

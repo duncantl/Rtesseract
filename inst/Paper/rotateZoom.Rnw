@@ -1,0 +1,74 @@
+
+In figure~\ref{fig:base}, we can readily identify
+the rotated, vertical text on the right of the page.
+We were also able to identify this text from the low confidence levels of the 
+results returned from \code{GetBoxes}.
+Tesseract recognizes the rest of the page as horizontally oriented text
+and is entirely confused by these symbols in that context.
+So it returns nonsensical results.
+However, in many cases, we may want to extract the rotated text.
+Ignoring how we identify the relevant rectangle(s) of interest 
+in the page, we can 
+\begin{enumerate}
+\item{rotate the contents image}
+\item{restrict tesseract to separately recognize the text within each of these rectangles}
+\end{enumerate} 
+
+We start by reading the image. Rather than passing the name of the
+file to \code{tesseract}, we explicitly read the image
+using \code{pixRead}.
+<<>>=
+px = pixRead(f)
+
+@ 
+Next we rotate this image 90 degrees, corresponding to a negative direction, or anticlockwise:
+% for now, use pixRotateAMGray
+<<>>=
+prot = pixRotate(px, -pi/2)
+
+@ 
+We pass this rotated image to \code{tesseract} rather than the name of a file:
+<<>>=
+ts = tesseract(prot)
+
+@ We don't want to process all of  the text in the image.
+Instead, we want to zoom in on the now horizontal text.
+We can plot rotated image and see the range of the horizontal and vertical region
+of interest:
+Counting from the top-down, we start at position 1000 (corresponding to 5000 on the plot)
+and use a rectangle that is 300 pixels tall.
+On the horizontal dimension, we could use the entire width of the image,
+but we restrict the region to be between 500 and 3500.
+We instruct tesseract to only process this rectangle via \code{SetRectangle}:
+<<>>=
+SetRectangle(ts, dims = c(500, 1000, 3000, 300))
+
+@ 
+Finally, we perform the OCR and get the results using 
+<<>>=
+bb = GetBoxes(ts)
+
+@ 
+The results are
+<<>>=
+   left bottom right  top                     text confidence
+1   607   1066   989 1119               Downloaded   84.95293
+2  1009   1067  1153 1119                     from   86.13186
+3  1172   1067  1963 1134 http://Www.jimmun01.0rg/   84.31792
+4  1985   1075  2037 1119                       at   88.32067
+5  2057   1067  2204 1119                     Univ   88.22494
+6  2226   1067  2291 1119                       of   88.29621
+7  2307   1066  2807 1119         California-Davis   86.20193
+8  2830   1083  2902 1119                       on   90.20372
+9  2924   1067  3164 1119                  October   84.11350
+10 3185   1067  3276 1129                      27,   87.64180
+11 3297   1066  3443 1119                     2016   87.64180 
+
+@ 
+We have recovered the rotated text reasonably well, and significantly better
+than how it was  identified in the original processing.
+A w has been mistaken as a W, the 01 at the end of \code{jimmun} in row 3 should be 0l.
+But these are common mistakes.
+
+
+

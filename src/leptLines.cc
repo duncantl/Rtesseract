@@ -185,6 +185,19 @@ R_pixRotateAMGray(SEXP r_pix, SEXP r_angle, SEXP r_grayval)
 
 extern "C"
 SEXP
+R_pixRotate(SEXP r_pix, SEXP r_angle, SEXP r_type, SEXP r_incolor, SEXP r_width, SEXP r_height)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixRotate(pix, REAL(r_angle)[0], INTEGER(r_type)[0], INTEGER(r_incolor)[0], INTEGER(r_width)[0], INTEGER(r_height)[0]);
+    return(createRef(ans, "PIX", R_pixDestroy));    
+}
+
+
+
+
+
+extern "C"
+SEXP
 R_pixThresholdToBinary(SEXP r_pix, SEXP r_threshval)
 {
     PIX *pix = GET_REF(r_pix, PIX);
