@@ -1,5 +1,14 @@
 # Todo Items
 
+1. Add general pixRotate() functions, not just pixRotateAMGray().
+   e.g. pixRotate{90,180}, pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
+
+1. Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
+
+1. Memory Leak notifications when quit from R.
+
+1. tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
+
 1. getInputName is taking a long time
 
 1. get dev. version if that is being used, e.g. tesseractVersion()
