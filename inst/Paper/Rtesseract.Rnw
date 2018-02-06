@@ -506,23 +506,26 @@ high-level functions (e.g., \code{GetText(smithburn, pageSegMode =
 \code{TesseractBaseAPI} object.
 
 The second of these variables is the Tesseract Engine Mode, which
-determines what OCR engine is used to recognize text. By default,
+determines which OCR engine is used to recognize text. By default,
 \pkg{Rtesseract} uses Tesseract only. Depending on installed version
 of Tesseract, other OCR engines can be used individually or in
-combination with Tesseract (Cube for Tesseract versions 3.04+, LSTM for
-Tesseract versions 4.00+). Although the use of these in combination
-with Tesseract can increase accuracy, their use can add significant
-computational load (between 6--10x) and require appropriately trained
-language files, so they are not used by default by \pkg{Rtesseract}'s
-OCR functions. 
+combination with Tesseract. For Tesseract versions 3.05+, an
+additional OCR engine Cube can augment the default Tesseract engine,
+and for Tesseract versions 4.00+ a Long Short-term Memory (LSTM)
+neural network based OCR engine can be added. Although the use of each
+of these in
+combination with Tesseract can potentially increase accuracy, their use can add
+significant computational load (between 6--10x) and require
+appropriately trained language files, so they are not used by default
+by \pkg{Rtesseract}'s OCR functions.
 
 \subsection{Image Pre-processing}
 
-Consider the image previous image. When we perform OCR on this,
+Consider the previous image. When we perform OCR on this,
 tesseract treats the highlighted text in "yellow" as a dark rectangular
 block and ignores it.
 
-Let's see what we get from `tesseract()` with this image:
+Let's see what we get from \code{tesseract()} with this image:
 
 <<>>=
 t0 = tesseract(smithburn)
@@ -530,33 +533,38 @@ w0 = GetText(t0, "RIL_TEXTLINE")
 @
 
 Some of the words in the highlighted text are ``Drs. Dick and Haddow.''
-Are these in the words returned by tesseract:
+Are these in the words returned by tesseract?
 
 <<>>=
 grep("Drs. Dick and Haddow", w0, value = TRUE)
 @ 
 
-It seems not. Of course, there is text under this highlight.
-We need to pre-process the image before we pass it to Tesseract to have the possibility of
-recovering this text.
+It seems not. In this case, the text under the highlighted area is
+being lost. We need to pre-process the image to remove the highlight
+but not the text before we pass it to
+Tesseract to have the possibility of recovering this text.
 There are many options for pre-processing images, including
-Imagemagick, OpenCV, or Leptonica. Leptonica is already used by
-Tesseract to do some processing of the image, e.g., de-skew, remove
-lines, etc. Since Leptonica is already interfaced with Tesseract
-(i.e., internally Tesseract operates off the \code{Pix} object created by
-Leptonica), we include some bindings to the Leptonica library in the
-\pkg{Rtesseract} package for basic image processing.
+Imagemagick, OpenCV, Leptonica, or even R itself operating on the
+image as a matrix or array. Leptonica is already used by Tesseract
+internally to do some pre-processing of the image, e.g., de-skew, remove
+lines, etc. and since Tesseract conducts OCR off the \code{Pix} object created by
+Leptonica, we include some bindings to the Leptonica library in the
+\pkg{Rtesseract} package for basic image processing. Using these
+functions, we can conduct our own pre-processing and then hand the
+resulting \code{Pix} object to Tesseract for OCR.
 
-In this case, we need only convert the image from color to gray-scale or 8 bits per pixel.
-We do this with the  \code{pixConvertTo8()} function.
-So we read the image and convert it with
+To remove the highlight, we need to convert the image from color
+to gray-scale or 8 bits per pixel, and thereby convert the yellow area
+to a light gray.  We do this with the
+\code{pixConvertTo8()} function,
 
 <<>>=
 pix = pixRead(smithburn)
 pix1 = pixConvertTo8(pix)
 @
 
-We can then pass the modified image  to the \code{tesseract()} function:
+We can test if this is sufficient to recover the text under the
+highlighted region by calling \code{tesseract()} on the modified image:
 
 <<>>=
 t1 = tesseract(pix1)
@@ -568,7 +576,7 @@ Then we call, e.g., \code{GetText()} as before, e.g.,
 w1 = GetText(t1, "RIL_TEXTLINE")
 @
 
-We then check whether the words we see under the highlighted text are in the words
+and check whether the words we see under the highlighted text are in the words
 returned by tesseract for this modified image:
 
 <<>>=
