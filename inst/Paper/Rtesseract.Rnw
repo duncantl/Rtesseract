@@ -541,7 +541,7 @@ significant computational load (between 6--10x) and require
 appropriately trained language files, so they are not used by default
 by \pkg{Rtesseract}'s OCR functions.
 
-\subsection{Image Pre-processing and Manipulation}
+\subsection{Image Manipulation and Pre-processing}
 
 \subsubsection{Rotating Text}
 

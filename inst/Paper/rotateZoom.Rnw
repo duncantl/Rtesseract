@@ -1,14 +1,15 @@
 
-In figure~\ref{fig:base}, we can readily identify
+Visually, in figure~\ref{fig:base} we can identify
 the rotated, vertical text on the right of the page.
-We were also able to identify this text from the low confidence levels of the 
+Above, we encountered this text from the low confidence levels of the 
 results returned from \code{GetBoxes}.
 Tesseract recognizes the rest of the page as horizontally oriented text
 and is entirely confused by these symbols in that context.
-So it returns nonsensical results.
-However, in many cases, we may want to extract the rotated text.
+So it returns nonsensical results. While we decided this text could safely
+ignored in this case, in many cases we may want to extract the rotated text.
 Ignoring how we identify the relevant rectangle(s) of interest 
-in the page, we can 
+in the page, we can
+
 \begin{enumerate}
 \item{rotate the contents image}
 \item{restrict tesseract to separately recognize the text within each of these rectangles}

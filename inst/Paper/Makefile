@@ -17,10 +17,10 @@ Rtesseract.pdf: Rtesseract.tex Rtesseract.bib
 # RJwrapper.Rnw wraps the style for the R Journal
 # and Rtesseract.Rnw
 # Rtesseract.tex should not be created ever
-RJwrapper.tex: RJwrapper.Rnw Rtesseract.Rnw
-	$(KNIT)
+# RJwrapper.tex: RJwrapper.Rnw Rtesseract.Rnw
+#	$(KNIT)
 
-Rtesseract.tex: Rtesseract.Rnw
+Rtesseract.tex: Rtesseract.Rnw rotateZoom.Rnw
 	$(KNIT)
 
 clean:
