@@ -40,11 +40,15 @@
 }
 \usage{
 pixRead(filename, ...)
+pixCreate(x, ...)
 }
 \arguments{
   \item{filename}{the name of the file, fully or relatively qualified as
-  necessary.}
-\item{\dots}{additional arguments, currently ignored.}
+    necessary.}
+  \item{x}{a vector of length three specifying the width, height and
+    depth of the image.}
+  \item{\dots}{additional arguments, currently ignored for
+    \code{pixRead} and passed to the methods for \code{pixCreate}.}
 }
 \value{
   An object of class \code{Pix-class}.
@@ -66,6 +70,13 @@ Duncan Temple Lang
 \examples{
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  pix = pixRead(f)
+ pixGetInputFormat(px)
+
+ plot(pix)
+ dim(pix)
+ pix[,]
+ 
+ pixGetInputFormat()
  api = tesseract(pix)
  lapply(api, GetAlternatives, "symbol")
 }
