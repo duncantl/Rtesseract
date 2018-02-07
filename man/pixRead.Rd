@@ -31,8 +31,7 @@
 \alias{pixZero}
 \alias{pixEqual}
 \alias{pixClone}
-\alias{pixRotateAMGray}
-\alias{pixRotate}
+\alias{pixCreate}
 \title{Read an Image for use with Tesseract}
 \description{
   This function reads an image, determining what format it is
@@ -41,21 +40,11 @@
 }
 \usage{
 pixRead(filename, ...)
-pixRotateAMGray(pix, angle, grayVal = 0L)
-pixRotateAMGray(pix, angle = -pi/2, type = 1L, incolor = 1L, width = 0L, height = 0L)
 }
 \arguments{
   \item{filename}{the name of the file, fully or relatively qualified as
   necessary.}
 \item{\dots}{additional arguments, currently ignored.}
-\item{pix}{the Pix object created via \code{pixRead} or \code{\link{GetImage}}}
-\item{angle}{a numeric value specifying the angle of rotation.
- These are in radians.  Positive values are clockwise, negative values anti-clockwise}
-\item{grayVal}{an integer value specifying the ....}%XXX
-\item{type}{how to rotate (by area map, shear or sampling} %XXX
-\item{incolor}{whether to bring in white or black pixels the rotation
-  leaves uncovered space from the background.}
-\item{width,height}{ignore for now, i.e. leave as 0}
 }
 \value{
   An object of class \code{Pix-class}.
