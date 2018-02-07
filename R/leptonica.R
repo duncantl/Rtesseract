@@ -105,10 +105,10 @@ function(pix)
 }
 
 pixGetPixels =
-function(pix, dims = pixGetDims(pix))
+function(pix, dims = pixGetDims(pix), transpose = FALSE)
 {
-    ans = .Call("R_pixGetPixels", pix)
-    dim(ans) = dims[1:2]
+    ans = .Call("R_pixGetPixels", pix, as.logical(transpose))
+    dim(ans) = if(transpose) rev(dims[1:2]) else dims[1:2]
     ans
 }
 
@@ -406,14 +406,21 @@ function(pix, width, height, depth, dims = c(width, height, depth))
 pixTranspose =
 function(pix, vert = TRUE, horiz = FALSE)
 {
-    m = pix[,]
+
+      # Create a new pix with nrow, ncol being those flipped from pix
     d = GetImageDims(pix)
     p2 = pixCreate(d[c(2, 1, 3)])
-    X = t(m)    
+
+    # Transpose the matrix and optionally reverse the order of each o the rows and the columns
+      # get the pix as a matrix
+#    m = pix[,]    
+    m = pixGetPixels(pix, transpose = TRUE) # equivalent to t(m)
     if(horiz)
-        X = X[, ncol(X):1]
+        m = m[, ncol(m):1]
     if(vert)
-        X = X[nrow(X):1,]
-    .Call("R_pixSetAllPixels", p2, rev(dim(m)), X)
+        m = m[nrow(m):1,]
+
+      # Copy this matrix to the pix
+    .Call("R_pixSetAllPixels", p2, dim(m), m)
     p2
 }

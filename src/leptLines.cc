@@ -242,20 +242,21 @@ R_pixSetRes(SEXP r_pix, SEXP r_vals)
 
 extern "C"
 SEXP
-R_pixGetPixels(SEXP r_pix)
+R_pixGetPixels(SEXP r_pix, SEXP r_transpose)
 {
     PIX *pix = GET_REF(r_pix, PIX);
     int r, c;
     pixGetDimensions(pix, &c, &r, NULL);
     SEXP ans = NEW_NUMERIC(r * c);
     double *p = REAL(ans);
+    int do_transpose = LOGICAL(r_transpose)[0];
 
     l_uint32 val;
     int i, j;    
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
             pixGetPixel(pix, j, i, &val);
-            p[i + j*r] = val;
+            p[do_transpose ? j + i*c : i + j*r] = val;
         }
     }
     
