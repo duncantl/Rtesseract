@@ -498,12 +498,35 @@ R_pixSet2DMatrixVals(SEXP r_pix, SEXP r_midx, SEXP r_vals)
         y = pidx[row] - 1;
         x = pidx[row + nr] -1;
         l_uint32 tmp;
+        //XXX
         pixGetPixel(pix, x, y, &tmp);
         Rprintf("%d, %d (%d) -> %d\n", x, y, tmp, pv[row]);
         pixSetPixel(pix, x, y, pv[row]);
     }
     
     return(R_NilValue);
+}
+
+
+extern "C"
+SEXP
+R_pixSetAllPixels(SEXP r_pix, SEXP r_dims, SEXP r_vals)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    
+    size_t r = INTEGER(r_dims)[0];
+    size_t c = INTEGER(r_dims)[1];    
+    
+    double *vals = REAL(r_vals);
+    int i, j;    
+        for(j = 0; j < c; j++) {
+    for(i = 0; i < r; i++) {
+            pixSetPixel(pix, j, i, *vals);
+            vals++;
+        }
+    }
+    
+    return(r_pix);
 }
 
 
@@ -530,4 +553,52 @@ R_pixSetMatrixVals(SEXP r_pix, SEXP r_i, SEXP r_j, SEXP r_vals)
     }
     
     return(r_pix);
+}
+
+
+
+
+extern "C"
+SEXP
+R_pixFlipLR(SEXP r_pix, SEXP r_target)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixFlipLR(r_target != R_NilValue ? GET_REF(r_target, PIX) : NULL, pix);
+    if(r_target == R_NilValue)
+       return(createRef(ans, "PIX", R_pixDestroy));    
+    else
+        return(r_target);
+}
+
+
+extern "C"
+SEXP
+R_pixFlipTB(SEXP r_pix, SEXP r_target)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    PIX *ans = pixFlipTB(r_target != R_NilValue ? GET_REF(r_target, PIX) : NULL, pix);
+    if(r_target == R_NilValue)
+       return(createRef(ans, "PIX", R_pixDestroy));    
+    else
+        return(r_target);
+}
+
+
+extern "C"
+SEXP
+R_pixCreate(SEXP r_dims)
+{
+    int *dims = INTEGER(r_dims);
+    PIX *ans = pixCreate(dims[1], dims[0], dims[2]);
+    return(createRef(ans, "Pix", R_pixDestroy));    
+}
+
+
+extern "C"
+SEXP
+R_pixSetDimensions(SEXP r_pix, SEXP r_dims)
+{
+    PIX *pix = GET_REF(r_pix, PIX);
+    int * dims = INTEGER(r_dims);
+    return(ScalarInteger(pixSetDimensions(pix, dims[0], dims[1], dims[2])));
 }

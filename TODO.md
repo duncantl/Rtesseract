@@ -1,9 +1,11 @@
 # Todo Items
 
-1. Add general pixRotate() functions, not just pixRotateAMGray().
-   e.g. pixRotate{90,180}, pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
+1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
+   e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
+     Not needed -  pixRotate{90,180},
 
-1. Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
+1. [not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
+  Is there a GetDims? no - just pixGetDims and GetImageDims.
 
 1. Memory Leak notifications when quit from R.
 

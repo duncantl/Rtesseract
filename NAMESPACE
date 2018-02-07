@@ -119,6 +119,11 @@ export(pixAddGray, pixThresholdToValue, pixThresholdToBinary, pixInvert, pixConv
        pixZero, pixGetDepth, pixEqual, pixSetRes,
        pixOpenGray, pixDilateGray, pixOpenBrick, pixCloseBrick, pixErodeBrick, pixDilateBrick)
 
+export(pixFlipTB, pixFlipLR)
+
+export(pixCreate, pixSetDims)
+export(pixTranspose)
+
 export(getLines)
 
 exportPattern("IFF_.*")

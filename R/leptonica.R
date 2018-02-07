@@ -266,7 +266,7 @@ setMethod("[", c("Pix", "matrix"),
             pixGetPixels(x)[ i, ... ]
           })
 
-
+#??? Is this signature correct? Is it value that should be a matrix and i and j are missing.
 setMethod("[<-", c("Pix", "matrix", "missing"),
           function(x, i, j, ..., value) {
               if(ncol(i) == 2) {
@@ -368,4 +368,52 @@ pixEqual =
 function(pix1, pix2, useAlpha = TRUE, useCMap = FALSE)
 {
   .Call("R_pixEqual", pix1, pix2, as.logical(useAlpha), as.logical(useCMap))
+}
+
+
+pixFlipTB =
+function(pix, target = NULL)
+{
+  .Call("R_pixFlipTB", pix, target)
+}
+
+pixFlipLR =
+function(pix, target = NULL)
+{
+  .Call("R_pixFlipLR", pix, target)
+}
+
+
+
+setGeneric("pixCreate", function(x, ...)  standardGeneric("pixCreate"))
+setMethod("pixCreate", "numeric",
+          function(x, ...) {
+              x = as.integer(x)
+              if(length(x) < 3)
+                 stop("Need width, height, and depth to create a Pix object")
+              .Call("R_pixCreate", x)
+          })
+
+pixSetDims =
+function(pix, width, height, depth, dims = c(width, height, depth))    
+{
+  .Call("R_pixSetDimensions", pix, as.integer(dims))
+}
+
+
+
+
+pixTranspose =
+function(pix, vert = TRUE, horiz = FALSE)
+{
+    m = pix[,]
+    d = GetImageDims(pix)
+    p2 = pixCreate(d[c(2, 1, 3)])
+    X = t(m)    
+    if(horiz)
+        X = X[, ncol(X):1]
+    if(vert)
+        X = X[nrow(X):1,]
+    .Call("R_pixSetAllPixels", p2, rev(dim(m)), X)
+    p2
 }

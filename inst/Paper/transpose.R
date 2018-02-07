@@ -1,0 +1,5 @@
+library(Rtesseract)
+f = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+px = pixRead(f)
+pt = pixTranspose(px)
+plot(pt)
