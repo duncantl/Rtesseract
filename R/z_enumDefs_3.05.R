@@ -1,6 +1,6 @@
 #cat("Version:", tesseractVersion(runTime = FALSE ), "\n")
 
-if( tesseractVersion(runTime = FALSE ) == c('3.0')) {
+if( tesseractVersion(runTime = FALSE ) %in% c('3.0', "3.05", "3.05.01")) {
 
 setClass("PolyBlockType", contains = "EnumValue")
 
