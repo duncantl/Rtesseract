@@ -59,21 +59,21 @@
 
 \Abstract{
 
-  We created the \pkg{Rtesseract} package to support working with text data
-  present in images. \pkg{Rtesseract} is an R package that provides
-  access to Tesseract, an Open Source C++ library for Optical Character
-  Recognition (OCR), from within R.  At its simplest, \pkg{Rtesseract}
-  allows an R user to recover of text from an image as lines, words or
-  individual characters.  We can also obtain the location of text
-  elements, possible alternatives and the predictive ``confidence'' for
-  each.  These are often necessary for interpreting the text, e.g., for
-  multi-column layout, or tables.  The package provides access to much of
-  the Tesseract C++ API, allowing full customization of the OCR
-  behavior, and exporting the results in various formats (e.g. PDF),
-  and also visualizing them within R itself. With the \pkg{Rtesseract}
-  package, users are able to create a fully programmatic workflow to
-  extract text data into R for subsequent analysis.
-}
+  We created the \pkg{Rtesseract} package to support working with text
+  data present in images. \pkg{Rtesseract} is an R package that
+  provides access to Tesseract, an Open Source C++ library for Optical
+  Character Recognition (OCR), from within R.  At its simplest,
+  \pkg{Rtesseract} allows an R user to recover of text from an image
+  as lines, words or individual characters.  We can also obtain the
+  location of text elements, possible alternatives and the predictive
+  ``confidence'' for each.  These are often necessary for interpreting
+  the text, e.g., for multi-column layout, or tables.  The package
+  provides access to much of the Tesseract C++ API, allowing full
+  customization of the OCR behavior, and exporting the results in
+  various formats (e.g. PDF), and also visualizing them within R
+  itself.  With the \pkg{Rtesseract} package, users are able to create
+  a fully programmatic workflow to extract text data into R for
+  subsequent analysis.  }
 
 \Keywords{}
 \Plainkeywords{}
@@ -127,17 +127,16 @@ smithburn = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract
 
 There has been an enormous increase in the amount of text data that we
 work with from social media, reports, scholarly articles, job
-applications, etc. These often come as plain text or structured documents
-such as word-processing files, HTML, PDF. However, there are many
-documents of interest that are only available as scanned or
+applications, etc. These often come as plain text or structured
+documents such as word-processing files, HTML, PDF. However, there are
+many documents of interest that are only available as scanned or
 photographic images (e.g., old books, newspapers).
 %we want tables of data or text for NLP, lists of entries
-Optical Character
-Recognition (OCR) is a technique to infer characters, words or lines
-of text from an image, thereby making them accessible for data
-analysis. There are many OCR software tools available (e.g., Adobe
-Acrobat, PDFPen Pro, ABBY), though these typically only output text results
-to a file.
+Optical Character Recognition (OCR) is a technique to infer
+characters, words or lines of text from an image, thereby making them
+accessible for data analysis. There are many OCR software tools
+available (e.g., Adobe Acrobat, PDFPen Pro, ABBY), though these
+typically only output text results to a file.
 
 Although OCR technology has steadily improved over the years, OCR
 results are rarely perfect. We may not care about these errors if they
@@ -170,16 +169,17 @@ alternative matches, location on the page, etc., which are helpful for
 assessing the certainty in the each returned result.
 
 In our work extracting and analyzing text data present in images from
-R, we desired a tool which would overcome the limitations above. In our
-search for solutions, we found Tesseract, a long-standing open source
-OCR library originally created in 1985 and currently under active
-development. Accessing the Tesseract API from R provides us with the
-ability to bring pre-processing, OCR, post-processing, and analysis
-under complete programmatic control within R. The \pkg{Rtesseract}
-package provides 1) a simple high-level function to extract the text
-from one or more images, 2) the ability to also obtain important
-auxiliary data (e.g., the confidence in each prediction, the location
-within the image), and 3) customization of how the OCR is done.
+R, we desired a tool which would overcome the limitations above. In
+our search for solutions, we found Tesseract, a long-standing open
+source OCR library originally created in 1985 and currently under
+active development. Accessing the Tesseract API from R provides us
+with the ability to bring pre-processing, OCR, post-processing, and
+analysis under complete programmatic control within R. The
+\pkg{Rtesseract} package provides 1) a simple high-level function to
+extract the text from one or more images, 2) the ability to also
+obtain important auxiliary data (e.g., the confidence in each
+prediction, the location within the image), and 3) customization of
+how the OCR is done.
 
 % OCR is improving, but it is not perfect. What is pipeline - concrete examples:
 % Why pre-process?
@@ -230,44 +230,43 @@ either simple or well-covered by the default configuration.
 We have not been alone in recognizing the utility of Tesseract. Prior
 to our creation of the \pkg{Rtesseract} in April 2015, the \pkg{ocR}
 package~\citep{Hagmann2014} provided an interface in R to Tesseract
-via calling the
-Tesseract command line executable. Using the \pkg{ocR} package, the
-user specifies the image file and command-line options, Tesseract is
-called and writes the results to a file which is then read back into
-R. Then, following the creation of \pkg{Rtesseract}, the
-\pkg{tesseract} package~\citep{ooms2016} was created and takes a similar
-approach to our \pkg{Rtesseract} package by interfacing to the Tesseract
-C\texttt{++} library. However, by design, \pkg{tesseract} provides only
-functionality to get the text results from the OCR
-process. %% Check this
-\pkg{Rtesseract}, from its initial implementation, provides
-access to most of the functionality in the Tesseract API and
-provides fine-grain control from R to the different steps in the OCR
-process. Additionally, \pkg{Rtesseract} provides tools which
-allow users to easily extend functionality, as well as access to
-leptonica, the image library Tesseract uses for image
+via calling the Tesseract command line executable. Using the \pkg{ocR}
+package, the user specifies the image file and command-line options,
+Tesseract is called and writes the results to a file which is then
+read back into R. Then, following the creation of \pkg{Rtesseract},
+the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
+similar approach to our \pkg{Rtesseract} package by interfacing to the
+Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
+provides only functionality to get the text results from the OCR
+process. %% Check this\
+pkg{Rtesseract}, from its initial
+implementation, provides access to most of the functionality in the
+Tesseract API and provides fine-grain control from R to the different
+steps in the OCR process. Additionally, \pkg{Rtesseract} provides
+tools which allow users to easily extend functionality, as well as
+access to leptonica, the image library Tesseract uses for image
 pre-processing. This functionality allows users to provide their own
 processed image to Tesseract. Lastly, \pkg{Rtesseract} has been
-designed to support
-both the current release (v3.05.01) and development versions
-(v4.00.alpha) of Tesseract, with mechanisms to configure
-\pkg{Rtesseract} according to the installed version of Tesseract.
+designed to support both the current release (v3.05.01) and
+development versions (v4.00.alpha) of Tesseract, with mechanisms to
+configure \pkg{Rtesseract} according to the installed version of
+Tesseract.
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
-reliable manner is sufficient. \pkg{Rtesseract} provides simple
+reliable manner is sufficient.  \pkg{Rtesseract} provides simple
 interfaces which allow users to provide the path to an image in a
-supported format, e.g. tiff or png, and to perform OCR
-on the image using the default settings (similar to both the \pkg{ocR}
-and \pkg{tesseract} packages). For example, suppose we have
-an image from an older scientific publication from which we want
-to extract information, e.g., Fig. \ref{fig:base}. We will use this
-image to highlight the functionality and common use-cases of the
+supported format, e.g. tiff or png, and to perform OCR on the image
+using the default settings (similar to both the \pkg{ocR} and
+\pkg{tesseract} packages). For example, suppose we have an image from
+an older scientific publication from which we want to extract
+information, e.g., Fig. \ref{fig:base}. We will use this image to
+highlight the functionality and common use-cases of the
 \pkg{Rtesseract} package. % AWK
 
 
-\begin{figure}[H]
+\begin{figure}[h]
 \includegraphics[width=\textwidth]{\Sexpr{smithburn}}
 \caption{An example image of a scientific paper which contains text we
   would like to extract and analyze.}
@@ -277,8 +276,7 @@ image to highlight the functionality and common use-cases of the
 \subsection{Basic Text Extraction}
 
 The most fundamental task for OCR is to convert an image into text.
-For this simple task, we
-use the high-level function \code{GetText},
+For this simple task, we use the high-level function \code{GetText},
 
 <<>>=
 smithburn = system.file("images", "SMITHBURN_1952_p3.png",
@@ -286,13 +284,11 @@ smithburn = system.file("images", "SMITHBURN_1952_p3.png",
 GetText(smithburn)
 @
 
-We pass \code{GetText} the path to a
-file containing the image.  By default, it returns the words it finds
-in the image in the order they appear.
-We sometimes want the
-results returned as individual characters (symbols), such as when we
-are checking how well Tesseract recognized individual characters,
-e.g. special or unique characters,
+We pass \code{GetText} the path to a file containing the image.  By
+default, it returns the words it finds in the image in the order they
+appear.  We sometimes want the results returned as individual
+characters (symbols), such as when we are checking how well Tesseract
+recognized individual characters, e.g. special or unique characters,
 
 <<>>=
 GetText(smithburn, level = "symbol")
@@ -304,8 +300,8 @@ or sometimes we only want full lines (textlines),
 GetText(smithburn, level = "textline")
 @
 
-Modifying the organizational level of the returned text is easy to achieve with the \code{levels} argument in
-\code{GetText}.
+Modifying the organizational level of the returned text is easy to
+achieve with the \code{levels} argument in \code{GetText}.
 
 \pkg{Rtesseract} includes three other high-level functions --
 \code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives} --
@@ -319,42 +315,43 @@ which only operates at the ``symbol'' level).
 This practice of calling \code{GetText} followed by another, e.g.,
 \code{GetBoxes} for the same file is a common occurrence when working
 interactively with \pkg{Rtesseract}. Yet, it has a distinct
-inefficiency - we repeat the OCR recognition for the same file merely to
-export a different aspect of the output from the OCR engine. Since OCR is
-reasonably computationally intensive, we would like to perform the OCR
-once and then query each aspect we want (i.e., the text, the
+inefficiency - we repeat the OCR recognition for the same file merely
+to export a different aspect of the output from the OCR engine. Since
+OCR is reasonably computationally intensive, we would like to perform
+the OCR once and then query each aspect we want (i.e., the text, the
 confidences, the alternatives, \ldots) from this single OCR operation.
 
-The \code{tesseract} function creates an
-instance of the OCR engine (an object of class \code{TesseractBaseAPI}
-in R).  We can repeatedly
-query this for the text, boxes, confidences and alternatives without repeating
-the OCR.  This is the preferred method when multiple pieces of information are
-needed from the same image. 
+The \code{tesseract} function creates an instance of the OCR engine
+(an object of class \code{TesseractBaseAPI} in R).  We can repeatedly
+query this for the text, boxes, confidences and alternatives without
+repeating the OCR.  This is the preferred method when multiple pieces
+of information are needed from the same image.
 
-We typically call \code{tesseract} by specifying the path to the file and any other options
-controlling how the OCR will be performed (explained in more detail below in ``Advanced
-Use''):
+We typically call \code{tesseract} by specifying the path to the file
+and any other options controlling how the OCR will be performed
+(explained in more detail below in ``Advanced Use''):
 
 <<>>=
 api = tesseract(smithburn)
 @
 
-We then pass the object returned by \code{tesseract} to each of the four high level functions
-rather than the file name, e.g., \code{GetText(api)},
-\code{GetBoxes(api)}, \code{GetConfidences(api)}. 
-By default, the call
-to \code{tesseract} doesn't perform the OCR immediately. Instead, it
-is only done when we request any results, e.g., calling any of the
-four functions above, or explicitly calling the \code{Recognize} function
-with the \code{TesseractBaseAPI} object as an argument.
+We then pass the object returned by \code{tesseract} to each of the
+four high level functions rather than the file name, e.g.,
+\code{GetText(api)}, \code{GetBoxes(api)}, \code{GetConfidences(api)}.
+By default, the call to \code{tesseract} doesn't perform the OCR
+immediately. Instead, it is only done when we request any results,
+e.g., calling any of the four functions above, or explicitly calling
+the \code{Recognize} function with the \code{TesseractBaseAPI} object
+as an argument.
 
-We can use this \code{TesseractBaseAPI} object to illustrate how \pkg{Rtesseract}'s ability to retrieve more than just the recognized text from
-an image can extend an OCR workflow. To continue the example above, after extracting the text from the
-scientific publication, we might want to check the results for inaccuracies. However,
-checking word by word manually is both tedious and
-error-prone. Rather, it seems reasonable to focus our attention initially on
-those words with the lowest confidences:
+We can use this \code{TesseractBaseAPI} object to illustrate how
+\pkg{Rtesseract}'s ability to retrieve more than just the recognized
+text from an image can extend an OCR workflow. To continue the example
+above, after extracting the text from the scientific publication, we
+might want to check the results for inaccuracies. However, checking
+word by word manually is both tedious and error-prone. Rather, it
+seems reasonable to focus our attention initially on those words with
+the lowest confidences:
 
 <<>>=
 confs = GetConfidences(api)
@@ -378,15 +375,15 @@ we can sort by the confidence,
 bbox[order(bbox[,"confidence"])[1:10],]
 @
 
-At first glance, it appears the low confidence words might be grouped together in
-similar areas on the page, with the far right side of the page
-(``left'' and ``right'' values of approximately 3800-4000) showing up
-often in the lowest cofidence results.
+At first glance, it appears the low confidence words might be grouped
+together in similar areas on the page, with the far right side of the
+page (``left'' and ``right'' values of approximately 3800-4000)
+showing up often in the lowest cofidence results.
 
-Since we have access to the confidences and
-bounding boxes in R, we can explore this theory by treating these
-objects just like any other data. To explore our hypothesis that these
-terms are grouped left to right, we can group the words into bins by their location left to
+Since we have access to the confidences and bounding boxes in R, we
+can explore this theory by treating these objects just like any other
+data. To explore our hypothesis that these terms are grouped left to
+right, we can group the words into bins by their location left to
 right using the \code{cut} function,
 
 <<>>=
@@ -404,15 +401,14 @@ tapply(bbox[,"confidence"], lrGroups, median)
 @
 
 Doing this verifies our suspicion that there are issues with the right
-side of the page. Looking
-at the image (Fig. \ref{fig:base}), we can see there is rotated text
-in the margin that identifies when and where the PDF was
-downloaded. This text is not being recognized well by the OCR, but is
-also not part of the journal article in which we are interested. Because
-this text crosses several textlines, post-processing without location
-information would involve searching for ``junk'', e.g. non-valid
-words such as ``Isosziim'', at the end of each
-text line. However, we can easily exclude this text in
+side of the page. Looking at the image (Fig. \ref{fig:base}), we can
+see there is rotated text in the margin that identifies when and where
+the PDF was downloaded. This text is not being recognized well by the
+OCR, but is also not part of the journal article in which we are
+interested. Because this text crosses several textlines,
+post-processing without location information would involve searching
+for ``junk'', e.g. non-valid words such as ``Isosziim'', at the end of
+each text line. However, we can easily exclude this text in
 post-processing with location information in hand. Additionally, while
 we could crop this image using editing software outside of R, we will
 show later how this area can be excluded from the OCR recognition step
@@ -426,8 +422,8 @@ the top of each page, we can focus on the first text line,
 GetText(api, level = "textline")[1]
 @ 
 
-We know that the lower case letter in ``c.'' is a mistake, but we might
-not be sure what the correct letter should be. Helpfully, we can
+We know that the lower case letter in ``c.'' is a mistake, but we
+might not be sure what the correct letter should be. Helpfully, we can
 inspect the alternative matches for the sixth character,
 
 <<>>=
@@ -437,28 +433,29 @@ GetAlternatives(api)[6]
 which reveals that ``C'' was a close second in this case.
 
 This example illustrates both the workflow of using OCR to extract
-text and highlights why having access to information beyond just the text is so
-helpful to a full OCR workflow if not crucial for increased accuracy.
+text and highlights why having access to information beyond just the
+text is so helpful to a full OCR workflow if not crucial for increased
+accuracy.
  
-In this OCR workflow, we find that visualizing
-the confidences is helpful for quickly inspecting \pkg{Rtesseract}
-results for issues. Therefore, \pkg{Rtesseract} includes a plotting method for
-OCR output. By default calling \code{plot} on a
-\code{TesseractBaseAPI} object will create a plot which includes
-original image overlaid with the bounding boxes colored (and
-optionally filled) by relative confidence. See
-Fig. \ref{fig:rtess_plot} for an example. Plotting the results is
-especially helpful when adjusting the OCR configuration settings to
-improve accuracy (discussed further below under ``Advanced Use'').
+In this OCR workflow, we find that visualizing the confidences is
+helpful for quickly inspecting \pkg{Rtesseract} results for
+issues. Therefore, \pkg{Rtesseract} includes a plotting method for OCR
+output. By default calling \code{plot} on a \code{TesseractBaseAPI}
+object will create a plot which includes original image overlaid with
+the bounding boxes colored (and optionally filled) by relative
+confidence. See Fig. \ref{fig:rtess_plot} for an example. Plotting the
+results is especially helpful when adjusting the OCR configuration
+settings to improve accuracy (discussed further below under ``Advanced
+Use'').
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<echo = FALSE>>=
 plot(api, fillBoxes = TRUE, main = "") # Check style manual
 @
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the scanned image with the bounding boxes surrounding the
-  recognized element optionally colored according to the boxes' associated
-  confidences.}
+  recognized element optionally colored according to the boxes'
+  associated confidences.}
 \label{fig:rtess_plot}
 \end{figure}
 
@@ -495,51 +492,59 @@ with spaces (e.g., the ``layout'' output of many other OCR engines).
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 accessing and manipulating the results of running the OCR engine on an
-image. In many non-trivial cases, you might want to manipulate the behavior of
-the OCR engine itself rather than only the output. For these
-purposes, the \pkg{Rtesseract} package exposes full access to the
-\code{TesseractBaseAPI}, which allows fine-tuning of the OCR engine
-for specific cases.
+image. In many non-trivial cases, you might want to manipulate the
+behavior of the OCR engine itself rather than only the output. For
+these purposes, the \pkg{Rtesseract} package exposes full access to
+the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
+engine for specific cases.
 
 \subsection{Page Segmentation Mode and OCR engine}
 
-Two variables controlling the OCR engine, \code{pageSegMode} and \code{engineMode}, deserve
-special mention because these two can have large impact on the results of the
-OCR. The first, the Page Segmentation Mode, adjusts how Tesseract
-recognizes lines of text in the image. By adjusting Page Segmentation
-Mode, the user can tell Tesseract how to expect the text to be
-arranged, e.g. as a single block of text, sparse
-text, arranged top to bottom (e.g., the verticle arrangement of
-many Asian texts) or even in
-a circle (e.g., the text on the rim of a coin), etc. The \pkg{Rtesseract}
-package preserves the defaults in the \code{TesseractAPI} and assumes
-the input is a single block of text (\code{PSM\_SINGLE\_BLOCK}) by
-default, though in our experience OCR can be significantly improved
-with changing the Page Segmentation Mode. We have found for most
-problems \code{PSM\_AUTO}, which attempts to detect the correct page
-segmentation automatically, is a good default, though any of the currently
-\Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))} available Page
-Segmentation modes might be best for different applications. Curiously,
-\code{PSM\_AUTO} is the default for the tesseract command line tool
-but not for the API. Page Segmentation Mode can be set either in the
-call to \code{tesseract}, in the \code{...}  arguments for any of the
-high-level functions (e.g., \code{GetText(smithburn, pageSegMode =
-"PSM\_AUTO")}), or by using \code{SetPageSegMode} on an existing
-\code{TesseractBaseAPI} object.
+First off, two ``meta-variables'' control which OCR engine is used,
+and how that engine recognizes the arrangement of text,
+\code{pageSegMode} and \code{engineMode}. Since adjusting these two
+variables can have large impact on the results of the OCR, they
+deserve special mention. The first, the Page Segmentation Mode,
+adjusts how Tesseract recognizes lines of text in the image. By
+adjusting Page Segmentation Mode, the user can tell Tesseract how to
+expect the text to be arranged, e.g. as a single block of text, sparse
+text, arranged top to bottom (e.g., the verticle arrangement of many
+Asian texts) or even in a circle (e.g., the text on the rim of a
+coin), etc. Included in the available options are to have Tesseact
+attempt to automatically detect the text orientation, the script used,
+or both. %more here The \pkg{Rtesseract} package preserves the
+defaults in the Tesseract C++ API and assumes the input is a single
+block of text (\code{PSM\_SINGLE\_BLOCK}) by default, though in our
+experience OCR can be significantly improved in some cases by changing
+the Page Segmentation Mode. We have found for most problems
+\code{PSM\_AUTO}, which attempts to detect the correct page
+segmentation automatically, is a good default, though any of the
+currently \Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))}
+available Page Segmentation modes might be best for different
+applications.
+%% Curiously,
+%% \code{PSM\_AUTO} is the default for the tesseract command line tool
+%% but not for the API.
+Page Segmentation Mode can be set in \pkg{Rtesseract} in multiple
+ways: in the call to \code{tesseract}, in the \code{...}  arguments
+for any of the high-level functions (e.g., \code{GetText(smithburn,
+  pageSegMode = "PSM\_AUTO")}), or by using \code{SetPageSegMode} on
+an existing \code{TesseractBaseAPI} object.
 
 The second of these variables is the Tesseract Engine Mode, which
-determines which OCR engine is used to recognize text. By default,
-\pkg{Rtesseract} uses Tesseract only. Depending on installed version
-of Tesseract, other OCR engines can be used individually or in
-combination with Tesseract. For Tesseract versions 3.05+, an
-additional OCR engine Cube can augment the default Tesseract engine,
-and for Tesseract versions 4.00+ a Long Short-term Memory (LSTM)
-neural network based OCR engine can be added. Although the use of each
-of these in
-combination with Tesseract can potentially increase accuracy, their use can add
-significant computational load (between 6--10x) and require
-appropriately trained language files, so they are not used by default
-by \pkg{Rtesseract}'s OCR functions.
+determines which OCR engine is used to recognize text. Tesseract ships
+with additional OCR algorithms which can be used individually or in
+combination with Tesseract, though by default \pkg{Rtesseract} uses
+Tesseract only. For Tesseract versions 3.05+, an additional OCR engine
+Cube is included, and for Tesseract versions 4.00+ a Long Short-term
+Memory (LSTM) neural network based OCR engine is included. Although
+the use of each of these in combination with Tesseract can potentially
+increase accuracy, their use can add significant computational load
+(between 6--10x) and require appropriately trained language files, so
+they are not used by default by \pkg{Rtesseract}'s OCR functions. For
+a comparison of the accuracy and performance of each of these options,
+please refer to
+\url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
 
 \subsection{Image Manipulation and Pre-processing}
 
@@ -551,9 +556,9 @@ by \pkg{Rtesseract}'s OCR functions.
 
 \subsubsection{Pre-processing the Image}
 
-Consider the previous image. When we perform OCR on this,
-tesseract treats the highlighted text in "yellow" as a dark rectangular
-block and ignores it.
+Consider the previous image. When we perform OCR on this, tesseract
+treats the highlighted text in "yellow" as a dark rectangular block
+and ignores it.
 
 Let's see what we get from \code{tesseract()} with this image:
 
@@ -562,8 +567,8 @@ t0 = tesseract(smithburn)
 w0 = GetText(t0, level = "textline")
 @
 
-Some of the words in the highlighted text are ``Drs. Dick and Haddow.''
-Are these in the words returned by tesseract?
+Some of the words in the highlighted text are ``Drs. Dick and
+Haddow.''  Are these in the words returned by tesseract?
 
 <<>>=
 grep("Drs. Dick and Haddow", w0, value = TRUE)
@@ -571,22 +576,24 @@ grep("Drs. Dick and Haddow", w0, value = TRUE)
 
 It seems not. In this case, the text under the highlighted area is
 being lost. We need to pre-process the image to remove the highlight
-but not the text before we pass it to
-Tesseract to have the possibility of recovering this text.
-There are many options for pre-processing images, including
-Imagemagick, OpenCV, Leptonica, or even R itself operating on the
-image as a matrix or array. Leptonica is already used by Tesseract
-internally to do some pre-processing of the image, e.g., de-skew, remove
-lines, etc. Tesseract conducts OCR off the \code{Pix} object created by
-Leptonica after this pre-processing, hence i the edited \code{Pix} directly
-to tesseract rather than write the image out to file only to be
-converted again to a \code{Pix} object. Hence, we include some bindings to the Leptonica library in the
-\pkg{Rtesseract} package for basic image processing. 
+but not the text before we pass it to Tesseract to have the
+possibility of recovering this text.  There are many options for
+pre-processing images, including Imagemagick, OpenCV, Leptonica, or
+even R itself operating on the image as a matrix or array. Leptonica
+is already used by Tesseract internally to do some pre-processing of
+the image, e.g., de-skew, remove lines, etc. Tesseract conducts OCR
+off a \code{Pix} object created by Leptonica after this
+pre-processing. It would be computational efficient if we could
+pre-process the image as a \code{Pix} object in memory to be handed
+directly to Tesseract rather than write the image to an intermediate
+file on disk only to be read and converted again to a \code{Pix}
+object. For this reason, we include some bindings to the Leptonica
+library in the \pkg{Rtesseract} package for basic image processing.
 
-To remove the highlight, we need to convert the image from color
-to gray-scale or 8 bits per pixel, and thereby convert the yellow area
-to a light gray.  We do this with the
-\code{pixConvertTo8()} function,
+To remove the highlight using Leptonica from within \proglang{R}, we
+need to convert the image from color to gray-scale or 8 bits per
+pixel, and thereby convert the yellow area to a light gray.  We do
+this with the \code{pixConvertTo8()} function,
 
 <<>>=
 pix = pixRead(smithburn)
@@ -594,7 +601,8 @@ pix1 = pixConvertTo8(pix)
 @
 
 We can test if this is sufficient to recover the text under the
-highlighted region by calling \code{tesseract()} on the modified image:
+highlighted region by calling \code{tesseract()} directly on the
+modified image:
 
 <<>>=
 t1 = tesseract(pix1)
@@ -606,8 +614,8 @@ Then we call, e.g., \code{GetText()} as before, e.g.,
 w1 = GetText(t1, level = "textline")
 @
 
-and check whether the words we see under the highlighted text are in the words
-returned by tesseract for this modified image:
+and check whether the words we see under the highlighted text are in
+the words returned by tesseract for this modified image:
 
 <<>>=
 grep("Drs. Dick and Haddow", w1, value = TRUE)
@@ -617,28 +625,25 @@ Indeed all three are there.
 
 \subsection{Using Leptonica to identify lines}
 
-A primary motivation underlying the Rtesseract package is that we need
-context from the rendered page to make sense of the results of the
-OCR. Rather than just getting the text back, generally, we want
-information about the location and size for each character, word or line identified by
-tesseract so that we can use it to intelligently interpret the
-content. This includes identifying document and section titles in the
-document based on the size of the text. In this example, we'll 
-look at the locations of lines on the page in order to be able to
-interpret data within tables.  Again, consider the previous image.
+A primary motivation underlying the Rtesseract package is that we need context from the rendered page to make sense of the results of the OCR.
+Rather than just getting the text back, generally, we want information
+about the location and size for each character, word or line
+identified by tesseract so that we can use it to intelligently
+interpret the content.   This includes identifying document and section titles in the document based on the size of the text.  In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.   Again, consider the previous image.
 
 We can clearly see the data in TABLE 1 are arranged by row and column.
-The column headers are separated by two horizontal lines spanning the width of the text on the page.
-The final 4 columns have two column headers that span all 4 columns.
-The header in column 4 (``NO. STRAINS ISOLATED'') is on 3 separate lines but
-clearly differentiated from the other data rows in the table due to the
+The column headers are separated by two horizontal lines spanning the
+width of the text on the page.  The final 4 columns have two column
+headers that span all 4 columns.  The header in column 4
+(``NO. STRAINS ISOLATED'') is on 3 separate lines but clearly
+differentiated from the other data rows in the table due to the
 horizontal line separating the header from the data rows.
 
-Firstly, the \code{tesseract()} function allows us to get the horizontal and
-vertical locations of the words on the page. So we could use these to
-attempt to recover the tabular nature of this data.  In this
-particular example, we can do this effectively and relatively
-simply. However, in images with tables that have center-aligned
+Firstly, the \code{tesseract()} function allows us to get the
+horizontal and vertical locations of the words on the page.  So we
+could use these to attempt to recover the tabular nature of this data.
+In this particular example, we can do this effectively and relatively
+simply.  However, in images with tables that have center-aligned
 columns (e.g. the "Year Isolated" column), this is much more
 complicated and can lead to ambiguity regarding to which column a cell
 belongs.  Instead, we can separate the values into their respective
@@ -651,21 +656,20 @@ find the final horizontal line in this example.
 
 Given the motivation of finding the vertical and horizontal lines on
 the page, let's explore how we can do this with Rtesseract.
-Unfortunately, we have to do  this outside or separately from the  OCR
-stage of recognizing the text.
-The OCR process tesseract performs actually identifies
-and removes the lines from the image before it recognizes the
-remaining text on the image. This aids the accuracy of the OCR.
-However, it does not allow us to query the locations of the
+Unfortunately, we have to do this outside or separately from the OCR
+stage of recognizing the text.  The OCR process tesseract performs
+actually identifies and removes the lines from the image before it
+recognizes the remaining text on the image.  This aids the accuracy of
+the OCR.  However, it does not allow us to query the locations of the
 lines it removed.  Accordingly, we must replicate approximately the
 same computations it performs to identify the lines and their
 locations.  Fortunately, the basic ideas of this process are described
-\url{http://www.leptonica.com/line-removal.html}. The \pkg{Rtesseract}
+\url{http://www.leptonica.com/line-removal.html}.  The \pkg{Rtesseract}
 package provides corresponding (and higher-level convenience)
 functions to effect the same computations.
 
 Note that we will pass the original/raw image to OCR without modifying
-it. Tesseract will do many of the same computations we do. So our aim
+it.  Tesseract will do many of the same computations we do.  So our aim
 here is to simply identify the locations of the horizontal and
 vertical lines in the image before or after we perform the OCR.
  
@@ -681,21 +685,20 @@ We immediately convert the image to gray-scale with `pixConvertTo8()`:
 p1 = pixConvertTo8(p1)
 @
 
-(Note that this creates a new Pix and allows the previous one to be garbage collected
-as we assign the new image to the same R variable.)
+(Note that this creates a new Pix and allows the previous one to be
+garbage collected as we assign the new image to the same R variable.)
 
 The next step is to correct any skew or orientation in the image.
-This can be important in detecting horizontal and vertical lines that may be at an angle
-because the scan was done with a slight rotation.
-There is a function \code{deskew()} to do this. However, we will show the steps
-as they illustrate some of the leptonica functions available in the
-Rtesseract package.
+This can be important in detecting horizontal and vertical lines that
+may be at an angle because the scan was done with a slight rotation.
+There is a function \code{deskew()} to do this.  However, we will show
+the steps as they illustrate some of the leptonica functions available
+in the Rtesseract package.
 
 To detect the skew, we must first create a separate binary image using
-\code{pixThresholdToBinary()}.
-Then we call \code{pixFindSkew()} to determine the actual angle of the skew.
-Then we rotate the original image
-by that skew angle:
+\code{pixThresholdToBinary()}.   Then we call \code{pixFindSkew()} to
+determine the actual angle of the skew.   Then we rotate the original
+image by that skew angle:
 
 <<>>=
 bin = pixThresholdToBinary(p1, 150)
@@ -703,10 +706,10 @@ angle = pixFindSkew(bin)
 p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 @
 
-The 255 in the call to \code{pixRotateAMGray} corresponds to white
-and means that any pixels that are "revealed" by rotating the
-"page" are colored white. These occur in the corners.
-We can specify any gray-scale color value we want here between 0 (black) and 255 (white).
+The 255 in the call to \code{pixRotateAMGray} corresponds to white and
+means that any pixels that are "revealed" by rotating the "page" are
+colored white.  These occur in the corners.   We can specify any
+gray-scale color value we want here between 0 (black) and 255 (white).
 
 \begin{comment}
 It is useful to look at the resulting image:
@@ -718,22 +721,22 @@ plot(p2)
 
 With the reoriented image, we call the Rtesseract function
 \code{getLines()} to get the coordinates of the lines in the image.
-We'll first extract the horizontal lines.
-For this, we pass the image and then desribe a "mask" or box
-that helps to identify contiguous regions in the image corresponding
-to the lines we want. For  horizontal lines, we want wide and vertically short boxes.
-We describe this box with the width and height of the box, e.g., 
+We'll first extract the horizontal lines.   For this, we pass the image
+and then desribe a "mask" or box that helps to identify contiguous
+regions in the image corresponding to the lines we want.  For
+horizontal lines, we want wide and vertically short boxes.   We
+describe this box with the width and height of the box, e.g.,
 
 <<>>=
 hlines = getLines(p2, 51, 3)
 hlines
 @
 
-This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates
-describing a single line. 
+This returns a list with each element identifying the (x0, y0) and
+(x1, y1) coordinates describing a single line.
 
-We can add these lines to the display of the image to verify they appear where
-we expect:
+We can add these lines to the display of the image to verify they
+appear where we expect:
 
 <<>>=
 plot(p2)
@@ -744,25 +747,25 @@ lapply(hlines,
        })
 @
 
-Note that we had to subtract the y coordinates from the number of rows of the image
-as R plots from bottom up and the coordinates for the lines are relative to
-row 1 and go down.
+Note that we had to subtract the y coordinates from the number of rows
+of the image as R plots from bottom up and the coordinates for the
+lines are relative to row 1 and go down.
 
-\code{getLines()} performs several operations on the image.
-It first uses the \code{findLines()} function
-to return an image that contains either the horizontal or vertical lines.
-We'll first get the horizontal lines with
+\code{getLines()} performs several operations on the image.   It first
+uses the \code{findLines()} function to return an image that contains
+either the horizontal or vertical lines.   We'll first get the
+horizontal lines with
 
 <<<>>=
 h = findLines(p2, 51, 3)
 @
 
-We specify the Pix to process and then the horizontal width
-and vertical height (in pixels) that define a window or a region.
-This fills in gaps in potential lines within the region.
-Leptonica moves this around and fills in gaps within it if the
-rest of the pixels within the region are not white.
-findLines() uses the function pixCloseGray() to do this.
+We specify the Pix to process and then the horizontal width and
+vertical height (in pixels) that define a window or a region.   This
+fills in gaps in potential lines within the region.   Leptonica moves
+this around and fills in gaps within it if the rest of the pixels
+within the region are not white.   findLines() uses the function
+pixCloseGray() to do this.
 
 Let's look at the resulting image to see what lines it detected:
 
@@ -770,22 +773,22 @@ Let's look at the resulting image to see what lines it detected:
 plot(h, invert = TRUE)
 @
 
-Note that the background is black, corresponding to values of 0 in the Pix.
-We see the 4 primary lines that span most of the width of the image.
-The second one down (at y = 3600) has several short gaps.
-We also see many short line segments above the first line and to the right of the image.
-The ones on the right correspond to parts of the letters in the rotated text
-in the image indicating "Downloaded from http://www.....".
-If we made the vertical height of our mask larger, we may discard these but at the risk
-of including other elements.
+Note that the background is black, corresponding to values of 0 in the
+Pix.   We see the 4 primary lines that span most of the width of the
+image.   The second one down (at y = 3600) has several short gaps.   We
+also see many short line segments above the first line and to the
+right of the image.   The ones on the right correspond to parts of the
+letters in the rotated text in the image indicating "Downloaded from
+http://www.....".   If we made the vertical height of our mask larger,
+we may discard these but at the risk of including other elements.
 
 
-We are looking for rows in the image that have many black pixels
-(with value 1).
-Currently, \code{findLines()} returns an image (Pix object).
-By default, this shows the potential lines and removes everything else.
-(We can also return the image with the lines removed and the text remaining.)
-We convert this to a matrix of 0s and 1s in R:
+We are looking for rows in the image that have many black pixels (with
+value 1).   Currently, \code{findLines()} returns an image (Pix
+object).   By default, this shows the potential lines and removes
+everything else.   (We can also return the image with the lines removed
+and the text remaining.)  We convert this to a matrix of 0s and 1s in
+R:
 
 <<>>=
 m = pixGetPixels(h)
@@ -795,17 +798,18 @@ m = pixGetPixels(h)
 
 \begin{comment}
 We find the rows of this matrix that have 1000 or more
-black pixels.  We do this with
+black pixels.   We do this with
 
 <<>>=
 w = rowSums(m) > 1000
 @
 
-The value 1000 is context-specific.  It includes lines
-that span 1000 pixels or more,  and also lines that have several smaller segments whose length adds up to 1000 pixels.
-1000 is about 25\% of the columns.  This might be too large to detect the
-shorter line segments on the right of the table header, but it is probably
-enough to ignore the small line segments that don't interest us.
+The value 1000 is context-specific.   It includes lines that span 1000
+pixels or more, and also lines that have several smaller segments
+whose length adds up to 1000 pixels.   1000 is about 25\% of the
+columns.   This might be too large to detect the shorter line segments
+on the right of the table header, but it is probably enough to ignore
+the small line segments that don't interest us.
 
 How many rows of the matrix satisfy this criterion:
 
@@ -813,11 +817,12 @@ How many rows of the matrix satisfy this criterion:
 table(w)
 @
 
-So we have 46 which is a lot more than the 6 we see in the original image.
+So we have 46 which is a lot more than the 6 we see in the original
+image.
 
 We can see these horizontal lines on the image with
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<figure = TRUE>>=
 plot(h, invert = TRUE)
 abline(h = nrow(m) - which(w), col = "red")
@@ -826,20 +831,22 @@ abline(h = nrow(m) - which(w), col = "red")
 \label{}
 \end{figure}
 
-Note again that the rows in the matrix go from 1 to nrow, while on the plot,
-they go down the page. This is why we get the height with  \code{nrow(m) - which(w)}.
+Note again that the rows in the matrix go from 1 to nrow, while on the
+plot, they go down the page.  This is why we get the height with
+\code{nrow(m) - which(w)}.
 
 We can see we get the 4 lines that span the width of the text area,
 but not the two shorter line segments.
 \end{comment}
 
 We are looking for lines which span more than a certain
-threshold. This threshold will be context specific, but we can find a
-suitable one via some experimentation. An initial guess of 1000 pixels
-resulted in discarding the two shorter segments. 
-So let's relax the threshold of requiring 1000 black pixels. We'll use 10\% of the columns:
+threshold.  This threshold will be context specific, but we can find a
+suitable one via some experimentation.  An initial guess of 1000 pixels
+resulted in discarding the two shorter segments.   So let's relax the
+threshold of requiring 1000 black pixels.  We'll use 10\% of the
+columns:
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<>>=
 w = rowSums(m) > 0.1 * ncol(m)
 plot(h, invert = TRUE)
@@ -849,9 +856,10 @@ abline(h = nrow(m) - which(w), col = "red")
 \label{}
 \end{figure}
 
-So we detect these two shorter lines and no other additional lines (except the original 4 longer lines).
-However, now we have 74 rows in the matrix that satisfy this criterion.
-Yet we see only 6 lines on the plot.
+So we detect these two shorter lines and no other additional lines
+(except the original 4 longer lines).   However, now we have 74 rows in
+the matrix that satisfy this criterion.   Yet we see only 6 lines on
+the plot.
 
 Let's look at the row numbers for these 74 rows:
 
@@ -859,29 +867,29 @@ Let's look at the row numbers for these 74 rows:
 which(w)
 @
 
-It may not be clear, but these are grouped together.  Each of the red
+It may not be clear, but these are grouped together.   Each of the red
 lines we see on the plot is actually a collection of multiple adjacent
-lines.  This is clearer if we compute the difference between the row
+lines.   This is clearer if we compute the difference between the row
 numbers:
 
 <<>>=
 diff(which(w))
 @
 
-We see a collection of 1s meaning that these are adjacent rows, then a large
-jump between row numbers, followed by a collection of 1s and on.
-So it is clear these are grouped.
-We want to combine adjacent lines into a single group
-and have a group for each conceptually separate line on the image.
-One way to do this is run length encoding (RLE):
+We see a collection of 1s meaning that these are adjacent rows, then a
+large jump between row numbers, followed by a collection of 1s and on.
+So it is clear these are grouped.   We want to combine adjacent lines
+into a single group and have a group for each conceptually separate
+line on the image.   One way to do this is run length encoding (RLE):
 
 <<>>=
 rle(diff(which(w)))
 @
 
-Another way is very similar but more explicit and gives us a little more control.
-We find where the differences between successive row numbers is greater than 2
-and then we run a cumulative sum which gives us group labels:
+Another way is very similar but more explicit and gives us a little
+more control.   We find where the differences between successive row
+numbers is greater than 2 and then we run a cumulative sum which gives
+us group labels:
 
 <<>>=
 g = cumsum( diff(which(w)) > 2 )
@@ -897,29 +905,33 @@ names(ll) = tapply(seq(along = rowNums), c(0, g),
                    function(i) as.integer(mean(rowNums[i])))
 @
 
-(Note that we added 0 to the start of the vector g since g has one less element than
-w since we were computing pairwise differences.)
-The computation is a little akward. We split the indices of rowNums and then have
-to use those to index back into rowNums to find out which rows of m we need to extract for this group.
+(Note that we added 0 to the start of the vector g since g has one
+less element than w since we were computing pairwise differences.)
+The computation is a little akward.  We split the indices of rowNums
+and then have to use those to index back into rowNums to find out
+which rows of m we need to extract for this group.
 
 The third line puts the average of the row numbers of each group as
-the name of that element.  This will be convenient for mapping this
+the name of that element.   This will be convenient for mapping this
 back to the general vertical area.
 
-Each element of \code{ll} is a matrix. For each of these, we  want to combine them
-to identify the start and end of a line. Each may have several separate line segments.
+Each element of \code{ll} is a matrix.  For each of these, we want to
+combine them to identify the start and end of a line.  Each may have
+several separate line segments.
 
-Lets consider the first element of \code{ll}. It has 14 rows and 4050 columns.
-It is useful to query how many 0s and 1s there are?
+Lets consider the first element of \code{ll}.  It has 14 rows and 4050
+columns.   It is useful to query how many 0s and 1s there are?
 
 <<>>=
 table(ll[[1]])
 @
 
-These are about equal:  27000 0s and 30000 1s.
-(In this setup, 1 is black.)
-So there are many white pixels eventhough the black pixels appear as solid line on our plot.
-But that was because we just drew a straight line at these vertical positions, regardless how many pixels were white. Of course, we selected these rows because they had many black pixels.
+These are about equal: 27000 0s and 30000 1s.   (In this setup, 1 is
+black.)  So there are many white pixels eventhough the black pixels
+appear as solid line on our plot.   But that was because we just drew a
+straight line at these vertical positions, regardless how many pixels
+were white.  Of course, we selected these rows because they had many
+black pixels.
 
 Since we think these rows make up a single line, let's aggregate across the adjacent
 rows to form a single aggregate row using \code{colSums()}:
@@ -928,45 +940,49 @@ rows to form a single aggregate row using \code{colSums()}:
 rr = colSums(ll[[1]])
 @
 
-If this is a solid line across most of the page, we'd expect most pixels to be filled,
-perhaps with a few short gaps.
-Each element of rr contains the number of rows in this group that had a black pixel.
-This might be 1 or 14, with only one row or all of them having a black pixel.
-We might look at these counts or just consider whether any row has a black pixel in this column. We are looking for a rule to mark a pixel in the aggregated line as black or white.
+If this is a solid line across most of the page, we'd expect most
+pixels to be filled, perhaps with a few short gaps.   Each element of
+rr contains the number of rows in this group that had a black pixel.
+This might be 1 or 14, with only one row or all of them having a black
+pixel.   We might look at these counts or just consider whether any row
+has a black pixel in this column.  We are looking for a rule to mark a
+pixel in the aggregated line as black or white.
 
-If we look at the vector \code{rr}, we see a lot of 0s at the beginning and the end. These are the margins where the line is not present.
+If we look at the vector \code{rr}, we see a lot of 0s at the
+beginning and the end.  These are the margins where the line is not
+present.
 
-If we want to threshold this aggregate line to have a black pixel in a column
-if \textit{any} of the pixels in the adjacent rows defining it
+If we want to threshold this aggregate line to have a black pixel in a
+column if \textit{any} of the pixels in the adjacent rows defining it
 has a black pixel, we can do this with
 
 <<>>=
 rle(rr > 0)
 @
 
-We get the two margins and a long run of 2895 pixels.
-If we require at least half of the 14 rows to have a black pixel in a column,
-we get the same groups:
+We get the two margins and a long run of 2895 pixels.   If we require
+at least half of the 14 rows to have a black pixel in a column, we get
+the same groups:
 
 <<>>=
 rle(rr >= 7)
 @
 
-Let's consider one of the shorter lines.
-These are elements 2 and 3 of \code{ll}. 
-Again, we compute the column sums for the adjacent lines in this group:
+Let's consider one of the shorter lines.   These are elements 2 and 3
+of \code{ll}.   Again, we compute the column sums for the adjacent
+lines in this group:
 
 <<>>=
 rr = colSums(ll[[2]])
 table(rr)
 @
 
-Most are 0.
-There are 9 adjacent rows in this group.
-We see no columns that have at least one black pixel but less than half the number of rows.
-Let's draw points at each of the columns that have a black pixel in at least half the rows:
+Most are 0.   There are 9 adjacent rows in this group.   We see no
+columns that have at least one black pixel but less than half the
+number of rows.   Let's draw points at each of the columns that have a
+black pixel in at least half the rows:
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<>>=
 z = which(rr >= 4.5)
 plot(h, invert = TRUE)
@@ -977,20 +993,20 @@ points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)),
 \label{}
 \end{figure}
 
-This appears to capture the short horizontal line spanning the four columns
-on the right of the table. So this appears to be a reasonable approach,
-at least for this image.
+This appears to capture the short horizontal line spanning the four
+columns on the right of the table.  So this appears to be a reasonable
+approach, at least for this image.
 
 \subsubsection{Vertical Lines}
 
-We can follow the same process to identify the
-locations of the vertical lines. We've already deskewed the original
-image, so we don't have to do that.  We can call \code{findLines()} and this
-time specify a window that is tall and narrow to capture the vertical
-parts.  We should experiment with these values.  One thing to note is
-that characters have vertical components more than horizontal
-components, e.g. 1, L, M.  If we make the height of the window too
-small, we'll pick up more false positives.
+We can follow the same process to identify the locations of the
+vertical lines.  We've already deskewed the original image, so we don't
+have to do that.   We can call \code{findLines()} and this time specify
+a window that is tall and narrow to capture the vertical parts.   We
+should experiment with these values.   One thing to note is that
+characters have vertical components more than horizontal components,
+e.g.  1, L, M.  If we make the height of the window too small, we'll
+pick up more false positives.
 
 <<>>=
 v = findLines(p2, 3, 101)
@@ -1000,17 +1016,15 @@ Again, we can plot this and see where the lines are.
 
 \subsubsection{Removing the Lines}
 
-We don't have to remove the lines before we pass the image to tesseract
-as tesseract will remove them for us.
-However, it is interesting to see how well we can do.
-Instead of finding the locations of the lines (with \code{getLines()}),
-we'll remove them from the image.
-This uses the same basic approach and sequence of steps.
-However, rather than extract the line coordinates,
-we use \code{pixAddGray()} to overlay the images with the horizontal and then
-the vertical lines onto the original image.
-This removes the lines from the original image.
-We do this directly from the image file with
+We don't have to remove the lines before we pass the image to
+tesseract as tesseract will remove them for us.   However, it is
+interesting to see how well we can do.   Instead of finding the
+locations of the lines (with \code{getLines()}), we'll remove them
+from the image.   This uses the same basic approach and sequence of
+steps.   However, rather than extract the line coordinates, we use
+\code{pixAddGray()} to overlay the images with the horizontal and then
+the vertical lines onto the original image.   This removes the lines
+from the original image.   We do this directly from the image file with
 
 <<>>=
 p1 = pixRead(smithburn)
@@ -1025,7 +1039,7 @@ plot(p)
 
 Let's compare this to the original image.
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<>>=
 plot(p2)
 @
@@ -1033,16 +1047,18 @@ plot(p2)
 \label{}
 \end{figure}
 
-The horizontal and vertical lines are essentially gone. 
-We can certainly see light grey "smudges" in some places where the vertical lines were.
-We also see some short horizontal line segments remaining.
+The horizontal and vertical lines are essentially gone.   We can
+certainly see light grey "smudges" in some places where the vertical
+lines were.   We also see some short horizontal line segments
+remaining.
 
-We can experiment with the horizontal and vertical values we pass to \code{findLines()}.
-Increasing the horizontal width from 51 to 75 cleans up the horizontal lines.
+We can experiment with the horizontal and vertical values we pass to
+\code{findLines()}.   Increasing the horizontal width from 51 to 75
+cleans up the horizontal lines.
 
-We can also change the thresholds for creating the binary images.
-We can also threshold the final image (p) at this point.
-We set any value 50 or above to 255, i.e., white, with
+We can also change the thresholds for creating the binary images.   We
+can also threshold the final image (p) at this point.   We set any
+value 50 or above to 255, i.e., white, with
 
 <<>>=
 pp = pixThresholdToValue(p, 50, 255)
@@ -1050,7 +1066,7 @@ pp = pixThresholdToValue(p, 50, 255)
 
 and when we plot the resulting image
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<>>=
 plot(pp)
 @
@@ -1058,13 +1074,14 @@ plot(pp)
 \label{}
 \end{figure}
 
-The gray marks on the vertical lines have disappeared.
-Note however that it removed some of the text, specifically the rotated text on the right
-and the URL within that text that is colored blue in the original image.
-Fortunately, we don't care about this text for our application. 
+The gray marks on the vertical lines have disappeared.   Note however
+that it removed some of the text, specifically the rotated text on the
+right and the URL within that text that is colored blue in the
+original image.   Fortunately, we don't care about this text for our
+application.
 
-We can compare the image we created with the lines removed to
-the one tesseract creates.  We do this with
+We can compare the image we created with the lines removed to the one
+tesseract creates.   We do this with
 
 <<>>=
 tesseract(smithburn, pageSegMode = "psm_auto",
@@ -1077,16 +1094,16 @@ This creates a PDF file named vhlinefinding.pdf.
 
 There are a plethora of variables that can be adjusted, so for space
 considerations we will highlight the ones we have found the most
-useful in our work. To continue the example above, on inspection of
+useful in our work.  To continue the example above, on inspection of
 the results of the OCR there are some domain-specific terms that are
-not being recognized correctly. While it might be possible to correct
+not being recognized correctly.  While it might be possible to correct
 these in post-processing, it is preferable to tweak the settings of
 the OCR engine to allow the correct recognition in the processing
-stage. The above document includes the two terms that are consistently
+stage.  The above document includes the two terms that are consistently
 mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
-Paulo'' (a non-English place name). \code{Tesseract} allows
+Paulo'' (a non-English place name).  \code{Tesseract} allows
 user-specified words to be added to the dictionary of correct matches
-through a ``user-words'' file. \pkg{Rtesseract} allows you to specify
+through a ``user-words'' file.  \pkg{Rtesseract} allows you to specify
 this file, which will then be used by the OCR engine to resolve
 ambiguities:
 
@@ -1131,25 +1148,25 @@ plotSubsets(symbolBB[idx,], img = png::readPNG(f))
 @
 \caption{An example of the \code{plotSubsets} function, which creates panel plots of
   individual subsets of the image along with the associated OCR result
-  and confidence. In this example, the ``ã'' character is oft
+  and confidence.  In this example, the ``ã'' character is oft
   mis-recognized.}
 \label{fig:subsets}
 \end{figure}
 
 Continuing the example, say we were primarily interested in the
-abstract. Using the bounding boxes or other coordinates as guides, we
-are able to adjust the OCR-ed area without leaving R. Typically, to do
+abstract.  Using the bounding boxes or other coordinates as guides, we
+are able to adjust the OCR-ed area without leaving R.  Typically, to do
 this would involve partitioning the image into subsets using an image
 editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
-OCR on each of these subset images. This process involves leaving R
-and involves steps that may be difficult to replicate. However,
+OCR on each of these subset images.  This process involves leaving R
+and involves steps that may be difficult to replicate.  However,
 \pkg{Rtesseract} allows the user to specify a rectangle of interest
-using the \code{SetRectangle} function. This function takes a
+using the \code{SetRectangle} function.  This function takes a
 \code{TesseractBaseAPI} object and the left, top, width and height of
 the sub-area as additional arguments (the dimensions of the full input
-image can be found with \code{GetImageDims}). Once set, the next call to the
+image can be found with \code{GetImageDims}).  Once set, the next call to the
 \code{TesseractBaseAPI} will only recognize text within this rectangle
-- no external image manipulation required. Since we know that the
+- no external image manipulation required.  Since we know that the
 abstract is between the ``Abstract'' header and the ``Keywords''
 tagline, we can easily find the coordinates of these using the
 bounding boxes and then only recognize text within this area:
@@ -1178,34 +1195,34 @@ engines, etc. The current settings for the tesseract OCR engine are
 %% Treat the API as a list, names(api) 
 returned by \code{PrintVariables} (returns
 \Sexpr{length(PrintVariables())} variables at the time of
-writing). These variables can be adjusted via a call to
-\code{SetVariables}.  Full documentation of user-adjustable variables
+writing).  These variables can be adjusted via a call to
+\code{SetVariables}.   Full documentation of user-adjustable variables
 is available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
 
-Tesseract requires trained language files in order to operate. 
+Tesseract requires trained language files in order to operate.  
 By default, \pkg{Rtesseract} searches the /usr/bin/local directory for
-installed trained language files, but this can be overridden. The
+installed trained language files, but this can be overridden.  The
 current location where the API is searching for language data is
-returned by \code{GetDataPath}. Since Tesseract allows users to create
+returned by \code{GetDataPath}.  Since Tesseract allows users to create
 trained data files for custom languages, the ability to specify the
 path of the language files alleviates the need to place these language
-data files in the default search location. More information on
+data files in the default search location.  More information on
 training Tesseract and providing language files can be found at
-\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}. 
+\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}.  
 
 %XXX This seems a little arcane and not necessarily relevant for this
 %article, i.e. not necessarily % correct level.
 % ME - I think it is OK for this paper
 
 Lastly, we have found that some experimentation is required to settle
-on the best set of customized variables for more difficult cases. By
+on the best set of customized variables for more difficult cases.  By
 creating persistent TesseractBaseAPI objects via the \code{tesseract}
 function, two or more \code{TesseractBaseAPI}s can be created for the
 same image, which allows you to compare the impact of various settings
-to fine tune the OCR for individual cases. Once a suitable set of
+to fine tune the OCR for individual cases.  Once a suitable set of
 adjustments have been found, these settings can be exported using
-\code{PrintVariables}. These custom variables can then be easily set
+\code{PrintVariables}.  These custom variables can then be easily set
 using \code{SetVariables} or the \code{opts} argument in the
 \code{tesseract} function.
 
@@ -1222,16 +1239,16 @@ v[grep("tessedit_char", names(v))]
 \pkg{Rtesseract} includes functionality to export the results of OCR
 to many conventional file types, including BoxText, HOcr/HTML , OSD
 (Orientation and Script Detection), TSV (tab separated values), and
-PDF. Of these, \code{toPDF} is unique in that it creates a searchable
+PDF.  Of these, \code{toPDF} is unique in that it creates a searchable
 PDF document, not a plain-text document.
 
 \subsection{Metadata}
 
 Lastly, \pkg{Rtesseract} allows users to access metadata about the OCR
-engine and the input image. The current version of Tesseract can be
+engine and the input image.  The current version of Tesseract can be
 returned by \code{tesseractVersion}, while the capabilities for
 reading various image formats via leptonica is provided by
-\code{leptonicaImageFormats}. Information about the source image are
+\code{leptonicaImageFormats}.  Information about the source image are
 also accessible through R using the \code{GetInputName},
 \code{GetImageInfo},\code{GetImageDims}, and
 \code{GetSourceYResolution} functions.
@@ -1239,25 +1256,25 @@ also accessible through R using the \code{GetInputName},
 \section{Installation}
 
 In order to use \pkg{Rtesseract}, users must first have both Tesseract
-and its dependency, Leptonica, installed. Tesseract is available from
+and its dependency, Leptonica, installed.  Tesseract is available from
 \url{https://github.com/tesseract-ocr/} and Leptonica from
-\url{https://github.com/DanBloomberg/leptonica}. Pre-compiled binaries
+\url{https://github.com/DanBloomberg/leptonica}.  Pre-compiled binaries
 are available for most platforms for the current stable version
-(v3.05). As previously mentioned \pkg{Rtesseract} also works with the
+(v3.05).  As previously mentioned \pkg{Rtesseract} also works with the
 development version of Tesseract (4.00alpha) currently available from
-\url{https://github.com/tesseract-ocr/tesseract/releases}. However, to
+\url{https://github.com/tesseract-ocr/tesseract/releases}.  However, to
 build Tesseract from source requires many additional pieces of
 software, including leptonica v1.74+, automake, libtool, pkg-config,
-aclocal, autoheader, and autoconf-archive. Additionally, users will
+aclocal, autoheader, and autoconf-archive.  Additionally, users will
 also need to install the training data for the language(s) used in the
-documents to be processed.  Currently, there are pre-trained data sets
+documents to be processed.   Currently, there are pre-trained data sets
 for 140+ languages available from
-\url{https://github.com/tesseract-ocr}. Users can also provide their
-own trained data. For more information about training Tesseract,
+\url{https://github.com/tesseract-ocr}.  Users can also provide their
+own trained data.  For more information about training Tesseract,
 please see
-\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}. \pkg{Rtesseract}
+\url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}.  \pkg{Rtesseract}
 includes some functions that assist with training, including
-\code{ReadBoxFile()}. Finally, the \pkg{Rtesseract} package itself can
+\code{ReadBoxFile()}.  Finally, the \pkg{Rtesseract} package itself can
 be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
 
@@ -1266,12 +1283,12 @@ be installed from source at
 
 \pkg{Rtesseract} provides both easy access to basic OCR functionality
 for simple use-cases as well as access to low-level control parameters
-for more advanced uses. By allowing recovery of additional information
-generated by Tesseract, such as confidence levels and bounding boxes,
-\pkg{Rtesseract} supports novel applications of inputting data from
-images into R (e.g., spatial analysis of text). Leveraging free,
-open-source software allows full integration of the work-flow of
-text from images into R.
+for more advanced uses.  By allowing recovery of additional
+information generated by Tesseract, such as confidence levels and
+bounding boxes, \pkg{Rtesseract} supports novel applications of
+inputting data from images into R (e.g., spatial analysis of text).
+Leveraging free, open-source software allows full integration of the
+work-flow of text from images into R.
 
 \bibliography{Rtesseract.bib}
 \end{document}
