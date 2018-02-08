@@ -60,10 +60,10 @@
 \Abstract{
 
   We created the \pkg{Rtesseract} package to support working with text
-  data present in images. \pkg{Rtesseract} is an R package that
+  data present in images. \pkg{Rtesseract} is an \proglang{R} package that
   provides access to Tesseract, an Open Source C++ library for Optical
-  Character Recognition (OCR), from within R.  At its simplest,
-  \pkg{Rtesseract} allows an R user to recover of text from an image
+  Character Recognition (OCR), from within \proglang{R}.  At its simplest,
+  \pkg{Rtesseract} allows an \proglang{R} user to recover of text from an image
   as lines, words or individual characters.  We can also obtain the
   location of text elements, possible alternatives and the predictive
   ``confidence'' for each.  These are often necessary for interpreting
@@ -72,7 +72,7 @@
   customization of the OCR behavior, and exporting the results in
   various formats (e.g. PDF), and also visualizing them within R
   itself.  With the \pkg{Rtesseract} package, users are able to create
-  a fully programmatic workflow to extract text data into R for
+  a fully programmatic workflow to extract text data into \proglang{R} for
   subsequent analysis.  }
 
 \Keywords{}
@@ -178,12 +178,12 @@ alternative matches, location on the page, etc., which are helpful for
 assessing the certainty in the each returned result.
 
 In our work extracting and analyzing text data present in images from
-R, we desired a tool which would overcome the limitations above. In
+\proglang{R}, we desired a tool which would overcome the limitations above. In
 our search for solutions, we found Tesseract, a long-standing open
 source OCR library originally created in 1985 and currently under
-active development. Accessing the Tesseract API from R provides us
+active development. Accessing the Tesseract API from \proglang{R} provides us
 with the ability to bring pre-processing, OCR, post-processing, and
-analysis under complete programmatic control within R. The
+analysis under complete programmatic control within \proglang{R}. The
 \pkg{Rtesseract} package provides 1) a simple high-level function to
 extract the text from one or more images, 2) the ability to also
 obtain important auxiliary data (e.g., the confidence in each
@@ -213,7 +213,7 @@ function to extract the text from one or more images, 2) the ability
 to also obtain important auxiliary data (e.g., the confidence in each
 prediction, the location within the image), and 3) customization of
 how the OCR is done. Additionally, the results are accessible directly
-within R as text and/or a data frame of locations and confidences.
+within \proglang{R} as text and/or a data frame of locations and confidences.
 \end{comment}
 
 This approach using \pkg{Rtesseract} tightly integrates pre- and
@@ -248,7 +248,7 @@ similar approach to our \pkg{Rtesseract} package by interfacing to the
 Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
 provides only functionality to get the text results from the OCR
 process. %% Check this\
-pkg{Rtesseract}, from its initial
+\pkg{Rtesseract}, from its initial
 implementation, provides access to most of the functionality in the
 Tesseract API and provides fine-grain control from \proglang{R} to the different
 steps in the OCR process. Additionally, \pkg{Rtesseract} provides
@@ -257,7 +257,7 @@ access to leptonica, the image library Tesseract uses for image
 pre-processing. This functionality allows users to provide their own
 processed image to Tesseract. Lastly, \pkg{Rtesseract} has been
 designed to support both the current release (v3.05.01) and
-development versions (v4.00.alpha) of Tesseract, with mechanisms to
+development versions (v4.00.dev) of Tesseract, with mechanisms to
 configure \pkg{Rtesseract} according to the installed version of
 Tesseract.
 
@@ -310,19 +310,19 @@ GetText(smithburn, level = "textline")
 @
 
 Modifying the organizational level of the returned text is easy to
-achieve with the \code{levels} argument in \code{GetText}.
+achieve with the \code{levels} argument in \code{GetText()}.
 
 \pkg{Rtesseract} includes three other high-level functions --
-\code{GetBoxes}, \code{GetConfidences}, and \code{GetAlternatives} --
+\code{GetBoxes()}, \code{GetConfidences()}, and \code{GetAlternatives()} --
 to extend the information accessible by the user. Similar to
-\code{GetText}, these functions can take the path of the image file
-and the optional \code{level} argument (except \code{GetAlternatives}
+\code{GetText()}, these functions can take the path of the image file
+and the optional \code{level} argument (except \code{GetAlternatives()}
 which only operates at the ``symbol'' level).
 
 \subsection{Creating a persistent API object}
 
-This practice of calling \code{GetText} followed by another, e.g.,
-\code{GetBoxes} for the same file is a common occurrence when working
+This practice of calling \code{GetText()} followed by another, e.g.,
+\code{GetBoxes()} for the same file is a common occurrence when working
 interactively with \pkg{Rtesseract}. Yet, it has a distinct
 inefficiency - we repeat the OCR recognition for the same file merely
 to export a different aspect of the output from the OCR engine. Since
@@ -330,13 +330,13 @@ OCR is reasonably computationally intensive, we would like to perform
 the OCR once and then query each aspect we want (i.e., the text, the
 confidences, the alternatives, \ldots) from this single OCR operation.
 
-The \code{tesseract} function creates an instance of the OCR engine
-(an object of class \code{TesseractBaseAPI} in R).  We can repeatedly
+The \code{tesseract()} function creates an instance of the OCR engine
+(an object of class \code{TesseractBaseAPI} in \proglang{R}).  We can repeatedly
 query this for the text, boxes, confidences and alternatives without
 repeating the OCR.  This is the preferred method when multiple pieces
 of information are needed from the same image.
 
-We typically call \code{tesseract} by specifying the path to the file
+We typically call \code{tesseract()} by specifying the path to the file
 and any other options controlling how the OCR will be performed
 (explained in more detail below in ``Advanced Use''):
 
@@ -344,13 +344,13 @@ and any other options controlling how the OCR will be performed
 api = tesseract(smithburn)
 @
 
-We then pass the object returned by \code{tesseract} to each of the
+We then pass the object returned by \code{tesseract()} to each of the
 four high level functions rather than the file name, e.g.,
 \code{GetText(api)}, \code{GetBoxes(api)}, \code{GetConfidences(api)}.
-By default, the call to \code{tesseract} doesn't perform the OCR
+By default, the call to \code{tesseract()} doesn't perform the OCR
 immediately. Instead, it is only done when we request any results,
 e.g., calling any of the four functions above, or explicitly calling
-the \code{Recognize} function with the \code{TesseractBaseAPI} object
+the \code{Recognize()} function with the \code{TesseractBaseAPI} object
 as an argument.
 
 We can use this \code{TesseractBaseAPI} object to illustrate how
@@ -375,8 +375,8 @@ by extracting the bounding boxes,
 bbox = GetBoxes(api)
 @
 
-\code{GetBoxes} extends the information returned by
-\code{GetConfidences} by including the left, top, right, and bottom of
+\code{GetBoxes()} extends the information returned by
+\code{GetConfidences()} by including the left, top, right, and bottom of
 the bounding box around the word, symbol, textline, etc. Using these,
 we can sort by the confidence,
 
@@ -389,11 +389,11 @@ together in similar areas on the page, with the far right side of the
 page (``left'' and ``right'' values of approximately 3800-4000)
 showing up often in the lowest cofidence results.
 
-Since we have access to the confidences and bounding boxes in R, we
+Since we have access to the confidences and bounding boxes in \proglang{R}, we
 can explore this theory by treating these objects just like any other
 data. To explore our hypothesis that these terms are grouped left to
 right, we can group the words into bins by their location left to
-right using the \code{cut} function,
+right using the \code{cut()} function,
 
 <<>>=
 lrGroups = cut(bbox[,"left"],
@@ -419,10 +419,11 @@ post-processing without location information would involve searching
 for ``junk'', e.g. non-valid words such as ``Isosziim'', at the end of
 each text line. However, we can easily exclude this text in
 post-processing with location information in hand. Additionally, while
-we could crop this image using editing software outside of R, we will
+we could crop this image using editing software outside of \proglang{R}, we will
 show later how this area can be excluded from the OCR recognition step
-using \pkg{Rtesseract} without leaving R.
+using \pkg{Rtesseract} without leaving \proglang{R}.
 
+%% Not a great example
 To continue, suppose we also wanted to extract the author's
 name. Using some prior knowledge that this information is present at
 the top of each page, we can focus on the first text line,
@@ -433,7 +434,7 @@ GetText(api, level = "textline")[1]
 
 We know that the lower case letter in ``c.'' is a mistake, but we
 might not be sure what the correct letter should be. Helpfully, we can
-inspect the alternative matches for the sixth character,
+inspect the alternative matches, in this case for the sixth character ``c'',
 
 <<>>=
 GetAlternatives(api)[6]
@@ -443,19 +444,18 @@ which reveals that ``C'' was a close second in this case.
 
 This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the
-text is so helpful to a full OCR workflow if not crucial for increased
-accuracy.
+text is so helpful to a full OCR workflow, if not crucial for increased
+accuracy and error checking.
  
 In this OCR workflow, we find that visualizing the confidences is
 helpful for quickly inspecting \pkg{Rtesseract} results for
 issues. Therefore, \pkg{Rtesseract} includes a plotting method for OCR
-output. By default calling \code{plot} on a \code{TesseractBaseAPI}
+output. By default calling \code{plot()} on a \code{TesseractBaseAPI}
 object will create a plot which includes original image overlaid with
 the bounding boxes colored (and optionally filled) by relative
 confidence. See Fig. \ref{fig:rtess_plot} for an example. Plotting the
 results is especially helpful when adjusting the OCR configuration
-settings to improve accuracy (discussed further below under ``Advanced
-Use'').
+settings to improve accuracy (discussed further below).
 
 \begin{figure}[h]
 <<echo = FALSE>>=
@@ -467,6 +467,42 @@ plot(api, fillBoxes = TRUE, main = "") # Check style manual
   associated confidences.}
 \label{fig:rtess_plot}
 \end{figure}
+
+\subsection{Zooming and subsetting an image using \pkg{Rtesseract}}
+
+It is sometimes useful to ``zoom in'' on a part of the image to inspect a region that is not being accurately recognized.  For visualizing a sub-area of the original image, we use the \code{plotSubImage()} function. For example, if we wanted to zoom in on the lowest confidence word,
+
+<<>>=
+bbox = GetBoxes(api)
+i = which.min(bbox$confidence)
+# Fix this!
+bbox[i,]
+plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
+@ 
+
+However, there are times when there is only a part of the image that we want to recognize with OCR.
+In this case, we may want to avoid the computations involved in recognizing the entire contents of an image when we are only interested a piece of it.
+We could crop the original image, create a new file containing only the area of interest, and then call \code{tesseract()} on this image.
+However, it would be better to focus only on the area of interest without modifying the original image.
+For this, \pkg{Rtesseract} includes the \code{SetRectangle()} function. For example, if we know we are only interested in the table on the lower half of the page, we can recognize only this area. First, we can locate where ``TABLE'' is,
+
+<<>>=
+bbox[grep("TABLE", bbox$text),]
+@ 
+
+Then we reduce the recognization rectangle to only this area, with the diminsions specified as left edge, top edge, width of box, height of box,
+
+<<>>=
+SetRectangle(api, dims = c(0, 1864, 4000, 6000 - 1864))
+GetBoxes(api)
+@
+
+%To avoid messing something up later
+<<echo = FALSE, results = "hide">>
+SetRectangle(api, dims = c(0,0,4050, 6000))
+@ 
+
+Although this example only highlights basic uses of the ability to restrict the recognized area, we will show later how we can use \code{SetRectangle()} in conjunction with image manipulation to handle more complex tasks.
 
 \begin{comment}
 Similarly, by allowing access to information regarding the bounding
@@ -509,7 +545,7 @@ engine for specific cases.
 
 \subsection{Page Segmentation Mode and OCR engine}
 
-First off, two ``meta-variables'' control which OCR engine is used,
+First, two ``meta-variables'' control which OCR engine is used,
 and how that engine recognizes the arrangement of text,
 \code{pageSegMode} and \code{engineMode}. Since adjusting these two
 variables can have large impact on the results of the OCR, they
@@ -521,7 +557,8 @@ text, arranged top to bottom (e.g., the verticle arrangement of many
 Asian texts) or even in a circle (e.g., the text on the rim of a
 coin), etc. Included in the available options are to have Tesseact
 attempt to automatically detect the text orientation, the script used,
-or both. %more here The \pkg{Rtesseract} package preserves the
+or both. %more here
+The \pkg{Rtesseract} package preserves the
 defaults in the Tesseract C++ API and assumes the input is a single
 block of text (\code{PSM\_SINGLE\_BLOCK}) by default, though in our
 experience OCR can be significantly improved in some cases by changing
@@ -535,9 +572,9 @@ applications.
 %% \code{PSM\_AUTO} is the default for the tesseract command line tool
 %% but not for the API.
 Page Segmentation Mode can be set in \pkg{Rtesseract} in multiple
-ways: in the call to \code{tesseract}, in the \code{...}  arguments
+ways: in the call to \code{tesseract()}, in the \code{...}  arguments
 for any of the high-level functions (e.g., \code{GetText(smithburn,
-  pageSegMode = "PSM\_AUTO")}), or by using \code{SetPageSegMode} on
+  pageSegMode = "PSM\_AUTO")}), or by using \code{SetPageSegMode()} on
 an existing \code{TesseractBaseAPI} object.
 
 The second of these variables is the Tesseract Engine Mode, which
@@ -546,7 +583,7 @@ with additional OCR algorithms which can be used individually or in
 combination with Tesseract, though by default \pkg{Rtesseract} uses
 Tesseract only. For Tesseract versions 3.05+, an additional OCR engine
 Cube is included, and for Tesseract versions 4.00+ a Long Short-term
-Memory (LSTM) neural network based OCR engine is included. Although
+Memory (LSTM) neural network-based OCR engine is included. Although
 the use of each of these in combination with Tesseract can potentially
 increase accuracy, their use can add significant computational load
 (between 6--10x) and require appropriately trained language files, so
@@ -555,7 +592,7 @@ a comparison of the accuracy and performance of each of these options,
 please refer to
 \url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
 
-\subsection{Image Manipulation and Pre-processing}
+\subsection{Image Manipulation and Pre-processing using \pkg{Rtesseract}}
 
 \subsubsection{Rotating Text}
 
@@ -769,12 +806,12 @@ horizontal lines with
 h = findLines(p2, 51, 3)
 @
 
-We specify the Pix to process and then the horizontal width and
+We specify the \code{Pix} to process and then the horizontal width and
 vertical height (in pixels) that define a window or a region.   This
 fills in gaps in potential lines within the region.   Leptonica moves
 this around and fills in gaps within it if the rest of the pixels
-within the region are not white.   findLines() uses the function
-pixCloseGray() to do this.
+within the region are not white.   \code{findLines()} uses the function
+\code{pixCloseGray()} to do this.
 
 Let's look at the resulting image to see what lines it detected:
 
@@ -1164,7 +1201,7 @@ plotSubsets(symbolBB[idx,], img = png::readPNG(f))
 
 Continuing the example, say we were primarily interested in the
 abstract.  Using the bounding boxes or other coordinates as guides, we
-are able to adjust the OCR-ed area without leaving R.  Typically, to do
+are able to adjust the OCR-ed area without leaving \proglang{R}.  Typically, to do
 this would involve partitioning the image into subsets using an image
 editing tool (e.g., Gimp, Darktable, Photoshop), and then running the
 OCR on each of these subset images.  This process involves leaving R
