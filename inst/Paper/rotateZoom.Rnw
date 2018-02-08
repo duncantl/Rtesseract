@@ -1,5 +1,5 @@
 
-In Fig.~\ref{fig:base} we can visually identify the rotated, vertical text on the right of the page.
+In Figure~\ref{fig:base} we can visually identify the rotated, vertical text on the right of the page.
 In the examples above, we also encountered this text from the low confidence levels of the 
 results returned from \code{GetBoxes()}.
 Tesseract recognizes the rest of the page as horizontally oriented text
@@ -40,13 +40,6 @@ Instead, we want to zoom in on the now horizontal text.
 As we illustrated above, we can plot the rotated image and see the
 range of the horizontal and vertical region of interest:
 
-\begin{figure}[h]
-<<echo = FALSE>>=
-plot(ts, main = "")
-@ 
-\caption{}
-\label{}
-\end{figure}
 
 Judging from the plot, we count from the top-down, starting at position 1000 (corresponding to 5000 on the plot)
 and use a rectangle that is 300 pixels tall.

@@ -459,7 +459,7 @@ settings to improve accuracy (discussed further below).
 
 \begin{figure}[h]
 <<echo = FALSE>>=
-plot(api, fillBoxes = TRUE, main = "") # Check style manual
+plot(api, fillBoxes = TRUE, main = "")
 @
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the scanned image with the bounding boxes surrounding the
@@ -468,15 +468,17 @@ plot(api, fillBoxes = TRUE, main = "") # Check style manual
 \label{fig:rtess_plot}
 \end{figure}
 
-\subsection{Zooming and subsetting an image using \pkg{Rtesseract}}
+\subsection{Zooming and subsetting an image}
 
 It is sometimes useful to ``zoom in'' on a part of the image to inspect a region that is not being accurately recognized.  For visualizing a sub-area of the original image, we use the \code{plotSubImage()} function. For example, if we wanted to zoom in on the lowest confidence word,
 
 <<>>=
 bbox = GetBoxes(api)
 i = which.min(bbox$confidence)
-# Fix this!
 bbox[i,]
+@
+
+<<>>=
 plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
 @ 
 
@@ -497,41 +499,8 @@ SetRectangle(api, dims = c(0, 1864, 4000, 6000 - 1864))
 GetBoxes(api)
 @
 
-%To avoid messing something up later
-<<echo = FALSE, results = "hide">>
-SetRectangle(api, dims = c(0,0,4050, 6000))
-@ 
-
 Although this example only highlights basic uses of the ability to restrict the recognized area, we will show later how we can use \code{SetRectangle()} in conjunction with image manipulation to handle more complex tasks.
 
-\begin{comment}
-Similarly, by allowing access to information regarding the bounding
-boxes, \pkg{Rtesseract} enables users to use location or size specific
-information manipulate the results of the OCR. For example,
-identifying the title in the image of the scientific paper from plain
-text results would involve using context-based heuristics, but the
-task is far simpler with access to information about the text
-size. First, we need to extract the bounding boxes at the text-line
-level,
-
-<<>>=
-bb = GetBoxes(api, level = "textline")
-@
-
-And then identify the set of boxes which are the tallest,
-
-<<>>=
-rownames(bb)[which.max(bb[,4] - bb[,2])]
-
-@ 
-
-We have used the location of the bounding boxes to identify and
-reconstruct text arranged in columns, separating by unrelated elements
-(e.g., newspaper content), or even to reconstruct complex tabular
-content. In our use, we have found using the bounding boxes preferable
-to attempting to simulate the layout of the page by padding the text
-with spaces (e.g., the ``layout'' output of many other OCR engines).
-\end{comment}
 
 \section{Controlling the OCR engine behavior}
 
@@ -592,7 +561,7 @@ a comparison of the accuracy and performance of each of these options,
 please refer to
 \url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
 
-\subsection{Image Manipulation and Pre-processing using \pkg{Rtesseract}}
+\subsection{Image Manipulation and Pre-processing}
 
 \subsubsection{Rotating Text}
 
