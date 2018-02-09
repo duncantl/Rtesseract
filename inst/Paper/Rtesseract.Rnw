@@ -432,21 +432,30 @@ the top of each page, we can focus on the first text line,
 GetText(api, level = "textline")[1]
 @ 
 
-We know that the lower case letter in ``c.'' is a mistake, but we
-might not be sure what the correct letter should be. Helpfully, we can
-inspect the alternative matches, in this case for the sixth character ``c'',
+We know that the lower case letter in abbreviated first and middle
+names is a mistake, but we might not be sure what the correct letter
+should be.
+Should it be an ``O'', or a ``C''?
+Helpfully, we can inspect the alternative matches, in this case for
+the sixth character in the OCR output,
 
 <<>>=
 GetAlternatives(api)[6]
 @ 
 
-which reveals that ``C'' was a close second in this case.
+which reveals that ``C'' was a close second in this case. The
+alternatives which are capital letters are ``O'' and ``G'', and both have
+substantially lower confidences than ``C''. Therefore, we can be reasonably
+certain that the author's name should be ``K. C. Smithburn'' without
+inspecting the original image.
 
 This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the
 text is so helpful to a full OCR workflow, if not crucial for increased
 accuracy and error checking.
- 
+
+\subsection{Visualizing OCR results}
+
 In this OCR workflow, we find that visualizing the confidences is
 helpful for quickly inspecting \pkg{Rtesseract} results for
 issues. Therefore, \pkg{Rtesseract} includes a plotting method for OCR
@@ -482,6 +491,9 @@ bbox[i,]
 plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
 @ 
 
+Again, we can see the text is rotated for this character, resulting in
+poor OCR results.
+
 However, there are times when there is only a part of the image that we want to recognize with OCR.
 In this case, we may want to avoid the computations involved in recognizing the entire contents of an image when we are only interested a piece of it.
 We could crop the original image, create a new file containing only the area of interest, and then call \code{tesseract()} on this image.
@@ -499,8 +511,11 @@ SetRectangle(api, dims = c(0, 1864, 4000, 6000 - 1864))
 GetBoxes(api)
 @
 
-Although this example only highlights basic uses of the ability to restrict the recognized area, we will show later how we can use \code{SetRectangle()} in conjunction with image manipulation to handle more complex tasks.
 
+Although this example only highlights basic uses of the ability to restrict the recognized area, we will show later how we can use \code{SetRectangle()} in conjunction with image manipulation to handle more complex tasks.
+Setting the recognition area can be helpful in cases where there are
+multiple languages in the same image, or when one area is most
+accurately recognized with settings suboptimal for other areas. 
 
 \section{Controlling the OCR engine behavior}
 
@@ -528,7 +543,7 @@ coin), etc. Included in the available options are to have Tesseact
 attempt to automatically detect the text orientation, the script used,
 or both. %more here
 The \pkg{Rtesseract} package preserves the
-defaults in the Tesseract C++ API and assumes the input is a single
+defaults in the Tesseract C\texttt{++} API and assumes the input is a single
 block of text (\code{PSM\_SINGLE\_BLOCK}) by default, though in our
 experience OCR can be significantly improved in some cases by changing
 the Page Segmentation Mode. We have found for most problems
@@ -540,11 +555,42 @@ applications.
 %% Curiously,
 %% \code{PSM\_AUTO} is the default for the tesseract command line tool
 %% but not for the API.
+The current Page Segmentation Mode can be found by calling
+\code{GetPageSegMode()} on a \code{TesseractBaseAPI} object,
+
+<<>>=
+GetPageSegMode(api)
+@
+
 Page Segmentation Mode can be set in \pkg{Rtesseract} in multiple
-ways: in the call to \code{tesseract()}, in the \code{...}  arguments
-for any of the high-level functions (e.g., \code{GetText(smithburn,
-  pageSegMode = "PSM\_AUTO")}), or by using \code{SetPageSegMode()} on
-an existing \code{TesseractBaseAPI} object.
+ways: in the call to \code{tesseract()},
+
+<<eval = FALSE>>=
+api = tesseract(smithburn, pageSegMode = "PSM_AUTO")
+@
+
+in the \code{...}  arguments for any of the high-level functions,
+
+<<>>=
+GetText(smithburn, pageSegMode = "PSM_AUTO")
+@
+
+or by using \code{SetPageSegMode()} on an existing
+\code{TesseractBaseAPI} object,
+
+<<>>=
+GetPageSegMode(api)
+SetPageSegMode(api, mode = "PSM_AUTO")
+GetPageSegMode(api)
+@
+
+The available Page Segmentation Modes are listed and enumerated values
+in the \pkg{Rtesseract} package, and can be found with,
+
+%% Too hacky - fix this in the package
+<<>>=
+grep("^PSM", ls("package:Rtesseract"), value = TRUE)
+@ 
 
 The second of these variables is the Tesseract Engine Mode, which
 determines which OCR engine is used to recognize text. Tesseract ships
@@ -552,8 +598,38 @@ with additional OCR algorithms which can be used individually or in
 combination with Tesseract, though by default \pkg{Rtesseract} uses
 Tesseract only. For Tesseract versions 3.05+, an additional OCR engine
 Cube is included, and for Tesseract versions 4.00+ a Long Short-term
-Memory (LSTM) neural network-based OCR engine is included. Although
-the use of each of these in combination with Tesseract can potentially
+Memory (LSTM) neural network-based OCR engine is included.
+
+The current Engine mode can be found by calling \code{oem()} on a
+\code{TesseractBaseAPI} object,
+
+<<>>=
+oem(api)
+@ 
+
+Similar to Page Segmentation Mode, the Engine Mode can be set in
+several ways. However, unlike Page Segmentation Mode, the Engine Mode
+needs to be set at initialization, which means you cannot set it on an
+already initialized \code{TesseractBaseAPI} object. %Duncan, this correct?
+
+The Engine Mode can be set either in the call to \code{tesseract()}
+
+<<>>=
+api = tesseract(smithburn, engineMode = "OEM_TESSERACT_ONLY")
+@
+
+or in the call a base level function,
+
+<<>>=
+GetText(smithburn, engineMode = "OEM_CUBE")
+@ 
+
+Notice that \code{GetText()} is being called on the file
+name. Attempting to set the engine mode on an already created
+\code{TesseractBaseAPI} object will have no effect, e.g.,
+\code{GetText(api, engineMode = "OEM\_CUBE")}.
+
+Although the use of the other OCR engines in combination with Tesseract can potentially
 increase accuracy, their use can add significant computational load
 (between 6--10x) and require appropriately trained language files, so
 they are not used by default by \pkg{Rtesseract}'s OCR functions. For
