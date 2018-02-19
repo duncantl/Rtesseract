@@ -137,24 +137,26 @@ smithburn = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract
 There has been an enormous increase in the amount of text data that we
 work with from social media, reports, scholarly articles, job
 applications, etc. These often come as plain text or structured
-documents such as word-processing files, HTML, PDF. However, there are
+documents such as word-processing files, HTML, or PDF. However, there are
 many documents of interest that are only available as scanned or
 photographic images (e.g., old books, newspapers).
-%we want tables of data or text for NLP, lists of entries
 Optical Character Recognition (OCR) is a technique to infer
 characters, words or lines of text from an image, thereby making them
-accessible for data analysis. There are many OCR software tools
-available (e.g., Adobe Acrobat, PDFPen Pro, ABBY), though these
-typically only output text results to a file.
+accessible for data analysis.
 
+There are many commercial OCR software tools
+currently available (e.g., Adobe Acrobat, PDFPen Pro, ABBY, Google Cloud Vision), though these
+typically only output text results.
 Although OCR technology has steadily improved over the years, OCR
 results are rarely perfect. We may not care about these errors if they
 are inconsequential to subsequent analysis. However, often these error
-do impact our analysis and we need to correct them before
+impact our analysis and we need to correct them before
 preceding. Therefore, OCR is commonly part of a workflow that involves
 pre- and post-processing steps to verify and increase the accuracy of
-the text extraction. For example, an image might be manipulated (e.g.,
-cropped, increased contrast, decreased noise, etc.) using image
+the text extraction.
+
+A typical OCR workflow might first start with image pre-processing. 
+The image might be cropped, contrast increased, noise decreased, etc. using image
 editing software to make the text ``stand out'' prior to OCR. Then
 after OCR has been run we will check if the results make sense. In
 some cases there are obvious issues, such as nonsense words or garbled
@@ -163,9 +165,7 @@ areas where the OCR engine had the least confidence. When we have
 prior contextual knowledge about the correct matches, such as only
 numbers or certain characters or words occur in the text, we can
 leverage this information to correct errors in the post-processing
-steps.
-
-When the text is arranged in columns or blocks, we will want to
+steps. When the text is arranged in columns or blocks, we will want to
 rearrange the text into the correct order. Finally, we will analyze
 the text results using methods such as NLP. Using OCR software which
 only returns text results, our full OCR workflow would involve 1)
@@ -189,14 +189,6 @@ extract the text from one or more images, 2) the ability to also
 obtain important auxiliary data (e.g., the confidence in each
 prediction, the location within the image), and 3) customization of
 how the OCR is done.
-
-% OCR is improving, but it is not perfect. What is pipeline - concrete examples:
-% Why pre-process?
-% Why post-process?
-%
-% 1. We picked tesseract
-% 2. so did ...
-% 3. why ours is better for workflow
 
 % Use the term certainty/uncertainty
 
@@ -1181,40 +1173,49 @@ tesseract(smithburn, pageSegMode = "psm_auto",
 
 This creates a PDF file named vhlinefinding.pdf.
 
-\subsection{Other Variables}
+\subsection{Augmenting the dictionaries}
 
 There are a plethora of variables that can be adjusted, so for space
 considerations we will highlight the ones we have found the most
-useful in our work.  To continue the example above, on inspection of
+useful in our work.
+
+%% Might need to cut this - cannot get it to work correctly
+To continue the example above, on inspection of
 the results of the OCR there are some domain-specific terms that are
 not being recognized correctly.  While it might be possible to correct
 these in post-processing, it is preferable to tweak the settings of
 the OCR engine to allow the correct recognition in the processing
 stage.  The above document includes the two terms that are consistently
-mis-recognized; {\it{``Ae. aegypti''}} (a scientific name) and ``São
-Paulo'' (a non-English place name).  \code{Tesseract} allows
+mis-recognized; {\it{``Anopheles''}} (a scientific name) and ``Zika''
+(a virus name).  \code{Tesseract} allows
 user-specified words to be added to the dictionary of correct matches
 through a ``user-words'' file.  \pkg{Rtesseract} allows you to specify
 this file, which will then be used by the OCR engine to resolve
 ambiguities:
 
-<<new>>=
-# Create a user-words file for English
-writeLines(c("2\tz'\t1\t1\0"), "eng.unicharambigs")
+<<>>=
+writeLines(c("2 z' 1 1 "), "eng.unicharambigs")
 writeLines(c("Zika", "Anopheles"), "eng.user-words")
-
-# Create a new API for comparison
-api2 = tesseract(smithburn, pageSegMode="psm_auto",# engineMode=2,
-                 # datapath = path.expand("~/DSI/tessdata/"))#,
-                 opts = list(user_words_file = "eng.user-words",
-                             tessedit_enable_dict_correction = "1"))
-
-
-#Fixed error in OCR engine rather than post-process results
-grep("^An", GetText(api2), value = TRUE)
-GetText(api, "textline")[2]
-
 @
+
+For comparison, we will create a second \code{TesseractBaseAPI} object
+with new settings,
+
+<<>>=
+api2 = tesseract(smithburn, pageSegMode="psm_auto",
+                 opts = list(user_words_file = file.path(getwd(),"eng.user-words"),
+                             user_words_suffix = "user-words",
+                             language_model_penalty_non_dict_word = 0.75,
+                             # tessedit_char_blacklist = "a",
+                             tessedit_enable_dict_correction = "1"))
+@
+
+And then we can check if the results are improved,
+
+<<>>=
+grep("^An", GetText(api), value = TRUE)
+grep("^An", GetText(api2), value = TRUE)
+@ 
 
 Extending this idea, we can explore which characters have the lowest
 confidence and/or occurrence in the text.
