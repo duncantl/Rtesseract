@@ -161,7 +161,7 @@ editing software to make the text ``stand out'' prior to OCR. Then
 after OCR has been run we will check if the results make sense. In
 some cases there are obvious issues, such as nonsense words or garbled
 text, but in other cases we might want to focus our attention on the
-areas where the OCR engine had the least confidence. When we have
+areas where the OCR engine had the least certainty. When we have
 prior contextual knowledge about the correct matches, such as only
 numbers or certain characters or words occur in the text, we can
 leverage this information to correct errors in the post-processing
@@ -209,7 +209,9 @@ within \proglang{R} as text and/or a data frame of locations and confidences.
 \end{comment}
 
 This approach using \pkg{Rtesseract} tightly integrates pre- and
-post-processing steps with the actual OCR. For example, we can focus
+post-processing steps with the actual OCR, all from within
+\proglang{R}.
+For example, we can focus
 on a sub-region of the image, or enhance the image with some computer
 vision techniques before performing the character recognition. We can
 specify a domain-specific vocabulary, or identify unconventional
@@ -222,7 +224,7 @@ text can aid and inform subsequent analyses. For example, the layout
 of the text into blocks, the presence of elements such as lines or
 other dividers, or even the relative size of the text can all be used
 to make sense of the resulting text. Diagnostic pieces of information
-such as the confidence in the matches, alternative matches, etc., can
+such as the certainty in the matches, alternative matches, etc., can
 be essential assessing certainty and improving OCR accuracy. If the
 OCR tool only returns the text results, as is the case with many OCR
 tools, OCR's usefulness is limited to cases where the problem is
@@ -234,7 +236,7 @@ package~\citep{Hagmann2014} provided an interface in \proglang{R} to Tesseract
 via calling the Tesseract command line executable. Using the \pkg{ocR}
 package, the user specifies the image file and command-line options,
 Tesseract is called and writes the results to a file which is then
-read back into \proglang{R}. Then, following the creation of \pkg{Rtesseract},
+read back into \proglang{R}. Then, following the creation of our \pkg{Rtesseract},
 the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
 similar approach to our \pkg{Rtesseract} package by interfacing to the
 Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
@@ -250,8 +252,8 @@ pre-processing. This functionality allows users to provide their own
 processed image to Tesseract. Lastly, \pkg{Rtesseract} has been
 designed to support both the current release (v3.05.01) and
 development versions (v4.00.dev) of Tesseract, with mechanisms to
-configure \pkg{Rtesseract} according to the installed version of
-Tesseract.
+configure \pkg{Rtesseract} according to the installed versions of
+Tesseract, leptonica, and image libraries.
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
 
@@ -768,7 +770,7 @@ We immediately convert the image to gray-scale with `pixConvertTo8()`:
 p1 = pixConvertTo8(p1)
 @
 
-(Note that this creates a new Pix and allows the previous one to be
+(Note that this creates a new \code{Pix} and allows the previous one to be
 garbage collected as we assign the new image to the same \proglang{R} variable.)
 
 The next step is to correct any skew or orientation in the image.
@@ -789,7 +791,7 @@ angle = pixFindSkew(bin)
 p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
 @
 
-The 255 in the call to \code{pixRotateAMGray} corresponds to white and
+The 255 in the call to \code{pixRotateAMGray()} corresponds to white and
 means that any pixels that are "revealed" by rotating the "page" are
 colored white.  These occur in the corners.   We can specify any
 gray-scale color value we want here between 0 (black) and 255 (white).
@@ -1173,7 +1175,9 @@ tesseract(smithburn, pageSegMode = "psm_auto",
 
 This creates a PDF file named vhlinefinding.pdf.
 
-\subsection{Augmenting the dictionaries}
+\begin{comment}
+  
+  \subsection{Augmenting the dictionaries}
 
 There are a plethora of variables that can be adjusted, so for space
 considerations we will highlight the ones we have found the most
@@ -1278,60 +1282,113 @@ GetImageDims(api)
 SetRectangle(api, 0, 0, 4013, 3210)
 @ 
 
-Many customizable variables which allow fine control of the OCR engine
-are accessible through \proglang{R} via the \pkg{Rtesseract} package, including
-pageSegMode, pageOrientation, language, white- and black-list
-characters, custom user-added patterns and words, alternative OCR
-engines, etc. The current settings for the tesseract OCR engine are
 
-%% Treat the API as a list, names(api) 
-returned by \code{PrintVariables} (returns
-\Sexpr{length(PrintVariables())} variables at the time of
-writing).  These variables can be adjusted via a call to
-\code{SetVariables}.   Full documentation of user-adjustable variables
+\end{comment}
+
+\section{Querying and setting variables}
+
+Many additional customizable variables allow further fine control of the OCR engine
+and are accessible through \proglang{R} via the \pkg{Rtesseract}
+package.
+These include white- and black-list
+characters, custom user-added patterns and words, etc.
+To find the current settings for the tesseract OCR engine we use the
+function \code{PrintVariables()},
+
+<<>>=
+v = PrintVariables(api)
+v
+@ 
+
+At the time of writing, this returns \Sexpr{length(PrintVariables())}
+variables. \code{PrintVariables} returns a named character vector,
+with the names corresponding to the variable name and the value
+corresponding to the current value. We can search for options,
+
+<<>>=
+grep("blacklist", names(v), value = TRUE)
+@
+
+and then adjust those options via a call to
+\code{SetVariables},
+
+<<>>=
+SetVariables(api, tessedit_char_blacklist = c("^", "_", "|"))
+@
+
+Alternatively, we can also set variables when the api is created by \code{tesseract()}
+
+<<>>=
+api = tesseract(smithburn, opts = list(tessedit_char_blacklist = c("^", "_", "|")))
+@
+
+Full documentation of user-adjustable variables
 is available at
 \url{https://github.com/tesseract-ocr/tesseract/blob/master/doc/tesseract.1.asc}.
 
+\subsection{Specifying the recognized language}
+
 Tesseract requires trained language files in order to operate.  
-By default, \pkg{Rtesseract} searches the /usr/bin/local directory for
-installed trained language files, but this can be overridden.  The
-current location where the API is searching for language data is
-returned by \code{GetDataPath}.  Since Tesseract allows users to create
+By default, \pkg{Rtesseract} searches either \texttt{/usr/bin/local}
+or \texttt{/usr/share/} directory for
+installed trained language files, but when we create the
+\code{TesseractBaseAPI} we can specify both a different
+language, say Spanish
+
+<<>>=
+api = tesseract(smithburn, lang = "spa")
+@
+
+and an alternative location for the language data files,
+
+<<eval = FALSE>>=
+api = tesseract(smithburn, lang = "spa", datapath = ".")
+@
+
+We can find the current location where the API is searching for
+language data with \code{GetDatapath()},
+
+<<>>=
+GetDatapath(api)
+@
+
+Since Tesseract allows us to create
 trained data files for custom languages, the ability to specify the
 path of the language files alleviates the need to place these language
 data files in the default search location.  More information on
 training Tesseract and providing language files can be found at
 \url{https://github.com/tesseract-ocr/tesseract/wiki/Training-Tesseract}.  
 
-%XXX This seems a little arcane and not necessarily relevant for this
-%article, i.e. not necessarily % correct level.
-% ME - I think it is OK for this paper
+\subsection{Evaluating different configurations}
 
-Lastly, we have found that some experimentation is required to settle
-on the best set of customized variables for more difficult cases.  By
-creating persistent TesseractBaseAPI objects via the \code{tesseract}
+Sometimes, optimal settings are found through experimentation.  By
+creating persistent \code{TesseractBaseAPI} objects via the \code{tesseract()}
 function, two or more \code{TesseractBaseAPI}s can be created for the
-same image, which allows you to compare the impact of various settings
-to fine tune the OCR for individual cases.  Once a suitable set of
-adjustments have been found, these settings can be exported using
-\code{PrintVariables}.  These custom variables can then be easily set
-using \code{SetVariables} or the \code{opts} argument in the
-\code{tesseract} function.
+same image, e.g.
 
-% Looking at and changing options
 <<>>=
-#Querying the adjustable variables
-v = PrintVariables()
-v[grep("tessedit_char", names(v))]
+api = tesserct(smithburn, pageSegMode = "PSM_AUTO")
+api2 = tesseract(smithburn, pageSegMode = "PSM_SINGLE_BLOCK",
+                 opts = list(
+                     tessedit_char_whitelist = c(letters,
+                                                 LETTERS,
+                                                 0:9,
+                                                 ".")))
+@
 
-@ 
+Doing this allows us to compare the impact of various settings
+to fine tune the OCR for individual cases.  Once a suitable set of
+adjustments have been found, we can exported these settings using
+\code{PrintVariables()}. These custom variables can then be easily set
+using again \code{SetVariables()} or the \code{opts} argument in the
+\code{tesseract()} function.
 
-\subsection{Writing directly to file}
+\subsection{Writing results directly to file}
 
 \pkg{Rtesseract} includes functionality to export the results of OCR
 to many conventional file types, including BoxText, HOcr/HTML , OSD
 (Orientation and Script Detection), TSV (tab separated values), and
-PDF.  Of these, \code{toPDF} is unique in that it creates a searchable
+PDF.  Of these, \code{toPDF()} is unique in that it creates a searchable
 PDF document, not a plain-text document.
 
 \subsection{Metadata}
