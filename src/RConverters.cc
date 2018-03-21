@@ -618,7 +618,7 @@ createRRoutineReference(void *fun, const char * const routineName,  const char *
 	PROTECT( tmp = NEW_CHARACTER(numParams));
 	va_start(args, numParams);
 	for(int i = 0; i < numParams; i++) 
-	    SET_STRING_ELT(tmp, i, mkChar(va_arg(args, const char * const)));
+	    SET_STRING_ELT(tmp, i, mkChar(va_arg(args, const char * )));
 	SET_SLOT(ans, Rf_install("parameterTypes"), tmp);
 	va_end(args);
 	UNPROTECT(1);
