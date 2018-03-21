@@ -1,5 +1,7 @@
 # Todo Items
 
+1. User dictionary option.  See Paper/
+
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
    e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
      Not needed -  pixRotate{90,180},
@@ -9,13 +11,25 @@
 
 1. Memory Leak notifications when quit from R.
    If we rm() any api object and then explicitly gc(), no problem. W/o the gc(), we get the
-   ObjectCache warnings. These are relatively deep down in 
+   ObjectCache warnings. These are relatively deep down in tesseract.
+   How important is this.
+    If it is, we can collect all the tesseract objects in a linked list within the package
+	and remove them when they are freed. Then, when the package is detached, any API objects left in
+   the list can be removed and freed.
    
-1. Trap tprintf() calls in tesseract and redirect to R console.
+1. See if we can trap tprintf() calls in tesseract and redirect to R console.
+   + On linux with DSOs for libtesseract, we can slide ours in. See ext.cpp.
+      Doesn't work so readily on OSX. We'll need to figure out how to override the symbol.
+   + Problem is we get several sequential messages which really are part of the same message, so hard
+      to collect them into a warning.
+      + [implemented] We could use our own .Call() which sets a flag, cumulates the tprintf()s, reports them at the end
+          and clears the collection.
+
+1. Catch errors due to wrong version of tessdata, i.e. using 3.0 data with 4.0 tesseract and vice versa.
 
 1. tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
 
-1. get dev. version if that is being used, e.g. tesseractVersion()
+1. detect and deal with the "dev" string in the tesseract version if that is being used, e.g. tesseractVersion()
 
 1. [verify] findLines() and getLines() functions.
 
@@ -23,6 +37,8 @@
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
    from a file.
    Calling as.raster, so need to provide S3 method for that for pix.
+   This arises when we manipulate the image so it is different from the contents in the original
+   file, e.g., when we remove lines.
 
 1. [ok] Does plot.OCR call Recognize() again? No
    rasterImage() takes time, calling rgb() which profiling indicates takes the longest time - 27%
@@ -39,7 +55,6 @@
 1. [low] remove dependencies on readPNG() from plot.OCR()
     Not necessary. They are just suggests. May be faster than plotting from the Pix??
 
-
 1. Methods for pixOrientDetect", pixUpDownDetect, pixUpDownDetectGeneral
 
 1. [test] pixZero
@@ -51,9 +66,20 @@
 1. [okay - could do more] pixWrite should guess the format from the extension.	
     Can guess png, webp, jp2, jpeg, jpg, lpdf
 	
-1.  [test] pixOr, pixAnd, pixXor, 
+1. [test] pixOr, pixAnd, pixXor, 
 
-1. [test more] Add method for tesseract() to be called with a Pix, 
+1. get rid of "libpng warning iCCP: known incorrect sRGB profile"
+ This is due to content in the PNG file. To remove it, one can use ImageMagick's mogrifgy
+ command-line too.  (Or pngcrush apparently.)
+  (See
+ https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile)
+ 
+1. [done] Add method for tesseract() to be called with a Pix, 
+```
+p = pixRead("inst/images/sampleImage.jpg")
+a = tesseract(p)
+bb = GetBoxes(a)
+```
    (otherwise,
 	   tess = tesseract()
 	   SetImage(tess, pix)

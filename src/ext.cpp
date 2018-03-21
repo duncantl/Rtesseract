@@ -6,17 +6,68 @@ using std::string;
 
 #include <stdarg.h>
 
+#define MAX_MSG_LEN 100000
+#if 0
 void tprintf_internal(const char *fmt, ...)
 {
-    char msg[100000];
+    char msg[MAX_MSG_LEN];
     va_list argptr;
     va_start(argptr, fmt);
-    vsprintf(msg, fmt, argptr);
+    vsnprintf(msg, MAX_MSG_LEN, fmt, argptr);
     va_end(argptr);
 
 //    PROBLEM msg    WARN;
     Rprintf(msg); //"our own tprintf\n"
 }
+#else
+
+int numEls = 0;
+char *buf[1000];
+
+void 
+appendTprintf(const char *msg)
+{
+    buf[numEls++] = strdup(msg);
+}
+
+void
+clear_tprintf_els()
+{
+    for(int i = 0; i < numEls; i++)
+        free(buf[i]);
+    numEls = 0;
+}
+
+extern "C"
+SEXP
+R_get_tprintf()
+{
+   SEXP ans = NEW_CHARACTER(numEls);
+   PROTECT(ans);
+   for(int i = 0; i < numEls; i++)
+       SET_STRING_ELT(ans, i, mkChar(buf[i]));
+   UNPROTECT(1);
+   return(ans);
+}
+
+extern "C"
+SEXP
+R_clear_tprintf()
+{
+    clear_tprintf_els();
+    return(R_NilValue);
+}
+
+void tprintf_internal(const char *fmt, ...)
+{
+    char msg[MAX_MSG_LEN];
+    va_list argptr;
+    va_start(argptr, fmt);
+    vsnprintf(msg, MAX_MSG_LEN, fmt, argptr);
+    va_end(argptr);
+    appendTprintf(msg);
+}
+#endif
 
 extern "C"
 SEXP
