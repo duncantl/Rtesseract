@@ -232,15 +232,25 @@ switch(val) {
    case tesseract::OEM_TESSERACT_ONLY:
 	elName = "tesseract::OEM_TESSERACT_ONLY";
 	break;
+#ifdef HAS_OEM_CUBE
    case tesseract::OEM_CUBE_ONLY:
 	elName = "tesseract::OEM_CUBE_ONLY";
 	break;
    case tesseract::OEM_TESSERACT_CUBE_COMBINED:
 	elName = "tesseract::OEM_TESSERACT_CUBE_COMBINED";
 	break;
+#endif
    case tesseract::OEM_DEFAULT:
 	elName = "tesseract::OEM_DEFAULT";
 	break;
+#ifdef HAS_OEM_LSTM
+   case tesseract::OEM_LSTM_ONLY:
+	elName = "tesseract::OEM_LSTM_ONLY";
+	break;
+   case tesseract::OEM_TESSERACT_LSTM_COMBINED:
+	elName = "tesseract::OEM_TESSERACT_LSTM_COMBINED";
+	break;
+#endif
    default:
 	elName = "?";
 }
