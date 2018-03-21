@@ -1811,6 +1811,8 @@ if test -z "$CXXFLAGS" ; then
   CXXFLAGS="-std=c++11"
 fi
 
+
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2323,7 +2325,7 @@ echo "CXXFLAGS = $CXXFLAGS"
 
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
-echo "$TESS_CFLAGS"
+echo "Tesseract CFLAGS = $TESS_CFLAGS"
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2469,7 +2471,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-   #include <tesseract/publictypes.h>
+   #include <publictypes.h>
 
 int
 main ()
@@ -2493,7 +2495,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-   #include <tesseract/publictypes.h>
+   #include <publictypes.h>
 
 int
 main ()
@@ -2633,6 +2635,8 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 USE_REXIT="FALSE"
 
 echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
+
+if test -n "" ; then
 
 echo "Building libRexit.a"
 (cd src/Rexit; make)
@@ -3812,6 +3816,9 @@ fi
 else
   echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
 fi  # end of test for building libRexit.a
+
+fi
+
 
 
 

@@ -29,6 +29,8 @@ if test -z "$CXXFLAGS" ; then
   CXXFLAGS="-std=c++11"
 fi
 
+
+
 dnl probably should use the one from R's configuration
 dnl  CXX=`R CMD config  CXX`
 AC_PROG_CXX
@@ -37,7 +39,7 @@ echo "CXXFLAGS = $CXXFLAGS"
 
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
-echo "$TESS_CFLAGS"
+echo "Tesseract CFLAGS = $TESS_CFLAGS"
 AC_LANG(C++)
 
 AC_TRY_COMPILE(
@@ -116,7 +118,7 @@ AC_TRY_COMPILE(
 
 AC_TRY_COMPILE(
  [
-   #include <tesseract/publictypes.h> 
+   #include <publictypes.h> 
  ],
  [
     tesseract::OEM_LSTM_ONLY;
@@ -128,7 +130,7 @@ AC_TRY_COMPILE(
 
 AC_TRY_COMPILE(
  [
-   #include <tesseract/publictypes.h> 
+   #include <publictypes.h> 
  ],
  [
     tesseract::OEM_CUBE_ONLY;
@@ -258,6 +260,8 @@ USE_REXIT="FALSE"
 
 echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
 
+if test -n "" ; then 
+
 echo "Building libRexit.a"
 (cd src/Rexit; make)
 if test $? = 0 ; then
@@ -280,6 +284,9 @@ if test $? = 0 ; then
 else
   echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
 fi  # end of test for building libRexit.a
+
+fi
+
 
 AC_SUBST(USE_REXIT)
 AC_SUBST(REXIT_LIB)
