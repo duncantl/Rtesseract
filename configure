@@ -1806,6 +1806,13 @@ if test -n "$PKG_CONFIG" ; then
 
 fi
 
+
+if test -z "$CXXFLAGS" ; then
+  CXXFLAGS="-std=c++11"
+fi
+
+
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2314,9 +2321,11 @@ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $
 ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
 
+echo "CXXFLAGS = $CXXFLAGS"
+
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
-echo "$TESS_CFLAGS"
+echo "Tesseract CFLAGS = $TESS_CFLAGS"
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2459,6 +2468,54 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 
 
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+   #include <publictypes.h>
+
+int
+main ()
+{
+
+    tesseract::OEM_LSTM_ONLY;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  CPPDEFS="$CPPDEFS -DHAS_OEM_LSTM=1"
+else
+  echo "No OEM_LSTM_ONLY enumeration value for the TessBaseAPI"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+   #include <publictypes.h>
+
+int
+main ()
+{
+
+    tesseract::OEM_CUBE_ONLY;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  CPPDEFS="$CPPDEFS -DHAS_CUBE_ONLY=1"
+else
+  echo "No OEM_CUBE_ONLY enumeration value for the TessBaseAPI"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
 PNG_FILES="NA"
 JPG_FILES="NA"
 TIFF_FILES="NA"
@@ -2506,7 +2563,7 @@ if test "$?" = "0" ; then
     echo "jp2 support"
     JP2_FILES="TRUE"
   else
-    echo "no jp2 suppport"
+    echo "** no jp2 suppport"
   fi
   GIF_FILES="FALSE"
   ./readImage sampleImage.gif
@@ -2578,6 +2635,8 @@ echo "Leptonica version: $LEPTONICA_VERSION"
 USE_REXIT="FALSE"
 
 echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
+
+if test -n "" ; then
 
 echo "Building libRexit.a"
 (cd src/Rexit; make)
@@ -3757,6 +3816,9 @@ fi
 else
   echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
 fi  # end of test for building libRexit.a
+
+fi
+
 
 
 

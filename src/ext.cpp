@@ -4,6 +4,19 @@ using std::string;
 #include "Rtesseract.h"
 
 
+#include <stdarg.h>
+
+void tprintf_internal(const char *fmt, ...)
+{
+    char msg[100000];
+    va_list argptr;
+    va_start(argptr, fmt);
+    vsprintf(msg, fmt, argptr);
+    va_end(argptr);
+
+//    PROBLEM msg    WARN;
+    Rprintf(msg); //"our own tprintf\n"
+}
 
 extern "C"
 SEXP

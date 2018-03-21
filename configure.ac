@@ -22,13 +22,24 @@ if test -n "$PKG_CONFIG" ; then
 
 fi
 
+
+dnl For 4.00dev beta, we need -std=c++11. Should check for this in a more structured manner, but for now just bang it in
+dnl but allow the user set CXXFLAGS and override this.
+if test -z "$CXXFLAGS" ; then
+  CXXFLAGS="-std=c++11"
+fi
+
+
+
 dnl probably should use the one from R's configuration
 dnl  CXX=`R CMD config  CXX`
 AC_PROG_CXX
 
+echo "CXXFLAGS = $CXXFLAGS"
+
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
-echo "$TESS_CFLAGS"
+echo "Tesseract CFLAGS = $TESS_CFLAGS"
 AC_LANG(C++)
 
 AC_TRY_COMPILE(
@@ -103,6 +114,30 @@ AC_TRY_COMPILE(
  [CPPDEFS="$CPPDEFS -DHAS_DETECT_ORIENTATION_SCRIPT=1"; echo "Has DetectOrientatinScript() method"],
  [echo "NO DetectOrientationScript() method"]
 )
+
+
+AC_TRY_COMPILE(
+ [
+   #include <publictypes.h> 
+ ],
+ [
+    tesseract::OEM_LSTM_ONLY;
+ ],
+ [CPPDEFS="$CPPDEFS -DHAS_OEM_LSTM=1"],
+ [echo "No OEM_LSTM_ONLY enumeration value for the TessBaseAPI"]
+ )
+
+
+AC_TRY_COMPILE(
+ [
+   #include <publictypes.h> 
+ ],
+ [
+    tesseract::OEM_CUBE_ONLY;
+ ],
+ [CPPDEFS="$CPPDEFS -DHAS_CUBE_ONLY=1"],
+ [echo "No OEM_CUBE_ONLY enumeration value for the TessBaseAPI"]
+ )
 
 
 PNG_FILES="NA"
@@ -225,6 +260,8 @@ USE_REXIT="FALSE"
 
 echo "R_INCLUDE_DIR:  $R_INCLUDE_DIR"
 
+if test -n "" ; then 
+
 echo "Building libRexit.a"
 (cd src/Rexit; make)
 if test $? = 0 ; then
@@ -247,6 +284,9 @@ if test $? = 0 ; then
 else
   echo "Could not build src/Rexit/libRexit.a.  Using atexit() mechanism"
 fi  # end of test for building libRexit.a
+
+fi
+
 
 AC_SUBST(USE_REXIT)
 AC_SUBST(REXIT_LIB)
