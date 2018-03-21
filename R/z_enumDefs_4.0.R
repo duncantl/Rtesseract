@@ -108,11 +108,11 @@ ParagraphJustification = ParagraphJustificationValues = structure(c(0L, 1L, 2L, 
  setAs("numeric", "ParagraphJustification", function(from) asEnumValue(from, ParagraphJustificationValues, "ParagraphJustification", prefix = NA) )
 setClass("OcrEngineMode", contains = "EnumValue")
 
-OcrEngineMode = OcrEngineModeValues = structure(c(0L, 1L, 2L, 3L), .Names = c('OEM_TESSERACT_ONLY', 'OEM_CUBE_ONLY', 'OEM_TESSERACT_CUBE_COMBINED', 'OEM_DEFAULT'))
+OcrEngineMode = OcrEngineModeValues = structure(c(0L, 1L, 2L, 3L), .Names = c('OEM_TESSERACT_ONLY', 'OEM_LSTM_ONLY', 'OEM_TESSERACT_LSTM_COMBINED', 'OEM_DEFAULT'))
 
 `OEM_TESSERACT_ONLY` = GenericEnumValue('OEM_TESSERACT_ONLY', 0L, 'OcrEngineMode')
-`OEM_CUBE_ONLY` = GenericEnumValue('OEM_CUBE_ONLY', 1L, 'OcrEngineMode')
-`OEM_TESSERACT_CUBE_COMBINED` = GenericEnumValue('OEM_TESSERACT_CUBE_COMBINED', 2L, 'OcrEngineMode')
+`OEM_LSTM_ONLY` = GenericEnumValue('OEM_LSTM_ONLY', 1L, 'OcrEngineMode')
+`OEM_TESSERACT_LSTM_COMBINED` = GenericEnumValue('OEM_TESSERACT_LSTM_COMBINED', 2L, 'OcrEngineMode')
 `OEM_DEFAULT` = GenericEnumValue('OEM_DEFAULT', 3L, 'OcrEngineMode')
 
  setAs("character", "OcrEngineMode", function(from) asEnumValue(from, OcrEngineModeValues, "OcrEngineMode", prefix = "OEM_") )
