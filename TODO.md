@@ -8,15 +8,15 @@
   Is there a GetDims? no - just pixGetDims and GetImageDims.
 
 1. Memory Leak notifications when quit from R.
+   If we rm() any api object and then explicitly gc(), no problem. W/o the gc(), we get the
+   ObjectCache warnings. These are relatively deep down in 
+   
+1. Trap tprintf() calls in tesseract and redirect to R console.
 
 1. tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
 
-1. getInputName is taking a long time
-
 1. get dev. version if that is being used, e.g. tesseractVersion()
 
-1. don't use LIB_R_EXIT
-   
 1. [verify] findLines() and getLines() functions.
 
 1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
@@ -24,7 +24,7 @@
    from a file.
    Calling as.raster, so need to provide S3 method for that for pix.
 
-1. Does plot.OCR call Recognize() again? No
+1. [ok] Does plot.OCR call Recognize() again? No
    rasterImage() takes time, calling rgb() which profiling indicates takes the longest time - 27%
    Apparently (when stepping through the code) GetInputName(), is.na(img) before rasterImage() call take time.
 
@@ -86,6 +86,10 @@
   ```
   but not tesseract("", configs = "config")
   Need pageSegMode = "psm_auto".
+
+1. [no] GetInputName is taking a long time - Seems fine.
+1. [done] don't use LIB_R_EXIT - commented out from configure.ac now
+   
 
 ## A. Required to get package on CRAN
 
