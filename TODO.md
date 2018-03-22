@@ -2,6 +2,11 @@
 
 1. User dictionary option.  See Paper/
 
+1. [done] Options
+```
+a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
+```
+
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
    e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
      Not needed -  pixRotate{90,180},

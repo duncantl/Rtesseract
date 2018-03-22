@@ -29,7 +29,7 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
 }
 
 Init = 
-function(api, lang = "eng", configs = character(), vars = character(), datapath = NA, engineMode = OEM_DEFAULT, debugOnly = FALSE, force2 = FALSE)
+function(api, lang = "eng", configs = character(), vars = character(), datapath = NA, engineMode = OEM_DEFAULT, debugOnly = FALSE, force2 = TRUE)
 {
   if(!is.na(datapath) && (!file.exists(datapath) || !file.info(datapath)[1, "isdir"])) 
       stop("No such directory ", datapath)
@@ -59,7 +59,7 @@ function(api)
 SetVariables =
 function(api, ..., opts = list(...))
 {
-  .vars = sapply(opts, as, "character")
+  .vars = sapply(opts, function(x) paste(as(x, "character"), collapse = ""))
   .vars[ .vars == "FALSE" ] = "F"
   .vars[ .vars == "TRUE" ] = "T"  
     
