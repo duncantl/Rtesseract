@@ -4,13 +4,12 @@ inc = "/usr/local/include/tesseract"
 version = "3.05"
 
 
-inc = "~/Projects/OCR/tess4/api"
-version = "4.0"
+#inc = "~/Projects/OCR/tess4/api"
+#version = "4.0"
 
 tu = createTU("tess.cc", include = inc)
 
-
-e = getEnums(tu)
+e = getEnums(tu, "tesseract") # Filter out the other enums.
 
 # k = getCppClasses(tu)
 
@@ -20,6 +19,8 @@ cat(paste("if(tesseractVersion(runTime = FALSE) == c('", version[1], "')) {\n", 
     unlist(lapply(e, makeEnumClass)),
     "\n\n\n}\n\n",
     file = zfile, sep = "\n")
+
+
 
 if(FALSE) {
 # makeEnumDef(e$PageSegMode, namespace = "tesseract"),
