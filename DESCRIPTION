@@ -17,5 +17,5 @@ SystemRequirements: tesseract_3.0.3 release candidate or higher
       https://code.google.com/p/tesseract-ocr/
       tesseract requires leptonica.
 Imports: methods, grDevices
-Suggests: png, tiff, jpeg
+Suggests: png, tiff, jpeg, Aspell
 Others: rjpeg
