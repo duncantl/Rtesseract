@@ -563,10 +563,11 @@ ways: in the call to \code{tesseract()},
 api = tesseract(smithburn, pageSegMode = "PSM_AUTO")
 @
 
-in the \code{...}  arguments for any of the high-level functions,
+in the \code{...}  arguments for any of the high-level functions,  %% @MATT - do we define high-level clearly early on?
+e.g.,
 
 <<>>=
-GetText(smithburn, pageSegMode = "PSM_AUTO")
+GetText(smithburn, pageSegMode = PSM_AUTO)
 @
 
 or by using \code{SetPageSegMode()} on an existing
@@ -574,7 +575,7 @@ or by using \code{SetPageSegMode()} on an existing
 
 <<>>=
 GetPageSegMode(api)
-SetPageSegMode(api, mode = "PSM_AUTO")
+SetPageSegMode(api, mode = PSM_AUTO)
 GetPageSegMode(api)
 @
 
@@ -582,6 +583,7 @@ The available Page Segmentation Modes are listed and enumerated values
 in the \pkg{Rtesseract} package, and can be found with,
 
 %% Too hacky - fix this in the package
+%% @MATT or Rtesseract:::PageSegMode  (note the need for :::). Is this okay?
 <<>>=
 grep("^PSM", ls("package:Rtesseract"), value = TRUE)
 @ 
