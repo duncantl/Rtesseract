@@ -531,17 +531,21 @@ engine for specific cases.
 
 \subsection{Page Segmentation Mode and OCR engine}
 
-First, two ``meta-variables'' control which OCR engine is used,
-and how that engine recognizes the arrangement of text,
+There are two ``meta-variables'' control how that Tesseract recognizes the arrangement of text and which OCR engine is used,
 \code{pageSegMode} and \code{engineMode}. Since adjusting these two
-variables can have large impact on the results of the OCR, they
-deserve special mention. The first, the Page Segmentation Mode,
-adjusts how Tesseract recognizes lines of text in the image. By
-adjusting Page Segmentation Mode, the user can tell Tesseract how to
+variables can have a large impact on the results of the OCR, they
+deserve special mention.
+
+The first, the Page Segmentation Mode,
+adjusts how Tesseract recognizes the layout of the text in the image.
+Correctly identifying the text layout is an important first step to accurate OCR.
+As we have seen previously, text cannot be properly recognized when it is arranged vertically where Tesseract expects horizontal layout.
+Adjusting the Page Segmentation Mode variable allows us to directly tell Tesseract how to
 expect the text to be arranged, e.g. as a single block of text, sparse
 text, arranged top to bottom (e.g., the vertical arrangement of many
 Asian texts) or even in a circle (e.g., the text on the rim of a
-coin), etc. Included in the available options are to have Tesseract
+coin), etc.
+Included in the available options are to have Tesseract
 attempt to automatically detect the text orientation, the script used,
 or both. %more here
 The \pkg{Rtesseract} package preserves the
@@ -590,15 +594,14 @@ GetPageSegMode(api)
 The available Page Segmentation Modes are listed and enumerated values
 in the \pkg{Rtesseract} package, and can be found with,
 
-%% Too hacky - fix this in the package
-%% @MATT or Rtesseract:::PageSegMode  (note the need for :::). Is this okay?
 <<>>=
-grep("^PSM", ls("package:Rtesseract"), value = TRUE)
+Rtesseract:::PageSegMode
 @ 
 
 The second of these variables is the Tesseract Engine Mode, which
-determines which OCR engine is used to recognize text. Tesseract ships
-with additional OCR algorithms which can be used individually or in
+determines which OCR engine is used to recognize text.
+Tesseract operates by recognizing elements of individual characters, and different OCR engines recognize these elements using different algorithms.
+Tesseract ships with additional OCR algorithms which can be used individually or in
 combination with Tesseract, though by default \pkg{Rtesseract} uses
 Tesseract only. For Tesseract versions 3.05+, an additional OCR engine
 Cube is included, and for Tesseract versions 4.00+ a Long Short-term
