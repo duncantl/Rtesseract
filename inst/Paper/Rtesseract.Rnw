@@ -598,14 +598,19 @@ in the \pkg{Rtesseract} package, and can be found with,
 Rtesseract:::PageSegMode
 @ 
 
-The second of these variables is the Tesseract Engine Mode, which
+The second of these ``meta-variables'' is the Tesseract Engine Mode, which
 determines which OCR engine is used to recognize text.
 Tesseract operates by recognizing elements of individual characters, and different OCR engines recognize these elements using different algorithms.
 Tesseract ships with additional OCR algorithms which can be used individually or in
-combination with Tesseract, though by default \pkg{Rtesseract} uses
-Tesseract only. For Tesseract versions 3.05+, an additional OCR engine
-Cube is included, and for Tesseract versions 4.00+ a Long Short-term
-Memory (LSTM) neural network-based OCR engine is included.
+combination with Tesseract's original line-finding algorithm.
+For Tesseract versions 3.05+, an additional OCR engine ``Cube'' is included, and for Tesseract versions 4.00+ a Long Short-term Memory (LSTM) neural network-based OCR engine is included.
+Although the use of the other OCR engines in combination with Tesseract can potentially
+increase accuracy, their use can add significant computational load
+(between 6--10x) and require appropriately trained language files, so
+they are not used by default by \pkg{Rtesseract}'s OCR functions. For
+a comparison of the accuracy and performance of each of these options,
+please refer to
+\url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
 
 The current Engine mode can be found by calling \code{oem()} on a
 \code{TesseractBaseAPI} object,
@@ -636,14 +641,6 @@ name. Attempting to set the engine mode on an already created
 \code{TesseractBaseAPI} object will have no effect, e.g.,
 \code{GetText(api, engineMode = "OEM\_CUBE")}.
 
-Although the use of the other OCR engines in combination with Tesseract can potentially
-increase accuracy, their use can add significant computational load
-(between 6--10x) and require appropriately trained language files, so
-they are not used by default by \pkg{Rtesseract}'s OCR functions. For
-a comparison of the accuracy and performance of each of these options,
-please refer to
-\url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
-
 \subsection{Image Manipulation and Pre-processing}
 
 \subsubsection{Rotating Text}
@@ -654,21 +651,16 @@ please refer to
 
 \subsubsection{Pre-processing the Image}
 
-Consider the previous image. When we perform OCR on this, tesseract
+Consider the image in Fig. \ref{fig:base}. When we perform OCR on this, Tesseract
 treats the highlighted text in "yellow" as a dark rectangular block
 and ignores it.
 
-Let's see what we get from \code{tesseract()} with this image:
+For example, some of the words in the image present in the highlighted text are ``Drs. Dick and
+Haddow.''  Are these in the words returned by Tesseract?
 
 <<>>=
 t0 = tesseract(smithburn)
 w0 = GetText(t0, level = "textline")
-@
-
-Some of the words in the highlighted text are ``Drs. Dick and
-Haddow.''  Are these in the words returned by tesseract?
-
-<<>>=
 grep("Drs. Dick and Haddow", w0, value = TRUE)
 @ 
 
@@ -698,7 +690,7 @@ pix = pixRead(smithburn)
 pix1 = pixConvertTo8(pix)
 @
 
-We can test if this is sufficient to recover the text under the
+We can test if this is sufficient to recover the text under the yellow
 highlighted region by calling \code{tesseract()} directly on the
 modified image:
 
@@ -719,7 +711,7 @@ the words returned by tesseract for this modified image:
 grep("Drs. Dick and Haddow", w1, value = TRUE)
 @ 
 
-Indeed all three are there.
+Indeed, they are there.
 
 \subsection{Using Leptonica to identify lines}
 
@@ -727,9 +719,9 @@ A primary motivation underlying the Rtesseract package is that we need context f
 Rather than just getting the text back, generally, we want information
 about the location and size for each character, word or line
 identified by tesseract so that we can use it to intelligently
-interpret the content.  This includes identifying document and section titles in the document based on the size of the text.  In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.  Again, consider the previous image.
+interpret the content.  This includes identifying document and section titles in the document based on the size of the text.  In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.  Again, consider the previous image in Fig. \ref{fig:base}.
 
-We can clearly see the data in TABLE 1 are arranged by row and column.
+We can clearly see in the image that the data in TABLE 1 are arranged by row and column.
 The column headers are separated by two horizontal lines spanning the
 width of the text on the page.  The final 4 columns have two column
 headers that span all 4 columns.  The header in column 4
@@ -742,7 +734,7 @@ horizontal and vertical locations of the words on the page.  So we
 could use these to attempt to recover the tabular nature of this data.
 In this particular example, we can do this effectively and relatively
 simply.  However, in images with tables that have center-aligned
-columns (e.g. the ``Year Isolated'' column), this is much more
+columns (e.g. the ``Year Isolated'' column) or with many empty cells, this is more
 complicated and can lead to ambiguity regarding which column a cell
 belongs.  Instead, we can separate the values into their respective
 columns much more effectively if we can identify the vertical lines
@@ -753,15 +745,15 @@ the table and the continuation of the regular text below it if we can
 find the final horizontal line in this example.
 
 Given the motivation of finding the vertical and horizontal lines on
-the page, let's explore how we can do this with Rtesseract.
+the page, let's explore how we can do this with \pkg{Rtesseract}.
 Unfortunately, we have to do this outside or separately from the OCR
-stage of recognizing the text.  The OCR process tesseract performs
+stage of recognizing the text.  The OCR process Tesseract performs
 actually identifies and removes the lines from the image before it
 recognizes the remaining text on the image.  This aids the accuracy of
 the OCR.  However, it does not allow us to query the locations of the
 lines it removed.  Accordingly, we must replicate approximately the
 same computations it performs to identify the lines and their
-locations.  Fortunately, the basic ideas of this process are described
+locations.  Fortunately, the basic ideas of this process are described at
 \url{http://www.leptonica.com/line-removal.html}.  The \pkg{Rtesseract}
 package provides corresponding (and higher-level convenience)
 functions to effect the same computations.
@@ -777,7 +769,7 @@ We start by reading the image:
 p1 = pixRead(smithburn)
 @
 
-We immediately convert the image to gray-scale with `pixConvertTo8()`:
+We immediately convert the image to gray-scale with \code{pixConvertTo8()}:
 
 <<>>=
 p1 = pixConvertTo8(p1)
