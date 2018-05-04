@@ -828,7 +828,8 @@ This returns a list with each element identifying the (x0, y0) and
 We can add these lines to the display of the image to verify they
 appear where we expect:
 
-<<>>=
+\begin{figure}
+<<fig = TRUE>>=
 plot(p2)
 lapply(hlines,
        function(tmp) {
@@ -836,6 +837,9 @@ lapply(hlines,
                  lty = 3, lwd = 2)
        })
 @
+\caption{}
+\label{}
+\end{figure}
 
 Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
