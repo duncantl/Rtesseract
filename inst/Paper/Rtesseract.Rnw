@@ -20,34 +20,9 @@
 % + Setting an image after processing it in R first. Have to check this works. 
 %     SetImage_raw
 % 
-
-%     NOTES: Too disjoint - leaving too much ot the reader to figure
-%     out
-%     References too far away from their target
-%     More explanations to some of the parameters
-%     Going for chatty
-
-%     Code is part of sentence or figure - no ". <CODE>"
-
-%     Leaving too much to the reader to figure out -
-%     be more explicit in what we are doing and why we are doing it.
-%     Spell out motivation for the various functions - explain the
-%     funcitons in text before running off and using them.
-
-%     Connect the text to the code better - Break up the code into
-%     small segments 
-%     Short - motivation for each section
-
-%     Highlight that give us the means to query and then modify the
-%     tool - changes computational model
-
 %     All names mirror the C++ API, so you can find attitional
 %     documentation in the Tesseract documentation.
 
-%     Tesseract is rich - this provides easy way to modify,
-%     programmatically explore, able to "sit" with and drive
-%     More than a single function / atomic action
-%     is piece of a larger workflow.
 
 \author{Matthew B. Espe\\UC - Davis
   \And Duncan Temple Lang \\UC - Davis}
