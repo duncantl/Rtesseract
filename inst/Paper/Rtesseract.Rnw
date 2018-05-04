@@ -230,7 +230,7 @@ development versions (v4.00.dev) of Tesseract, with mechanisms to
 configure \pkg{Rtesseract} according to the installed versions of
 Tesseract, leptonica, and image libraries.
 
-\section{Optical Character Recognition using Rtesseract}\label{desc}
+\section{Optical Character Recognition using\pkg{Rtesseract}}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient.  \pkg{Rtesseract} provides simple
@@ -605,7 +605,7 @@ The Engine Mode can be set either in the call to \code{tesseract()}
 api = tesseract(smithburn, engineMode = "OEM_TESSERACT_ONLY") 
 @
 
-or in the call a base level function,
+or in the call to a base level function,
 
 <<>>=
 GetText(smithburn, engineMode = "OEM_TESSERACT_ONLY")
@@ -690,7 +690,7 @@ Indeed, they are there.
 
 \subsection{Using Leptonica to identify lines}
 
-A primary motivation underlying the Rtesseract package is that we need context from the rendered page to make sense of the results of the OCR.
+A primary motivation underlying the\pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
 Rather than just getting the text back, generally, we want information
 about the location and size for each character, word or line
 identified by tesseract so that we can use it to intelligently
@@ -733,21 +733,23 @@ locations.  Fortunately, the basic ideas of this process are described at
 package provides corresponding (and higher-level convenience)
 functions to effect the same computations.
 
-Note that we will pass the original/raw image to OCR without modifying
-it.  Tesseract will do many of the same computations we do.  So our aim
-here is to simply identify the locations of the horizontal and
+Our aim here is to simply identify the locations of the horizontal and
 vertical lines in the image before or after we perform the OCR.
- 
+Note that these steps are entirely independent of the OCR.
+When we pass the original/raw image to OCR without modifying
+it,
+Tesseract will do many of the same computations we do, but for the purposes of removing the lines to increase OCR accuracy. %% Does not make sense
+
 We start by reading the image:
 
 <<>>=
-p1 = pixRead(smithburn)
+p1 = pixRead(filename = smithburn)
 @
 
 We immediately convert the image to gray-scale with \code{pixConvertTo8()}:
 
 <<>>=
-p1 = pixConvertTo8(p1)
+p1 = pixConvertTo8(pix = p1)
 @
 
 (Note that this creates a new \code{Pix} and allows the previous one to be
@@ -758,7 +760,7 @@ This can be important in detecting horizontal and vertical lines that
 may be at an angle because the scan was done with a slight rotation.
 There is a function \code{deskew()} to do this.  However, we will show
 the steps as they illustrate some of the leptonica functions available
-in the Rtesseract package.
+in the\pkg{Rtesseract} package.
 
 To detect the skew, we must first create a separate binary image using
 \code{pixThresholdToBinary()}.  Then we call \code{pixFindSkew()} to
@@ -766,14 +768,17 @@ determine the actual angle of the skew.  Then we rotate the original
 image by that skew angle:
 
 <<>>=
-bin = pixThresholdToBinary(p1, 150)
-angle = pixFindSkew(bin)
-p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
+bin = pixThresholdToBinary(pix = p1, threshold = 150)
+angle = pixFindSkew(pix = bin)
+p2 = pixRotateAMGray(pix = p1, angle = angle[1]*pi/180,
+                     grayVal = 255)
 @
 
+When the page is deskewed, areas in the corners of the page have to be filled to maintain a rectangular image.
 The 255 in the call to \code{pixRotateAMGray()} corresponds to white and
 means that any pixels that are ``revealed'' by rotating the ``page'' are
-colored white.  These occur in the corners.  We can specify any
+colored white.
+We can specify any
 gray-scale color value we want here between 0 (black) and 255 (white).
 
 \begin{comment}
@@ -784,16 +789,20 @@ plot(p2)
 @
 \end{comment}
 
-With the reoriented image, we call the Rtesseract function
+With the reoriented image, we call the\pkg{Rtesseract} function
 \code{getLines()} to get the coordinates of the lines in the image.
 We'll first extract the horizontal lines.  For this, we pass the image
 and then describe a ``mask'' or box that helps to identify contiguous
-regions in the image corresponding to the lines we want.  For
+regions in the image corresponding to the lines we want.
+For
 horizontal lines, we want wide and vertically short boxes.  We
 describe this box with the width and height of the box, e.g.,
+This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
+Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
+Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
 
 <<>>=
-hlines = getLines(p2, 51, 3)
+hlines = getLines(pix = p2, hor = 51, vert = 3)
 hlines
 @
 
@@ -826,7 +835,7 @@ either the horizontal or vertical lines.  We'll first get the
 horizontal lines with
 
 <<<>>=
-h = findLines(p2, 51, 3)
+h = findLines(pix = p2, hor = 51, vert = 3)
 @
 
 We specify the \code{Pix} to process and then the horizontal width and
