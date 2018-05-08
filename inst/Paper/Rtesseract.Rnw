@@ -812,8 +812,8 @@ This returns a list with each element identifying the (x0, y0) and
 We can add these lines to the display of the image to verify they
 appear where we expect:
 
-\begin{figure}
-<<fig = TRUE>>=
+\begin{figure}[H]
+<<fig = TRUE, echo = FALSE>>=
 plot(p2)
 lapply(hlines,
        function(tmp) {
@@ -821,8 +821,8 @@ lapply(hlines,
                  lty = 3, lwd = 2)
        })
 @
-\caption{}
-\label{}
+\caption{The result of identifying lines using the \code{getLines} function colored in red over the original image.}
+\label{fig:lines_id}
 \end{figure}
 
 Note that we had to subtract the y coordinates from the number of rows
@@ -851,8 +851,9 @@ Let's look at the resulting image to see what lines it detected:
 plot(h, invert = TRUE)
 @
 
-Note that the background is black, corresponding to values of 0 in the
-Pix.  We see the 4 primary lines that span most of the width of the
+Note that the background is black in the \code{Pix} object, corresponding to values of 0.
+Adding the option \code{invert = TRUE} will invert the \code{Pix}.
+We see the 4 primary lines that span most of the width of the
 image.  The second one down (at y = 3600) has several short gaps.   We
 also see many short line segments above the first line and to the
 right of the image.   The ones on the right correspond to parts of the

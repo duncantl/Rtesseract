@@ -98,7 +98,7 @@ plot(pt)
 
 Now the dimension of the image is 4050 rows by 6000 columns.
 
-We can have Tesseract process the sub-rectangle
+We can have Tesseract process the sub-rectangle corresponding to the area we are interested in
 
 <<>>=
 ts = tesseract(pt)
