@@ -230,7 +230,7 @@ development versions (v4.00.dev) of Tesseract, with mechanisms to
 configure \pkg{Rtesseract} according to the installed versions of
 Tesseract, leptonica, and image libraries.
 
-\section{Optical Character Recognition using\pkg{Rtesseract}}\label{desc}
+\section{Optical Character Recognition using Rtesseract}\label{desc}
 
 For many simple problems, merely extracting text from an image in a
 reliable manner is sufficient.  \pkg{Rtesseract} provides simple
@@ -690,7 +690,7 @@ Indeed, they are there.
 
 \subsection{Using Leptonica to identify lines}
 
-A primary motivation underlying the\pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
+A primary motivation underlying the \pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
 Rather than just getting the text back, generally, we want information
 about the location and size for each character, word or line
 identified by tesseract so that we can use it to intelligently
@@ -760,7 +760,7 @@ This can be important in detecting horizontal and vertical lines that
 may be at an angle because the scan was done with a slight rotation.
 There is a function \code{deskew()} to do this.  However, we will show
 the steps as they illustrate some of the leptonica functions available
-in the\pkg{Rtesseract} package.
+in the \pkg{Rtesseract} package.
 
 To detect the skew, we must first create a separate binary image using
 \code{pixThresholdToBinary()}.  Then we call \code{pixFindSkew()} to
@@ -789,7 +789,7 @@ plot(p2)
 @
 \end{comment}
 
-With the reoriented image, we call the\pkg{Rtesseract} function
+With the reoriented image, we call the \pkg{Rtesseract} function
 \code{getLines()} to get the coordinates of the lines in the image.
 We'll first extract the horizontal lines.  For this, we pass the image
 and then describe a ``mask'' or box that helps to identify contiguous
@@ -810,7 +810,7 @@ Hence when the rectangle is wide (horizontal) or tall (vertical), lines are comb
 We can add these lines to the display of the image to verify they
 appear where we expect:
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<fig = TRUE, echo = FALSE>>=
 plot(p2)
 lapply(hlines,
@@ -833,7 +833,7 @@ First, we use the \code{findLines()} function to return an image that contains
 either the horizontal or vertical lines,
 
 <<<>>=
-h = findLines(pix = p2, hor = 51, vert = 3)
+hLines = findLines(pix = p2, hor = 51, vert = 3)
 @
 
 We specify the \code{Pix} to process and then the horizontal width and
@@ -846,7 +846,7 @@ Internally, \code{findLines()} uses the function \code{pixCloseGray()} to do thi
 Let's look at the resulting image to see what lines it detected:
 
 <<>>=
-plot(h, invert = TRUE)
+plot(hLines, invert = TRUE)
 @
 
 Due to differences between \proglang{R} and Leptonica, the \code{Pix} object's background has values of 0, which corresponds to black in \proglang{R}'s plotting functions.
@@ -869,7 +869,7 @@ and the text remaining.)  We convert this to a matrix of 0s and 1s in
 \proglang{R}:
 
 <<>>=
-m = pixGetPixels(h)
+pMat = pixGetPixels(hLines)
 @
 
 \begin{comment}
@@ -877,7 +877,7 @@ We find the rows of this matrix that have 1000 or more
 black pixels.  We do this with
 
 <<>>=
-w = rowSums(m) > 1000
+longLines = rowSums(pMat) > 1000
 @
 
 The value 1000 is context-specific.  It includes lines that span 1000
@@ -890,7 +890,7 @@ the small line segments that don't interest us.
 How many rows of the matrix satisfy this criterion:
 
 <<>>=
-table(w)
+table(longLines)
 @
 
 So we have 46 which is a lot more than the 6 we see in the original
@@ -900,8 +900,8 @@ We can see these horizontal lines on the image with
 
 \begin{figure}[h]
 <<figure = TRUE>>=
-plot(h, invert = TRUE)
-abline(h = nrow(m) - which(w), col = "red")
+plot(hLines, invert = TRUE)
+abline(h = nrow(pMat) - which(longLines), col = "red")
 @
 \caption{}
 \label{}
@@ -909,7 +909,7 @@ abline(h = nrow(m) - which(w), col = "red")
 
 Note again that the rows in the matrix go from 1 to nrow, while on the
 plot, they go down the page.  This is why we get the height with
-\code{nrow(m) - which(w)}.
+\code{nrow(pMat) - which(longLines)}.
 
 We can see we get the 4 lines that span the width of the text area,
 but not the two shorter line segments.
@@ -922,11 +922,11 @@ An initial guess of 1000 pixels resulted in discarding two shorter segments whic
 So we will relax the threshold of 1000 black pixels.
 As a second guess, we'll use 10\% cells in a column:
 
-\begin{figure}[H]
+\begin{figure}[h]
 <<>>=
-w = rowSums(m) > 0.1 * ncol(m)
-plot(h, invert = TRUE)
-abline(h = nrow(m) - which(w), col = "red")
+longLines = rowSums(pMat) > 0.1 * ncol(pMat)
+plot(hLines, invert = TRUE)
+abline(h = nrow(pMat) - which(longLines), col = "red")
 @
 \caption{An example of locating lines on a page. After locating any possible lines, we have colored red any row with greater than 10\% of the cells containing a black pixel. This restricts our attention to the longer or more prominent lines.}
 \label{fig:highlight_lines}
@@ -940,18 +940,16 @@ the plot.
 Let's look at the row numbers for these 74 rows:
 
 <<>>=
-which(w)
+which(longLines)
 @
 
 It may not be clear, but these are grouped together.  Each of the red
-lines we see on the plot is actually a collection of multiple adjacent
-lines.
+lines we see on the plot is actually a collection of multiple adjacent lines.
 Or in other words, the line thickness results in the line spanning multiple rows.
-This is clearer if we compute the difference between the row
-numbers:
+This is clearer if we compute the difference between the row numbers:
 
 <<>>=
-diff(which(w))
+diff(which(longLines))
 @
 
 We see a collection of 1s meaning that these are adjacent rows, then a
@@ -961,7 +959,7 @@ into a single group and have a group for each conceptually separate
 line on the image.  One way to do this is run length encoding (RLE):
 
 <<>>=
-rle(diff(which(w)))
+rle(diff(which(longLines)))
 @
 
 Another way is very similar but more explicit and gives us a little
@@ -970,38 +968,38 @@ numbers is greater than 2 and then we run a cumulative sum which gives
 us group labels:
 
 <<>>=
-g = cumsum( diff(which(w)) > 2 )
+lineGroups = cumsum( diff(which(longLines)) > 2 )
 @
 
-We can use g to split the rows into groups
+We can use \code{lineGroups} to split the rows into groups
 
 <<>>=
-rowNums = which(w)
-ll = tapply(seq(along = rowNums), c(0, g),
-            function(i) m[rowNums[i], ])
-names(ll) = tapply(seq(along = rowNums), c(0, g),
+rowNums = which(longLines)
+combinedLines = tapply(seq(along = rowNums), c(0, lineGroups),
+            function(i) pMat[rowNums[i], ])
+names(combinedLines) = tapply(seq(along = rowNums), c(0, lineGroups),
                    function(i) as.integer(mean(rowNums[i])))
 @
 
 (Note that we added 0 to the start of the vector g since g has one
-less element than w since we were computing pairwise differences.)
-The computation is a little awkward.  We split the indices of rowNums
-and then have to use those to index back into rowNums to find out
-which rows of m we need to extract for this group.
+less element than \code{longLines} since we were computing pairwise differences.)
+The computation is a little awkward.  We split the indices of \code{rowNums}
+and then have to use those to index back into \code{rowNums} to find out
+which rows of \code{pMat} we need to extract for this group.
 
 The third line puts the average of the row numbers of each group as
 the name of that element.  This will be convenient for mapping this
 back to the general vertical area.
 
-Each element of \code{ll} is a matrix.  For each of these, we want to
+Each element of \code{combinedLines} is a matrix.  For each of these, we want to
 combine them to identify the start and end of a line.  Each may have
 several separate line segments.
 
-Let's consider the first element of \code{ll}.  It has 14 rows and 4050
+Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
 columns.  It is useful to query how many 0s and 1s there are?
 
 <<>>=
-table(ll[[1]])
+table(combinedLines[[1]])
 @
 
 These are about equal: 27000 0s and 30000 1s.  (In this setup, 1 is
@@ -1015,7 +1013,7 @@ Since we think these rows make up a single line, let's aggregate across the adja
 rows to form a single aggregate row using \code{colSums()}:
 
 <<>>=
-rr = colSums(ll[[1]])
+rowNcells = colSums(combinedLines[[1]])
 @
 
 If this is a solid line across most of the page, we'd expect most
@@ -1026,7 +1024,7 @@ pixel.  We might look at these counts or just consider whether any row
 has a black pixel in this column.  We are looking for a rule to mark a
 pixel in the aggregated line as black or white.
 
-If we look at the vector \code{rr}, we see a lot of 0s at the
+If we look at the vector \code{rowNcells}, we see a lot of 0s at the
 beginning and the end.  These are the margins where the line is not
 present.
 
@@ -1035,7 +1033,7 @@ column if \textit{any} of the pixels in the adjacent rows defining it
 has a black pixel, we can do this with
 
 <<>>=
-rle(rr > 0)
+rle(rowNcells > 0)
 @
 
 We get the two margins and a long run of 2895 pixels.  If we require
@@ -1043,16 +1041,16 @@ at least half of the 14 rows to have a black pixel in a column, we get
 the same groups:
 
 <<>>=
-rle(rr >= 7)
+rle(rowNcells >= 7)
 @
 
 Let's consider one of the shorter lines.  These are elements 2 and 3
-of \code{ll}.  Again, we compute the column sums for the adjacent
+of \code{combinedLines}.  Again, we compute the column sums for the adjacent
 lines in this group:
 
 <<>>=
-rr = colSums(ll[[2]])
-table(rr)
+rowNcells = colSums(combinedLines[[2]])
+table(rowNcells)
 @
 
 Most are 0.  There are 9 adjacent rows in this group.  We see no
@@ -1062,12 +1060,12 @@ black pixel in at least half the rows:
 
 \begin{figure}[h]
 <<>>=
-z = which(rr >= 4.5)
-plot(h, invert = TRUE)
-points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)),
+z = which(rowNcells >= 4.5)
+plot(hLines, invert = TRUE)
+points(z, nrow(pMat) - rep(as.integer(names(combinedLines)[2]), length(z)),
        col = "green", pch = 16, cex = 0.5)
 @
-\caption{}
+\caption{An example of identifying lines.}
 \label{}
 \end{figure}
 
