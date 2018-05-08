@@ -794,20 +794,18 @@ With the reoriented image, we call the\pkg{Rtesseract} function
 We'll first extract the horizontal lines.  For this, we pass the image
 and then describe a ``mask'' or box that helps to identify contiguous
 regions in the image corresponding to the lines we want.
-For
-horizontal lines, we want wide and vertically short boxes.  We
-describe this box with the width and height of the box, e.g.,
-This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
-Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
-Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
+For horizontal lines, we want wide and vertically short boxes.
+We describe this box with the width and height of the box, e.g.,
 
 <<>>=
 hlines = getLines(pix = p2, hor = 51, vert = 3)
 hlines
 @
 
-This returns a list with each element identifying the (x0, y0) and
-(x1, y1) coordinates describing a single line.
+This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates describing a single line.
+This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
+Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
+Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
 
 We can add these lines to the display of the image to verify they
 appear where we expect:
@@ -829,21 +827,21 @@ Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
 lines are relative to row 1 and go down.
 
-\code{getLines()} performs several operations on the image.  It first
-uses the \code{findLines()} function to return an image that contains
-either the horizontal or vertical lines.  We'll first get the
-horizontal lines with
+\code{getLines()} performs several operations on the image.
+To illustrate how the lower-level functions in \pkg{Rtesseract} to can be leveraged to address special cases, we will describe how \code{getLines()} works.
+First, we use the \code{findLines()} function to return an image that contains
+either the horizontal or vertical lines,
 
 <<<>>=
 h = findLines(pix = p2, hor = 51, vert = 3)
 @
 
 We specify the \code{Pix} to process and then the horizontal width and
-vertical height (in pixels) that define a window or a region.  This
-fills in gaps in potential lines within the region.  Leptonica moves
-this around and fills in gaps within it if the rest of the pixels
-within the region are not white.  \code{findLines()} uses the function
-\code{pixCloseGray()} to do this.
+vertical height (in pixels) that define a window or a region.  As explained previously, this
+``mask'' is used to fill in gaps in potential lines within the region.
+We use Leptonica to fill in gaps within the masked area if the rest of the pixels within the region are not white.
+Internally, \code{findLines()} uses the function \code{pixCloseGray()} to do this.
+%% Might not need this info
 
 Let's look at the resulting image to see what lines it detected:
 
@@ -851,10 +849,11 @@ Let's look at the resulting image to see what lines it detected:
 plot(h, invert = TRUE)
 @
 
-Note that the background is black in the \code{Pix} object, corresponding to values of 0.
-Adding the option \code{invert = TRUE} will invert the \code{Pix}.
-We see the 4 primary lines that span most of the width of the
-image.  The second one down (at y = 3600) has several short gaps.   We
+Due to differences between \proglang{R} and Leptonica, the \code{Pix} object's background has values of 0, which corresponds to black in \proglang{R}'s plotting functions.
+Adding the option \code{invert = TRUE} in the call to \code{plot} will invert the \code{Pix} so that the image in \proglang{R} is as we would expect,
+with the background white and the lines black.
+We see the 4 primary lines that span most of the width of the image.
+The second one down (at y = 3600) has several short gaps.   We
 also see many short line segments above the first line and to the
 right of the image.   The ones on the right correspond to parts of the
 letters in the rotated text in the image indicating ``Downloaded from
@@ -867,13 +866,11 @@ value 1).  Currently, \code{findLines()} returns an image (Pix
 object).  By default, this shows the potential lines and removes
 everything else.  (We can also return the image with the lines removed
 and the text remaining.)  We convert this to a matrix of 0s and 1s in
-R:
+\proglang{R}:
 
 <<>>=
 m = pixGetPixels(h)
 @
-
-(or simply \code{h[,]})
 
 \begin{comment}
 We find the rows of this matrix that have 1000 or more
@@ -918,24 +915,24 @@ We can see we get the 4 lines that span the width of the text area,
 but not the two shorter line segments.
 \end{comment}
 
-We are looking for lines which span more than a certain
-threshold.  This threshold will be context specific, but we can find a
-suitable one via some experimentation.  An initial guess of 1000 pixels
-resulted in discarding the two shorter segments.  So let's relax the
-threshold of requiring 1000 black pixels.  We'll use 10\% of the
-columns:
+We are looking for lines which span more than a certain threshold.  
+This threshold will be context specific, but we can find a
+suitable one via some experimentation.
+An initial guess of 1000 pixels resulted in discarding two shorter segments which we are interested in.
+So we will relax the threshold of 1000 black pixels.
+As a second guess, we'll use 10\% cells in a column:
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<>>=
 w = rowSums(m) > 0.1 * ncol(m)
 plot(h, invert = TRUE)
 abline(h = nrow(m) - which(w), col = "red")
 @
-\caption{}
-\label{}
+\caption{An example of locating lines on a page. After locating any possible lines, we have colored red any row with greater than 10\% of the cells containing a black pixel. This restricts our attention to the longer or more prominent lines.}
+\label{fig:highlight_lines}
 \end{figure}
 
-So we detect these two shorter lines and no other additional lines
+As you can see in Fig. \ref{fig:highlight_lines}, we now detect these two shorter lines and have avoided identifying other additional lines
 (except the original 4 longer lines).  However, now we have 74 rows in
 the matrix that satisfy this criterion.  Yet we see only 6 lines on
 the plot.
@@ -948,7 +945,9 @@ which(w)
 
 It may not be clear, but these are grouped together.  Each of the red
 lines we see on the plot is actually a collection of multiple adjacent
-lines.  This is clearer if we compute the difference between the row
+lines.
+Or in other words, the line thickness results in the line spanning multiple rows.
+This is clearer if we compute the difference between the row
 numbers:
 
 <<>>=
