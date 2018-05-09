@@ -740,6 +740,8 @@ When we pass the original/raw image to OCR without modifying
 it,
 Tesseract will do many of the same computations we do, but for the purposes of removing the lines to increase OCR accuracy. %% Does not make sense
 
+\subsection{Horizontal Lines}
+
 We start by reading the image:
 
 <<>>=
@@ -759,17 +761,25 @@ The next step is to correct any skew or orientation in the image.
 This can be important in detecting horizontal and vertical lines that
 may be at an angle because the scan was done with a slight rotation.
 There is a function \code{deskew()} to do this.  However, we will show
-the steps as they illustrate some of the leptonica functions available
+the steps as they illustrate some of the Leptonica functions available
 in the \pkg{Rtesseract} package.
 
 To detect the skew, we must first create a separate binary image using
-\code{pixThresholdToBinary()}.  Then we call \code{pixFindSkew()} to
-determine the actual angle of the skew.  Then we rotate the original
-image by that skew angle:
+\code{pixThresholdToBinary()}.
 
 <<>>=
 bin = pixThresholdToBinary(pix = p1, threshold = 150)
+@ 
+
+Then we call \code{pixFindSkew()} to
+determine the actual angle of the skew.
+<<>>=
 angle = pixFindSkew(pix = bin)
+@ 
+
+Then we rotate the original image by that skew angle:
+
+<<>>=
 p2 = pixRotateAMGray(pix = p1, angle = angle[1]*pi/180,
                      grayVal = 255)
 @
@@ -794,8 +804,12 @@ With the reoriented image, we call the \pkg{Rtesseract} function
 We'll first extract the horizontal lines.  For this, we pass the image
 and then describe a ``mask'' or box that helps to identify contiguous
 regions in the image corresponding to the lines we want.
+This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
+Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
+Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
+
 For horizontal lines, we want wide and vertically short boxes.
-We describe this box with the width and height of the box, e.g.,
+We describe this box with the width (horizontal) and height (vertical) dimensions of the box, e.g.,
 
 <<>>=
 hlines = getLines(pix = p2, hor = 51, vert = 3)
@@ -803,12 +817,9 @@ hlines
 @
 
 This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates describing a single line.
-This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
-Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
-Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
 
 We can add these lines to the display of the image to verify they
-appear where we expect:
+appear where we expect (Fig. \ref{fig:lines_id}).
 
 \begin{figure}[h]
 <<fig = TRUE, echo = FALSE>>=
@@ -837,13 +848,13 @@ hLines = findLines(pix = p2, hor = 51, vert = 3)
 @
 
 We specify the \code{Pix} to process and then the horizontal width and
-vertical height (in pixels) that define a window or a region.  As explained previously, this
+vertical height (in pixels) that define the ``mask'' window.  As explained previously, this
 ``mask'' is used to fill in gaps in potential lines within the region.
 We use Leptonica to fill in gaps within the masked area if the rest of the pixels within the region are not white.
 Internally, \code{findLines()} uses the function \code{pixCloseGray()} to do this.
 %% Might not need this info
 
-Let's look at the resulting image to see what lines it detected:
+We can look at the resulting image to see what lines it detected:
 
 <<>>=
 plot(hLines, invert = TRUE)
@@ -873,6 +884,7 @@ pMat = pixGetPixels(hLines)
 @
 
 \begin{comment}
+
 We find the rows of this matrix that have 1000 or more
 black pixels.  We do this with
 
@@ -880,10 +892,9 @@ black pixels.  We do this with
 longLines = rowSums(pMat) > 1000
 @
 
-The value 1000 is context-specific.  It includes lines that span 1000
-pixels or more, and also lines that have several smaller segments
-whose length adds up to 1000 pixels.  1000 is about 25\% of the
-columns.  This might be too large to detect the shorter line segments
+The value 1000 (approximately 25\% of the width of the page) is an initial guess.
+This includes both lines that span 1000 pixels or more and lines that have several smaller segments whose length adds up to 1000 pixels.
+This might be too large to detect the shorter line segments
 on the right of the table header, but it is probably enough to ignore
 the small line segments that don't interest us.
 
@@ -896,7 +907,7 @@ table(longLines)
 So we have 46 which is a lot more than the 6 we see in the original
 image.
 
-We can see these horizontal lines on the image with
+We can visualize these 46 horizontal lines on the image with
 
 \begin{figure}[h]
 <<figure = TRUE>>=
@@ -907,7 +918,7 @@ abline(h = nrow(pMat) - which(longLines), col = "red")
 \label{}
 \end{figure}
 
-Note again that the rows in the matrix go from 1 to nrow, while on the
+Note again that the rows in the matrix go from 1 to \code{nrow}, while on the
 plot, they go down the page.  This is why we get the height with
 \code{nrow(pMat) - which(longLines)}.
 
@@ -928,7 +939,7 @@ longLines = rowSums(pMat) > 0.1 * ncol(pMat)
 plot(hLines, invert = TRUE)
 abline(h = nrow(pMat) - which(longLines), col = "red")
 @
-\caption{An example of locating lines on a page. After locating any possible lines, we have colored red any row with greater than 10\% of the cells containing a black pixel. This restricts our attention to the longer or more prominent lines.}
+\caption{An example of locating lines on a page. After locating any possible lines, we have colored red any row with greater than 10\% of the cells containing a black pixel. This restricts our attention to the longer lines.}
 \label{fig:highlight_lines}
 \end{figure}
 
@@ -945,7 +956,8 @@ which(longLines)
 
 It may not be clear, but these are grouped together.  Each of the red
 lines we see on the plot is actually a collection of multiple adjacent lines.
-Or in other words, the line thickness results in the line spanning multiple rows.
+In other words, the line's thickness on the page results in the line spanning multiple rows of the matrix.
+\begin{comment}
 This is clearer if we compute the difference between the row numbers:
 
 <<>>=
@@ -954,16 +966,24 @@ diff(which(longLines))
 
 We see a collection of 1s meaning that these are adjacent rows, then a
 large jump between row numbers, followed by a collection of 1s and on.
-So it is clear these are grouped.  We want to combine adjacent lines
-into a single group and have a group for each conceptually separate
-line on the image.  One way to do this is run length encoding (RLE):
+So it is clear these are grouped.
+\end{comment}
+
+We want to combine adjacent lines
+into a single group and have a separate group for each conceptually separate
+line on the image.
+\begin{comment}
+One way to do this is run length encoding (RLE):
 
 <<>>=
 rle(diff(which(longLines)))
 @
 
 Another way is very similar but more explicit and gives us a little
-more control.  We find where the differences between successive row
+more control.
+\end{comment}
+
+We find where the differences between successive row
 numbers is greater than 2 and then we run a cumulative sum which gives
 us group labels:
 
@@ -977,26 +997,34 @@ We can use \code{lineGroups} to split the rows into groups
 rowNums = which(longLines)
 combinedLines = tapply(seq(along = rowNums), c(0, lineGroups),
             function(i) pMat[rowNums[i], ])
-names(combinedLines) = tapply(seq(along = rowNums), c(0, lineGroups),
-                   function(i) as.integer(mean(rowNums[i])))
 @
 
-(Note that we added 0 to the start of the vector g since g has one
-less element than \code{longLines} since we were computing pairwise differences.)
+Note that we added 0 to the start of the vector \code{lineGroups} since \code{lineGroups} has one
+less element than \code{longLines} since we were computing pairwise differences.
 The computation is a little awkward.  We split the indices of \code{rowNums}
 and then have to use those to index back into \code{rowNums} to find out
 which rows of \code{pMat} we need to extract for this group.
 
-The third line puts the average of the row numbers of each group as
-the name of that element.  This will be convenient for mapping this
+Lastly, we put the average of the row numbers of each group as
+the name of that element.
+This will be convenient for mapping this
 back to the general vertical area.
 
-Each element of \code{combinedLines} is a matrix.  For each of these, we want to
-combine them to identify the start and end of a line.  Each may have
-several separate line segments.
+<<>>=
+names(combinedLines) = tapply(seq(along = rowNums), c(0, lineGroups),
+                   function(i) as.integer(mean(rowNums[i])))
+
+@ 
+
+\code{combindedLines} is a list, with each element a matrix containing rows we suspect belong to the same horizontal line on the page.
+For each of these, we want to combine them and identify the coordinates of the horizontal start and end of a line.
+This is complicated by the fact that each element may contain a single line or multiple lines segments.
+We have only considered the percentage of the row which is filled by black, and will now need to create a rule to distinguish between a solid line and a line segment. 
 
 Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
-columns.  It is useful to query how many 0s and 1s there are?
+columns.
+\begin{comment}
+  It is useful to query how many 0s and 1s there are?
 
 <<>>=
 table(combinedLines[[1]])
@@ -1008,9 +1036,10 @@ appear as solid line on our plot.  But that was because we just drew a
 straight line at these vertical positions, regardless how many pixels
 were white.  Of course, we selected these rows because they had many
 black pixels.
+\end{comment}
 
-Since we think these rows make up a single line, let's aggregate across the adjacent
-rows to form a single aggregate row using \code{colSums()}:
+We can start with the assumption that this element contains either a single line or line segments, as opposed to a series of parallel lines. 
+We can aggregate across the adjacent rows to form a single aggregate row using \code{colSums()}:
 
 <<>>=
 rowNcells = colSums(combinedLines[[1]])
@@ -1018,14 +1047,14 @@ rowNcells = colSums(combinedLines[[1]])
 
 If this is a solid line across most of the page, we'd expect most
 pixels to be filled, perhaps with a few short gaps.  Each element of
-rr contains the number of rows in this group that had a black pixel.
-This might be 1 or 14, with only one row or all of them having a black
-pixel.  We might look at these counts or just consider whether any row
-has a black pixel in this column.  We are looking for a rule to mark a
-pixel in the aggregated line as black or white.
+\code{rowNcells} contains the number of cells in each column that had a value of 1 (black in this setup).
+This can vary from none of the cells to all of the cells containing a value of 1. 
+%% This might be 1 or 14, with only one row or all of them having a black pixel.
+%% We might look at these counts or just consider whether any row has a black pixel in this column.
+From this information, we are looking for a rule to mark a pixel in the aggregated line as black (solid line) or white (line segments).
 
 If we look at the vector \code{rowNcells}, we see a lot of 0s at the
-beginning and the end.  These are the margins where the line is not
+beginning and the end.  These are the page margins where the line is not
 present.
 
 If we want to threshold this aggregate line to have a black pixel in a
@@ -1044,6 +1073,7 @@ the same groups:
 rle(rowNcells >= 7)
 @
 
+\begin{comment}
 Let's consider one of the shorter lines.  These are elements 2 and 3
 of \code{combinedLines}.  Again, we compute the column sums for the adjacent
 lines in this group:
@@ -1055,7 +1085,10 @@ table(rowNcells)
 
 Most are 0.  There are 9 adjacent rows in this group.  We see no
 columns that have at least one black pixel but less than half the
-number of rows.  Let's draw points at each of the columns that have a
+number of rows.
+\end{comment}
+
+Let's draw points at each of the columns that have a
 black pixel in at least half the rows:
 
 \begin{figure}[h]
@@ -1085,7 +1118,7 @@ e.g. 1, L, M.  If we make the height of the window too small, we'll
 pick up more false positives.
 
 <<>>=
-v = findLines(p2, 3, 101)
+v = findLines(pix = p2, hor = 3, vert = 101)
 @
 
 Again, we can plot this and see where the lines are.
