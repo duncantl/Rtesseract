@@ -244,7 +244,7 @@ highlight the functionality and common use-cases of the
 \pkg{Rtesseract} package. % AWK
 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \includegraphics[width=\textwidth]{\Sexpr{smithburn}}
 \caption{An example image of a scientific paper which contains text we
   would like to extract and analyze.}
@@ -740,7 +740,7 @@ When we pass the original/raw image to OCR without modifying
 it,
 Tesseract will do many of the same computations we do, but for the purposes of removing the lines to increase OCR accuracy. %% Does not make sense
 
-\subsection{Horizontal Lines}
+\subsubsection{Horizontal Lines}
 
 We start by reading the image:
 
@@ -773,6 +773,7 @@ bin = pixThresholdToBinary(pix = p1, threshold = 150)
 
 Then we call \code{pixFindSkew()} to
 determine the actual angle of the skew.
+
 <<>>=
 angle = pixFindSkew(pix = bin)
 @ 
@@ -821,7 +822,7 @@ This returns a list with each element identifying the (x0, y0) and (x1, y1) coor
 We can add these lines to the display of the image to verify they
 appear where we expect (Fig. \ref{fig:lines_id}).
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<fig = TRUE, echo = FALSE>>=
 plot(p2)
 lapply(hlines,
@@ -856,9 +857,13 @@ Internally, \code{findLines()} uses the function \code{pixCloseGray()} to do thi
 
 We can look at the resulting image to see what lines it detected:
 
+\begin{figure}[H]
 <<>>=
 plot(hLines, invert = TRUE)
 @
+\caption{An example of detecting lines on a page using the \code{getLines()} function in \pkg{Rtesseract}.}
+  \label{}
+\end{figure}
 
 Due to differences between \proglang{R} and Leptonica, the \code{Pix} object's background has values of 0, which corresponds to black in \proglang{R}'s plotting functions.
 Adding the option \code{invert = TRUE} in the call to \code{plot} will invert the \code{Pix} so that the image in \proglang{R} is as we would expect,
@@ -877,7 +882,7 @@ value 1).  Currently, \code{findLines()} returns an image (Pix
 object).  By default, this shows the potential lines and removes
 everything else.  (We can also return the image with the lines removed
 and the text remaining.)  We convert this to a matrix of 0s and 1s in
-\proglang{R}:
+\proglang{R} using \code{pixGetPixels()}:
 
 <<>>=
 pMat = pixGetPixels(hLines)
@@ -909,7 +914,7 @@ image.
 
 We can visualize these 46 horizontal lines on the image with
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<figure = TRUE>>=
 plot(hLines, invert = TRUE)
 abline(h = nrow(pMat) - which(longLines), col = "red")
@@ -933,7 +938,7 @@ An initial guess of 1000 pixels resulted in discarding two shorter segments whic
 So we will relax the threshold of 1000 black pixels.
 As a second guess, we'll use 10\% cells in a column:
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<>>=
 longLines = rowSums(pMat) > 0.1 * ncol(pMat)
 plot(hLines, invert = TRUE)
@@ -944,9 +949,9 @@ abline(h = nrow(pMat) - which(longLines), col = "red")
 \end{figure}
 
 As you can see in Fig. \ref{fig:highlight_lines}, we now detect these two shorter lines and have avoided identifying other additional lines
-(except the original 4 longer lines).  However, now we have 74 rows in
-the matrix that satisfy this criterion.  Yet we see only 6 lines on
-the plot.
+(except the original 4 longer lines).
+However, now we have 74 rows in the matrix that satisfy this criterion.
+Yet we see only 6 lines on the plot.
 
 Let's look at the row numbers for these 74 rows:
 
@@ -957,6 +962,7 @@ which(longLines)
 It may not be clear, but these are grouped together.  Each of the red
 lines we see on the plot is actually a collection of multiple adjacent lines.
 In other words, the line's thickness on the page results in the line spanning multiple rows of the matrix.
+
 \begin{comment}
 This is clearer if we compute the difference between the row numbers:
 
@@ -972,6 +978,7 @@ So it is clear these are grouped.
 We want to combine adjacent lines
 into a single group and have a separate group for each conceptually separate
 line on the image.
+
 \begin{comment}
 One way to do this is run length encoding (RLE):
 
@@ -1023,6 +1030,7 @@ We have only considered the percentage of the row which is filled by black, and 
 
 Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
 columns.
+
 \begin{comment}
   It is useful to query how many 0s and 1s there are?
 
@@ -1091,7 +1099,7 @@ number of rows.
 Let's draw points at each of the columns that have a
 black pixel in at least half the rows:
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<>>=
 z = which(rowNcells >= 4.5)
 plot(hLines, invert = TRUE)
@@ -1126,14 +1134,10 @@ Again, we can plot this and see where the lines are.
 \subsubsection{Removing the Lines}
 
 We don't have to remove the lines before we pass the image to
-tesseract as tesseract will remove them for us.  However, it is
+Tesseract as Tesseract will remove them for us.  However, it is
 interesting to see how well we can do.  Instead of finding the
 locations of the lines (with \code{getLines()}), we'll remove them
-from the image.  This uses the same basic approach and sequence of
-steps.  However, rather than extract the line coordinates, we use
-\code{pixAddGray()} to overlay the images with the horizontal and then
-the vertical lines onto the original image.  This removes the lines
-from the original image.  We do this directly from the image file with
+from the image.  The initial steps use the same basic approach as finding the lines
 
 <<>>=
 p1 = pixRead(smithburn)
@@ -1141,19 +1145,26 @@ p2 = pixConvertTo8(p1)
 p2 = deskew(p2)
 p3 = findLines(p2, 51, 1, FALSE)
 p4 = findLines(p2, 3, 101, FALSE)
-p = pixAddGray(p2, p3)
-p = pixAddGray(p, p4)
-plot(p)
 @
 
-Let's compare this to the original image.
+However, rather than extract the line coordinates, we use
+\code{pixAddGray()} to overlay the images with the horizontal and then
+the vertical lines onto the original image.
+This removes the lines from the original image.
+
+<<>>=
+p = pixAddGray(p2, p3)
+p = pixAddGray(p, p4)
+@
+
+We can plot the resulting image (Fig. \ref{fig:remove_lines}) and compare it to the original image (Fig. \ref{fig:base}).
 
 \begin{figure}[H]
 <<>>=
-plot(p2)
+plot(p)
 @
-\caption{}
-\label{}
+\caption{An example of removing lines from an image using the \code{pixAddGray()} function in ]pkg{Rtesseract}.}
+\label{fig:remove_lines}
 \end{figure}
 
 The horizontal and vertical lines are essentially gone.  We can
@@ -1179,25 +1190,27 @@ and when we plot the resulting image
 <<>>=
 plot(pp)
 @
-\caption{}
-\label{}
+\caption{An example of removing ``smudges'' on an image by thresholding grey values to white using the function \code{pixThresholdToValue()} in \pkg{Rtesseract}.}
+\label{fig:remove_smudge}
 \end{figure}
 
-The gray marks on the vertical lines have disappeared.   Note however
-that it removed some of the text, specifically the rotated text on the
+The gray marks on the vertical lines have disappeared in Fig \ref{fig:remove_smudge}.
+Note however that it removed some of the text, specifically the rotated text on the
 right and the URL within that text that is colored blue in the
-original image.   Fortunately, we don't care about this text for our
+original image.
+Fortunately, we don't care about this text for our
 application.
 
 We can compare the image we created with the lines removed to the one
-tesseract creates.   We do this with
+tesseract creates by passing the option \code{textord\_tabfind\_show\_vlines}.
+We do this with
 
 <<>>=
 tesseract(smithburn, pageSegMode = "psm_auto",
           textord_tabfind_show_vlines = 1)
 @
 
-This creates a PDF file named vhlinefinding.pdf.
+This creates a separate PDF file named vhlinefinding.pdf.
 
 \begin{comment}
   
