@@ -792,14 +792,6 @@ colored white.
 We can specify any
 gray-scale color value we want here between 0 (black) and 255 (white).
 
-\begin{comment}
-It is useful to look at the resulting image:
-
-<<fig = TRUE>>=
-plot(p2)
-@
-\end{comment}
-
 With the reoriented image, we call the \pkg{Rtesseract} function
 \code{getLines()} to get the coordinates of the lines in the image.
 We'll first extract the horizontal lines.  For this, we pass the image
@@ -823,7 +815,7 @@ We can add these lines to the display of the image to verify they
 appear where we expect (Fig. \ref{fig:lines_id}).
 
 \begin{figure}[H]
-<<fig = TRUE, echo = FALSE>>=
+<<fig = TRUE, results = "hide", echo = FALSE>>=
 plot(p2)
 lapply(hlines,
        function(tmp) {
@@ -876,7 +868,6 @@ letters in the rotated text in the image indicating ``Downloaded from
 http://www. ...''.  If we made the vertical height of our mask larger,
 we may discard these but at the risk of including other elements.
 
-
 We are looking for rows in the image that have many black pixels (with
 value 1).  Currently, \code{findLines()} returns an image (Pix
 object).  By default, this shows the potential lines and removes
@@ -887,49 +878,6 @@ and the text remaining.)  We convert this to a matrix of 0s and 1s in
 <<>>=
 pMat = pixGetPixels(hLines)
 @
-
-\begin{comment}
-
-We find the rows of this matrix that have 1000 or more
-black pixels.  We do this with
-
-<<>>=
-longLines = rowSums(pMat) > 1000
-@
-
-The value 1000 (approximately 25\% of the width of the page) is an initial guess.
-This includes both lines that span 1000 pixels or more and lines that have several smaller segments whose length adds up to 1000 pixels.
-This might be too large to detect the shorter line segments
-on the right of the table header, but it is probably enough to ignore
-the small line segments that don't interest us.
-
-How many rows of the matrix satisfy this criterion:
-
-<<>>=
-table(longLines)
-@
-
-So we have 46 which is a lot more than the 6 we see in the original
-image.
-
-We can visualize these 46 horizontal lines on the image with
-
-\begin{figure}[H]
-<<figure = TRUE>>=
-plot(hLines, invert = TRUE)
-abline(h = nrow(pMat) - which(longLines), col = "red")
-@
-\caption{}
-\label{}
-\end{figure}
-
-Note again that the rows in the matrix go from 1 to \code{nrow}, while on the
-plot, they go down the page.  This is why we get the height with
-\code{nrow(pMat) - which(longLines)}.
-
-We can see we get the 4 lines that span the width of the text area,
-but not the two shorter line segments.
-\end{comment}
 
 We are looking for lines which span more than a certain threshold.  
 This threshold will be context specific, but we can find a
@@ -1422,10 +1370,10 @@ using again \code{SetVariables()} or the \code{opts} argument in the
 \subsection{Writing results directly to file}
 
 \pkg{Rtesseract} includes functionality to export the results of OCR
-to many conventional file types, including BoxText, HOcr/HTML , OSD
+to many file types, including BoxText, HOcr/HTML , OSD
 (Orientation and Script Detection), TSV (tab separated values), and
 PDF.  Of these, \code{toPDF()} is unique in that it creates a searchable
-PDF document, not a plain-text document.
+PDF document.
 
 \subsection{Metadata}
 
@@ -1467,12 +1415,12 @@ Windows is desired, we suggest installing Tesseract from the Rwinlib
 repository (\url{https://github.com/rwinlib/tesseract}), which also
 includes the required libraries for Windows.  As previously mentioned
 \pkg{Rtesseract} also works with the development version of Tesseract
-(4.00+), which is currently available from
+(4.00-beta), which is currently available from
 \url{https://github.com/tesseract-ocr/tesseract/releases}. At the time
 of writing, we are not aware of pre-built binaries for v4.00 which
 include the required libraries as well. However, to build Tesseract
 from source requires many additional pieces of software, including
-leptonica v1.74+, automake, libtool, pkg-config, aclocal, autoheader,
+leptonica >= v1.74, automake, libtool, pkg-config, aclocal, autoheader,
 and autoconf-archive.  Additionally, users will also need to install
 the training data for the language(s) used in the documents to be
 processed. Currently, there are pre-trained data sets for 140+
