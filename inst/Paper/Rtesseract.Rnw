@@ -20,34 +20,9 @@
 % + Setting an image after processing it in R first. Have to check this works. 
 %     SetImage_raw
 % 
-
-%     NOTES: Too disjoint - leaving too much ot the reader to figure
-%     out
-%     References too far away from their target
-%     More explanations to some of the parameters
-%     Going for chatty
-
-%     Code is part of sentence or figure - no ". <CODE>"
-
-%     Leaving too much to the reader to figure out -
-%     be more explicit in what we are doing and why we are doing it.
-%     Spell out motivation for the various functions - explain the
-%     funcitons in text before running off and using them.
-
-%     Connect the text to the code better - Break up the code into
-%     small segments 
-%     Short - motivation for each section
-
-%     Highlight that give us the means to query and then modify the
-%     tool - changes computational model
-
 %     All names mirror the C++ API, so you can find attitional
 %     documentation in the Tesseract documentation.
 
-%     Tesseract is rich - this provides easy way to modify,
-%     programmatically explore, able to "sit" with and drive
-%     More than a single function / atomic action
-%     is piece of a larger workflow.
 
 \author{Matthew B. Espe\\UC - Davis
   \And Duncan Temple Lang \\UC - Davis}
@@ -269,7 +244,7 @@ highlight the functionality and common use-cases of the
 \pkg{Rtesseract} package. % AWK
 
 
-\begin{figure}[h]
+\begin{figure}[H]
 \includegraphics[width=\textwidth]{\Sexpr{smithburn}}
 \caption{An example image of a scientific paper which contains text we
   would like to extract and analyze.}
@@ -630,7 +605,7 @@ The Engine Mode can be set either in the call to \code{tesseract()}
 api = tesseract(smithburn, engineMode = "OEM_TESSERACT_ONLY") 
 @
 
-or in the call a base level function,
+or in the call to a base level function,
 
 <<>>=
 GetText(smithburn, engineMode = "OEM_TESSERACT_ONLY")
@@ -715,7 +690,7 @@ Indeed, they are there.
 
 \subsection{Using Leptonica to identify lines}
 
-A primary motivation underlying the Rtesseract package is that we need context from the rendered page to make sense of the results of the OCR.
+A primary motivation underlying the \pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
 Rather than just getting the text back, generally, we want information
 about the location and size for each character, word or line
 identified by tesseract so that we can use it to intelligently
@@ -758,21 +733,25 @@ locations.  Fortunately, the basic ideas of this process are described at
 package provides corresponding (and higher-level convenience)
 functions to effect the same computations.
 
-Note that we will pass the original/raw image to OCR without modifying
-it.  Tesseract will do many of the same computations we do.  So our aim
-here is to simply identify the locations of the horizontal and
+Our aim here is to simply identify the locations of the horizontal and
 vertical lines in the image before or after we perform the OCR.
- 
+Note that these steps are entirely independent of the OCR.
+When we pass the original/raw image to OCR without modifying
+it,
+Tesseract will do many of the same computations we do, but for the purposes of removing the lines to increase OCR accuracy. %% Does not make sense
+
+\subsubsection{Horizontal Lines}
+
 We start by reading the image:
 
 <<>>=
-p1 = pixRead(smithburn)
+p1 = pixRead(filename = smithburn)
 @
 
 We immediately convert the image to gray-scale with \code{pixConvertTo8()}:
 
 <<>>=
-p1 = pixConvertTo8(p1)
+p1 = pixConvertTo8(pix = p1)
 @
 
 (Note that this creates a new \code{Pix} and allows the previous one to be
@@ -782,53 +761,61 @@ The next step is to correct any skew or orientation in the image.
 This can be important in detecting horizontal and vertical lines that
 may be at an angle because the scan was done with a slight rotation.
 There is a function \code{deskew()} to do this.  However, we will show
-the steps as they illustrate some of the leptonica functions available
-in the Rtesseract package.
+the steps as they illustrate some of the Leptonica functions available
+in the \pkg{Rtesseract} package.
 
 To detect the skew, we must first create a separate binary image using
-\code{pixThresholdToBinary()}.  Then we call \code{pixFindSkew()} to
-determine the actual angle of the skew.  Then we rotate the original
-image by that skew angle:
+\code{pixThresholdToBinary()}.
 
 <<>>=
-bin = pixThresholdToBinary(p1, 150)
-angle = pixFindSkew(bin)
-p2 = pixRotateAMGray(p1, angle[1]*pi/180, 255)
+bin = pixThresholdToBinary(pix = p1, threshold = 150)
+@ 
+
+Then we call \code{pixFindSkew()} to
+determine the actual angle of the skew.
+
+<<>>=
+angle = pixFindSkew(pix = bin)
+@ 
+
+Then we rotate the original image by that skew angle:
+
+<<>>=
+p2 = pixRotateAMGray(pix = p1, angle = angle[1]*pi/180,
+                     grayVal = 255)
 @
 
+When the page is deskewed, areas in the corners of the page have to be filled to maintain a rectangular image.
 The 255 in the call to \code{pixRotateAMGray()} corresponds to white and
 means that any pixels that are ``revealed'' by rotating the ``page'' are
-colored white.  These occur in the corners.  We can specify any
+colored white.
+We can specify any
 gray-scale color value we want here between 0 (black) and 255 (white).
 
-\begin{comment}
-It is useful to look at the resulting image:
-
-<<fig = TRUE>>=
-plot(p2)
-@
-\end{comment}
-
-With the reoriented image, we call the Rtesseract function
+With the reoriented image, we call the \pkg{Rtesseract} function
 \code{getLines()} to get the coordinates of the lines in the image.
 We'll first extract the horizontal lines.  For this, we pass the image
 and then describe a ``mask'' or box that helps to identify contiguous
-regions in the image corresponding to the lines we want.  For
-horizontal lines, we want wide and vertically short boxes.  We
-describe this box with the width and height of the box, e.g.,
+regions in the image corresponding to the lines we want.
+This mask is important for identifying lines that might be slightly broken due to poor quality scans of light or thin lines on the page.
+Broken lines with white space between each other less than the width (horizontal) or height (vertical) of the rectangle are considered to be connected. 
+Hence when the rectangle is wide (horizontal) or tall (vertical), lines are combined more agressively.
+
+For horizontal lines, we want wide and vertically short boxes.
+We describe this box with the width (horizontal) and height (vertical) dimensions of the box, e.g.,
 
 <<>>=
-hlines = getLines(p2, 51, 3)
+hlines = getLines(pix = p2, hor = 51, vert = 3)
 hlines
 @
 
-This returns a list with each element identifying the (x0, y0) and
-(x1, y1) coordinates describing a single line.
+This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates describing a single line.
 
 We can add these lines to the display of the image to verify they
-appear where we expect:
+appear where we expect (Fig. \ref{fig:lines_id}).
 
-<<>>=
+\begin{figure}[H]
+<<fig = TRUE, results = "hide", echo = FALSE>>=
 plot(p2)
 lapply(hlines,
        function(tmp) {
@@ -836,184 +823,167 @@ lapply(hlines,
                  lty = 3, lwd = 2)
        })
 @
+\caption{The result of identifying lines using the \code{getLines} function colored in red over the original image.}
+\label{fig:lines_id}
+\end{figure}
 
 Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
 lines are relative to row 1 and go down.
 
-\code{getLines()} performs several operations on the image.  It first
-uses the \code{findLines()} function to return an image that contains
-either the horizontal or vertical lines.  We'll first get the
-horizontal lines with
+\code{getLines()} performs several operations on the image.
+To illustrate how the lower-level functions in \pkg{Rtesseract} to can be leveraged to address special cases, we will describe how \code{getLines()} works.
+First, we use the \code{findLines()} function to return an image that contains
+either the horizontal or vertical lines,
 
 <<<>>=
-h = findLines(p2, 51, 3)
+hLines = findLines(pix = p2, hor = 51, vert = 3)
 @
 
 We specify the \code{Pix} to process and then the horizontal width and
-vertical height (in pixels) that define a window or a region.  This
-fills in gaps in potential lines within the region.  Leptonica moves
-this around and fills in gaps within it if the rest of the pixels
-within the region are not white.  \code{findLines()} uses the function
-\code{pixCloseGray()} to do this.
+vertical height (in pixels) that define the ``mask'' window.  As explained previously, this
+``mask'' is used to fill in gaps in potential lines within the region.
+We use Leptonica to fill in gaps within the masked area if the rest of the pixels within the region are not white.
+Internally, \code{findLines()} uses the function \code{pixCloseGray()} to do this.
+%% Might not need this info
 
-Let's look at the resulting image to see what lines it detected:
+We can look at the resulting image to see what lines it detected:
 
+\begin{figure}[H]
 <<>>=
-plot(h, invert = TRUE)
+plot(hLines, invert = TRUE)
 @
+\caption{An example of detecting lines on a page using the \code{getLines()} function in \pkg{Rtesseract}.}
+  \label{}
+\end{figure}
 
-Note that the background is black, corresponding to values of 0 in the
-Pix.  We see the 4 primary lines that span most of the width of the
-image.  The second one down (at y = 3600) has several short gaps.   We
+Due to differences between \proglang{R} and Leptonica, the \code{Pix} object's background has values of 0, which corresponds to black in \proglang{R}'s plotting functions.
+Adding the option \code{invert = TRUE} in the call to \code{plot} will invert the \code{Pix} so that the image in \proglang{R} is as we would expect,
+with the background white and the lines black.
+We see the 4 primary lines that span most of the width of the image.
+The second one down (at y = 3600) has several short gaps.   We
 also see many short line segments above the first line and to the
 right of the image.   The ones on the right correspond to parts of the
 letters in the rotated text in the image indicating ``Downloaded from
 http://www. ...''.  If we made the vertical height of our mask larger,
 we may discard these but at the risk of including other elements.
 
-
 We are looking for rows in the image that have many black pixels (with
 value 1).  Currently, \code{findLines()} returns an image (Pix
 object).  By default, this shows the potential lines and removes
 everything else.  (We can also return the image with the lines removed
 and the text remaining.)  We convert this to a matrix of 0s and 1s in
-R:
+\proglang{R} using \code{pixGetPixels()}:
 
 <<>>=
-m = pixGetPixels(h)
+pMat = pixGetPixels(hLines)
 @
 
-(or simply \code{h[,]})
+We are looking for lines which span more than a certain threshold.  
+This threshold will be context specific, but we can find a
+suitable one via some experimentation.
+An initial guess of 1000 pixels resulted in discarding two shorter segments which we are interested in.
+So we will relax the threshold of 1000 black pixels.
+As a second guess, we'll use 10\% cells in a column:
 
-\begin{comment}
-We find the rows of this matrix that have 1000 or more
-black pixels.  We do this with
-
+\begin{figure}[H]
 <<>>=
-w = rowSums(m) > 1000
+longLines = rowSums(pMat) > 0.1 * ncol(pMat)
+plot(hLines, invert = TRUE)
+abline(h = nrow(pMat) - which(longLines), col = "red")
 @
-
-The value 1000 is context-specific.  It includes lines that span 1000
-pixels or more, and also lines that have several smaller segments
-whose length adds up to 1000 pixels.  1000 is about 25\% of the
-columns.  This might be too large to detect the shorter line segments
-on the right of the table header, but it is probably enough to ignore
-the small line segments that don't interest us.
-
-How many rows of the matrix satisfy this criterion:
-
-<<>>=
-table(w)
-@
-
-So we have 46 which is a lot more than the 6 we see in the original
-image.
-
-We can see these horizontal lines on the image with
-
-\begin{figure}[h]
-<<figure = TRUE>>=
-plot(h, invert = TRUE)
-abline(h = nrow(m) - which(w), col = "red")
-@
-\caption{}
-\label{}
+\caption{An example of locating lines on a page. After locating any possible lines, we have colored red any row with greater than 10\% of the cells containing a black pixel. This restricts our attention to the longer lines.}
+\label{fig:highlight_lines}
 \end{figure}
 
-Note again that the rows in the matrix go from 1 to nrow, while on the
-plot, they go down the page.  This is why we get the height with
-\code{nrow(m) - which(w)}.
-
-We can see we get the 4 lines that span the width of the text area,
-but not the two shorter line segments.
-\end{comment}
-
-We are looking for lines which span more than a certain
-threshold.  This threshold will be context specific, but we can find a
-suitable one via some experimentation.  An initial guess of 1000 pixels
-resulted in discarding the two shorter segments.  So let's relax the
-threshold of requiring 1000 black pixels.  We'll use 10\% of the
-columns:
-
-\begin{figure}[h]
-<<>>=
-w = rowSums(m) > 0.1 * ncol(m)
-plot(h, invert = TRUE)
-abline(h = nrow(m) - which(w), col = "red")
-@
-\caption{}
-\label{}
-\end{figure}
-
-So we detect these two shorter lines and no other additional lines
-(except the original 4 longer lines).  However, now we have 74 rows in
-the matrix that satisfy this criterion.  Yet we see only 6 lines on
-the plot.
+As you can see in Fig. \ref{fig:highlight_lines}, we now detect these two shorter lines and have avoided identifying other additional lines
+(except the original 4 longer lines).
+However, now we have 74 rows in the matrix that satisfy this criterion.
+Yet we see only 6 lines on the plot.
 
 Let's look at the row numbers for these 74 rows:
 
 <<>>=
-which(w)
+which(longLines)
 @
 
 It may not be clear, but these are grouped together.  Each of the red
-lines we see on the plot is actually a collection of multiple adjacent
-lines.  This is clearer if we compute the difference between the row
-numbers:
+lines we see on the plot is actually a collection of multiple adjacent lines.
+In other words, the line's thickness on the page results in the line spanning multiple rows of the matrix.
+
+\begin{comment}
+This is clearer if we compute the difference between the row numbers:
 
 <<>>=
-diff(which(w))
+diff(which(longLines))
 @
 
 We see a collection of 1s meaning that these are adjacent rows, then a
 large jump between row numbers, followed by a collection of 1s and on.
-So it is clear these are grouped.  We want to combine adjacent lines
-into a single group and have a group for each conceptually separate
-line on the image.  One way to do this is run length encoding (RLE):
+So it is clear these are grouped.
+\end{comment}
+
+We want to combine adjacent lines
+into a single group and have a separate group for each conceptually separate
+line on the image.
+
+\begin{comment}
+One way to do this is run length encoding (RLE):
 
 <<>>=
-rle(diff(which(w)))
+rle(diff(which(longLines)))
 @
 
 Another way is very similar but more explicit and gives us a little
-more control.  We find where the differences between successive row
+more control.
+\end{comment}
+
+We find where the differences between successive row
 numbers is greater than 2 and then we run a cumulative sum which gives
 us group labels:
 
 <<>>=
-g = cumsum( diff(which(w)) > 2 )
+lineGroups = cumsum( diff(which(longLines)) > 2 )
 @
 
-We can use g to split the rows into groups
+We can use \code{lineGroups} to split the rows into groups
 
 <<>>=
-rowNums = which(w)
-ll = tapply(seq(along = rowNums), c(0, g),
-            function(i) m[rowNums[i], ])
-names(ll) = tapply(seq(along = rowNums), c(0, g),
-                   function(i) as.integer(mean(rowNums[i])))
+rowNums = which(longLines)
+combinedLines = tapply(seq(along = rowNums), c(0, lineGroups),
+            function(i) pMat[rowNums[i], ])
 @
 
-(Note that we added 0 to the start of the vector g since g has one
-less element than w since we were computing pairwise differences.)
-The computation is a little awkward.  We split the indices of rowNums
-and then have to use those to index back into rowNums to find out
-which rows of m we need to extract for this group.
+Note that we added 0 to the start of the vector \code{lineGroups} since \code{lineGroups} has one
+less element than \code{longLines} since we were computing pairwise differences.
+The computation is a little awkward.  We split the indices of \code{rowNums}
+and then have to use those to index back into \code{rowNums} to find out
+which rows of \code{pMat} we need to extract for this group.
 
-The third line puts the average of the row numbers of each group as
-the name of that element.  This will be convenient for mapping this
+Lastly, we put the average of the row numbers of each group as
+the name of that element.
+This will be convenient for mapping this
 back to the general vertical area.
 
-Each element of \code{ll} is a matrix.  For each of these, we want to
-combine them to identify the start and end of a line.  Each may have
-several separate line segments.
+<<>>=
+names(combinedLines) = tapply(seq(along = rowNums), c(0, lineGroups),
+                   function(i) as.integer(mean(rowNums[i])))
 
-Let's consider the first element of \code{ll}.  It has 14 rows and 4050
-columns.  It is useful to query how many 0s and 1s there are?
+@ 
+
+\code{combindedLines} is a list, with each element a matrix containing rows we suspect belong to the same horizontal line on the page.
+For each of these, we want to combine them and identify the coordinates of the horizontal start and end of a line.
+This is complicated by the fact that each element may contain a single line or multiple lines segments.
+We have only considered the percentage of the row which is filled by black, and will now need to create a rule to distinguish between a solid line and a line segment. 
+
+Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
+columns.
+
+\begin{comment}
+  It is useful to query how many 0s and 1s there are?
 
 <<>>=
-table(ll[[1]])
+table(combinedLines[[1]])
 @
 
 These are about equal: 27000 0s and 30000 1s.  (In this setup, 1 is
@@ -1022,24 +992,25 @@ appear as solid line on our plot.  But that was because we just drew a
 straight line at these vertical positions, regardless how many pixels
 were white.  Of course, we selected these rows because they had many
 black pixels.
+\end{comment}
 
-Since we think these rows make up a single line, let's aggregate across the adjacent
-rows to form a single aggregate row using \code{colSums()}:
+We can start with the assumption that this element contains either a single line or line segments, as opposed to a series of parallel lines. 
+We can aggregate across the adjacent rows to form a single aggregate row using \code{colSums()}:
 
 <<>>=
-rr = colSums(ll[[1]])
+rowNcells = colSums(combinedLines[[1]])
 @
 
 If this is a solid line across most of the page, we'd expect most
 pixels to be filled, perhaps with a few short gaps.  Each element of
-rr contains the number of rows in this group that had a black pixel.
-This might be 1 or 14, with only one row or all of them having a black
-pixel.  We might look at these counts or just consider whether any row
-has a black pixel in this column.  We are looking for a rule to mark a
-pixel in the aggregated line as black or white.
+\code{rowNcells} contains the number of cells in each column that had a value of 1 (black in this setup).
+This can vary from none of the cells to all of the cells containing a value of 1. 
+%% This might be 1 or 14, with only one row or all of them having a black pixel.
+%% We might look at these counts or just consider whether any row has a black pixel in this column.
+From this information, we are looking for a rule to mark a pixel in the aggregated line as black (solid line) or white (line segments).
 
-If we look at the vector \code{rr}, we see a lot of 0s at the
-beginning and the end.  These are the margins where the line is not
+If we look at the vector \code{rowNcells}, we see a lot of 0s at the
+beginning and the end.  These are the page margins where the line is not
 present.
 
 If we want to threshold this aggregate line to have a black pixel in a
@@ -1047,7 +1018,7 @@ column if \textit{any} of the pixels in the adjacent rows defining it
 has a black pixel, we can do this with
 
 <<>>=
-rle(rr > 0)
+rle(rowNcells > 0)
 @
 
 We get the two margins and a long run of 2895 pixels.  If we require
@@ -1055,31 +1026,35 @@ at least half of the 14 rows to have a black pixel in a column, we get
 the same groups:
 
 <<>>=
-rle(rr >= 7)
+rle(rowNcells >= 7)
 @
 
+\begin{comment}
 Let's consider one of the shorter lines.  These are elements 2 and 3
-of \code{ll}.  Again, we compute the column sums for the adjacent
+of \code{combinedLines}.  Again, we compute the column sums for the adjacent
 lines in this group:
 
 <<>>=
-rr = colSums(ll[[2]])
-table(rr)
+rowNcells = colSums(combinedLines[[2]])
+table(rowNcells)
 @
 
 Most are 0.  There are 9 adjacent rows in this group.  We see no
 columns that have at least one black pixel but less than half the
-number of rows.  Let's draw points at each of the columns that have a
+number of rows.
+\end{comment}
+
+Let's draw points at each of the columns that have a
 black pixel in at least half the rows:
 
-\begin{figure}[h]
+\begin{figure}[H]
 <<>>=
-z = which(rr >= 4.5)
-plot(h, invert = TRUE)
-points(z, nrow(m) - rep(as.integer(names(ll)[2]), length(z)),
+z = which(rowNcells >= 4.5)
+plot(hLines, invert = TRUE)
+points(z, nrow(pMat) - rep(as.integer(names(combinedLines)[2]), length(z)),
        col = "green", pch = 16, cex = 0.5)
 @
-\caption{}
+\caption{An example of identifying lines.}
 \label{}
 \end{figure}
 
@@ -1099,7 +1074,7 @@ e.g. 1, L, M.  If we make the height of the window too small, we'll
 pick up more false positives.
 
 <<>>=
-v = findLines(p2, 3, 101)
+v = findLines(pix = p2, hor = 3, vert = 101)
 @
 
 Again, we can plot this and see where the lines are.
@@ -1107,14 +1082,10 @@ Again, we can plot this and see where the lines are.
 \subsubsection{Removing the Lines}
 
 We don't have to remove the lines before we pass the image to
-tesseract as tesseract will remove them for us.  However, it is
+Tesseract as Tesseract will remove them for us.  However, it is
 interesting to see how well we can do.  Instead of finding the
 locations of the lines (with \code{getLines()}), we'll remove them
-from the image.  This uses the same basic approach and sequence of
-steps.  However, rather than extract the line coordinates, we use
-\code{pixAddGray()} to overlay the images with the horizontal and then
-the vertical lines onto the original image.  This removes the lines
-from the original image.  We do this directly from the image file with
+from the image.  The initial steps use the same basic approach as finding the lines
 
 <<>>=
 p1 = pixRead(smithburn)
@@ -1122,19 +1093,26 @@ p2 = pixConvertTo8(p1)
 p2 = deskew(p2)
 p3 = findLines(p2, 51, 1, FALSE)
 p4 = findLines(p2, 3, 101, FALSE)
-p = pixAddGray(p2, p3)
-p = pixAddGray(p, p4)
-plot(p)
 @
 
-Let's compare this to the original image.
+However, rather than extract the line coordinates, we use
+\code{pixAddGray()} to overlay the images with the horizontal and then
+the vertical lines onto the original image.
+This removes the lines from the original image.
+
+<<>>=
+p = pixAddGray(p2, p3)
+p = pixAddGray(p, p4)
+@
+
+We can plot the resulting image (Fig. \ref{fig:remove_lines}) and compare it to the original image (Fig. \ref{fig:base}).
 
 \begin{figure}[H]
 <<>>=
-plot(p2)
+plot(p)
 @
-\caption{}
-\label{}
+\caption{An example of removing lines from an image using the \code{pixAddGray()} function in ]pkg{Rtesseract}.}
+\label{fig:remove_lines}
 \end{figure}
 
 The horizontal and vertical lines are essentially gone.  We can
@@ -1160,25 +1138,27 @@ and when we plot the resulting image
 <<>>=
 plot(pp)
 @
-\caption{}
-\label{}
+\caption{An example of removing ``smudges'' on an image by thresholding grey values to white using the function \code{pixThresholdToValue()} in \pkg{Rtesseract}.}
+\label{fig:remove_smudge}
 \end{figure}
 
-The gray marks on the vertical lines have disappeared.   Note however
-that it removed some of the text, specifically the rotated text on the
+The gray marks on the vertical lines have disappeared in Fig \ref{fig:remove_smudge}.
+Note however that it removed some of the text, specifically the rotated text on the
 right and the URL within that text that is colored blue in the
-original image.   Fortunately, we don't care about this text for our
+original image.
+Fortunately, we don't care about this text for our
 application.
 
 We can compare the image we created with the lines removed to the one
-tesseract creates.   We do this with
+tesseract creates by passing the option \code{textord\_tabfind\_show\_vlines}.
+We do this with
 
 <<>>=
 tesseract(smithburn, pageSegMode = "psm_auto",
           textord_tabfind_show_vlines = 1)
 @
 
-This creates a PDF file named vhlinefinding.pdf.
+This creates a separate PDF file named vhlinefinding.pdf.
 
 \begin{comment}
   
@@ -1390,10 +1370,10 @@ using again \code{SetVariables()} or the \code{opts} argument in the
 \subsection{Writing results directly to file}
 
 \pkg{Rtesseract} includes functionality to export the results of OCR
-to many conventional file types, including BoxText, HOcr/HTML , OSD
+to many file types, including BoxText, HOcr/HTML , OSD
 (Orientation and Script Detection), TSV (tab separated values), and
 PDF.  Of these, \code{toPDF()} is unique in that it creates a searchable
-PDF document, not a plain-text document.
+PDF document.
 
 \subsection{Metadata}
 
@@ -1435,12 +1415,12 @@ Windows is desired, we suggest installing Tesseract from the Rwinlib
 repository (\url{https://github.com/rwinlib/tesseract}), which also
 includes the required libraries for Windows.  As previously mentioned
 \pkg{Rtesseract} also works with the development version of Tesseract
-(4.00+), which is currently available from
+(4.00-beta), which is currently available from
 \url{https://github.com/tesseract-ocr/tesseract/releases}. At the time
 of writing, we are not aware of pre-built binaries for v4.00 which
 include the required libraries as well. However, to build Tesseract
 from source requires many additional pieces of software, including
-leptonica v1.74+, automake, libtool, pkg-config, aclocal, autoheader,
+leptonica >= v1.74, automake, libtool, pkg-config, aclocal, autoheader,
 and autoconf-archive.  Additionally, users will also need to install
 the training data for the language(s) used in the documents to be
 processed. Currently, there are pre-trained data sets for 140+
