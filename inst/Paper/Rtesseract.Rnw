@@ -913,7 +913,7 @@ It may not be clear, but these are grouped together.  Each of the red
 lines we see on the plot is actually a collection of multiple adjacent lines.
 In other words, the line's thickness on the page results in the line spanning multiple rows of the matrix.
 
-\begin{comment}
+%\begin{comment}
 This is clearer if we compute the difference between the row numbers:
 
 <<>>=
@@ -923,13 +923,13 @@ diff(which(longLines))
 We see a collection of 1s meaning that these are adjacent rows, then a
 large jump between row numbers, followed by a collection of 1s and on.
 So it is clear these are grouped.
-\end{comment}
+%% \end{comment}
 
 We want to combine adjacent lines
 into a single group and have a separate group for each conceptually separate
 line on the image.
 
-\begin{comment}
+%% \begin{comment}
 One way to do this is run length encoding (RLE):
 
 <<>>=
@@ -938,7 +938,7 @@ rle(diff(which(longLines)))
 
 Another way is very similar but more explicit and gives us a little
 more control.
-\end{comment}
+%% \end{comment}
 
 We find where the differences between successive row
 numbers is greater than 2 and then we run a cumulative sum which gives
@@ -981,7 +981,7 @@ We have only considered the percentage of the row which is filled by black, and 
 Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
 columns.
 
-\begin{comment}
+%% \begin{comment}
   It is useful to query how many 0s and 1s there are?
 
 <<>>=
@@ -994,7 +994,7 @@ appear as solid line on our plot.  But that was because we just drew a
 straight line at these vertical positions, regardless how many pixels
 were white.  Of course, we selected these rows because they had many
 black pixels.
-\end{comment}
+%% \end{comment}
 
 We can start with the assumption that this element contains either a single line or line segments, as opposed to a series of parallel lines. 
 We can aggregate across the adjacent rows to form a single aggregate row using \code{colSums()}:
@@ -1031,7 +1031,7 @@ the same groups:
 rle(rowNcells >= 7)
 @
 
-\begin{comment}
+%% \begin{comment}
 Let's consider one of the shorter lines.  These are elements 2 and 3
 of \code{combinedLines}.  Again, we compute the column sums for the adjacent
 lines in this group:
@@ -1044,7 +1044,7 @@ table(rowNcells)
 Most are 0.  There are 9 adjacent rows in this group.  We see no
 columns that have at least one black pixel but less than half the
 number of rows.
-\end{comment}
+%% \end{comment}
 
 Let's draw points at each of the columns that have a
 black pixel in at least half the rows:
