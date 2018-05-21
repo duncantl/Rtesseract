@@ -66,9 +66,7 @@ bb
 @ 
 
 We have recovered the rotated text reasonably well, and significantly better
-than how it was  identified in the original processing.
-A ``w'' has been mistaken as a ``W'', the ``01'' at the end of \code{jimmun} in row 3 should be ``0l''.
-But these are common mistakes in OCR.
+than how it was identified in the original processing.
 
 \subsubsection{Transposing versus Rotating the Image}
 
@@ -96,7 +94,7 @@ plot(pt)
 \label{fig:transpose}
 \end{figure}
 
-Now the dimension of the image is 4050 rows by 6000 columns.
+Now the dimensions of the image are 4050 rows by 6000 columns.
 
 We can have Tesseract process the sub-rectangle corresponding to the area we are interested in
 
@@ -107,12 +105,9 @@ bb = GetBoxes(ts)
 bb
 @
  
-We get very slightly different answers (WWW rather than Www and 
-different confidences) but they are qualitatively the same.
+We get roughly the same answer as the rotated image.
 
-This approach is somewhat simpler conceptual, but it is slower
-as currently, transposing an image is quite slow.
+This approach is somewhat simpler conceptually, but it is slower
+as transposing an image is quite slow.
 This is because it extracts all of the pixels from the original image, creates a new image (fast)
 and copies all of the pixels to the new image in the appropriate transposed order.
-We will make this faster in the future using more efficient elements of the leptonica API
-to get and set pixels.
