@@ -625,13 +625,14 @@ name. Attempting to set the engine mode on an already created
 \subsubsection{Pre-processing the Image}
 
 Consider again the image in Fig. \ref{fig:base}.
-When we perform OCR on this, Tesseract treats the highlighted text in "yellow" as a dark rectangular block and ignores it.
+When we perform OCR on this using only Tesseract, Tesseract treats the highlighted text in "yellow" as a dark rectangular block and ignores it. The LSTM engine in Tesseract versions 4.00+ can handle situations like this better,
+but at the time of writing this feature is still actively under development and is much less stable than the original algorithm.
 
 For example, some of the words in the image present in the highlighted text are ``Drs. Dick and Haddow.''
 Are these in the words returned by Tesseract?
 
 <<>>=
-t0 = tesseract(smithburn)
+t0 = tesseract(smithburn, engineMode = "tesseract_only")
 w0 = GetText(t0, level = "textline")
 grep("Drs. Dick and Haddow", w0, value = TRUE)
 @
@@ -1354,8 +1355,10 @@ function, two or more \code{TesseractBaseAPI}s can be created for the
 same image, e.g.
 
 <<>>=
-api = tesseract(smithburn, pageSegMode = "PSM_AUTO")
-api2 = tesseract(smithburn, pageSegMode = "PSM_SINGLE_BLOCK",
+api = tesseract(smithburn,
+                pageSegMode = "PSM_AUTO")
+api2 = tesseract(smithburn,
+                 pageSegMode = "PSM_SINGLE_BLOCK",
                  opts = list(
                      tessedit_char_whitelist = c(letters,
                                                  LETTERS,
