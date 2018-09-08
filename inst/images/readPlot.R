@@ -3,6 +3,14 @@ if(FALSE) {
     # examples - West\ Causcasian\ Bat\ Virus/Wright-2010.pdf
     #            Mucambo\ Virus/Auguste-2010.pdf
     #  See Auguste-2010.jpg
+    # Doggett-1999
+    # Yasuda-2012.xml
+    # Moore-2007
+    # Kuzmin-2008
+    # Yasuda-2012
+    # Prescot-2013
+    # "../Lagos Bat Virus/Malerczyk-2014.xml"
+    # Hayman-2010
     
     # See ReadPDF/inst/examples/readPlot.R
     library(Rtesseract)
@@ -52,6 +60,7 @@ if(FALSE) {
     # ticks
     thl = getLines(p1,  2, 1)    
 }
+
 
 
 if(FALSE) {
