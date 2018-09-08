@@ -66,7 +66,9 @@ export(SetPageSegMode, GetPageSegMode)
 #exportClasses("PageSegMode")
 exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageSegMode, PageIteratorLevel, ParagraphJustification, OcrEngineMode, StrongScriptDirection)
 
+# Note seen. S4 method.
 S3method(plot, TesseractBoxdata)
+S3method(plot, OCRResults)
 
 export(GetSmudges, GetCharWidth, GetCharHeight, bboxToDF, orderBBox)
 
@@ -134,3 +136,5 @@ S3method(as.raster, PIX)
 exportMethods("[<-")
 
 export(findLines, getLines)
+
+export(showPoints)
