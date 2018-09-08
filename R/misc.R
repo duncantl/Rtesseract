@@ -3,6 +3,8 @@ GetSmudges =
     # Identify what are probably specs/smudges from the scanning process that are not characters.
     # These are small boxes. We also want them to be far way from other elements.
     #
+    # !! threshold is not used.
+    #
 function(bbox, threshold = 5, charWidth = GetCharWidth(bbox), charHeight = GetCharHeight(bbox), anywhere = FALSE)
 {
   w = bbox[,3] - bbox[,1]
@@ -10,8 +12,9 @@ function(bbox, threshold = 5, charWidth = GetCharWidth(bbox), charHeight = GetCh
   i = which( w < .25*charWidth & h < .25*charHeight )
   if(!anywhere)
       return(i)
-  
-  D = as.matrix(dist(bbox))
+  #XX?? Do we want to a) remove text and confidence?  b) compute the mid point of each box a
+  #XX  this dist() is computing distances between left and right.
+  D = as.matrix(dist(bbox)) #???
   m = apply(D[i, , drop = FALSE], 1, function(x) sort(x)[2])
   i [  m > 3*charWidth ]
 }
@@ -21,12 +24,12 @@ GetCharWidth =
     #
     # get an estimate of the typical character width
     #
-function(bbox, fun = median, onlyAlphaNumeric = TRUE)
+function(bbox, fun = median, onlyAlphaNumeric = TRUE, ...)
 {
    if(onlyAlphaNumeric)
       bbox = bbox[ grepl( "[A-Za-z0-9]", GetRecText(bbox)), ]
    
-   fun(  (bbox[,3] - bbox[,1])/nchar(GetRecText(bbox)) )
+   fun(  (bbox[,3] - bbox[,1])/nchar(GetRecText(bbox)), ... )
 }
 
 
@@ -34,12 +37,12 @@ GetCharHeight =
     #
     # get an estimate of the typical character height
     #
-function(bbox, fun = median, onlyAlphaNumeric = TRUE)
+function(bbox, fun = median, onlyAlphaNumeric = TRUE, ...)
 {
    if(onlyAlphaNumeric)
       bbox = bbox[ grepl( "[A-Za-z0-9]", GetRecText(bbox)), ]
    
-   fun(  (bbox[,4] - bbox[,2])  )
+   fun(  (bbox[,4] - bbox[,2]) , ... )
 }    
 
 GetRecText =
