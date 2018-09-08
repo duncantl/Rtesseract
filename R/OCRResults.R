@@ -1,5 +1,5 @@
 plot.OCRResults =
-function(x, y, cex = 1, col = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
+function(x, y, cex = .5, col = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
           ylim = range(c(x$top, x$bottom))*c(.95, 1.05), ...)
 {
     plot(0, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", ...)
