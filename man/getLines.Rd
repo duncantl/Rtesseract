@@ -5,13 +5,16 @@
 \title{Find and Determine Vertical and Horizontal Line Segments in an Image}
 
 \description{
-  These functions use leptonica Pix functions to identify vertical or
+  The functions getLines() and findLines() use leptonica Pix functions to identify vertical or
   horizontal lines in an image and then extract the coordinates of these
   segments, combining close segments as appropriate.
+  findLines(), by default, processes the image to leave only the lines
+  and getLines() uses this to the line coordinates.
 }
 \usage{
 getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
          gap = 0.02, ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
+findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210)
 }
 \arguments{
   \item{pix}{the image, as a \code{\link{Pix-class}} object, or
@@ -33,10 +36,10 @@ getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
   considered one, i.e., when the end of one segment is within gap pixels
   of the start of the other segment.}
   \item{\dots}{additional arguments passed to \code{findLines}}
-  \item{asIs}{indicates if the image passed via \code{pix} has already be
+  \item{asIs}{indicates if the image passed via \code{pix} has already been
   processed to contain only the images (\code{TRUE}).  Otherwise,
   \code{pix} is passed to \code{findLines} and we extract the lines from
-  the resulting image}
+  the resulting image.}
   \item{horizontal}{a logical value indicating whether we are looking
     for horizontal or vertical lines. This can be useful if the \code{pix}
     value is the preprocessed image that contains only the lines.
@@ -45,7 +48,10 @@ getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
   }
 }
 \value{
- a list of matrices, each containing 4 columns giving x0, y0, x1, y1 coordinates
+ a list of matrices, each containing 4 columns giving x0, y0, x1, y1
+ coordinates
+ or, if \code{asDataFrame}, we combine the list into a single
+ data frame with the same columns.
 }
 \references{
 \url{http://www.leptonica.com/line-removal.html}
