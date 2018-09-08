@@ -1,5 +1,18 @@
 # Todo Items
 
+1. getLines() for UCD_Lehmann_0377.jpg fails.
+```
+f = "/Users/duncan/Data/UCD_LEHMANN/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg"
+pp = pixRead(f)
+pp8 = pixConvertTo8(pp)
+ll = findLines(pp8, 201, 7, TRUE, erode = integer())
+getLines(ll, asIs = TRUE, horizontal = TRUE)
+```
+
+1. Had a crash with some code after a while in inst/images/readPlot.R (inside the if(FALSE)..)
+
+1. Make getLines() more robust.
+
 1. User dictionary option.  See Paper/
 
 1. [done] Options
