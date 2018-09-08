@@ -24,8 +24,8 @@
 %     documentation in the Tesseract documentation.
 
 
-\author{Matthew B. Espe\\UC - Davis
-  \And Duncan Temple Lang \\UC - Davis}
+\author{Matthew B. Espe \\ UC - Davis
+  \And Duncan Temple Lang \\ UC - Davis}
 \Plainauthor{Matthew B. Espe, Duncan Temple Lang}
 
 \title{\pkg{Rtesseract}: A package for Optical Character Recognition (OCR) from \proglang{R}}
@@ -333,7 +333,7 @@ the lowest confidences:
 
 <<>>=
 confs = GetConfidences(api)
-sort(confs)[1:10]
+round(sort(confs)[1:10], 1)
 @ 
 
 Clearly, some of these do not look correct. To further investigate, we
@@ -375,7 +375,7 @@ lrGroups = cut(bbox[,"left"],
 And then calculate the median confidence inside each group,
 
 <<out.lines=8>>=
-tapply(bbox[,"confidence"], lrGroups, median)
+tapply(bbox[,"confidence"], lrGroups, function(x) round(median(x),1))
 @
 
 Doing this verifies our suspicion that there are issues with the right
@@ -392,6 +392,7 @@ we could crop this image using editing software outside of \proglang{R}, we will
 show later how this area can be excluded from the OCR recognition step
 using \pkg{Rtesseract} without leaving \proglang{R}.
 
+\begin{comment}
 %% Not a great example
 To continue, suppose we also wanted to extract the author's
 name. Using some prior knowledge that this information is present at
@@ -422,6 +423,7 @@ This example illustrates both the workflow of using OCR to extract
 text and highlights why having access to information beyond just the
 text is so helpful to a full OCR workflow, if not crucial for increased
 accuracy and error checking.
+\end{comment}
 
 \subsection{Visualizing OCR results}
 
@@ -437,7 +439,7 @@ settings to improve accuracy (discussed further below).
 
 \begin{figure}[H]
 <<echo = FALSE>>=
-plot(api, fillBoxes = TRUE, main = "")
+plot(api, main = "")
 @
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the scanned image with the bounding boxes surrounding the
@@ -445,16 +447,16 @@ plot(api, fillBoxes = TRUE, main = "")
   associated confidences.}
 \label{fig:rtess_plot}
 \end{figure}
-
+o
 \subsection{Zooming and subsetting an image}
 
 It is sometimes useful to ``zoom in'' on a part of the image to inspect a region that is not being accurately recognized.
 For visualizing a sub-area of the original image, we use the \code{plotSubImage()} function.
-For example, we can find the lowest confidence word,
+For example, we can find a low confidence word,
 
 <<>>=
 bbox = GetBoxes(api)
-i = which.min(bbox$confidence)
+i = which(bbox$confidence < 25)[1]
 bbox[i,]
 @
 
@@ -468,20 +470,17 @@ plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
 \label{fig:zoom}
 \end{figure}
 
-As before, we can see the text is rotated for this character, resulting in
-poor OCR results.
-
 There are times when there is only a part of the image that we want to recognize with OCR.
 In this case, we may want to avoid the computations involved in recognizing the entire contents of an image when we are only interested a piece of it.
 We could crop the original image, create a new file containing only the area of interest, and then call \code{tesseract()} on this image.
 However, it would be better to focus only on the area of interest without modifying the original image.
-For this, \pkg{Rtesseract} includes the \code{SetRectangle()} function. For example, if we know we are only interested in the table on the lower half of the page, we can recognize only this area. First, we can locate where ``TABLE'' is,
+For this, \pkg{Rtesseract} includes the \code{SetRectangle()} function. For example, if we know we are only interested in the table on the lower half of the page, we can recognize only this area. First, we can locate where the top of the table is by finding the word ``TABLE'',
 
 <<>>=
 bbox[grep("TABLE", bbox$text),]
 @ 
 
-Then we reduce the recognization rectangle to only this area using the \code{SetRectangle()}function,
+Then we reduce the recognization rectangle to only the area below this word using the \code{SetRectangle()}function,
 with the dimensions specified as left edge, top edge, width of box, and height of box 
 
 <<>>=
@@ -498,7 +497,7 @@ accurately recognized with settings suboptimal for other areas.
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 accessing and manipulating the results of running the OCR engine on an
-image. In many non-trivial cases, you might want to manipulate the
+image. In many non-trivial cases, we might want to manipulate the
 behavior of the OCR engine itself rather than only the output. For
 these purposes, the \pkg{Rtesseract} package exposes full access to
 the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
@@ -508,8 +507,7 @@ engine for specific cases.
 
 There are two ``meta-variables'' control how that Tesseract recognizes the arrangement of text and which OCR engine is used,
 \code{pageSegMode} and \code{engineMode}. Since adjusting these two
-variables can have a large impact on the results of the OCR, they
-deserve special mention.
+variables can have a large impact on the results of the OCR, they deserve special mention.
 
 The first, the Page Segmentation Mode,
 adjusts how Tesseract recognizes the layout of the text in the image.
@@ -553,7 +551,7 @@ api = tesseract(smithburn, pageSegMode = "PSM_AUTO")
 in the \code{...}  arguments for any of the high-level functions,  %% @MATT - do we define high-level clearly early on?
 e.g.,
 
-<<>>=
+<<eval = FALSE>>=
 GetText(smithburn, pageSegMode = PSM_AUTO)
 @
 
@@ -601,13 +599,13 @@ already initialized \code{TesseractBaseAPI} object. %Duncan, this correct?
 
 The Engine Mode can be set either in the call to \code{tesseract()}
 
-<<>>=
+<<eval = FALSE>>=
 api = tesseract(smithburn, engineMode = "OEM_TESSERACT_ONLY") 
 @
 
-or in the call to a base level function,
+or in the call to a base level function when calling on a image filename,
 
-<<>>=
+<<eval = FALSE>>=
 GetText(smithburn, engineMode = "OEM_TESSERACT_ONLY")
 @ 
 
@@ -626,19 +624,20 @@ name. Attempting to set the engine mode on an already created
 
 \subsubsection{Pre-processing the Image}
 
-Consider the image in Fig. \ref{fig:base}. When we perform OCR on this, Tesseract
-treats the highlighted text in "yellow" as a dark rectangular block
-and ignores it.
+Consider again the image in Fig. \ref{fig:base}.
+When we perform OCR on this using only Tesseract, Tesseract treats the highlighted text in "yellow" as a dark rectangular block and ignores it. The LSTM engine in Tesseract versions 4.00+ can handle situations like this better,
+but at the time of writing this feature is still actively under development and is much less stable than the original algorithm.
 
-For example, some of the words in the image present in the highlighted text are ``Drs. Dick and
-Haddow.''  Are these in the words returned by Tesseract?
+For example, some of the words in the image present in the highlighted text are ``Drs. Dick and Haddow.''
+Are these in the words returned by Tesseract?
 
 <<>>=
-t0 = tesseract(smithburn)
+t0 = tesseract(smithburn, engineMode = "tesseract_only")
 w0 = GetText(t0, level = "textline")
 grep("Drs. Dick and Haddow", w0, value = TRUE)
-@ 
+@
 
+%% Tesseract 4.00-beta does get this!!
 It seems not. In this case, the text under the highlighted area is
 being lost. We need to pre-process the image to remove the highlight
 but not the text before we pass it to Tesseract to have the
@@ -831,6 +830,10 @@ Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
 lines are relative to row 1 and go down.
 
+For those intersted, we include a vignette with \pkg{Rtesseract} which illustrates how the \code{GetLines()} function leverages several lower-level functions in \pkg{Rtesseract} to identify lines on the image.
+
+\begin{comment}
+
 \code{getLines()} performs several operations on the image.
 To illustrate how the lower-level functions in \pkg{Rtesseract} to can be leveraged to address special cases, we will describe how \code{getLines()} works.
 First, we use the \code{findLines()} function to return an image that contains
@@ -911,7 +914,7 @@ It may not be clear, but these are grouped together.  Each of the red
 lines we see on the plot is actually a collection of multiple adjacent lines.
 In other words, the line's thickness on the page results in the line spanning multiple rows of the matrix.
 
-\begin{comment}
+%\begin{comment}
 This is clearer if we compute the difference between the row numbers:
 
 <<>>=
@@ -921,13 +924,13 @@ diff(which(longLines))
 We see a collection of 1s meaning that these are adjacent rows, then a
 large jump between row numbers, followed by a collection of 1s and on.
 So it is clear these are grouped.
-\end{comment}
+%% \end{comment}
 
 We want to combine adjacent lines
 into a single group and have a separate group for each conceptually separate
 line on the image.
 
-\begin{comment}
+%% \begin{comment}
 One way to do this is run length encoding (RLE):
 
 <<>>=
@@ -936,7 +939,7 @@ rle(diff(which(longLines)))
 
 Another way is very similar but more explicit and gives us a little
 more control.
-\end{comment}
+%% \end{comment}
 
 We find where the differences between successive row
 numbers is greater than 2 and then we run a cumulative sum which gives
@@ -979,7 +982,7 @@ We have only considered the percentage of the row which is filled by black, and 
 Let's consider the first element of \code{combinedLines}.  It has 14 rows and 4050
 columns.
 
-\begin{comment}
+%% \begin{comment}
   It is useful to query how many 0s and 1s there are?
 
 <<>>=
@@ -992,7 +995,7 @@ appear as solid line on our plot.  But that was because we just drew a
 straight line at these vertical positions, regardless how many pixels
 were white.  Of course, we selected these rows because they had many
 black pixels.
-\end{comment}
+%% \end{comment}
 
 We can start with the assumption that this element contains either a single line or line segments, as opposed to a series of parallel lines. 
 We can aggregate across the adjacent rows to form a single aggregate row using \code{colSums()}:
@@ -1029,7 +1032,7 @@ the same groups:
 rle(rowNcells >= 7)
 @
 
-\begin{comment}
+%% \begin{comment}
 Let's consider one of the shorter lines.  These are elements 2 and 3
 of \code{combinedLines}.  Again, we compute the column sums for the adjacent
 lines in this group:
@@ -1042,7 +1045,7 @@ table(rowNcells)
 Most are 0.  There are 9 adjacent rows in this group.  We see no
 columns that have at least one black pixel but less than half the
 number of rows.
-\end{comment}
+%% \end{comment}
 
 Let's draw points at each of the columns that have a
 black pixel in at least half the rows:
@@ -1061,6 +1064,7 @@ points(z, nrow(pMat) - rep(as.integer(names(combinedLines)[2]), length(z)),
 This appears to capture the short horizontal line spanning the four
 columns on the right of the table.  So this appears to be a reasonable
 approach, at least for this image.
+\end{comment}
 
 \subsubsection{Vertical Lines}
 
@@ -1351,8 +1355,10 @@ function, two or more \code{TesseractBaseAPI}s can be created for the
 same image, e.g.
 
 <<>>=
-api = tesseract(smithburn, pageSegMode = "PSM_AUTO")
-api2 = tesseract(smithburn, pageSegMode = "PSM_SINGLE_BLOCK",
+api = tesseract(smithburn,
+                pageSegMode = "PSM_AUTO")
+api2 = tesseract(smithburn,
+                 pageSegMode = "PSM_SINGLE_BLOCK",
                  opts = list(
                      tessedit_char_whitelist = c(letters,
                                                  LETTERS,
