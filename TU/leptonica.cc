@@ -1,1 +1,3 @@
-#include <leptonica/allheaders.h>
+// #include <leptonica/allheaders.h>
+#include <allheaders.h>
+
