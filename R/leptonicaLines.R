@@ -6,7 +6,7 @@ getLines =
     #
     #
     # 
-function(pix, hor, vert, lineThreshold = .1, fraction = .5, gap = .02,
+function(pix, hor, vert, lineThreshold = .1, fraction = .5, gap = .02, asDataFrame = FALSE,
           ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
 {
   if(!asIs)
@@ -30,12 +30,23 @@ function(pix, hor, vert, lineThreshold = .1, fraction = .5, gap = .02,
   idx = which(w)
   g = cumsum( diff(idx) > 2 )
     # collect the rows   Fix for columns too.
-  ll = lapply(split(seq(along = idx), c(0, g)), function(i) if(horizontal) img[idx[i], ] else img[, idx[i]])
+  ll = lapply(split(seq(along = idx), c(0, g)), function(i) if(horizontal) img[idx[i], , drop = FALSE] else img[, idx[i], drop = FALSE])
+
+  if(length(ll) == 0 || (length(ll) == 1 && nrow(ll[[1]]) == 0))
+      return(NULL)
+  
   names(ll) = pos = tapply(seq(along = idx), c(0, g), function(i) as.integer(mean(idx[i])))
 
     # Next, for each of these vectors, process the groups to find where they agree
 
-  z = mapply(getHLine, ll, pos, MoreArgs = list(horizontal = horizontal, fraction = fraction, gap = gap), SIMPLIFY = FALSE)
+  z = mapply(getHLine, ll, pos,
+             MoreArgs = list(horizontal = horizontal, fraction = fraction, gap = gap),
+             SIMPLIFY = FALSE)
+  
+  if(asDataFrame)
+      as.data.frame(do.call(rbind, z))
+  else
+      z
 }
 
 getHLine =
@@ -54,13 +65,20 @@ function(x, coord, horizontal = TRUE, fraction = .5, gap = .02)
     }
     
     if(!any(on))
-        return(matrix(0, , 2))
-    
-    r = rle(on)
-    i = which(r$values)
-    pos = cumsum(r$length)
-    ans = cbind(pos[i-1], pos[i])
-    ans = connectGap(ans, gap)
+        return(matrix(0, 0, 4, dimnames = list(NULL, c("x0", "y0", "x1", "y1" ))))
+
+    if(!all(on)) {
+        r = rle(on)
+        i = which(r$values)
+        if(length(i) > 1) {
+            pos = cumsum(r$length)
+            ans = cbind(pos[i-1], pos[i])
+            ans = connectGap(ans, gap)
+        } else
+            ans = matrix(c(min(which(on)), max(which(on))), 1, 2)
+    } else {
+       ans = c(1, length(on))
+    }
 
     m = matrix(0, nrow(ans), 4, dimnames = list(NULL, c("x0", "y0", "x1", "y1")))
     if(horizontal) {
