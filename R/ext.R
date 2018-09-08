@@ -301,12 +301,16 @@ setMethod("GetBoxes",
                   cols = 2:5
               } else {
                   m = as.data.frame(m)
+#                  class(m) = c("OCRPositionResults", class(m))
                   m$text = names(ans)
                   rownames(m) = NULL
                   cols = 2:6
               }
 
-              m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
+              ans = m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
+              class(ans) = c("OCRResults", class(ans))
+              
+              ans
           })
 
 setMethod("GetBoxes",
