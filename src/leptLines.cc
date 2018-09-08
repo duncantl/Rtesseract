@@ -252,7 +252,8 @@ R_pixGetPixels(SEXP r_pix, SEXP r_transpose)
     int do_transpose = LOGICAL(r_transpose)[0];
 
     l_uint32 val;
-    int i, j;    
+    int i, j;
+// Could do this faster by exploiting leptonica's structure and not getting pixels individually    
     for(j = 0; j < c; j++) {
         for(i = 0; i < r; i++) {
             pixGetPixel(pix, j, i, &val);
