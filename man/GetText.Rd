@@ -57,9 +57,21 @@ GetAlternatives(obj, ...)
   \item{\dots}{other arguments that are currently ignored.}
 }
 \value{
-  \code{GetBoxes} returns a matrix with 4 columns
+  \code{GetBoxes}, by default, returns a data.frame.
+  This has 6 elements. These are
+  \item{left,bottom,right,top}{the location of the box as measured from
+    the left top corner, so top and bottom go down the image. That is
+  larger values of top and bottom correspond to lower on the image.}
+  \item{text}{the recognized text}
+  \item{confidence}{the accuracy/credibility (as a percentage) reported by tesseract}
+
+  The class of this data frame is \code{OCRResults} and there
+  is a plot() method for this to display the recovered words as they appear on the image.
+
+  Alternatively, \code{GetBoxes} can return a matrix with 4 columns
   giving the lower-left corner and upper right corner,
-   xbottom, ybottom, xtop, ytop.
+  xbottom, ybottom, xtop, ytop and the text found in that box as row names.
+  
   
   %% \code{BoundingBox} returns a numeric vector with 4 elements
   %% corresponding to the lower-left corner and upper right corner.
