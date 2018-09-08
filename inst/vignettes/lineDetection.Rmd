@@ -144,7 +144,7 @@ we expect:
 plot(p2)
 lapply(hlines,
         function(tmp) {
-	   lines(tmp[c(1, 3)], nrow(p2) - tmp[c(2, 4)], col = "red", lty = 3, lwd = 2)
+	   lines(tmp[, c(1, 3)], nrow(p2) - tmp[, c(2, 4)], col = "red", lty = 3, lwd = 2)
         })
 ```
 Note that we had to subtract the y coordinates from the number of rows of the image
