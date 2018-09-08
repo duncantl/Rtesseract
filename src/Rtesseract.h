@@ -5,7 +5,12 @@
 //typedef std::string string;
 using std::string;
 
-#include <baseapi.h>
+#ifndef ADD_TESSERACT_DIR 
+#include <baseapi.h> 
+#else
+#include <tesseract/baseapi.h> 
+#endif
+
 #include <allheaders.h>
 
 using namespace std;

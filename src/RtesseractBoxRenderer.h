@@ -1,4 +1,8 @@
+#ifndef ADD_TESSERACT_DIR 
 #include <renderer.h>
+#else
+#include <tesseract/renderer.h>
+#endif
 
 class RTessBoxTextRenderer : public tesseract::TessResultRenderer /* BoxTextRenderer */ {
 

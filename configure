@@ -2326,6 +2326,7 @@ echo "CXXFLAGS = $CXXFLAGS"
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
 echo "Tesseract CFLAGS = $TESS_CFLAGS"
+
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -2337,9 +2338,39 @@ ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
+   #include <baseapi.h>
+
+int
+main ()
+{
+
+    tesseract::TessBaseAPI api;
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+  CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"
+else
+   export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+
+
+
+
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
    #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif
 
 int
 main ()
@@ -2366,7 +2397,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
    #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif
 
 int
 main ()
@@ -2392,7 +2427,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
   #include <string>
   using std::string;
-  #include <baseapi.h>
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif
 
 int
 main ()
@@ -2420,8 +2459,13 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+   #include <renderer.h>
+#else
    #include <tesseract/baseapi.h>
    #include <tesseract/renderer.h>
+#endif
 
 int
 main ()
@@ -2447,7 +2491,11 @@ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
    #include <tesseract/baseapi.h>
+#endif
 
 int
 main ()
@@ -2471,7 +2519,11 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
+#ifndef ADD_TESSERACT_DIR
    #include <publictypes.h>
+#else
+   #include <tesseract/publictypes.h>
+#endif
 
 int
 main ()
@@ -2495,7 +2547,11 @@ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
+#ifndef ADD_TESSERACT_DIR
    #include <publictypes.h>
+#else
+   #include <tesseract/publictypes.h>
+#endif
 
 int
 main ()
