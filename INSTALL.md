@@ -9,7 +9,7 @@ Version 4.0 is not officially released, so these difficulties are understandable
 The language files are specific to the Tesseract version. For Tesseract 4.0+, you can use either files from [tessdata_best](https://github.com/tesseract-ocr/tessdata_best), as suggested [here](https://github.com/tesseract-ocr/tesseract/issues/1205).
 The tessdata_fast files will also work.
 
-For Tesseract versions 3.04+, you need to use the files from tessdata: https://github.com/tesseract-ocr/tessdata   
+For Tesseract versions 3.04+, you need to use the files from [tessdata](https://github.com/tesseract-ocr/tessdata)
 
 These files can be put into the default search locations (e.g., /usr/local/share) or Tesseract can be told where to find them with the `tessdata` flag.
 
