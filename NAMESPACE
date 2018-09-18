@@ -126,8 +126,6 @@ export(pixFlipTB, pixFlipLR)
 export(pixCreate, pixSetDims)
 export(pixTranspose)
 
-export(getLines)
-
 exportPattern("IFF_.*")
 
 S3method(as.raster, Pix)

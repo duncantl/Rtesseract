@@ -40,13 +40,32 @@ echo "CXXFLAGS = $CXXFLAGS"
 
 CXXFLAGS="$TESS_CFLAGS $CXXFLAGS"
 echo "Tesseract CFLAGS = $TESS_CFLAGS"
+
 AC_LANG(C++)
 
 AC_TRY_COMPILE(
  [
-   #include <string>
-   using std::string; 
    #include <baseapi.h> 
+ ],
+ [
+    tesseract::TessBaseAPI api;
+ ],
+ [CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],
+ [ export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"]
+)
+
+
+
+
+AC_TRY_COMPILE(
+ [
+   #include <string>
+   using std::string;
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif
  ],
  [
     tesseract::TessBaseAPI api;
@@ -61,7 +80,11 @@ AC_TRY_COMPILE(
  [
    #include <string>
    using std::string; 
-   #include <baseapi.h> 
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif   
  ],
  [
     tesseract::TessBaseAPI * api;
@@ -75,7 +98,11 @@ AC_TRY_COMPILE(
  [
   #include <string>
   using std::string; 
-  #include <baseapi.h> 
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
+   #include <tesseract/baseapi.h>
+#endif
  ],
  [
     tesseract::TessBaseAPI * api;
@@ -91,8 +118,13 @@ AC_TRY_COMPILE(
  [
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+   #include <renderer.h>   
+#else
    #include <tesseract/baseapi.h>
    #include <tesseract/renderer.h>
+#endif   
  ],
  [
     tesseract::TessPDFRenderer render("", "", true);
@@ -106,7 +138,11 @@ AC_TRY_COMPILE(
  [
    #include <string>
    using std::string;
+#ifndef ADD_TESSERACT_DIR
+   #include <baseapi.h>
+#else
    #include <tesseract/baseapi.h>
+#endif   
  ],
  [
     tesseract::DetectOrientationScript;
@@ -118,7 +154,11 @@ AC_TRY_COMPILE(
 
 AC_TRY_COMPILE(
  [
-   #include <publictypes.h> 
+#ifndef ADD_TESSERACT_DIR 
+   #include <publictypes.h>
+#else
+   #include <tesseract/publictypes.h> 
+#endif
  ],
  [
     tesseract::OEM_LSTM_ONLY;
@@ -130,7 +170,11 @@ AC_TRY_COMPILE(
 
 AC_TRY_COMPILE(
  [
-   #include <publictypes.h> 
+#ifndef ADD_TESSERACT_DIR 
+   #include <publictypes.h>
+#else
+   #include <tesseract/publictypes.h> 
+#endif
  ],
  [
     tesseract::OEM_CUBE_ONLY;

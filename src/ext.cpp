@@ -1,6 +1,12 @@
 #include <string>
 using std::string;
+
+#ifndef ADD_TESSERACT_DIR 
 #include <osdetect.h>
+#else
+#include <tesseract/osdetect.h> 
+#endif
+
 #include "Rtesseract.h"
 
 
@@ -113,7 +119,12 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 #undef error
 #endif
 
+
+#ifndef ADD_TESSERACT_DIR 
 #include <genericvector.h>
+#else
+#include <tesseract/genericvector.h> 
+#endif
 
 #define error Rf_error
 
@@ -539,7 +550,13 @@ R_tesseract_ClearPersistentCache()
 
 
 #if 1
+
+#ifndef ADD_TESSERACT_DIR 
 #include <strngs.h>
+#else
+#include <tesseract/strngs.h> 
+#endif
+
 #include <R_ext/Arith.h>
 
 SEXP
@@ -1039,7 +1056,7 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
   GenericVector<STRING> langs;
   api->GetAvailableLanguagesAsVector(&langs);
 
-  int i = 0, len = langs.length();
+  int i = 0, len = langs.size(); // length();
   SEXP r_ans;
   PROTECT(r_ans = NEW_CHARACTER(len));
   for(i = 0; i < len; i++) {

@@ -1,5 +1,11 @@
 #include "Rtesseract.h"
+
+#ifndef ADD_TESSERACT_DIR 
 #include <osdetect.h>
+#else
+#include <tesseract/osdetect.h> 
+#endif
+
 
 
 SEXP BoxaAToR(Boxa *boxes);
