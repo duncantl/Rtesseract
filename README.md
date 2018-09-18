@@ -49,5 +49,5 @@ We - Matt Espe & Duncan Temple Lang - started developing this package in April 2
 
 
 <!--
-install_name_tool  -change libtesseract.4.0.0.dylib /usr/local/lib/libtesseract.4.0.0.dylib Rtesseract.so 
+install_name_tool  -change libtesseract.4.0.0.dylib /usr/local/lib/libtesseract.4.0.0.dylib src/Rtesseract.so 
 -->
