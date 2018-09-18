@@ -1,24 +1,22 @@
+# Linux
 
-From source:
-
-automake
-libtool
-
-leptonica
+Follow the instructions [here](https://github.com/tesseract-ocr/tesseract/wiki)
 
 # Windows
 
-The "easiest" / recommended path is using cmake, but cmake is not playing nice with the compiler tools that ship with Rtools. MinGW is not updated and SourceForge is down so I cannot test MinGW-64.
+The recommended path from the Tesseract devs is using cmake.
+However, we have found that differences between the compiler tools that ship with Rtools can cause issues. 
+MinGW is out-of-date, so our recommended approach for Windows is using MSYS2.
 
 ## Using MSYS2
 
 ### Prep
 
-MSYS2 ported the `pacman` package manager, which is familiar (to me). It is fairly simple with some slight wrinkles.
+MSYS2 ported the `pacman` package manager from Arch Linux, which has a simple syntax for searching for and installing packages. 
 
 1. Install MSYS2 from [here](https://www.msys2.org/) and follow their getting started steps.
 
-1. Install the development tools needed to build from source by running:
+1. Install the development tools needed to build software from source by running:
 
 ```
 pacman -S base-devel
@@ -46,11 +44,12 @@ makepkg -sri
 
 ### Dependencies:
 
-Dependencies should be automatically installed from the `makepkg` command. In case they are not, they can be manually installed using pacman.
+Dependencies should be automatically installed from the `makepkg` command. 
+In case they are not, they can be manually installed using pacman.
 
 In MSYS2, the dependencies include a prefix string that makes the package name difficult to guess. 
 Additionally, some packages are named slightly different from their Linux versions.
-To find the name of the dependency so you can install using the default pacman command, search for it using regex:
+To find the name of the dependency so you can install using the `pacman` command, search for it using regex:
 
 ```
 pacman -Ss <regex> 
