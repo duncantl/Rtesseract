@@ -2,6 +2,22 @@ Tesseract 4.0 is currently not as easy to install on all systems as earlier vers
 Version 4.0 is not officially released, so these difficulties are understandable.
 
 
+# General
+
++ Missing eng.traineddata and other training files
+
+The language files are specific to the Tesseract version. For Tesseract 4.0+, you can use either files from [tessdata_best](https://github.com/tesseract-ocr/tessdata_best), as suggested [here](https://github.com/tesseract-ocr/tesseract/issues/1205).
+The tessdata_fast files will also work.
+
+For Tesseract versions 3.04+, you need to use the files from tessdata: https://github.com/tesseract-ocr/tessdata   
+
+These files can be put into the default search locations (e.g., /usr/local/share) or Tesseract can be told where to find them with the `tessdata` flag.
+
+3) aspell
+R CMD BUILD said I was misisng aspell, so I got from [omegahat.net](http://www.omegahat.net/Aspell/)
+You might need to apply this [fix](https://stackoverflow.com/questions/25395685/aspell-wont-build-on-os-x-10-9-mavericks)
+
+
 # Ubuntu
 On Ubuntu, we use clang
  ./configure CXX=clang++ CC=clang
@@ -33,16 +49,3 @@ See https://github.com/tesseract-ocr/tesseract/issues/1670
 
 Since this is an unresolved issue, for now I just undid that change in the tesseract code (in src/api/baseapi.cpp) 
 
-2) missing eng.traineddata and other training files
-
-I was missing .trainneddata files like eng.traineddata. (First saw the error when I tried to run tesseract directly from the command line.)
-
-(First attempt to fix) Got files from tessdata: https://github.com/tesseract-ocr/tessdata   
-(Second, better attempt) Got files from tessdata_best (https://github.com/tesseract-ocr/tessdata_best), as suggested here: https://github.com/tesseract-ocr/tesseract/issues/1205
-The tessdata_fast repo should also work
-
-Added the necessary .traineddata files where they were being looked for, in my case /usr/local/share/tessdata.
-
-3) aspell
-R CMD BUILD said I was misisng aspell, so I got from http://www.omegahat.net/Aspell/Aspell_0.2-0.tar.gz
-Then I fixed this: https://stackoverflow.com/questions/25395685/aspell-wont-build-on-os-x-10-9-mavericks
