@@ -1,11 +1,17 @@
 \name{plot}
 \alias{plot,TesseractBaseAPI-method}
+\alias{plot,OCRResults-method}
 \title{Plot the results of an OCR}
 \description{
-  This function is a useful diagnostic of how well
+  These functions are useful diagnostics of how well
   the OCR recognized the text.
-  It can display both the image and the rectangular regions
-  for the elements the OCR recognized.
+  The method for a TesseractBaseAPI object can display both the image
+  and all of the locations and rectangular regions (but not the text) for the elements the OCR recognized.
+  The method for OCRResults (returned from a call to
+  \code{\link{GetBoxes}})
+  displays the text returned from the OCR as it appears on the
+  page.   On other words, it doesn't show the background image
+  but does show the text. 
 }
 %\usage{}
 \value{
@@ -23,7 +29,7 @@ Duncan Temple Lang
 }
 \seealso{
   \code{\link{tesseract}}
-  \code{\link{Recognize}}  
+  \code{\link{Recognize}}
 }
 \keyword{IO}
 \keyword{programming}
