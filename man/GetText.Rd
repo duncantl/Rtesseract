@@ -61,7 +61,10 @@ GetAlternatives(obj, ...)
   This has 6 elements. These are
   \item{left,bottom,right,top}{the location of the box as measured from
     the left top corner, so top and bottom go down the image. That is
-  larger values of top and bottom correspond to lower on the image.}
+    larger values of top and bottom correspond to lower on the image.
+    Note that top is larger than bottom since it is measured from the
+    origin (0), but is lower on the page as we view it.
+  }
   \item{text}{the recognized text}
   \item{confidence}{the accuracy/credibility (as a percentage) reported by tesseract}
 
