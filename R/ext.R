@@ -309,6 +309,7 @@ setMethod("GetBoxes",
 
               ans = m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
               class(ans) = c("OCRResults", class(ans))
+              attr(ans, "imageDims") = dim(GetImage(obj))
               
               ans
           })

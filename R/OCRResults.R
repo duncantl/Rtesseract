@@ -1,6 +1,9 @@
 plot.OCRResults =
 function(x, y, cex = .5, col = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
-          ylim = range(c(x$top, x$bottom))*c(.95, 1.05), ...)
+         #!!! instead of accessing imageDims[1], have an accessor function that returns NA
+         # or something if not present.
+         ylim = c(0, imageDims(x)["rows"]), # range(c(x$top, x$bottom))*c(.95, 1.05)
+         ...)
 {
     plot(0, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", ...)
 
@@ -8,6 +11,19 @@ function(x, y, cex = .5, col = "black", xlim = range(c(x$left, x$right)) * c(.95
     text(x$left, h - x$bottom, x$text, adj = c(0, 0), cex = cex, col = col)
 }
 
+imageDims =
+function(x, ...)
+  UseMethod("imageDims")
+
+imageDims.default =
+function(x, ...)
+{
+    ans = attr(x, "imageDims")
+    if(is.null(ans))
+        c(rows = NA, columns = NA)
+    else
+        ans
+}
 setOldClass(c("OCRResults", "data.frame"))
 setMethod("plot", "OCRResults", plot.OCRResults)
 
