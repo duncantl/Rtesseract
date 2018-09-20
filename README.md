@@ -30,7 +30,7 @@ rows or columns
 3. We can restrict the recognition to a sub-rectangle of the image.
 3. The package provides lower-level access to the C++ API, allowing for more fine-grained and efficient
  use and flexible programmatic access.
-3. We can set and query many variables cotrolling tesseract's behaviour.
+3. We can set and query many variables controlling tesseract's behavior.
 3. We can query details about the image.
 3. We can query the metadata about the version of tesseract, the supported image formats, etc.
 

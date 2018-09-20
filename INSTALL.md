@@ -13,8 +13,9 @@ For Tesseract versions 3.04+, you need to use the files from [tessdata](https://
 
 These files can be put into the default search locations (e.g., /usr/local/share) or Tesseract can be told where to find them with the `tessdata` flag.
 
-3) aspell
-R CMD BUILD said I was misisng aspell, so I got from [omegahat.net](http://www.omegahat.net/Aspell/)
++ aspell is suggested (not a dependency)
+
+R CMD BUILD said I was missing aspell, so I got from [omegahat.net](http://www.omegahat.net/Aspell/)
 You might need to apply this [fix](https://stackoverflow.com/questions/25395685/aspell-wont-build-on-os-x-10-9-mavericks)
 
 
