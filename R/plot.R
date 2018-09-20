@@ -166,7 +166,7 @@ function(bbox, confidences = bbox[, "confidence"],
     intervals[1] = 0
     intervals[numColors+1] = 100
     
-    i = cut(confidences, intervals )
+    i = cut(confidences, unique(intervals) )
     structure(colors[ i ], names = as.character(i))
 }
 
