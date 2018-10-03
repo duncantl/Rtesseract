@@ -12,16 +12,16 @@ function(image = character(), pageSegMode = integer(), lang = "eng", datapath = 
 
   if(!is.na(datapath)) 
       datapath = normalizePath(datapath)
+
+  if(length(opts) > 0)
+     SetVariables(api, opts = opts)  
   
   if(init)
      Init(api, lang, datapath = datapath, configs = configs, vars = vars, engineMode = engineMode, debugOnly = debugOnly)
 
   if(length(pageSegMode))  # Make certain this happens after Init() as the C++ Init() resets PageSegMode
       SetPageSegMode(api, pageSegMode)
-  
-  if(nargs() > 0)
-     SetVariables(api, opts = opts)  
-  
+    
   if(length(image))
      SetImage(api, image)
   
