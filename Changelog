@@ -1,4 +1,7 @@
+
 0.3-1
+	* Set the locale for each .Call() invocation to handle tesseract 4.0.
+	
 	* Can treat the TesseractBaseAPI object returned by tesseract() as a named list to get/set the
 	  tesseract variables. names(), $, [[, $<-, [[<-, [, [<-, methods.
 0.3-0
