@@ -1,0 +1,7 @@
+library(Rtesseract)
+smithburn = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")
+test2.api = tesseract(smithburn)
+tmp2 = GetBoxes(test2.api)
+gc()
+test2.api = tesseract(smithburn)
+gc()
