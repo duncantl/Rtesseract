@@ -294,10 +294,10 @@ R_TessBaseAPI_GetThresholdedImage(SEXP r_api)
 
 extern "C"
 SEXP
-R_pixRead(SEXP r_filename)
+R_pixRead(SEXP r_filename, SEXP r_addFinalizer)
 {
   Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
-  return(createRef(image, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
+  return(createRef(image, "Pix", (Rf_length(r_addFinalizer) == 0 || LOGICAL(r_addFinalizer)[0]) ? R_pixDestroy : NULL)); //XXX Put a finalizer on this and bump the reference count
 }
 
 void
