@@ -61,16 +61,16 @@ function(bbox, dims, alts, template = "svgValidate_template.html")
     if(is.character(template))
         template = XML::htmlParse(template)
     
-    osvg = getNodeSet(template, "//svg")
-    replaceNodes(osvg[[1]], XML::xmlRoot(XML::xmlParse(svg)))
+    osvg = XML::getNodeSet(template, "//svg")
+    XML::replaceNodes(osvg[[1]], XML::xmlRoot(XML::xmlParse(svg)))
 
     data = mkSVGData(bbox)
     h = XML::getNodeSet(template, "//head")
     XML::newXMLNode("script", attrs = c(type = "text/javascript"),
-               paste("var conf =", toJSON(data$conf), ";"), parent = h)
+               paste("var conf =", RJSONIO::toJSON(data$conf), ";"), parent = h)
 
     XML::newXMLNode("script", attrs = c(type = "text/javascript"),
-               paste("var data =", toJSON(data$data), ";"), parent = h)    
+               paste("var data =", RJSONIO::toJSON(data$data), ";"), parent = h)    
 
     m = XML::getNodeSet(template, "//i[@id = 'minConf']")[[1]]
     XML::xmlValue(m) = floor(min(bbox$conf))
