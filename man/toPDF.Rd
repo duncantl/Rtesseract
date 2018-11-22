@@ -72,7 +72,7 @@ Duncan Temple Lang
 }
 \examples{
 f = system.file("images", "1990_p44.png", package = "Rtesseract")
-toPDF(f, "tmp")
+try( toPDF(f, "tmp") ) # may fail if can't find pdf.ttf. Is this in tesseract  4.0's tessdata
 
 toHTML(f, TRUE, "tmp")
 

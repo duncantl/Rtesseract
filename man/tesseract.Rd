@@ -112,7 +112,7 @@ tesseract(image = character(), pageSegMode = integer(), lang = "eng",
 
 Init(api, lang = "eng", configs = character(), vars =
      character(), datapath = NA, engineMode = OEM_DEFAULT,
-     debugOnly = FALSE, force2 = FALSE)
+     debugOnly = FALSE, force2 = TRUE)
 
 Recognize(api)
 }

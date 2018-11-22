@@ -22,7 +22,7 @@
 }
 \usage{
 pixRotateAMGray(pix, angle, grayVal = 0L)
-pixRotateAMGray(pix, angle = -pi/2, type = 1L, incolor = 1L, width = 0L, height = 0L)
+pixRotate(pix, angle = -pi/2, type = 1L, incolor = 1L, width = 0L, height = 0L)
 pixFlipLR(pix, target = NULL)
 pixFlipTB(pix, target = NULL)
 }
