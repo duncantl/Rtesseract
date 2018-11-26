@@ -1,3 +1,5 @@
+// #define FINALIZER_DEBUG 1
+
 #include <string>
 using std::string;
 
@@ -78,17 +80,28 @@ void tprintf_internal(const char *fmt, ...)
 // Just for OSX ??
 #include <locale.h>
 
+// Called from the .Call() in this package to set the locale to C when
+// we are using tesseract 4.0 for now.
+extern "C"
+void
+Rtesseract_setCLocale()
+{
+  setlocale(LC_ALL, "C");
+}
+
 extern "C"
 SEXP
 R_TessBaseAPI_new()
 {
   // Adjusted from Jeroen's tesseract pkg
   // https://github.com/ropensci/tesseract/blob/efd0d5fc84d87380271495c1a2c678b84e49b2ae/src/tesseract.cpp
-  char *old_ctype = strdup(setlocale(LC_ALL, NULL));
-  setlocale(LC_ALL, "C");
+//  char *old_ctype = strdup(setlocale(LC_ALL, NULL));
+//  char *new_ctype = strdup(setlocale(LC_ALL, NULL));
+//  fprintf(stderr, "new locale after setting LC_ALL to C: %s, from %s\n", new_ctype, old_ctype);
+//  free(new_ctype);
   tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
-  setlocale(LC_ALL, old_ctype);
-  free(old_ctype);
+//  setlocale(LC_ALL, old_ctype);
+//  free(old_ctype);
   return(createRef(api, "TesseractBaseAPI", R_freeAPI));
 }
 
@@ -98,7 +111,7 @@ R_freeAPI(SEXP obj)
   tesseract::TessBaseAPI * api = (tesseract::TessBaseAPI *)  R_ExternalPtrAddr(obj)  ;
   if(api) {
 #ifdef FINALIZER_DEBUG
-    Rprintf("R_freeAPI\n");
+  Rprintf("R_freeAPI %p\n", api);
 #endif
     delete api;
   }
@@ -303,14 +316,14 @@ R_pixRead(SEXP r_filename, SEXP r_addFinalizer)
 void
 R_pixDestroy(SEXP obj)
 {
-//   Pix *p = (Pix *) R_ExternalPtrAddr(obj);
-//   if(p) {
-// #ifdef FINALIZER_DEBUG
-//      Rprintf("R_pixDestroy\n");
-// #endif
-//      pixDestroy(&p);
-//      R_SetExternalPtrAddr(obj, NULL);
-//   }
+   Pix *p = (Pix *) R_ExternalPtrAddr(obj);
+   if(p) {
+#ifdef FINALIZER_DEBUG
+     Rprintf("R_pixDestroy\n");
+#endif
+      pixDestroy(&p);
+      R_SetExternalPtrAddr(obj, NULL);
+   }
 }
 
 SEXP

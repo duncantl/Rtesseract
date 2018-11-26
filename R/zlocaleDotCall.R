@@ -7,7 +7,8 @@ function (.NAME, ..., PACKAGE)
     #    on.exit(Sys.setlocale(, old))
     old = getLocale()
     on.exit(resetLocale(old))    
-    Sys.setlocale(, "C")
+#    Sys.setlocale(, "C")
+    .C("Rtesseract_setCLocale", PACKAGE = "Rtesseract")
     base::.Call(.NAME, ..., PACKAGE = "Rtesseract")
 }
 
