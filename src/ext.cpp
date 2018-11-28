@@ -75,11 +75,20 @@ void tprintf_internal(const char *fmt, ...)
 }
 #endif
 
+// Just for OSX ??
+#include <locale.h>
+
 extern "C"
 SEXP
 R_TessBaseAPI_new()
 {
+  // Adjusted from Jeroen's tesseract pkg
+  // https://github.com/ropensci/tesseract/blob/efd0d5fc84d87380271495c1a2c678b84e49b2ae/src/tesseract.cpp
+  char *old_ctype = strdup(setlocale(LC_ALL, NULL));
+  setlocale(LC_ALL, "C");
   tesseract::TessBaseAPI *api = new tesseract::TessBaseAPI();
+  setlocale(LC_ALL, old_ctype);
+  free(old_ctype);
   return(createRef(api, "TesseractBaseAPI", R_freeAPI));
 }
 
@@ -285,23 +294,23 @@ R_TessBaseAPI_GetThresholdedImage(SEXP r_api)
 
 extern "C"
 SEXP
-R_pixRead(SEXP r_filename)
+R_pixRead(SEXP r_filename, SEXP r_addFinalizer)
 {
   Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
-  return(createRef(image, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
+  return(createRef(image, "Pix", (Rf_length(r_addFinalizer) == 0 || LOGICAL(r_addFinalizer)[0]) ? R_pixDestroy : NULL)); //XXX Put a finalizer on this and bump the reference count
 }
 
 void
 R_pixDestroy(SEXP obj)
 {
-  Pix *p = (Pix *) R_ExternalPtrAddr(obj);
-  if(p) {
-#ifdef FINALIZER_DEBUG
-     Rprintf("R_pixDestroy\n");
-#endif
-     pixDestroy(&p);
-     R_SetExternalPtrAddr(obj, NULL);
-  }
+//   Pix *p = (Pix *) R_ExternalPtrAddr(obj);
+//   if(p) {
+// #ifdef FINALIZER_DEBUG
+//      Rprintf("R_pixDestroy\n");
+// #endif
+//      pixDestroy(&p);
+//      R_SetExternalPtrAddr(obj, NULL);
+//   }
 }
 
 SEXP

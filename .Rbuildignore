@@ -1,3 +1,4 @@
+.*-mine$
 .git
 src/Makevars$
 .o$

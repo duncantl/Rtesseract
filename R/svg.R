@@ -30,7 +30,7 @@ function(bbox, dims,  alt = NULL, col = GetConfidenceColors(bbox), alpha = .8, c
         alt = alt[w]
     
     dims = as.numeric(dims)
-    col = Rtesseract:::toAlpha(col, alpha)
+    col = toAlpha(col, alpha)
     idx = seq(length = nrow(bbox))
     txt =  c(sprintf('<svg width="%f" height="%f">', dims[1], dims[2]),
              sprintf('<text id="%d" index="%d" x="%f" y="%f" fill="%s">%s</text>', idx, idx, bbox$left, bbox$top,  col, gsub("&", "&amp;", bbox$text)),
@@ -59,25 +59,25 @@ function(bbox, dims, alts, template = "svgValidate_template.html")
 {
     svg = mkSVG(bbox, dims)
     if(is.character(template))
-        template = htmlParse(template)
+        template = XML::htmlParse(template)
     
-    osvg = getNodeSet(template, "//svg")
-    replaceNodes(osvg[[1]], xmlRoot(xmlParse(svg)))
+    osvg = XML::getNodeSet(template, "//svg")
+    XML::replaceNodes(osvg[[1]], XML::xmlRoot(XML::xmlParse(svg)))
 
     data = mkSVGData(bbox)
-    h = getNodeSet(template, "//head")
-    newXMLNode("script", attrs = c(type = "text/javascript"),
-               paste("var conf =", toJSON(data$conf), ";"), parent = h)
+    h = XML::getNodeSet(template, "//head")
+    XML::newXMLNode("script", attrs = c(type = "text/javascript"),
+               paste("var conf =", RJSONIO::toJSON(data$conf), ";"), parent = h)
 
-    newXMLNode("script", attrs = c(type = "text/javascript"),
-               paste("var data =", toJSON(data$data), ";"), parent = h)    
+    XML::newXMLNode("script", attrs = c(type = "text/javascript"),
+               paste("var data =", RJSONIO::toJSON(data$data), ";"), parent = h)    
 
-    m = getNodeSet(template, "//i[@id = 'minConf']")[[1]]
-    xmlValue(m) = floor(min(bbox$conf))
-    m = getNodeSet(template, "//i[@id = 'maxConf']")[[1]]
-    xmlValue(m) = ceiling(max(bbox$conf))
-    m = getNodeSet(template, "//input[@id = 'confSlider']")[[1]]
-    xmlAttrs(m)  = c(value = ceiling(max(bbox$conf)))
+    m = XML::getNodeSet(template, "//i[@id = 'minConf']")[[1]]
+    XML::xmlValue(m) = floor(min(bbox$conf))
+    m = XML::getNodeSet(template, "//i[@id = 'maxConf']")[[1]]
+    XML::xmlValue(m) = ceiling(max(bbox$conf))
+    m = XML::getNodeSet(template, "//input[@id = 'confSlider']")[[1]]
+    XML::xmlAttrs(m)  = c(value = ceiling(max(bbox$conf)))
     
 
     invisible(template)

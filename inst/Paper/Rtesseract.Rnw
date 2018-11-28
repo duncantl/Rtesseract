@@ -24,29 +24,37 @@
 %     documentation in the Tesseract documentation.
 
 
-\author{Matthew B. Espe \\ UC - Davis
-  \And Duncan Temple Lang \\ UC - Davis}
+\author{Matthew B. Espe \\ Data Science Initiative \\ University of California, Davis
+  \And Duncan Temple Lang \\ Data Science Initiative \\ University of California, Davis}
 \Plainauthor{Matthew B. Espe, Duncan Temple Lang}
 
-\title{\pkg{Rtesseract}: A package for Optical Character Recognition (OCR) from \proglang{R}}
+\title{\pkg{Rtesseract}: a Package for Optical Character Recognition from \proglang{R}}
 \Plaintitle{}
 \Shorttitle{}
 
 \Abstract{
-
+%FIX: Make the first sentence stronger and connect to scanned documents.
+% e.g.
+  % We are increasingly recovering text and numeric data from scanned documents
+  % and images.  The \pkg{Rtesseract} provides flexible and comprehensive functionality for
+  % this using optical character recognition (OCR) and is an interface to the Open Source C++
+  % OCR library tesseract.
   We created the \pkg{Rtesseract} package to support working with text
   data present in images. \pkg{Rtesseract} is an \proglang{R} package that
-  provides access to Tesseract, an Open Source C++ library for Optical
+  provides access to Tesseract, an open source \proglang{C++} library for Optical
   Character Recognition (OCR), from within \proglang{R}.  At its simplest,
   \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image
-  as lines, words or individual characters.  We can also obtain the
-  location of text elements, possible alternatives and the predictive
-  ``confidence'' for each.  These are often necessary for interpreting
-  the text, e.g., for multi-column layout, or tables.  The package
-  provides access to much of the Tesseract C++ API, allowing full
+  as lines, individual words or separate characters.  Importantly, we can also obtain the
+  location of text elements, possible alternatives for characters, and the estimated
+  ``confidence'' for each.  These metadata are often essential for interpreting
+  and reconstructing the text, e.g., for multi-column layout, tables, or even section titles.  The package provides access to much of the Tesseract C++ API, allowing full
   customization of the OCR behavior, and exporting the results in
   various formats (e.g. PDF), and also visualizing them within R
-  itself.  With the \pkg{Rtesseract} package, users are able to create
+  itself.  The package also provides access to leptonica's image manipulation
+  functionality for pre-processing images to enhance the recognition, and also
+  high-level functionality for recovering horizontal and vertical lines often vital
+  for reconstructing data from tables.
+  With the \pkg{Rtesseract} package, users are able to create
   a fully programmatic workflow to extract text data into \proglang{R} for
   subsequent analysis.  }
 
@@ -66,6 +74,13 @@
 \pagenumbering{arabic}
 
 \section{Introduction}\label{intro}
+% FIX: we may need to make this section "tighter", i.e. get the essential points
+% across in a more compelling manner, and also show the distinction between Jeroen's 
+% package and ours, or emphasize that ours was first.
+% Everything that is written is good and correct. But it may not be compelling to 
+% those who don't already understand the need for metadata.   We may need to spell
+% this out with minimally worded examples, e.g. tables with missing cells.
+
 
 <<setup, echo=FALSE, message=FALSE, warning=FALSE>>=
 library(Rtesseract)
@@ -114,56 +129,73 @@ work with from social media, reports, scholarly articles, job
 applications, etc. These often come as plain text or structured
 documents such as word-processing files, HTML, or PDF. However, there are
 many documents of interest that are only available as scanned or
-photographic images (e.g., old books, newspapers).
-Optical Character Recognition (OCR) is a technique to infer
+photographic images (e.g., old books, newspapers, reports).
+Optical Character Recognition (OCR) is a technique to infer and extract
 characters, words or lines of text from an image, thereby making them
 accessible for data analysis.
 
 There are many commercial OCR software tools
-currently available (e.g., Adobe Acrobat, PDFPen Pro, ABBY, Google Cloud Vision), though these
-typically only output text results.
+%FIX: citations for each of these
+currently available (e.g., Adobe Acrobat, PDFPen Pro, ABBY, Google Cloud Vision), 
+though these
+typically  %FIX: this word is tricky. ABBY outputs XML with information.
+  % Perhaps  "however not all of these...."
+  % And will the reader understand the implications of this at this point in the text.
+only output text results.
 Although OCR technology has steadily improved over the years, OCR
 results are rarely perfect. We may not care about these errors if they
 are inconsequential to subsequent analysis. However, often these error
 impact our analysis and we need to correct them before
-preceding. Therefore, OCR is commonly part of a workflow that involves
+proceeding. Therefore, OCR is commonly part of a workflow that involves
 pre- and post-processing steps to verify and increase the accuracy of
 the text extraction.
 
 A typical OCR workflow might first start with image pre-processing. 
-The image might be cropped, contrast increased, noise decreased, etc. using image
-editing software to make the text ``stand out'' prior to OCR. Then
-after OCR has been run we will check if the results make sense. In
-some cases there are obvious issues, such as nonsense words or garbled
+The image might be cropped, contrast increased, noise decreased, have smudges removed, 
+etc. using image editing software to make the text ``stand out'' prior to OCR. Then
+after OCR has been run, we will check if the results make sense. In
+some cases there are obvious issues, such as nonsense words or garbled %FIX what does garbled mean
 text, but in other cases we might want to focus our attention on the
 areas where the OCR engine had the least certainty. When we have
 prior contextual knowledge about the correct matches, such as only
 numbers or certain characters or words occur in the text, we can
 leverage this information to correct errors in the post-processing
-steps. When the text is arranged in columns or blocks, we will want to
+steps. 
+When the text is arranged in columns or blocks, we will want to
 rearrange the text into the correct order. Finally, we will analyze
-the text results using methods such as NLP. Using OCR software which
-only returns text results, our full OCR workflow would involve 1)
+the text results using methods such as those used in Natural Language Processing (NLP). 
+% New paragraph possibly??
+Using OCR software which only returns text results, our full OCR workflow would involve 1)
 multiple platforms to perform pre-processing, OCR, post-processing,
 and analysis, 2) using pre- and post-processing steps to overcome
 limited control over the OCR process itself, 3) limited options to
 programmatically control and reproduce each step in the workflow, and
-4) no access to OCR intermediate products, such as confidences,
-alternative matches, location on the page, etc., which are helpful for
-assessing the certainty in each returned result.
+4) no access to OCR intermediate metadata, such as confidence measures,
+alternative matches, location on the page, size of the text, etc., which are helpful for
+assessing the certainty in each returned result and recovering structure and layout
+of the data such as columns in a table or section titles.
+%FIX: Perhaps make this punchier, stronger and more succinct. Not certain the
+% reader will get the need for this metadata
 
 In our work extracting and analyzing text data present in images from
-\proglang{R}, we desired a tool which would overcome the limitations above. In
+\proglang{R}, we desired  % required? needed?
+a tool which would overcome the limitations above. % perhaps be specific about which 
+% features specifically.
+In
 our search for solutions, we found Tesseract, a long-standing open
 source OCR library originally created in 1985 and currently under
+% resurgent ?
 active development. Accessing the Tesseract API from \proglang{R} provides us
 with the ability to bring pre-processing, OCR, post-processing, and
 analysis under complete programmatic control within \proglang{R}. The
 \pkg{Rtesseract} package provides 1) a simple high-level function to
 extract the text from one or more images, 2) the ability to also
-obtain important auxiliary data (e.g., the confidence in each
+obtain important auxiliary metadata (e.g., the confidence in each
 prediction, the location within the image), and 3) customization of
 how the OCR is done.
+%FIX: What about recovering lines, pre-processing the image (rotation), 
+% zooming in on specific regions for more focused OCR (perhaps based on the metadata from the original OCR)
+
 
 % Use the term certainty/uncertainty
 
@@ -171,9 +203,10 @@ how the OCR is done.
 In response to our needs, we developed the \pkg{Rtesseract} package,
 an interface to the open source OCR library Tesseract. Tesseract was
 created 1985, was released for open source in 2005, and has since been
-actively maintained and developed by the open source community
+actively maintained and developed by the open source community % FIX: the word "the" 
+  % for open source community may not be ideal as there are many more than one 
 (including developers at Google). Recent innovations in Tesseract
-include the integration of LSTM Deep Learning networks (versions >=
+include the integration of LSTM Deep Learning networks (versions $\ge$
 4.0) for increased speed and accuracy. By interfacing with Tesseract,
 the \pkg{Rtesseract} package provides us 1) a simple high-level
 function to extract the text from one or more images, 2) the ability
@@ -187,10 +220,10 @@ This approach using \pkg{Rtesseract} tightly integrates pre- and
 post-processing steps with the actual OCR, all from within
 \proglang{R}.
 For example, we can focus
-on a sub-region of the image, or enhance the image with some computer
+on a sub-region of the image, rotate the image, threshold the colors, or enhance the image with some computer
 vision techniques before performing the character recognition. We can
 specify a domain-specific vocabulary, or identify unconventional
-fonts. We can adjust the OCR behavior via configuration variables to
+fonts. We can adjust the OCR behavior via run-time configuration variables to
 correct errors in the recognition step rather than relying on
 post-processing. This tight integration simplifies workflows that
 otherwise rely on invoking stand-alone applications typically meant
@@ -200,7 +233,8 @@ of the text into blocks, the presence of elements such as lines or
 other dividers, or even the relative size of the text can all be used
 to make sense of the resulting text. Diagnostic pieces of information
 such as the certainty in the matches, alternative matches, etc., can
-be essential assessing certainty and improving OCR accuracy. If the
+be essential in assessing certainty, iteratively improving OCR accuracy or reconstructing
+the high-level structure from the individual data values. If the
 OCR tool only returns the text results, as is the case with many OCR
 tools, OCR's usefulness is limited to cases where the problem is
 either simple or well-covered by the default configuration.
@@ -209,35 +243,46 @@ We have not been alone in recognizing the utility of Tesseract. Prior
 to our creation of the \pkg{Rtesseract} in April 2015, the \pkg{ocR}
 package~\citep{Hagmann2014} provided an interface in \proglang{R} to Tesseract
 via calling the Tesseract command line executable. Using the \pkg{ocR}
-package, the user specifies the image file and command-line options,
+package, the \proglang{R} user specifies the image file and command-line options,
 Tesseract is called and writes the results to a file which is then
-read back into \proglang{R}. Then, following the creation of our \pkg{Rtesseract},
+read back into \proglang{R}. Following the creation of our \pkg{Rtesseract},
 the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
 similar approach to our \pkg{Rtesseract} package by interfacing to the
 Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
 provides only limited functionality to get the text results from the OCR
-process. %% Check this\
+process. %%FIX: Check this. I think it now gets the location information.
 Similar bindings to the Tesseract API exist in \proglang{Python}, \proglang{Ruby}, \proglang{Go}, etc. (see \url{https://github.com/tesseract-ocr/tesseract/wiki/AddOns} for additional details on these interfaces to Tesseract), though these typically only provide limited functionality.
 
 \pkg{Rtesseract}, from its initial
 implementation, provides access to most of the functionality in the
 Tesseract API and provides fine-grain control from \proglang{R} to the different
-steps in the OCR process. Additionally, \pkg{Rtesseract} provides
-additional tools which allow users to easily extend functionality, as well as
-access to leptonica, the image library Tesseract uses for image
-pre-processing. This functionality allows users to provide their own
+steps in the OCR process. 
+%FIX:  We have to be careful here. It is not the steps in the OCR itself, but the pre and
+%post-processing around tesseract, and via run-time variables controlling tesseract.
+% The sentence above could be misinterpreted.
+\pkg{Rtesseract} also provides
+higher-level functionality to visualize the results from the OCR on the original
+image.  \pkg{Rtesseract} additionally
+allows \proglang{R} users access to leptonica\citep{leptonica}, the image library Tesseract uses for
+image pre-processing. This functionality allows users to provide their own
 processed image to Tesseract. Lastly, \pkg{Rtesseract} has been
 designed to support both the current release (v3.05.01) and
 development versions (v4.0.0) of Tesseract, with mechanisms to
 configure \pkg{Rtesseract} according to the installed versions of
 Tesseract, leptonica, and image libraries.
 
+
 \section{Optical Character Recognition using Rtesseract}\label{desc}
 
+% This talks about text, but then doesn't mention GetText (added now)
+% and talks about interfaces (plural) rather than functions. 
+% So is it the collection of functionality we want to discuss here or just GetText()
+% as the paragraph seems to start with the simple case which is GetText().
+
 For many simple problems, merely extracting text from an image in a
-reliable manner is sufficient.  \pkg{Rtesseract} provides simple
-interfaces which allow users to provide the path to an image in a
-supported format, e.g. tiff or png, and to perform OCR on the image
+reliable manner is sufficient.  \pkg{Rtesseract} provides a simple
+function \code{GetText} which allows \proglang{R} users to provide the path to an image file in a
+supported format, e.g. TIFF, JPEG or PNG, and to perform OCR on the image
 using the default settings (similar to both the \pkg{ocR} and
 \pkg{tesseract} packages). For example, suppose we have an image from
 an older scientific publication from which we want to extract
@@ -256,7 +301,7 @@ highlight the functionality and common use-cases of the
 \subsection{Basic Text Extraction}
 
 The most fundamental task for OCR is to convert an image into text.
-For this simple task, we use the high-level function \code{GetText},
+For this simple task, we use the high-level function \code{GetText}, e.g.,
 
 <<>>=
 smithburn = system.file("images", "SMITHBURN_1952_p3.png",
@@ -265,21 +310,28 @@ GetText(smithburn)
 @
 
 We pass \code{GetText} the path to a file containing the image.  By
-default, it returns the words it finds in the image in the order they
+default, it returns the words it finds in the image in the order they % order needs qualification or some definition
 appear.  We sometimes want the results returned as individual
 characters (symbols), such as when we are checking how well Tesseract
-recognized individual characters, e.g. special or unique characters,
-
+recognized individual characters, e.g. special or unique characters.
+% motivate this better.  e.g. when we will do the word assimilation ourselves.
+% or when we want to do something with the words by getting the individual characters
+% in a second OCR pass and then comparing.
+We do this by providing a value for the \code{level} parameter of the
+\code{GetText} function, e.g.,
 <<>>=
 GetText(smithburn, level = "symbol")
 @ 
 
-or sometimes we only want full lines (textlines),
-
+In other situations, we may full lines (\code{textline}s) of text rather than
+individual words. Again, we specify this via the \code{level} parameter,
+e.g.,
 <<>>=
 GetText(smithburn, level = "textline")
 @
 
+% I find this confusing. "organizational level"... And we just went through the
+% 3 examples. So let's just say we can also use block and para
 Modifying the organizational level of the returned text is easy to
 achieve with the \code{levels} argument in \code{GetText()}.
 Possible values include ``block'', ``para'' (paragraph), ``textline'' and ``word''.

@@ -63,6 +63,9 @@
 \alias{OEM_TESSERACT_CUBE_COMBINED}
 \alias{OEM_DEFAULT}
 
+\alias{OEM_LSTM_ONLY}
+\alias{OEM_TESSERACT_LSTM_COMBINED}
+
 \alias{InputFileFormat-class}
 \alias{coerce,character,InputFileFormat-method}
 \alias{coerce,integer,InputFileFormat-method}

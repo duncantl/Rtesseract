@@ -11,12 +11,15 @@
  The image may be either a gray-scale (including binary) or an RGB image.
 }
 \usage{
-pixGetPixels(pix, dims = pixGetDims(pix))
+pixGetPixels(pix, dims = pixGetDims(pix), transpose = FALSE)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{pix}{a \code{\link{Pix-class}} object}
   \item{dims}{the dimensions of the \code{\link{Pix-class}} object}
+  \item{transpose}{a logical value controlling whether the dimensions
+    of the resulting matrix are reversed, i.e., the number of rows and
+    columns are interchanged.}
 }
 
 \value{

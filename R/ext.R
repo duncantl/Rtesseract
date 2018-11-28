@@ -67,13 +67,13 @@ function(api, ..., opts = list(...))
 }
 
 pixRead = 
-function(filename, ...)
+function(filename, addFinalizer = TRUE, ...)
 {
    filename = path.expand(filename)
    if(!file.exists(filename))
       stop("no such file ",  filename)
 
-   .Call("R_pixRead", filename)
+   .Call("R_pixRead", filename, as.logical(addFinalizer))
 }
 
 SetImage = 
@@ -84,7 +84,7 @@ function(api, pix, filename = NA)
         stop("No such file ", pix)
      if(is.na(filename))
         filename = pix
-     pix = pixRead(pix)
+     pix = pixRead(pix, FALSE) # Don't add a finalizer
  }
   
   if(!is.na(filename))

@@ -1,4 +1,4 @@
-KNIT = Rscript -e "library(knitr); knit('$<')"
+KNIT = Rscript -e "library(knitr); render_sweave(); knit('$<')"
 
 # Rtesseract.pdf: Rtesseract.bib RJwrapper.tex
 # 	pdflatex RJwrapper.tex
@@ -20,7 +20,7 @@ Rtesseract.pdf: Rtesseract.tex Rtesseract.bib
 # RJwrapper.tex: RJwrapper.Rnw Rtesseract.Rnw
 #	$(KNIT)
 
-Rtesseract.tex: Rtesseract.Rnw rotateZoom.Rnw
+Rtesseract.tex: Rtesseract.Rnw rotateZoom.Rnw Makefile
 	$(KNIT)
 
 clean:

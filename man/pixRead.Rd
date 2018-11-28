@@ -23,6 +23,7 @@
 \alias{[<-,Pix,missing,missing-method}
 \alias{coerce,character,Pix-method}
 \alias{plot,Pix-method}
+\alias{pixSetDims}
 \alias{pixGetDims}
 \alias{pixGetDepth}
 \alias{pixGetRes}
@@ -32,6 +33,7 @@
 \alias{pixEqual}
 \alias{pixClone}
 \alias{pixCreate}
+\alias{pixCreate,numeric-method}
 \title{Read an Image for use with Tesseract}
 \description{
   This function reads an image, determining what format it is
@@ -39,7 +41,7 @@
   for optical character recognition.
 }
 \usage{
-pixRead(filename, ...)
+pixRead(filename, addFinalizer = TRUE, ...)
 pixCreate(x, ...)
 }
 \arguments{
@@ -47,6 +49,13 @@ pixCreate(x, ...)
     necessary.}
   \item{x}{a vector of length three specifying the width, height and
     depth of the image.}
+  \item{addFinalizer}{a logical value that controls whether the C code
+      for pixRead adds a finalizer to garbage collect the resulting Pix
+      object. When we pass the Pix to tesseract via
+      \code{\link{SetImage}}, that tesseract object will attempt to free
+      the image when/if it is garbage collected. So we have to avoid two
+      attempts to free the same Pix.
+    }
   \item{\dots}{additional arguments, currently ignored for
     \code{pixRead} and passed to the methods for \code{pixCreate}.}
 }
@@ -70,13 +79,13 @@ Duncan Temple Lang
 \examples{
  f = system.file("images", "OCRSample2.png", package = "Rtesseract")
  pix = pixRead(f)
- pixGetInputFormat(px)
+ pixGetInputFormat(pix)
 
  plot(pix)
  dim(pix)
  pix[,]
  
- pixGetInputFormat()
+ pixGetInputFormat(pix)
  api = tesseract(pix)
  lapply(api, GetAlternatives, "symbol")
 }

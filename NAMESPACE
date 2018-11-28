@@ -3,7 +3,7 @@ useDynLib(Rtesseract)
 
 import(methods)
 
-importFrom("utils", read.table)
+importFrom("utils", read.table, adist, aspell)
 import(graphics)
 importFrom("grDevices", "rgb", "colorRampPalette", "col2rgb", "as.raster")
 importFrom("stats", dist, median, quantile, density)

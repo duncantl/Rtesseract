@@ -13,7 +13,7 @@
 }
 \usage{
 getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
-         gap = 0.02, ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
+         gap = 0.02, asDataFrame = FALSE, ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
 findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210)
 }
 \arguments{
@@ -35,6 +35,8 @@ findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), th
   \item{gap}{the number of pixels below which two segments are
   considered one, i.e., when the end of one segment is within gap pixels
   of the start of the other segment.}
+\item{asDataFrame}{a logical value that controls whether the result is
+  returned as a data.frame or a matrix.}
   \item{\dots}{additional arguments passed to \code{findLines}}
   \item{asIs}{indicates if the image passed via \code{pix} has already been
   processed to contain only the images (\code{TRUE}).  Otherwise,
@@ -46,6 +48,13 @@ findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), th
     In this case, we don't have to specify \code{horiz} and \code{vert}
     but just \code{horizontal}.
   }
+  \item{asLines}{a logical value that controls ....}
+  \item{invert}{a logical value that controls whether we invert the
+     resulting binary image, turning black to white and vice versa, only
+   used if \code{asLines} is \code{TRUE}.}
+  \item{erode}{a numeric/integer vector with 2 elements, passed to \code{\link{pixErodeGray}}}
+  \item{threshold}{an integer value used for thresholding the gray-scale
+  pixels to create a binary, black and white image.}  
 }
 \value{
  a list of matrices, each containing 4 columns giving x0, y0, x1, y1

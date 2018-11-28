@@ -1,21 +1,40 @@
 \name{plot}
 \alias{plot,TesseractBaseAPI-method}
 \alias{plot,OCRResults-method}
+\alias{showPoints}
 \title{Plot the results of an OCR}
 \description{
-  These functions are useful diagnostics of how well
-  the OCR recognized the text.
+  These functions are useful diagnostics of how well the OCR recognized the text.
   The method for a TesseractBaseAPI object can display both the image
   and all of the locations and rectangular regions (but not the text) for the elements the OCR recognized.
-  The method for OCRResults (returned from a call to
-  \code{\link{GetBoxes}})
+  The method for OCRResults (returned from a call to  \code{\link{GetBoxes}})
   displays the text returned from the OCR as it appears on the
-  page.   On other words, it doesn't show the background image
-  but does show the text. 
+  page.   In other words, it doesn't show the background image
+  but does show the text.
+  \code{showPoints} can be used to highlight a subset of entries in the
+  results of the OCR that are of interest. The function draws large
+  circles centered at those points so one can quickly identify them
+  visually on the original image.
 }
-%\usage{}
+\usage{
+showPoints(x, top = par()$usr[4], radii = 30, fg = "red", ...)
+}
+\arguments{
+\item{x}{the subset of the matrix or data.frame of results from the OCR
+  giving the coordinates of the items we want to identify via
+  \code{showPoints}}
+\item{top}{the number of pixels in the image, providing the value to map
+  the vertical coordinates in \code{x} to the coordinates of the plot,
+  i.e. subtract the values from this \code{top} value.}
+\item{radii}{the radius of the circles that are drawn at the points in
+  \code{x}.
+   This value is passed to  in the call to \code{\link[graphics]{symbols}} as the
+   argument for \code{radii}.}
+ \item{fg}{the color for drawing the circles}
+ \item{\dots}{additional arguments passed to \code{\link[graphics]{symbols}}}
+}
 \value{
-  This method returns the matrix
+  The plot methods return the matrix
   of bounding  boxes with values consistent
   with the user-coordinates of the plot (i.e.,
   the top and bottom mapped to the plot's coordinates

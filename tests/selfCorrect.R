@@ -10,4 +10,4 @@ spellFix("giviag") # from the aspell alternatives
 }
 
 
-selfCorrect(wrong = "giviag", words = words)
+Rtesseract:::selfCorrect(wrong = "giviag", words = words)

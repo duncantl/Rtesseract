@@ -9,13 +9,13 @@ Description: This provides a flexible Optical Character Recognition (OCR)
   It also provides some functionality from the leptonica library for
   performing image processing. This allows us, for example, to detect
   lines in an image, important for interpreting tables.
-Version: 0.3-0
+Version: 0.3-1
 Author: Duncan Temple Lang, Matt Espe
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
 License: Apache License
 SystemRequirements: tesseract_3.0.3 release candidate or higher
       https://code.google.com/p/tesseract-ocr/
       tesseract requires leptonica.
-Imports: methods, grDevices
-Suggests: png, tiff, jpeg, Aspell
+Imports: methods, grDevices, utils
+Suggests: png, tiff, jpeg, Aspell, XML, RJSONIO
 Others: rjpeg

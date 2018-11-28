@@ -13,6 +13,7 @@
 \alias{GetAlternatives,TesseractBaseAPI-method}
 \alias{GetAlternatives,character-method}
 \alias{GetAlternatives,Pix-method}
+\alias{[,OCRResults,ANY,ANY-method}
 
 \title{Query the Current OCR Result to Get Text, Bounding Boxes, Confidence or Alternative Characters}
 \description{
@@ -69,7 +70,8 @@ GetAlternatives(obj, ...)
   \item{confidence}{the accuracy/credibility (as a percentage) reported by tesseract}
 
   The class of this data frame is \code{OCRResults} and there
-  is a plot() method for this to display the recovered words as they appear on the image.
+  is a plot() method for this to display the recovered words as they
+  appear on the image, and also.
 
   Alternatively, \code{GetBoxes} can return a matrix with 4 columns
   giving the lower-left corner and upper right corner,
