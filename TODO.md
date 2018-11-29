@@ -1,5 +1,12 @@
 # Todo Items
 
+1. Clean up top-level dir
+  - sampleImage.*: required to set image capabilities
+  - R scripts: createSamplePNG.R, lines.R, lines2.R
+  - directories: testRexit TU
+  - cpp: readImage.cpp
+  - notes: Note findLines_notes
+
 1. getLines() for UCD_Lehmann_0377.jpg fails.
 ```
 f = "/Users/duncan/Data/UCD_LEHMANN/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg"
