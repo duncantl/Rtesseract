@@ -6,7 +6,8 @@ function (.NAME, ..., PACKAGE)
     #    old = Sys.getlocale()
     #    on.exit(Sys.setlocale(, old))
     old = getLocale()
-    on.exit(resetLocale(old))    
+    on.exit(resetLocale(old))
+#    expr = susbstitute(resetLocale(old), list(old = old))
 #    Sys.setlocale(, "C")
     .C("Rtesseract_setCLocale", PACKAGE = "Rtesseract")
     base::.Call(.NAME, ..., PACKAGE = "Rtesseract")
@@ -17,7 +18,6 @@ LocaleEls = c("LC_COLLATE", "LC_CTYPE", "LC_MONETARY", "LC_NUMERIC", "LC_TIME", 
 getLocale =
 function()
 {
-#    cat("getLocale\n")
     tmp = sapply(LocaleEls, Sys.getlocale)
     tmp[tmp != ""]
 }
@@ -25,7 +25,6 @@ function()
 resetLocale =
 function(vals)
 {
-#    cat("resetLocale\n")
     mapply(Sys.setlocale, names(vals), vals)
 }
 
