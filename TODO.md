@@ -1,10 +1,19 @@
 # Todo Items
 
+
 1. Check the character encoding under the following setup:
      + do OCR on a foreign page with words that have accents or different characters
 	 + use a different language setting for TESSDATA_PREFIX
 
 1. Test under a different locale.
+
+1. Clean up top-level dir
+  - sampleImage.*: required to set image capabilities
+  - R scripts: createSamplePNG.R, lines.R, lines2.R
+  - directories: testRexit TU
+  - cpp: readImage.cpp
+  - notes: Note findLines_notes
+
 
 1. getLines() for UCD_Lehmann_0377.jpg fails.
 ```
