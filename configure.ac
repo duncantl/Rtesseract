@@ -197,7 +197,8 @@ PDF_FILES="NA"
 SPIX_FILES="NA"
 
 echo "Compiling readImage"
-$CXX $CPPFLAGS $CXXFLAGS -o readImage readImg.cpp $TESS_CFLAGS $LEPT_CFLAGS  $TESS_LIBS $LEPT_LIBS
+dnl echo "$CXX -o readImage readImg.cpp $LEPT_CFLAGS $TESS_CFLAGS $CXXFLAGS $CPPFLAGS  $LEPT_LIBS $TESS_LIBS"
+$CXX -o readImage readImg.cpp $LEPT_CFLAGS $TESS_CFLAGS $CXXFLAGS $CPPFLAGS $LEPT_LIBS  $TESS_LIBS
 
 if test "$?" = "0" ; then
   echo "testing leptonica can read different image formats"
