@@ -220,14 +220,18 @@ Duncan Temple Lang
 
 
 \dontrun{
-# Don't run these in the interest of time. But they work fine.
-f = system.file("images/RussianDoc.png", package = "Rtesseract")
-ans = GetText(tesseract(f, lang = "rus"))
-ans$text
+     # Don't run these in the interest of time. But they work fine.
+if("rus" %in% getAvailableLanguages()) {
+   f = system.file("images/RussianDoc.png", package = "Rtesseract")
+   ans = GetText(tesseract(f, lang = "rus"))
+   ans$text
+}
 
-f = system.file("images/Sanscrit.png", package = "Rtesseract")
-ans = GetBoxes(tesseract(f, lang = "san"))
-ans$text
+if("san" %in% getAvailableLanguages()) {
+   f = system.file("images/Sanscrit.png", package = "Rtesseract")
+   ans = GetBoxes(tesseract(f, lang = "san"))
+   ans$text
+}
 }
 
 }
