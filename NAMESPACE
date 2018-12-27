@@ -136,3 +136,6 @@ exportMethods("[<-")
 export(findLines, getLines)
 
 export(showPoints)
+
+
+export(getAvailableLanguages)

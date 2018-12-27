@@ -309,7 +309,7 @@ setMethod("GetBoxes",
 
               ans = m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
               class(ans) = c("OCRResults", class(ans))
-              attr(ans, "imageDims") = dim(GetImage(obj))
+              attr(ans, "imageDims") = GetImageDims(obj) # was dim(GetImage(obj)) which causes seg faults due to image being released twice or corrupted at least. Once by ~TessBaseAPI and once elsewhere.
               
               ans
           })
@@ -674,4 +674,12 @@ DetectOS =
 function(api)
 {
     .Call("R_TessBaseAPI_DetectOS", as(api, "TesseractBaseAPI"))
+}
+
+
+
+getAvailableLanguages =
+function(api = tesseract())
+{    
+    .Call("R_TessBaseAPI_GetAvailableLanguagesAsVector", api)
 }

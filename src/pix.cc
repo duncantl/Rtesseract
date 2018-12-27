@@ -33,8 +33,32 @@ R_pixWrite(SEXP r_pix, SEXP r_file, SEXP r_format)
     return(ScalarInteger(ans));
 }
 
+extern "C"
+SEXP
+R_pixCopy(SEXP r_pix)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    Pix *ans = NULL;
+    ans = pixCopy(NULL, pix);
+    return(createRef(ans, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count    
+}
 
 
+extern "C"
+SEXP
+R_pixGetRefcount(SEXP r_pix)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    return(ScalarInteger(pixGetRefcount(pix)));
+}
+
+extern "C"
+SEXP
+R_pixChangeRefcount(SEXP r_pix, SEXP r_val)
+{
+    Pix *pix = GET_REF(r_pix, Pix);
+    return(ScalarInteger( pixChangeRefcount(pix, INTEGER(r_val)[0]) ));
+}
 
 extern "C"
 SEXP

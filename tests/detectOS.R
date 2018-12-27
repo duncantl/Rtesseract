@@ -4,3 +4,7 @@ ts = tesseract(f)
 Recognize(ts)
 o = .Call("R_TessBaseAPI_DetectOS", ts)
 
+
+# Following segfaults
+# o = .Call("R_TessBaseAPI_DetectOS", tesseract())
+
