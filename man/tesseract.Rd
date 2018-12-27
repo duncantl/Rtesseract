@@ -221,13 +221,13 @@ Duncan Temple Lang
 
 \dontrun{
      # Don't run these in the interest of time. But they work fine.
-if("rus" %in% getAvailableLanguages()) {
+if("rus" \%in\% getAvailableLanguages()) {
    f = system.file("images/RussianDoc.png", package = "Rtesseract")
    ans = GetText(tesseract(f, lang = "rus"))
    ans$text
 }
 
-if("san" %in% getAvailableLanguages()) {
+if("san" \%in\% getAvailableLanguages()) {
    f = system.file("images/Sanscrit.png", package = "Rtesseract")
    ans = GetBoxes(tesseract(f, lang = "san"))
    ans$text
