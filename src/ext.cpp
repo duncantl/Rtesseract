@@ -110,8 +110,8 @@ R_freeAPI(SEXP obj)
 {
   tesseract::TessBaseAPI * api = (tesseract::TessBaseAPI *)  R_ExternalPtrAddr(obj)  ;
   if(api) {
-#ifdef FINALIZER_DEBUG
   Rprintf("R_freeAPI %p\n", api);
+#ifdef FINALIZER_DEBUG
 #endif
     delete api;
   }
@@ -262,6 +262,15 @@ R_TessBaseAPI_SetImage_raw(SEXP r_api, SEXP r_img, SEXP r_dims, SEXP r_bytes_per
 
 extern "C"
 SEXP
+R_TessBaseAPI_GetInputImage_refcount(SEXP r_api)
+{
+    tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
+    Pix *pix = api->GetInputImage();
+    return(ScalarInteger(pixGetRefcount(pix)));
+}
+
+extern "C"
+SEXP
 R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
 {
     tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI );
@@ -275,7 +284,7 @@ R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
         return(getPixAsArray(pix));
     
 Rprintf("[R_GetInputImage] Pix %p, refcount = %d\n", pix, pix->refcount);        
-   pixChangeRefcount(pix, +1);
+    pixClone(pix); //pixChangeRefcount(pix, +1);
 Rprintf("          new refcount = %d\n", pix->refcount);        
     return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
 }
@@ -326,9 +335,9 @@ R_pixDestroy(SEXP obj)
 #ifdef FINALIZER_DEBUG
      Rprintf("R_pixDestroy\n");
 #endif
-Rprintf("[R_pixDestroy] Pix %p, refcount = %d\n", p, p->refcount);         
-      pixChangeRefcount(p, -1);
-Rprintf("     now refcount = %d\n", p->refcount);         
+//Rprintf("[R_pixDestroy] Pix %p, refcount = %d\n", p, p->refcount);         
+//      pixChangeRefcount(p, -1);
+//Rprintf("     now refcount = %d\n", p->refcount);         
       pixDestroy(&p);
       R_SetExternalPtrAddr(obj, NULL);
    }
