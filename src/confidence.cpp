@@ -286,6 +286,7 @@ getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *a
     while(ri->Next(level))   
         n++;
 
+    delete ri;
     ri = api->GetIterator();
     SEXP ans, names, tmp;
     PROTECT(names = NEW_CHARACTER(n));
@@ -312,6 +313,7 @@ getRIBoundingBoxes(tesseract::PageIteratorLevel level, tesseract::TessBaseAPI *a
 
     } while (ri->Next(level));
 
+    delete ri;
     SET_NAMES(ans, names);
     UNPROTECT(2);
 
