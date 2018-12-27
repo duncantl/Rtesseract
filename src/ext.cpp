@@ -272,9 +272,12 @@ R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
 
     Pix *pix = api->GetInputImage();
     if(LOGICAL(r_asArray)[0])
-      return(getPixAsArray(pix));
-
-  return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
+        return(getPixAsArray(pix));
+    
+Rprintf("[R_GetInputImage] Pix %p, refcount = %d\n", pix, pix->refcount);        
+   pixChangeRefcount(pix, +1);
+Rprintf("          new refcount = %d\n", pix->refcount);        
+    return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
 }
 
 extern "C"
@@ -309,8 +312,10 @@ extern "C"
 SEXP
 R_pixRead(SEXP r_filename, SEXP r_addFinalizer)
 {
-  Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
-  return(createRef(image, "Pix", (Rf_length(r_addFinalizer) == 0 || LOGICAL(r_addFinalizer)[0]) ? R_pixDestroy : NULL)); //XXX Put a finalizer on this and bump the reference count
+    Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
+//    pixChangeRefcount(image, +1);
+Rprintf("[R_pixRead] Pix %p, refcount = %d\n", image, image->refcount);    
+    return(createRef(image, "Pix", (Rf_length(r_addFinalizer) == 0 || LOGICAL(r_addFinalizer)[0]) ? R_pixDestroy : NULL)); //XXX Put a finalizer on this and bump the reference count
 }
 
 void
@@ -321,6 +326,9 @@ R_pixDestroy(SEXP obj)
 #ifdef FINALIZER_DEBUG
      Rprintf("R_pixDestroy\n");
 #endif
+Rprintf("[R_pixDestroy] Pix %p, refcount = %d\n", p, p->refcount);         
+      pixChangeRefcount(p, -1);
+Rprintf("     now refcount = %d\n", p->refcount);         
       pixDestroy(&p);
       R_SetExternalPtrAddr(obj, NULL);
    }
@@ -405,7 +413,7 @@ R_ResultIterator_lapply(SEXP r_it, SEXP r_level, SEXP r_fun)
 
    do {
       const char* word = ri->GetUTF8Text(level);
-      SET_STRING_ELT(names, i, Rf_mkChar(word ? word : ""));
+      SET_STRING_ELT(names, i, Rf_mkCharCE(word ? word : "", CE_UTF8));
       if(fun)
 	el = fun(ri, level);
       else
@@ -479,7 +487,7 @@ R_ResultIterator_GetUTF8Text(SEXP r_it, SEXP r_level)
    tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
 
    const char * val = ri->GetUTF8Text(level);
-   SEXP ans = ScalarString(mkChar(val ? val : ""));
+   SEXP ans = ScalarString(mkCharCE(val ? val : "", CE_UTF8));
    delete[] val;
 
    return(ans);
@@ -746,7 +754,7 @@ getAlts(tesseract::ResultIterator *ri, tesseract::PageIteratorLevel level)
 	const char* choice = ci.GetUTF8Text();
 	conf = ci.Confidence();
 	if(choice) {
-           SET_STRING_ELT(names, i, Rf_mkChar(choice ? choice : ""));
+            SET_STRING_ELT(names, i, Rf_mkCharCE(choice ? choice : "", CE_UTF8));
 //          delete [] choice;
         }
 	REAL(ans)[i] = conf;
