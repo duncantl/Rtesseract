@@ -217,6 +217,19 @@ Duncan Temple Lang
     i = readPNG(f)
     plot(api, level = "symbol", img = i, border = "red")
  }
+
+
+\dontrun{
+# Don't run these in the interest of time. But they work fine.
+f = system.file("images/RussianDoc.png", package = "Rtesseract")
+ans = GetText(tesseract(f, lang = "rus"))
+ans$text
+
+f = system.file("images/Sanscrit.png", package = "Rtesseract")
+ans = GetBoxes(tesseract(f, lang = "san"))
+ans$text
+}
+
 }
 
 \keyword{IO}
