@@ -8,7 +8,7 @@ library(Rtesseract)
 # See also the stand-alone test in ref.cc in RefCount/ (outside of this R package repository)
 
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
-gctorture(TRUE)
+#gctorture(TRUE)
 api = tesseract(f)
 
 .Call("R_TessBaseAPI_GetInputImage_refcount", api)
