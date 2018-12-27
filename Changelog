@@ -1,14 +1,14 @@
-0.4-2
-        * getAvailableLanguages()
-	
+0.4-0
+        * getAvailableLanguages() function.
+
 	* Enhancements related to garbage collection and copying of Pix objects.
-	
+
 	* Use UTF-8 encoding on text obtained from OCR
-	
+
 	* Examples of reading Russian and Sanscrit documents.
 
 	* Avoid garbage collection related segmentation fault.
-	
+
 0.3-1
 	* Set the locale for each .Call() invocation to handle tesseract 4.0.
 
