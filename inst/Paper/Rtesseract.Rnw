@@ -438,6 +438,7 @@ the lowest confidences (note: ``confidence'' as used by Tesseract is a distance 
 confs = GetConfidences(api)
 round(sort(confs)[1:10], 1)
 @ 
+% Do we need to explain what the output is? The "recognized" words and their confidences.
 
 Clearly, some of these do not look correct. To further investigate, we
 might want to see where these low-confidence words occur on the page
@@ -448,6 +449,8 @@ bbox = GetBoxes(api)
 @
 
 \code{GetBoxes()} extends the information returned by
+% So why don't we just call GetBoxes() directly once and extract the subset of information we want?
+% We seem to be recommending not best practices and making things more complicated.
 \code{GetConfidences()} by including the left, top, right, and bottom of
 the bounding box around the word, symbol, textline, etc. Using these,
 we can sort by the confidence,
@@ -462,7 +465,7 @@ page (``left'' and ``right'' values of approximately 3800-4000)
 showing up often in the lowest confidence results.
 
 Since we have access to the confidences and bounding boxes in \proglang{R}, we
-can explore this theory by treating these objects just like any other
+can explore this conjecture by treating these objects just like any other
 data. To explore our hypothesis that these terms are grouped left to
 right, we can group the words into bins by their location left to
 right using the \code{cut()} function,
@@ -480,19 +483,21 @@ And then calculate the median confidence inside each group,
 <<out.lines=8>>=
 tapply(bbox[,"confidence"], lrGroups, function(x) round(median(x),1))
 @
-
+% Perhaps explicitly interpret the results, i.e. point out to the reader that
+% most intervals have a median confidence of approximately 91, except the last one
+% which is 57.
 Doing this verifies our suspicion that there are issues with the right
 side of the page. Looking at the image (Fig. \ref{fig:base}), we can
 see there is rotated text in the margin that identifies when and where
 the PDF was downloaded. This text is not being recognized well by the
-OCR, but is also not part of the journal article in which we are
+OCR (as it only works with a single text orientation), but is also not part of the journal article in which we are
 interested. Because this text crosses several textlines,
 post-processing without location information would involve searching
 for ``junk'', e.g. non-valid words such as ``Isosziim'', at the end of
 each text line. However, we can easily exclude this text in
 post-processing with location information in hand. Additionally, while
 we could crop this image using editing software outside of \proglang{R}, we will
-show later how this area can be excluded from the OCR recognition step
+show later how this region can be excluded from the OCR recognition step
 using \pkg{Rtesseract} without leaving \proglang{R}.
 
 \begin{comment}
@@ -529,16 +534,16 @@ accuracy and error checking.
 \end{comment}
 
 \subsection{Visualizing OCR results}
-
+% What is this? Different paragraph and section, so need explicit connectivity.
 In this OCR workflow, we find that visualizing the confidences is
 helpful for quickly inspecting \pkg{Rtesseract} results for
 issues. Therefore, \pkg{Rtesseract} includes a plotting method for OCR
 output. By default, calling \code{plot()} on a \code{TesseractBaseAPI}
-object will create a plot which includes original image overlaid with
-the bounding boxes colored (and optionally filled) by relative
-confidence. See Fig. \ref{fig:rtess_plot} for an example. Plotting the
+object will create a plot which includes the original image overlaid with
+the bounding boxes of the recognized elements (words, letters, lines, \dots),
+colored (and optionally filled) by relative confidence. See Fig. \ref{fig:rtess_plot} for an example. Plotting the
 results is especially helpful when adjusting the OCR configuration
-settings to improve accuracy (discussed further below).
+settings to improve accuracy, which we discuss below.
 
 \begin{figure}[H]
 <<echo = FALSE>>=
@@ -546,14 +551,20 @@ plot(api, main = "")
 @
 \caption{\pkg{Rtesseract}'s plotting function allows the user to
   overlay the scanned image with the bounding boxes surrounding the
-  recognized element optionally colored according to the boxes'
+  recognized elements, optionally colored according to the boxes'
   associated confidences.}
 \label{fig:rtess_plot}
 \end{figure}
-o
-\subsection{Zooming and subsetting an image}
+%FIX: The contrast between the different colors of the boxes isn't great. Perhaps we need to use
+% a red to green scale.  Also, do we need to put a legend on the plot? Probably!
 
+\subsection{Zooming and subsetting an image}
+%FIX: This probably needs more motivation. It is true, but does not necessarily explain why.
+% When and why is it useful. Just the poorly recognized regions? And what if they are not contiguous?
+% But what are other reasons?
 It is sometimes useful to ``zoom in'' on a part of the image to inspect a region that is not being accurately recognized.
+%FIX: This is potentially confusing the image and the plot.  We are not zooming in on the image for
+%OCR, but the results of the OCR.
 For visualizing a sub-area of the original image, we use the \code{plotSubImage()} function.
 For example, we can find a low confidence word,
 
@@ -562,6 +573,7 @@ bbox = GetBoxes(api)
 i = which(bbox$confidence < 25)[1]
 bbox[i,]
 @
+% Why are we only looking at the first of these? And what is it? How did we decide that?
 
 and then we can zoom in on that word,
 
@@ -569,9 +581,11 @@ and then we can zoom in on that word,
 <<>>=
 plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
 @ 
-\caption{An example of plotting a zoomed in segment of an image using \pkg{Rtesseract}}
+\caption{An example of plotting a zoomed-in segment of an image using \pkg{Rtesseract}}
 \label{fig:zoom}
 \end{figure}
+% FIX: zoomed-in is a colloquial term.
+%FIX in code: We should have a method for the data.frame so we don't need as.matrix() and the [, 1:4].
 
 There are times when there is only a part of the image that we want to recognize with OCR.
 In this case, we may want to avoid the computations involved in recognizing the entire contents of an image when we are only interested a piece of it.
