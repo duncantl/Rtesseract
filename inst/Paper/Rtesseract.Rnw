@@ -4,6 +4,7 @@
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{comment}
+\def\Cpp{C\texttt{++}}
 
 
 % Things we should add or make certain are there 
@@ -585,25 +586,42 @@ plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
 \label{fig:zoom}
 \end{figure}
 % FIX: zoomed-in is a colloquial term.
+% What does this show us? It doesn't help me much by itself?  We need context?
 %FIX in code: We should have a method for the data.frame so we don't need as.matrix() and the [, 1:4].
 
 There are times when there is only a part of the image that we want to recognize with OCR.
 In this case, we may want to avoid the computations involved in recognizing the entire contents of an image when we are only interested a piece of it.
-We could crop the original image, create a new file containing only the area of interest, and then call \code{tesseract()} on this image.
+% FIX: Perhaps add that the OCR will be confused by other aspects of the larger image and so we need
+% to restrict its view to the subregion. Give a motivating example.
+We could crop the original image, create a new file containing only the area of interest, and then
+call \code{tesseract()}  % FIX: or GetBoxes()
+on this image.
 However, it would be better to focus only on the area of interest without modifying the original image.
+%FIX: Why???
 For this, \pkg{Rtesseract} includes the \code{SetRectangle()} function. For example, if we know we are only interested in the table on the lower half of the page, we can recognize only this area. First, we can locate where the top of the table is by finding the word ``TABLE'',
 
 <<>>=
 bbox[grep("TABLE", bbox$text),]
 @ 
 
-Then we reduce the recognization rectangle to only the area below this word using the \code{SetRectangle()}function,
+Then we reduce the recognition region to only the rectangle below this word using the
+\code{SetRectangle()} function,
 with the dimensions specified as left edge, top edge, width of box, and height of box 
 
 <<>>=
 SetRectangle(api, dims = c(0, 1864, 4000, 6000 - 1864))
 GetBoxes(api)
 @
+% FIX:
+% 1. Need to explain 0,0 is top-left corner. This needs to come in easly and say how plot() is taking
+% care of all of this for us. We could mention this when explaining the output of GetBoxes()
+% 
+% 2. Where did the 400 and 6000 come from. We should tell people how to calculate them?
+%   dim(GetImage(api)) or GetImageDims(api) or now dim(api)[1:2]
+% 3. And can we do better and focus on the table and exclude the bits within the lines and exclude
+% the text. We can do this semi-manually, but also note that we can find the lines.
+% If we just say we know where the lines are (which we can compute), then we can punt on the
+% image dimensions for now.
 
 Although this example only highlights basic uses of the ability to restrict the recognized area, we will show later how we can use \code{SetRectangle()} in conjunction with image manipulation to handle more complex tasks.
 Setting the recognition area can be helpful in cases where there are
@@ -622,11 +640,11 @@ engine for specific cases.
 
 \subsection{Page Segmentation Mode and OCR engine}
 
-There are two ``meta-variables'' control how that Tesseract recognizes the arrangement of text and which OCR engine is used,
+There are two ``meta-variables'' that control how Tesseract recognizes the arrangement of text and which OCR engine is used,
 \code{pageSegMode} and \code{engineMode}. Since adjusting these two
 variables can have a large impact on the results of the OCR, they deserve special mention.
 
-The first, the Page Segmentation Mode,
+The first -- the Page Segmentation Mode --
 adjusts how Tesseract recognizes the layout of the text in the image.
 Correctly identifying the text layout is an important first step to accurate OCR.
 As we have seen previously, text cannot be properly recognized when it is arranged vertically where Tesseract expects horizontal layout.
@@ -636,11 +654,11 @@ text, arranged top to bottom (e.g., the vertical arrangement of many
 Asian texts) or even in a circle (e.g., the text on the rim of a
 coin), etc.
 Included in the available options are to have Tesseract
-attempt to automatically detect the text orientation, the script used,
+attempt to automatically detect the text orientation, the script used, % What do we mean by "script"?
 or both. %more here
-The \pkg{Rtesseract} package preserves the
-defaults in the Tesseract C\texttt{++} API and assumes the input is a single
-block of text (\code{PSM\_SINGLE\_BLOCK}) by default, though in our
+The \pkg{Rtesseract} package uses the
+defaults in the Tesseract \Cpp API and assumes the input is a single
+block of text (\code{PSM\_SINGLE\_BLOCK}), though in our
 experience OCR can be significantly improved in some cases by changing
 the Page Segmentation Mode. We have found for most problems
 \code{PSM\_AUTO}, which attempts to detect the correct page
