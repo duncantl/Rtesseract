@@ -110,8 +110,8 @@ R_freeAPI(SEXP obj)
 {
   tesseract::TessBaseAPI * api = (tesseract::TessBaseAPI *)  R_ExternalPtrAddr(obj)  ;
   if(api) {
-  Rprintf("R_freeAPI %p\n", api);
 #ifdef FINALIZER_DEBUG
+  Rprintf("R_freeAPI %p\n", api);
 #endif
     delete api;
   }
@@ -283,9 +283,9 @@ R_TessBaseAPI_GetInputImage(SEXP r_api, SEXP r_asArray)
     if(LOGICAL(r_asArray)[0])
         return(getPixAsArray(pix));
     
-Rprintf("[R_GetInputImage] Pix %p, refcount = %d\n", pix, pix->refcount);        
+//Rprintf("[R_GetInputImage] Pix %p, refcount = %d\n", pix, pix->refcount);        
     pixClone(pix); //pixChangeRefcount(pix, +1);
-Rprintf("          new refcount = %d\n", pix->refcount);        
+//Rprintf("          new refcount = %d\n", pix->refcount);        
     return(createRef(pix, "Pix", R_pixDestroy)); //XXX Put a finalizer on this and bump the reference count
 }
 
@@ -323,7 +323,7 @@ R_pixRead(SEXP r_filename, SEXP r_addFinalizer)
 {
     Pix *image = pixRead(CHAR(STRING_ELT(r_filename, 0)));
 //    pixChangeRefcount(image, +1);
-Rprintf("[R_pixRead] Pix %p, refcount = %d\n", image, image->refcount);    
+//Rprintf("[R_pixRead] Pix %p, refcount = %d\n", image, image->refcount);    
     return(createRef(image, "Pix", (Rf_length(r_addFinalizer) == 0 || LOGICAL(r_addFinalizer)[0]) ? R_pixDestroy : NULL)); //XXX Put a finalizer on this and bump the reference count
 }
 
