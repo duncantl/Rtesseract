@@ -260,6 +260,10 @@ steps in the OCR process.
 %FIX:  We have to be careful here. It is not the steps in the OCR itself, but the pre and
 %post-processing around tesseract, and via run-time variables controlling tesseract.
 % The sentence above could be misinterpreted.
+%FIX: Smaller point: This set of functionality in the API is quite vague. We may want to provide concrete 
+% illustrations of the high-level functionality, e.g., image manipulation (rotation, thresholding)
+% customization, post-processing based on the results. It comes next in the paragraph, so adding a
+% "including ... below".
 \pkg{Rtesseract} also provides
 higher-level functionality to visualize the results from the OCR on the original
 image.  \pkg{Rtesseract} additionally
@@ -284,7 +288,14 @@ reliable manner is sufficient.  \pkg{Rtesseract} provides a simple
 function \code{GetText} which allows \proglang{R} users to provide the path to an image file in a
 supported format, e.g. TIFF, JPEG or PNG, and to perform OCR on the image
 using the default settings (similar to both the \pkg{ocR} and
-\pkg{tesseract} packages). For example, suppose we have an image from
+\pkg{tesseract} packages).
+% FIX: The next 2 setences don't quite connect to this paragraph.
+% Perhaps lead with these and then introduce the basic text extraction - GetText() which comes
+% next anyway. Or else provide a brief overview of the different things we will discuss in this 
+% section, starting with simple text extraction.
+% It might also be good (and may already be here) to show what can go wrong with, e.g., 2 column
+% text with titles centered in the columns and being put/recovered in a line in the wrong column.
+For example, suppose we have an image from
 an older scientific publication from which we want to extract
 information, e.g., Fig. \ref{fig:base}. We will use this image to
 highlight the functionality and common use-cases of the
@@ -293,8 +304,15 @@ highlight the functionality and common use-cases of the
 
 \begin{figure}[H]
 \includegraphics[width=\textwidth]{\Sexpr{smithburn}}
+% Note I added more text to describe the elements of the image to the reader, hopefully
+% getting them to think about how we might need them and also setting us up for using them
+% later in the text.
 \caption{An example image of a scientific paper which contains text we
-  would like to extract and analyze.}
+  would like to extract and analyze. The highlighted text in the second paragraph
+  is part of the image. There is also rotated text running vertically down the right of the page.
+  There is a table of data with columns and rows separated by lines, and columns left- and center-aligned.
+  Some words are in italics and there are also footnotes.
+}
 \label{fig:base}
 \end{figure}
 
@@ -309,8 +327,9 @@ smithburn = system.file("images", "SMITHBURN_1952_p3.png",
 GetText(smithburn)
 @
 
-We pass \code{GetText} the path to a file containing the image.  By
-default, it returns the words it finds in the image in the order they % order needs qualification or some definition
+We pass \code{GetText} the path to a file containing the image.  
+%QUESTION: Can we specify a file with multiple pages? And can we specify which page?
+By default, it returns the words it finds in the image in the order they %FIX: order needs qualification or some definition
 appear.  We sometimes want the results returned as individual
 characters (symbols), such as when we are checking how well Tesseract
 recognized individual characters, e.g. special or unique characters.
@@ -333,16 +352,22 @@ GetText(smithburn, level = "textline")
 % I find this confusing. "organizational level"... And we just went through the
 % 3 examples. So let's just say we can also use block and para
 Modifying the organizational level of the returned text is easy to
-achieve with the \code{levels} argument in \code{GetText()}.
-Possible values include ``block'', ``para'' (paragraph), ``textline'' and ``word''.
+achieve with the \code{level} argument in \code{GetText()}.
+Possible values include ``block'', ``para'' (paragraph), ``textline'', ``word'' and ``symbol''.
 
+
+%FIX: Seque that motivates these.
 \pkg{Rtesseract} includes three other high-level functions --
 \code{GetBoxes()}, \code{GetConfidences()}, and \code{GetAlternatives()} --
 to extend the information accessible by the user. Similar to
 \code{GetText()}, these functions can take the path of the image file
 and the optional \code{level} argument (except \code{GetAlternatives()}
-which only operates at the ``symbol'' level).
+which only operates at the ``symbol'' level, i.e., individual characters).
 
+%FIX: Mentioning these doesn't seem to say why we would want to use them.
+% And then we go into API objects. But we are probably just better off
+% always using GetBoxes() and accessing the text column from that
+% rather than GetText().  And then we don't need the persistent API object.
 
 \subsection{Creating a persistent API object}
 
