@@ -368,6 +368,17 @@ which only operates at the ``symbol'' level, i.e., individual characters).
 % And then we go into API objects. But we are probably just better off
 % always using GetBoxes() and accessing the text column from that
 % rather than GetText().  And then we don't need the persistent API object.
+% It is not typical for novice use to call GetBoxes(), GetAlternatives(), etc.
+% but rather just one call and never need the persistent API. The persistent
+% API is useful, but more for advanced use, e.g., batch processing, simplifying
+% the customization code by doing it just once (but even this is not a big deal).
+% So the persistent API might be better coming later and we focus on 
+% GetBoxes(), GetAlternatives(), etc. immediately/next, saying what they return and 
+% why you want to use them.
+% It is useful to use the API object when we want to plot the results as we will avoid
+% multiple Recognize() calls (is this true???). This is an optimization issue, but important. But may not
+% cause us to introduce the API object interface so early. It seems more complex than GetText()
+% or GetBoxes()
 
 \subsection{Creating a persistent API object}
 
@@ -385,6 +396,9 @@ The \code{tesseract()} function creates an instance of the OCR engine
 query this for the text, boxes, confidences and alternatives without
 repeating the OCR.  This is the preferred method when multiple pieces
 of information are needed from the same image.
+% Say we can change its settings (i.e. variables), and also have it focus on 
+% subregions of the image, and even reuse the instance to process multiple
+% images having customized the settings.
 
 We typically call \code{tesseract()} by specifying the path to the file
 and any other options controlling how the OCR will be performed
@@ -393,16 +407,21 @@ and any other options controlling how the OCR will be performed
 <<>>=
 api = tesseract(smithburn)
 @
+% We didn't show any other options, yet we said we could.
 
 We then pass the object returned by \code{tesseract()} to each of the
 four high level functions rather than the file name, e.g.,
 \code{GetText(api)}, \code{GetBoxes(api)}, \code{GetConfidences(api)}.
 By default, the call to \code{tesseract()} doesn't perform the OCR
-immediately. Instead, it is only done when we request any results,
+immediately.  % Since R has lazy evaluation, we could refer to this as "lazily" to exploit the readers'
+% familiarity with R's lazy eval ?
+Instead, it is only done when we request any results,
 e.g., calling any of the four functions above, or explicitly calling
 the \code{Recognize()} function with the \code{TesseractBaseAPI} object
 as an argument.
 
+% This next sentence seems like we are using it to illustrate a point, not that 
+% its use is the "best" workflow.
 We can use this \code{TesseractBaseAPI} object to illustrate how
 \pkg{Rtesseract}'s ability to retrieve more than just the recognized
 text from an image can extend an OCR workflow. To continue the example
@@ -411,6 +430,9 @@ might want to check the results for inaccuracies. However, checking
 word by word manually is both tedious and error-prone. Rather, it
 seems reasonable to focus our attention initially on those words with
 the lowest confidences (note: ``confidence'' as used by Tesseract is a distance based measure of total similarity to the predicted character):
+% Following the lengthy comment above, this seems somewhat contrived. We can just call GetBoxes(smithburn)
+% and we have everything we need. This is what Jeroen's package does as it is sufficient for almost all
+% typical cases.
 
 <<>>=
 confs = GetConfidences(api)
