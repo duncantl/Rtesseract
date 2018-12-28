@@ -332,6 +332,9 @@ setMethod("GetBoxes",
           })
 
 
+setMethod("dim", "TesseractBaseAPI",
+          function(x)
+             GetImageDims(x)[1:2])
 
 
 Clear = 
