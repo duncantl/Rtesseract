@@ -58,6 +58,8 @@ export(compareWord, compareWords) # collapse
 
 S3method(plot, ConfusionMatrix)
 export(plotSubImage, plotSubsets)
+S3method(plotSubImage, matrix)
+S3method(plotSubImage, OCRResults)
 
 export(readBoxFile)
 
@@ -76,6 +78,7 @@ export(GetText, GetConfidences, GetBoxes, GetAlternatives)
 exportMethods("GetConfidences", "GetBoxes", "GetAlternatives")
 
 export(GetImageDims, GetImageInfo)
+exportMethods(GetImageDims)
 
 if(FALSE) {
      # Don't export yet.
@@ -92,6 +95,7 @@ export(hasRecognized) # rename!
 export(SetOutputName)
 
 export(oem)
+export("oem<-")
 
 #export(ProcessPages)
 
