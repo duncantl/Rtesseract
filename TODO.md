@@ -1,19 +1,46 @@
 # Todo Items
 
-1. In plot(TessBaseAPI), use red-green color map/scale.
+1. Add showPoints() like the one in ReadPDF.
 
-1. Cleanup getLines() to not need hor and vert - just one, or default for both,
-   and also methods to deal with a Pix or an API object and do the binary thresholding, etc.
+1. LRTResultIterator to get italics, etc.
 
-1. Method for plotSubImage() for data.frame of OCRResults.
+1. SVG view.
 
-1. Rewrite the script that converts a scanned PDF document with multiple pages to 
+1. user dictionary option. See inst/Paper/dictTest.R
+   
+1. Does IsValidWord() actually work? Seems to always say FALSE???
+   + If we use OEM_TESSERACT_ONLY as the engineMode in the call to tesseract(), then this does work.
+     But not with the default engineMode - OEM_DEFAULT.
+
+1. *** In plot.OCR, use red-green color map/scale. Deal with color-blind issues.
+    + [DOCUMENT] allow user to specify the end points of the color ramp via an option OCRConfidenceColors with 
+	   two values - low and high.
+
+1. In plot.OCR, add a legend.
+
+1. In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
+   smithburn image.  Is it that it puts a box covering the entire plotting region!!!
+
+1. Cleanup getLines() to not need both hor and vert - just one, or default for both,
+   +  methods to deal with a Pix or an API object and 
+      + coerce to a Pix handles this for both TesseractBaseAPI and character/file name.
+   + [Done] do the binary/8-bit conversion - pixConvertTo8().
+
+1. Put the correct row and column numbers on plotSubImage axes if we are going to talk about it in the paper.
+
+1. Make plotSubImage handle multiple rows.
+
+1. [done] Method for plotSubImage() for data.frame of OCRResults.
+
+1. [see inst/bin/pdf2png] Rewrite the script that converts a scanned PDF document with multiple pages to 
  a series of independent files each containing a page. (Lost on my previous laptop.)
+    + Consider renaming pdf2images
  
 1. See if tesseract can read a multi-page document. Has to be in TIFF? PNG? ..., not PDF.
 
 1. Check the character encoding under the following setup:
      + do OCR on a foreign page with words that have accents or different characters
+	   + Done - see RussianDoc.png, French.png and Sanscrit.png
 	 + use a different language setting for TESSDATA_PREFIX
 
 1. Test under a different locale.
@@ -25,10 +52,10 @@
   - cpp: readImage.cpp
   - notes: Note findLines_notes
 
-
 1. getLines() for UCD_Lehmann_0377.jpg fails.
 ```
-f = "/Users/duncan/Data/UCD_LEHMANN/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg"
+'/Users/duncan/Data/Lehmann_catalogs/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg'
+f = "inst/images/SMITHBURN_1952_p3.png"
 pp = pixRead(f)
 pp8 = pixConvertTo8(pp)
 ll = findLines(pp8, 201, 7, TRUE, erode = integer())
@@ -39,18 +66,17 @@ getLines(ll, asIs = TRUE, horizontal = TRUE)
 
 1. Make getLines() more robust.
 
-1. User dictionary option.  See Paper/
 
-1. [done] Options
+1. Options
 ```
 a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 ```
 
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
-   e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
+   + [TODO] e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
      Not needed -  pixRotate{90,180},
 
-1. [not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
+1. [IGNORE/not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
   Is there a GetDims? no - just pixGetDims and GetImageDims.
 
 1. Memory Leak notifications when quit from R.
