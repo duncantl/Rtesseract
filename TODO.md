@@ -1,6 +1,7 @@
 # Todo Items
 
 1. Add showPoints() like the one in ReadPDF.
+    + There is a function in OCRResults.R
 
 1. LRTResultIterator to get italics, etc.
 
