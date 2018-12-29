@@ -11,6 +11,18 @@
 
 	* dim() method for TesseractBaseAPI to get dimensions of current image.
 
+	* Added oem<-() function for TesseractBaseAPI objects.
+
+	* getLines()/findLines() now coerce the pix parameter to a Pix so can accept a
+	  TesseractBaseAPI object or a path to an image file.
+
+	* getLines()/findLines() convert the Pix to 8-bit
+
+	* GetImageDims() works on OCRResults objects.
+
+	* R global option "OCRConfidenceColors" controls the range of colors used in plot.OCR for displaying
+	  the confidences.
+	
 0.3-1
 	* Set the locale for each .Call() invocation to handle tesseract 4.0.
 
