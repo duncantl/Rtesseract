@@ -5,6 +5,7 @@
 \usepackage{hyperref}
 \usepackage{comment}
 \def\Cpp{C\texttt{++}}
+\def\fun#1{\code{#1()}}
 
 
 % Things we should add or make certain are there 
@@ -291,6 +292,11 @@ higher-level data structures (e.g. columns of text, paragraphs, columns and rows
 \item programmatic interface that enables querying functionality and sound error handling
 and recovery that enables the development of robust programmatic workflows.
 
+More image processing packages for \R{} have become available
+and one can use these pre-process images before OCR or to extract
+additional elements such as lines.  However, the \pkg{Rtesseract}
+functionality also makes this possible with a workflow
+that combines leptonice and tesseract.
 
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
