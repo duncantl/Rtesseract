@@ -32,9 +32,10 @@ function(bbox, dims,  alt = NULL, col = GetConfidenceColors(bbox), alpha = .8, c
     dims = as.numeric(dims)
     col = toAlpha(col, alpha)
     idx = seq(length = nrow(bbox))
-    txt =  c(sprintf('<svg width="%f" height="%f">', dims[1], dims[2]),
+    txt =  c(sprintf('<svg xmlns="http://www.w3.org/2000/svg" width="%f" height="%f">', dims[1], dims[2]),
+             "<g>",
              sprintf('<text id="%d" index="%d" x="%f" y="%f" fill="%s">%s</text>', idx, idx, bbox$left, bbox$top,  col, gsub("&", "&amp;", bbox$text)),
-             sprintf('</svg>'))
+             sprintf('</g></svg>'))
 }
 
 
