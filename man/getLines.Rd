@@ -14,7 +14,8 @@
 \usage{
 getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
          gap = 0.02, asDataFrame = FALSE, ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
-findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210)
+findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5),
+           threshold = 210, convertTo8 = GetImageDims(pix)[3] > 8)
 }
 \arguments{
   \item{pix}{the image, as a \code{\link{Pix-class}} object, or
@@ -54,7 +55,9 @@ findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), th
    used if \code{asLines} is \code{TRUE}.}
   \item{erode}{a numeric/integer vector with 2 elements, passed to \code{\link{pixErodeGray}}}
   \item{threshold}{an integer value used for thresholding the gray-scale
-  pixels to create a binary, black and white image.}  
+    pixels to create a binary, black and white image.}
+  \item{convertTo8}{controls whether the Pix is automatically converted
+   to 8 bit, if it is not already in that format.}
 }
 \value{
  a list of matrices, each containing 4 columns giving x0, y0, x1, y1

@@ -105,9 +105,15 @@ function(pos, gap)
 
 findLines =
     # This returns a Pix object, either the one with the lines
-    # or 
-function(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210)
+    # or <....????>
+function(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210,
+         convertTo8 = GetImageDims(pix)[3] > 8)
 {
+    pix = as(pix, "Pix")
+    
+    if(convertTo8)
+       pix = pixConvertTo8(pix)
+    
     p3 = pixCloseGray(pix, hor, vert)
     if(length(erode))
        p3 = pixErodeGray(p3, erode[1], erode[2])
