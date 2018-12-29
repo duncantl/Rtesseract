@@ -296,7 +296,11 @@ More image processing packages for \R{} have become available
 and one can use these pre-process images before OCR or to extract
 additional elements such as lines.  However, the \pkg{Rtesseract}
 functionality also makes this possible with a workflow
-that combines leptonice and tesseract.
+that combines leptonica and tesseract.
+By providing access to the leptonica functionality,
+the \pkg{Rtesseract} package allows us to manipulate and process images in the same format
+that tesseract operate on and to work with images directly before and after
+the OCR. 
 
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
@@ -835,25 +839,24 @@ grep("Drs. Dick and Haddow", w0, value = TRUE)
 
 %% Tesseract 4.00-beta does get this!!
 It seems not. In this case, the text under the highlighted area is
-being lost. We need to pre-process the image to remove the highlight
-but not the text before we pass it to Tesseract to have the
-possibility of recovering this text.  There are many options for
+being lost. We need to pre-process the image before we pass it to Tesseract,
+removing the highlight but not the text, in order to  recover this text.  There are many options for
 pre-processing images, including Imagemagick, OpenCV, Leptonica, or
 even \proglang{R} itself operating on the image as a matrix or array. Leptonica
 is already used by Tesseract internally to do some pre-processing of
-the image, e.g., de-skew, remove lines, etc. Tesseract conducts OCR
-off a \code{Pix} object (Leptonica's image object format) created by Leptonica after this
-pre-processing. It would be computational efficient if we could
+the image, e.g., de-skew, remove lines. Tesseract conducts OCR
+using a \code{Pix} object (Leptonica's native image object format) created by Leptonica during this
+pre-processing. It is  computationally efficient to
 pre-process the image as a \code{Pix} object in memory to be handed
 directly to Tesseract rather than write the image to an intermediate
-file on disk only to be read and converted again to a \code{Pix}
-object. For this reason, we include some bindings to the Leptonica
+file on disk, only to be read and converted again to a \code{Pix}
+object. For this reason, we have included bindings to the Leptonica
 library in the \pkg{Rtesseract} package for basic image processing.
 
 To remove the highlight using Leptonica from within \proglang{R}, we
 need to convert the image from color to gray-scale or 8 bits per
 pixel, and thereby convert the yellow area to a light gray.  We do
-this with the \code{pixConvertTo8()} function,
+this with the \code{pixConvertTo8()} function.
 
 <<>>=
 pix = pixRead(smithburn)
@@ -861,7 +864,7 @@ pix1 = pixConvertTo8(pix)
 @
 
 We can test if this is sufficient to recover the text under the yellow
-highlighted region by calling \code{tesseract()} directly on the
+highlighted region by calling \code{tesseract()} directly with the
 modified image:
 
 <<>>=
@@ -888,8 +891,11 @@ Indeed, they are there.
 A primary motivation underlying the \pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
 Rather than just getting the text back, generally, we want information
 about the location and size for each character, word or line
-identified by tesseract so that we can use it to intelligently
-interpret the content.  This includes identifying document and section titles in the document based on the size of the text.  In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.  Again, consider the previous image in Fig. \ref{fig:base}.
+identified by Tesseract so that we can use it to intelligently
+reconstruct the high-level content, e.g, columns of text, tables with rows and columns. 
+This also includes identifying document and section titles in the document based on the size of the text.  
+% FIX This is doesn't follow - a bait and switch.
+In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.  Again, consider the previous image in Fig. \ref{fig:base}.
 
 We can clearly see in the image that the data in TABLE 1 are arranged by row and column.
 The column headers are separated by two horizontal lines spanning the
