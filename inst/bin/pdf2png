@@ -1,9 +1,51 @@
 #!/bin/sh -x
 
-BASE=`echo $1 | sed -e s/.pdf$//`
+# e.g.
+# Basic
+#   pdf2png Doggett-1999.pdf
+# Specify density (pixels per inch) for print
+#   pdf2png -d 600 ../Doggett-1999.pdf
+# Change the naming convention for the generated files
+#   pdf2png -o ./bob_%02d.png ../Doggett-1999.pdf 
 
-#echo "BASE = $BASE"
+# Additional arguments understood by and passed onto convert
+#   pdf2png -o ./bob_%03d.png ../Doggett-1999.pdf -verbose
 
-convert "$1" "${BASE}-%04d.jpg"
 
-# -density 600 
+# Defaults
+BASE=""
+DENSITY=300
+
+
+while [ "$1" != "" ]; do
+    case $1 in
+        -d | --density )        shift
+                                DENSITY=$1
+                                ;;
+        -o  )                   shift
+                                BASE="$1"
+                                ;;				
+#        -h | --help )           usage
+#                                exit
+#                                ;;
+         * )                    break ;;				
+    esac
+    shift
+done
+
+echo "DENSITY = $DENSITY"
+echo "BASE = $BASE"
+
+echo "$@"
+
+FILE=$1
+
+if test "$BASE" = "" ; then
+  BASE=`echo $FILE | sed -e s/.pdf$//`
+  BASE="${BASE}_p%04d.png"
+fi
+
+shift
+
+convert -density $DENSITY  "$FILE" -quality 100 "$@" "${BASE}" 
+
