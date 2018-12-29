@@ -835,12 +835,12 @@ Indeed, they are there.
 \subsection{Using Leptonica to identify lines}
 
 A primary motivation underlying the \pkg{Rtesseract} package is that we need context from the rendered page to make sense of the results of the OCR.
-Rather than just getting the text back, generally, we want information
+Rather than just recovering the text from the image, generally, we want information
 about the location and size for each character, word or line
 identified by Tesseract so that we can use it to intelligently
 reconstruct the high-level content, e.g, columns of text, tables with rows and columns. 
 This also includes identifying document and section titles in the document based on the size of the text.  
-% FIX This is doesn't follow - a bait and switch.
+% FIX This is doesn't follow - a bait and switch. :-)
 In this example, we'll look at the locations of lines on the page in order to be able to interpret data within tables.  Again, consider the previous image in Fig. \ref{fig:base}.
 
 We can clearly see in the image that the data in TABLE 1 are arranged by row and column.
