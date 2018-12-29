@@ -13,6 +13,7 @@
 \alias{GetImage}
 \alias{GetInputImage}
 \alias{Init}
+\alias{dim,TesseractBaseAPI-method}
 
 \title{Creating a Tesseract Object}
 \description{
