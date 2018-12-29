@@ -123,20 +123,38 @@ function(x, y, col = rgb(seq(1, 0, length = max(x)), 1, 1), xlab = "Actual", yla
 
 
 plotSubImage = 
-function(box, img, ...)
+function(box, img, text = character(), ...)
     UseMethod("plotSubImage")
 
 plotSubImage.OCRResults = 
-function(box, img, ...)
-  plotSubImage(as.matrix(box[, 1:4]), img, ...)
+function(box, img, text =box[, "text"], ...)
+  plotSubImage(as.matrix(box[, 1:4]), img, text = text, ...)
 
 plotSubImage.matrix = 
-function(box, img, ...)
+function(box, img, text = character(), ...)
 {
-  pos = box
-  k = img[ pos[2]:pos[4],  pos[1]:pos[3], ]
+  if(nrow(box) == 0)
+     return(NULL)
+  opar = par(no.readonly = TRUE)
+  on.exit(par(opar))
+  par(mfrow = compGrid(nrow(box)))
+  sapply(1:nrow(box), function(i) plotSubImage.numeric(box[i,], img = img, text = text[i], ...))
+}
+
+plotSubImage.numeric = 
+function(box, img, text = character(), ...)
+{
+  k = img[ box[2]:box[4],  box[1]:box[3], ]
   plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", ...)
+  if(length(text) && !is.na(text) && nchar(text))  title(text)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
+}
+
+compGrid =
+function(num)
+{
+    r = ceiling(sqrt(num))
+    c(r, ceiling(num/r))
 }
 
 
