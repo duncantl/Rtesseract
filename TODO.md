@@ -1,5 +1,16 @@
 # Todo Items
 
+1. In plot(TessBaseAPI), use red-green color map/scale.
+
+1. Cleanup getLines() to not need hor and vert - just one, or default for both,
+   and also methods to deal with a Pix or an API object and do the binary thresholding, etc.
+
+1. Method for plotSubImage() for data.frame of OCRResults.
+
+1. Rewrite the script that converts a scanned PDF document with multiple pages to 
+ a series of independent files each containing a page. (Lost on my previous laptop.)
+ 
+1. See if tesseract can read a multi-page document. Has to be in TIFF? PNG? ..., not PDF.
 
 1. Check the character encoding under the following setup:
      + do OCR on a foreign page with words that have accents or different characters

@@ -332,6 +332,9 @@ setMethod("GetBoxes",
           })
 
 
+setMethod("dim", "TesseractBaseAPI",
+          function(x)
+             GetImageDims(x)[1:2])
 
 
 Clear = 
@@ -511,7 +514,8 @@ setGeneric("GetImageDims", function(obj, ...) standardGeneric("GetImageDims"))
 setMethod("GetImageDims", "TesseractBaseAPI",
           function(obj, ...) {
               ans = .Call("R_TessBaseAPI_GetImageDimensions", obj)
-              names(ans) = c("height", "width", "depth")
+              if(length(ans))
+                 names(ans) = c("height", "width", "depth")
               ans
           })
 

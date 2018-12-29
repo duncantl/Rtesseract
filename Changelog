@@ -7,7 +7,9 @@
 
 	* Examples of reading Russian and Sanscrit documents.
 
-	* Avoid garbage collection related segmentation fault.
+	* Avoid garbage collection related segmentation fault related to GetImage().
+
+	* dim() method for TesseractBaseAPI to get dimensions of current image.
 
 0.3-1
 	* Set the locale for each .Call() invocation to handle tesseract 4.0.

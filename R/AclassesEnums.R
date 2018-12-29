@@ -156,6 +156,7 @@ function(val, values, class = values@EnumName, fromString = NA,
      fromString = is(val, "character")
 
   if(fromString) {
+     val = trim(val)
      i = pmatch(val, names(values))  # allowing pmatch, but should type it explicitly in code.
        # deal with lowercase matches for covenience
      if(is.na(i))

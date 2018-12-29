@@ -3,18 +3,16 @@ In Figure~\ref{fig:base} we can visually identify the rotated, vertically orient
 In the examples above, we also identified this text from the low confidence levels of the 
 results returned from \code{GetBoxes()}.
 Tesseract recognizes the rest of the page as horizontally oriented text
-and is entirely confused by these symbols in that context.
+and is confused by these symbols in that context.
 So it returns nonsensical results.
-In this case, we decided this text could safely
+In this case, we decided this text could be safely
 ignored but in many cases we may want to extract the rotated text.
 Leaving aside how we identify the relevant rectangle(s) of interest 
 in the page, one approach is to
-
 \begin{enumerate}
-\item{rotate the contents image}
-\item{restrict tesseract to recognize the text within each of these sub-images}
+\item{rotate the entire image}
+\item{restrict Tesseract to process the text within each of these sub-images}
 \end{enumerate} 
-
 This involves processing the image, which we can do in \proglang{R} using \pkg{Rtesseract}.
 
 We start by reading the image. Rather than passing the name of the
@@ -25,12 +23,14 @@ using \code{pixRead()}.
 px = pixRead(smithburn)
 @ 
 
-Next we rotate this image 90 degrees, corresponding to a negative direction, or anticlockwise:
+Next we rotate this image 90 degrees anticlockwise,  corresponding to a negative direction for the
+\code{pixRotate} function:
 <<>>=
 prot = pixRotate(px, -pi/2)
 @ 
 
 We pass this rotated image to \code{tesseract()} rather than the name of a file:
+% This is the first time we have passed a Pix to tesseract() so we should comment on this explicitly.
 
 <<>>=
 ts = tesseract(prot)
@@ -41,10 +41,14 @@ We don't want to process all of the text in the image.
 Instead, we want to zoom in on the now horizontal text.
 As we illustrated above, we can plot the rotated image and see the
 range of the horizontal and vertical region of interest:
+%FIX:   We have a : at the end but no code. So need to remove or add something.
 
 
 Judging from the plot, we count from the top-down, starting at position 1000 (corresponding to 5000 on the plot)
 and use a rectangle that is 300 pixels tall.
+%FIX: Can we do this programmatically. We should at least say we can in principle using the
+%GetBoxes() results and finding the text in the right margin.
+% Show these ranges on the plot.
 On the horizontal dimension, we could use the entire width of the image,
 but we restrict the region to be between 500 and 3500.
 As before, we instruct Tesseract to only process this rectangle via \code{SetRectangle}:
@@ -52,6 +56,7 @@ As before, we instruct Tesseract to only process this rectangle via \code{SetRec
 <<>>=
 SetRectangle(ts, dims = c(500, 1000, 3000, 300))
 @ 
+% Remind the read this is top-left width and height.
 
 Finally, we perform the OCR and get the results using 
 
@@ -77,6 +82,7 @@ It moves the pixels to a different orientation.
 However, we may want to actually transpose the image, i.e., change the
 horizontal to vertical and vice versa and so change the dimensions
 of an r by c image to c by r.
+%FIX: Explain why we might want to do this.
 We can do this in two steps by
 copying the pixels from one Pix object to an R array and then back to an other existing
 Pix object.
@@ -91,6 +97,7 @@ pt = pixTranspose(px)
 plot(pt)
 @ 
 \caption{}
+%FIX:  Need a caption for this.
 \label{fig:transpose}
 \end{figure}
 
@@ -108,6 +115,27 @@ bb
 We get roughly the same answer as the rotated image.
 
 This approach is somewhat simpler conceptually, but it is slower
-as transposing an image is quite slow.
+as transposing an image is currently slower.
 This is because it extracts all of the pixels from the original image, creates a new image (fast)
 and copies all of the pixels to the new image in the appropriate transposed order.
+
+%FIX:  Not clear why the reader cares about the difference between rotate and transpose. 
+% Either explain it or we can drop it or shorten this part to just mention pixRotate() is available.
+% There are issues with aspect ratio and compressing the image when we rotate and transpose and one
+% may be better than the other depending on the dimensions of the image and the orientation and size
+% of the text of interest.
+
+%FIX:  We should also talk about rotation to improve the OCR accuracy. e.g.
+\begin{comment}
+Rotation is also important for correcting an image that has been scanned
+at a slight angle which is very common. Tesseract will attempt to identify
+the optimal rotation and apply that before it does the final OCR step
+as this can improve the results.
+However, we may have some contextual knowledge about the appropriate angle
+to rotate the image. For example, when taking pictures of many pages,
+there may be a systematic rotation that we can infer across pages.
+Or within a page, we may know that columns in a table are left- or right-aligned
+and so all entries should start or end at the same horizontal location.  We can 
+use this to estimate the rotation of the entire document and then reorient the
+image with a call to \fun{pixRotate}.
+\end{comment}  
