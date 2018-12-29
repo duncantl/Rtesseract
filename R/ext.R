@@ -150,6 +150,11 @@ setMethod("lapply", "TesseractBaseAPI",
                lapply(GetIterator(X), FUN, level, ...)
            })
 
+
+# TesseractBasePix to a Pix.
+setAs("TesseractBaseAPI", "Pix", function(from) GetImage(from))
+
+
 if(FALSE) # Don't expose this.
 setAs("TesseractBaseAPI", "ResultIterator",
         function(from) {
@@ -526,6 +531,8 @@ setMethod("GetImageDims", "Pix",
               ans
           })
 
+setMethod("GetImageDims", "OCRResults", function(obj, ...) attr(obj, "imageDims"))
+
 setGeneric("GetImageInfo", function(obj, ...) standardGeneric("GetImageInfo"))
 
 setMethod("GetImageInfo", "TesseractBaseAPI",
@@ -642,6 +649,14 @@ oem =
 function(api)
 {
    .Call("R_TessBaseAPI_oem", as(api, "TesseractBaseAPI"))
+}
+
+`oem<-` = 
+function(x, ..., value)
+{
+    api = as(x, "TesseractBaseAPI")
+    Init(api, engineMode = as(value, "OcrEngineMode"))
+    api
 }
 
 
