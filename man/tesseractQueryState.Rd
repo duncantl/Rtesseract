@@ -4,6 +4,7 @@
 \alias{GetInitLanguages}
 \alias{hasRecognized}
 \alias{oem}
+\alias{oem<-}
 \alias{IsValidWord}
 \alias{GetThresholdedImage}
 \alias{IsValidWord}
