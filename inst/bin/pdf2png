@@ -1,0 +1,9 @@
+#!/bin/sh -x
+
+BASE=`echo $1 | sed -e s/.pdf$//`
+
+#echo "BASE = $BASE"
+
+convert "$1" "${BASE}-%04d.jpg"
+
+# -density 600 
