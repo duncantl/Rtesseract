@@ -276,6 +276,22 @@ development versions (v4.0.0) of Tesseract, with mechanisms to
 configure \pkg{Rtesseract} according to the installed versions of
 Tesseract, leptonica, and image libraries.
 
+%@MATT: Here is a hastily written segment that we want to reword and integrate
+% to outline the distinction between Rtesseract and other packages.
+% It connects with the previous paragraphs, but I have written it independently for now.
+The \pkg{Rtesseract} provides 
+\begin{itemize}
+\item high-level functions to extract data from images,
+\item functions for evaluating the OCR results,
+\item infrastructure for reconstructing the extracted elements into meaningful
+higher-level data structures (e.g. columns of text, paragraphs, columns and rows of tables)  
+% Need to make this so if we want to include it. May want to drop this.
+\item functionality for pre-processing images to improve them for OCR and to 
+   do related non-OCR extraction, e.g., finding horizontal and vertical lines.
+\item programmatic interface that enables querying functionality and sound error handling
+and recovery that enables the development of robust programmatic workflows.
+
+
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
 
@@ -575,12 +591,16 @@ i = which(bbox$confidence < 25)[1]
 bbox[i,]
 @
 % Why are we only looking at the first of these? And what is it? How did we decide that?
+% Say that plotSubImage() is for individual words, apparently.
+% Do we really want to talk about it at all?
+% What about showPoints() (in ReadPDF?) to highlight the points on an existing plot.
+% Or your plotSubsets()
 
 and then we can zoom in on that word,
 
 \begin{figure}[H]
 <<>>=
-plotSubImage(as.matrix(bbox[i,1:4]), img = png::readPNG(smithburn))
+plotSubImage(bbox[i, ], img = png::readPNG(smithburn))
 @ 
 \caption{An example of plotting a zoomed-in segment of an image using \pkg{Rtesseract}}
 \label{fig:zoom}
@@ -617,7 +637,8 @@ GetBoxes(api)
 % care of all of this for us. We could mention this when explaining the output of GetBoxes()
 % 
 % 2. Where did the 400 and 6000 come from. We should tell people how to calculate them?
-%   dim(GetImage(api)) or GetImageDims(api) or now dim(api)[1:2]
+%  dim(api)
+%    or  dim(GetImage(api)) or GetImageDims(api) 
 % 3. And can we do better and focus on the table and exclude the bits within the lines and exclude
 % the text. We can do this semi-manually, but also note that we can find the lines.
 % If we just say we know where the lines are (which we can compute), then we can punt on the
@@ -632,11 +653,11 @@ accurately recognized with settings suboptimal for other areas.
 
 Thus far, we have focused on functions in \pkg{Rtesseract} which allow
 accessing and manipulating the results of running the OCR engine on an
-image. In many non-trivial cases, we might want to manipulate the
+image. In many non-trivial cases, we might want to control/customize the % was manipulate.  Chose best term here.
 behavior of the OCR engine itself rather than only the output. For
 these purposes, the \pkg{Rtesseract} package exposes full access to
-the \code{TesseractBaseAPI}, which allows fine-tuning of the OCR
-engine for specific cases.
+the methods in the \code{TesseractBaseAPI} object performing the OCR.
+This allows fine-tuning of the OCR engine for specific cases.
 
 \subsection{Page Segmentation Mode and OCR engine}
 
@@ -663,7 +684,7 @@ experience OCR can be significantly improved in some cases by changing
 the Page Segmentation Mode. We have found for most problems
 \code{PSM\_AUTO}, which attempts to detect the correct page
 segmentation automatically, is a good default, though any of the
-currently \Sexpr{length(grep("^PSM_",ls('package:Rtesseract')))}
+currently \Sexpr{length(grep("^PSM_", ls('package:Rtesseract')))}
 available Page Segmentation modes might be best for different
 applications.
 %% Curiously,
@@ -672,6 +693,7 @@ applications.
 The current Page Segmentation Mode can be found by calling
 \code{GetPageSegMode()} on a \code{TesseractBaseAPI} object,
 
+% We should check/have a circular text in the package (not in the paper.)
 <<>>=
 GetPageSegMode(api)
 @
@@ -699,11 +721,20 @@ SetPageSegMode(api, mode = PSM_AUTO)
 GetPageSegMode(api)
 @
 
-The available Page Segmentation Modes are listed and enumerated values
+The available Page Segmentation Modes are listed as enumerated values
 in the \pkg{Rtesseract} package, and can be found with,
 
 <<>>=
 Rtesseract:::PageSegMode
+
+One can specify a value for the \code{pageSegMode} parameter
+using 1) the \R{} variable names (e.g., \code{PSM_CIRCLE_WORD}),
+2) the symbolic name in quotes and in upper or lower case and with partial matching (e.g., "circle"),
+or 3) the corresponding number, which is both less readable
+and less reliable as the values may change across versions of 
+tesseract.
+
+
 @ 
 
 The second of these ``meta-variables'' is the Tesseract Engine Mode, which
@@ -711,14 +742,18 @@ determines which OCR engine is used to recognize text.
 Tesseract operates by recognizing elements of individual characters, and different OCR engines recognize these elements using different algorithms.
 Tesseract ships with additional OCR algorithms which can be used individually or in
 combination with Tesseract's original line-finding algorithm.
-For Tesseract versions 3.05+, an additional OCR engine ``Cube'' is included, and for Tesseract versions 4.00+ a Long Short-term Memory (LSTM) neural network-based OCR engine is included.
+For Tesseract versions 3.05+,  %@MATT Does this mean versions >= 3.05 or. We should use this
+                               %notation or better, use explicit english. And is this <= 4.00
+an additional OCR engine ``Cube'' is included, and for Tesseract versions 4.00+ a Long Short-term Memory (LSTM) neural network-based OCR engine is included.
 Although the use of the other OCR engines in combination with Tesseract can potentially
 increase accuracy, their use can add significant computational load
-(between 6--10x) and require appropriately trained language files, so
-they are not used by default by \pkg{Rtesseract}'s OCR functions. For
+(between 6--10x)  %@MATT Evidence for this.
+and require appropriately trained language files, % What does this mean? We haven't introduced it yet?
+so they are not used by default by \pkg{Rtesseract}'s OCR functions. For
 a comparison of the accuracy and performance of each of these options,
 please refer to
 \url{https://github.com/tesseract-ocr/tesseract/wiki/4.0-Accuracy-and-Performance}.
+%@MATT: Perhaps add this to the bibliography.
 
 The current Engine mode can be found by calling \code{oem()} on a
 \code{TesseractBaseAPI} object,
@@ -728,26 +763,46 @@ oem(api)
 @ 
 
 Similar to Page Segmentation Mode, the Engine Mode can be set in
-several ways. However, unlike Page Segmentation Mode, the Engine Mode
+several ways. % This is unclear - do you mean by R variable, "string" or numeric value, but not via
+              % different functions.
+However, unlike Page Segmentation Mode, the Engine Mode
 needs to be set at initialization, which means you cannot set it on an
-already initialized \code{TesseractBaseAPI} object. %Duncan, this correct?
+already initialized \code{TesseractBaseAPI} object. 
+%@Duncan, this correct?
+%@MATT: Actually, apparently (surprise to me) we can with, e.g.
+%    api = tesseract()
+%    oem(api)
+%    Init(api, engineMode = OEM_TESSERACT_LSTM_COMBINED)
+%    oem(api)
+% What this does to the state of the tesseract API object, I don't know.
+% Does it clear the image? Yes.
+% It doesn't reset all variables.
+%
+% Now added an oem<-() method.
+
+
+%FIX:  I think we need to explain more about what the segmentation and engine mode actually
+% control so people know why they would like to explore them.
+
 
 The Engine Mode can be set either in the call to \code{tesseract()}
 
 <<eval = FALSE>>=
-api = tesseract(smithburn, engineMode = "OEM_TESSERACT_ONLY") 
+api = tesseract(smithburn, engineMode = OEM_TESSERACT_ONLY) 
 @
 
-or in the call to a base level function when calling on a image filename,
+or in the call to a base level function when calling with an image filename,
 
 <<eval = FALSE>>=
-GetText(smithburn, engineMode = "OEM_TESSERACT_ONLY")
+GetText(smithburn, engineMode = OEM_TESSERACT_ONLY)
 @ 
 
-Notice that \code{GetText()} is being called on the file
+Notice that \code{GetText()} is being called with the file
 name. Attempting to set the engine mode on an already created
 \code{TesseractBaseAPI} object will have no effect, e.g.,
 \code{GetText(api, engineMode = "OEM\_CUBE")}.
+%FIX: We could fix this if we want! 
+
 
 \subsection{Image Manipulation and Pre-processing}
 
