@@ -81,7 +81,7 @@ function(x, y = "word",
 
         # Draw the bounding boxes for the detected elements.
     rect(m[,1],  m[,2], m[,3],  m[,4], border = border,
-        col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
+         col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
          ...)
 
         # And now the outer containing rectangle enclosing all the bounding boxes
@@ -121,12 +121,21 @@ function(x, y, col = rgb(seq(1, 0, length = max(x)), 1, 1), xlab = "Actual", yla
   axis(2, seq(u[3] + d/2, by = d, length = ncol(x)), colnames(x))  
 }
 
-plotSubImage = # plot.BoundingBox =
+
+plotSubImage = 
+function(box, img, ...)
+    UseMethod("plotSubImage")
+
+plotSubImage.OCRResults = 
+function(box, img, ...)
+  plotSubImage(as.matrix(box[, 1:4]), img, ...)
+
+plotSubImage.matrix = 
 function(box, img, ...)
 {
   pos = box
   k = img[ pos[2]:pos[4],  pos[1]:pos[3], ]
-  plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), ...)
+  plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", ...)
   rasterImage(k, 0, 0, ncol(k), nrow(k))
 }
 
@@ -156,15 +165,20 @@ function(bbox, img, nrow = 4, ncol = 4,
 
 
 GetConfidenceColors =
+    #
+    # Set
+    #   options(OCRConfidenceColors = c("#f7fcf5", "#005a32"))
+    # to use the original colors.
+    #
 function(bbox, confidences = bbox[, "confidence"],
          numColors = 10,
          colors = colorRampPalette(colorEnds)(numColors),
-         colorEnds = c("#f7fcf5", "#005a32"),
+         colorEnds = getOption("OCRConfidenceColors", c("red", "lightgreen")),  
          intervals = quantile(confidences, seq(0, 1, by = 1/numColors)))
 {
-    # prevent cut from returning NAs
-    intervals[1] = 0
-    intervals[numColors+1] = 100
+    # prevent cut from returning NAs for values that are exactly 0 or 100.
+    intervals[1] = 0 - .Machine$double.eps
+    intervals[numColors+1] = 100 
     
     i = cut(confidences, unique(intervals) )
     structure(colors[ i ], names = as.character(i))

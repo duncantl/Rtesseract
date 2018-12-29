@@ -15,7 +15,7 @@
 GetConfidenceColors(bbox, confidences = bbox[, "confidence"],
                     numColors = 10,
                     colors = colorRampPalette(colorEnds)(numColors),
-                    colorEnds = c("#f7fcf5", "#005a32"),
+                    colorEnds = getOption("OCRConfidenceColors", c("red", "lightgreen")),  
                     intervals = quantile(confidences, seq(0, 1, by = 1/numColors)))
 }
 %- maybe also 'usage' for other objects documented here.
@@ -27,8 +27,11 @@ GetConfidenceColors(bbox, confidences = bbox[, "confidence"],
   \item{numColors}{the number of colors to use in the color palette}
   \item{colors}{a vector of color values (as a character vector) in case
     the caller wants to specify the colors directly.}
-  \item{colorEnds}{a character vector of colors used to interpolate the
-    other color values}
+  \item{colorEnds}{a character vector of two colors giving the
+    color for the minimum and maximum confidence. These are  used to interpolate the
+    other color values for the confidences. The caller can specify these
+    two color values via the R session option named \code{OCRConfidenceColors}. 
+  }
   \item{intervals}{the bins by which to group the confidences}
 }
 \value{
