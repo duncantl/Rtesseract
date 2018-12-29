@@ -27,9 +27,9 @@
       + coerce to a Pix handles this for both TesseractBaseAPI and character/file name.
    + [Done] do the binary/8-bit conversion - pixConvertTo8().
 
-1. Put the correct row and column numbers on plotSubImage axes if we are going to talk about it in the paper.
+1. [done] Put the correct row and column numbers on plotSubImage axes if we are going to talk about it in the paper.
 
-1. Make plotSubImage handle multiple rows.
+1. [done] Make plotSubImage handle multiple rows.
 
 1. [done] Method for plotSubImage() for data.frame of OCRResults.
 

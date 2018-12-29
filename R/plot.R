@@ -130,6 +130,9 @@ plotSubImage.OCRResults =
 function(box, img, text =box[, "text"], ...)
   plotSubImage(as.matrix(box[, 1:4]), img, text = text, ...)
 
+#XXX  We may want to keep the aspect ratios the same for all of the plots/panels.
+# We might also want to keep the vertical ranges the same for all panels using the maximum height within box.
+
 plotSubImage.matrix = 
 function(box, img, text = character(), ...)
 {
@@ -145,9 +148,18 @@ plotSubImage.numeric =
 function(box, img, text = character(), ...)
 {
   k = img[ box[2]:box[4],  box[1]:box[3], ]
-  plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", ...)
-  if(length(text) && !is.na(text) && nchar(text))  title(text)
+  plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", axes = FALSE, ...)
+     # Draw the part of the image.
   rasterImage(k, 0, 0, ncol(k), nrow(k))
+  
+   # Put the tick marks corresponding to the column and row positions in the images.
+  ax2 = axTicks(2)
+  axis(2, at = ax2, pretty(box[2]:box[4], length(ax2) - 1)[seq(along = ax2)])
+  ax1 = axTicks(1)
+  axis(1, at = ax1, pretty(box[1]:box[3], length(ax1) - 1)[seq(along = ax1)])  
+
+    # Add a title if we are given one. This is typically the OCR value of the sub-region, i.e. the recognized text.
+  if(length(text) && !is.na(text) && nchar(text))  title(text)
 }
 
 compGrid =
