@@ -33,17 +33,12 @@
 \Shorttitle{}
 
 \Abstract{
-%FIX: Make the first sentence stronger and connect to scanned documents.
-% e.g.
-  % We are increasingly recovering text and numeric data from scanned documents
-  % and images.  The \pkg{Rtesseract} provides flexible and comprehensive functionality for
-  % this using optical character recognition (OCR) and is an interface to the Open Source C++
-  % OCR library tesseract.
-  We created the \pkg{Rtesseract} package to support working with text
-  data present in images. \pkg{Rtesseract} is an \proglang{R} package that
-  provides access to Tesseract, an open source \proglang{C++} library for Optical
-  Character Recognition (OCR), from within \proglang{R}.  At its simplest,
-  \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image
+  %FIX: Make the first sentence stronger and connect to scanned documents.
+  
+  Across disciplines, we increasingly desire to recover text and numeric data from scanned documents and images.
+  The \pkg{Rtesseract} provides flexible and comprehensive functionality for
+  this using optical character recognition (OCR) from within \proglang{R} by interfacing to the Open Source \proglang{C++} OCR library tesseract.
+  At its simplest, \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image
   as lines, individual words or separate characters.  Importantly, we can also obtain the
   location of text elements, possible alternatives for characters, and the estimated
   ``confidence'' for each.  These metadata are often essential for interpreting
@@ -58,7 +53,7 @@
   a fully programmatic workflow to extract text data into \proglang{R} for
   subsequent analysis.  }
 
-\Keywords{}
+\Keywords{Optical Character Recognition, OCR, R}
 \Plainkeywords{}
 \Address{
   Matthew Espe, Duncan Temple Lang\\
@@ -135,128 +130,82 @@ characters, words or lines of text from an image, thereby making them
 accessible for data analysis.
 
 There are many commercial OCR software tools
-%FIX: citations for each of these
-currently available (e.g., Adobe Acrobat, PDFPen Pro, ABBY, Google Cloud Vision), 
-though these
-typically  %FIX: this word is tricky. ABBY outputs XML with information.
-  % Perhaps  "however not all of these...."
-  % And will the reader understand the implications of this at this point in the text.
-only output text results.
+currently available (e.g.,
+Adobe Acrobat~\citep{acrobat},
+PDFPen Pro~\citep{pdfpen},
+ABBY~\citep{abbyy},
+Google Cloud Vision~\citep{gcv}), 
+however most of these return little more than text results.
 Although OCR technology has steadily improved over the years, OCR
-results are rarely perfect. We may not care about these errors if they
-are inconsequential to subsequent analysis. However, often these error
-impact our analysis and we need to correct them before
-proceeding. Therefore, OCR is commonly part of a workflow that involves
+results are rarely perfect.
+When errors in text recognition impact our subsequent analyses,
+we need to correct them before proceeding.
+
+Therefore, OCR is commonly part of a workflow that involves
 pre- and post-processing steps to verify and increase the accuracy of
 the text extraction.
-
-A typical OCR workflow might first start with image pre-processing. 
+A typical OCR workflow might start with image pre-processing to make the text ``stand out'' prior to OCR.
 The image might be cropped, contrast increased, noise decreased, have smudges removed, 
-etc. using image editing software to make the text ``stand out'' prior to OCR. Then
-after OCR has been run, we will check if the results make sense. In
-some cases there are obvious issues, such as nonsense words or garbled %FIX what does garbled mean
-text, but in other cases we might want to focus our attention on the
-areas where the OCR engine had the least certainty. When we have
-prior contextual knowledge about the correct matches, such as only
+etc. using image editing software.
+Then after OCR has been run, we will check if the results make sense.
+In some cases there are obvious issues, such as nonsense words or text,
+but in other cases we might want to focus our attention on the
+areas where the OCR engine had the least certainty.
+When we have prior contextual knowledge about the correct matches, such as only
 numbers or certain characters or words occur in the text, we can
 leverage this information to correct errors in the post-processing
-steps. 
+steps.
 When the text is arranged in columns or blocks, we will want to
-rearrange the text into the correct order. Finally, we will analyze
-the text results using methods such as those used in Natural Language Processing (NLP). 
-% New paragraph possibly??
-Using OCR software which only returns text results, our full OCR workflow would involve 1)
-multiple platforms to perform pre-processing, OCR, post-processing,
-and analysis, 2) using pre- and post-processing steps to overcome
-limited control over the OCR process itself, 3) limited options to
-programmatically control and reproduce each step in the workflow, and
-4) no access to OCR intermediate metadata, such as confidence measures,
-alternative matches, location on the page, size of the text, etc., which are helpful for
-assessing the certainty in each returned result and recovering structure and layout
-of the data such as columns in a table or section titles.
-%FIX: Perhaps make this punchier, stronger and more succinct. Not certain the
-% reader will get the need for this metadata
-
-In our work extracting and analyzing text data present in images from
-\proglang{R}, we desired  % required? needed?
-a tool which would overcome the limitations above. % perhaps be specific about which 
-% features specifically.
-In
-our search for solutions, we found Tesseract, a long-standing open
-source OCR library originally created in 1985 and currently under
-% resurgent ?
-active development. Accessing the Tesseract API from \proglang{R} provides us
-with the ability to bring pre-processing, OCR, post-processing, and
-analysis under complete programmatic control within \proglang{R}. The
-\pkg{Rtesseract} package provides 1) a simple high-level function to
-extract the text from one or more images, 2) the ability to also
-obtain important auxiliary metadata (e.g., the confidence in each
-prediction, the location within the image), and 3) customization of
-how the OCR is done.
-%FIX: What about recovering lines, pre-processing the image (rotation), 
-% zooming in on specific regions for more focused OCR (perhaps based on the metadata from the original OCR)
-
-
-% Use the term certainty/uncertainty
-
-\begin{comment}
-In response to our needs, we developed the \pkg{Rtesseract} package,
-an interface to the open source OCR library Tesseract. Tesseract was
-created 1985, was released for open source in 2005, and has since been
-actively maintained and developed by the open source community % FIX: the word "the" 
-  % for open source community may not be ideal as there are many more than one 
-(including developers at Google). Recent innovations in Tesseract
-include the integration of LSTM Deep Learning networks (versions $\ge$
-4.0) for increased speed and accuracy. By interfacing with Tesseract,
-the \pkg{Rtesseract} package provides us 1) a simple high-level
-function to extract the text from one or more images, 2) the ability
-to also obtain important auxiliary data (e.g., the confidence in each
-prediction, the location within the image), and 3) customization of
-how the OCR is done. Additionally, the results are accessible directly
-within \proglang{R} as text and/or a data frame of locations and confidences.
-\end{comment}
-
-This approach using \pkg{Rtesseract} tightly integrates pre- and
-post-processing steps with the actual OCR, all from within
-\proglang{R}.
-For example, we can focus
-on a sub-region of the image, rotate the image, threshold the colors, or enhance the image with some computer
-vision techniques before performing the character recognition. We can
-specify a domain-specific vocabulary, or identify unconventional
-fonts. We can adjust the OCR behavior via run-time configuration variables to
-correct errors in the recognition step rather than relying on
-post-processing. This tight integration simplifies workflows that
-otherwise rely on invoking stand-alone applications typically meant
-for human interactive use. Furthermore, metadata about the resulting
-text can aid and inform subsequent analyses. For example, the layout
-of the text into blocks, the presence of elements such as lines or
+rearrange the text into the correct order or even recover structural elements such as columns in a table or section titles.
+The presence of elements such as lines or
 other dividers, or even the relative size of the text can all be used
-to make sense of the resulting text. Diagnostic pieces of information
+to make sense of the resulting text.
+Diagnostic pieces of information
 such as the certainty in the matches, alternative matches, etc., can
 be essential in assessing certainty, iteratively improving OCR accuracy or reconstructing
-the high-level structure from the individual data values. If the
-OCR tool only returns the text results, as is the case with many OCR
+the high-level structure from the individual data values.
+
+When the OCR software does not provide additional information from the OCR process, e.g. location of text or confidence in recognized text,
+these steps may be difficult or impossible to conduct.
+Our full OCR workflow using OCR software which only returns text results involves 1)
+multiple platforms to perform pre-processing, OCR, post-processing,
+and analysis, 2) leveraging pre- and post-processing steps to overcome
+limited control over the OCR process itself, 3) limited options to
+programmatically control and reproduce each step in the workflow, and
+4) limited ability to use those techniques which rely on OCR intermediate metadata, such as confidence measures, alternative matches, location on the page, size of the text, etc.
+Hence, if the OCR tool only returns the text results, as is the case with many OCR
 tools, OCR's usefulness is limited to cases where the problem is
 either simple or well-covered by the default configuration.
 
-We have not been alone in recognizing the utility of Tesseract. Prior
-to our creation of the \pkg{Rtesseract} in April 2015, the \pkg{ocR}
-package~\citep{Hagmann2014} provided an interface in \proglang{R} to Tesseract
-via calling the Tesseract command line executable. Using the \pkg{ocR}
-package, the \proglang{R} user specifies the image file and command-line options,
-Tesseract is called and writes the results to a file which is then
-read back into \proglang{R}. Following the creation of our \pkg{Rtesseract},
-the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
-similar approach to our \pkg{Rtesseract} package by interfacing to the
-Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
-provides only limited functionality to get the text results from the OCR
-process. %%FIX: Check this. I think it now gets the location information.
-Similar bindings to the Tesseract API exist in \proglang{Python}, \proglang{Ruby}, \proglang{Go}, etc. (see \url{https://github.com/tesseract-ocr/tesseract/wiki/AddOns} for additional details on these interfaces to Tesseract), though these typically only provide limited functionality.
+In our work extracting and analyzing text data present in images from
+\proglang{R}, we required a tool which would overcome the limitations above. 
+In our search for solutions, we found Tesseract, a long-standing open
+source OCR library originally created in 1985 and currently under resurgent
+development. We created \pkg{Rtesseract} to access the Tesseract API from \proglang{R} and allows us to tightly integrate pre- and
+post-processing steps with the actual OCR and analysis under complete programmatic control within \proglang{R}.
+This tight integration simplifies workflows that
+otherwise rely on invoking stand-alone applications typically meant
+for human interactive use. Furthermore, providing metadata about the resulting
+text can aid and inform subsequent analyses. 
 
-\pkg{Rtesseract}, from its initial
-implementation, provides access to most of the functionality in the
-Tesseract API and provides fine-grain control from \proglang{R} to the different
-steps in the OCR process. 
+The \pkg{Rtesseract} package provides 1) a simple high-level function to
+extract the text from one or more images, 2) the ability to also
+obtain important auxiliary metadata (e.g., the confidence in each
+prediction, the location within the image), 3) customization of
+how the OCR is done,
+4) extended ability to adjust the image are being recognized, e.g. rotation, focus on subregions, etc.,
+and 5) the ability to identify structural elements in the image such as lines or blocks. 
+\pkg{Rtesseract} additionally allows \proglang{R} users access to leptonica\citep{leptonica}, the image library Tesseract uses for image pre-processing.
+This functionality allows users to provide their own processed image to Tesseract.
+\pkg{Rtesseract} also provides
+higher-level functionality to visualize the results from the OCR on the original
+image.
+Lastly, \pkg{Rtesseract} has been
+designed to support both the v3.05 and v4.0 versions of Tesseract, with mechanisms to
+configure \pkg{Rtesseract} according to the installed versions of
+Tesseract, leptonica, and image libraries.
+
+
 %FIX:  We have to be careful here. It is not the steps in the OCR itself, but the pre and
 %post-processing around tesseract, and via run-time variables controlling tesseract.
 % The sentence above could be misinterpreted.
@@ -264,16 +213,11 @@ steps in the OCR process.
 % illustrations of the high-level functionality, e.g., image manipulation (rotation, thresholding)
 % customization, post-processing based on the results. It comes next in the paragraph, so adding a
 % "including ... below".
-\pkg{Rtesseract} also provides
-higher-level functionality to visualize the results from the OCR on the original
-image.  \pkg{Rtesseract} additionally
-allows \proglang{R} users access to leptonica\citep{leptonica}, the image library Tesseract uses for
-image pre-processing. This functionality allows users to provide their own
-processed image to Tesseract. Lastly, \pkg{Rtesseract} has been
-designed to support both the current release (v3.05.01) and
-development versions (v4.0.0) of Tesseract, with mechanisms to
-configure \pkg{Rtesseract} according to the installed versions of
-Tesseract, leptonica, and image libraries.
+
+\subsubsection{Comparison to other packages}
+<<child = "comparison.Rnw">>=
+
+@ 
 
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
@@ -289,12 +233,14 @@ function \code{GetText} which allows \proglang{R} users to provide the path to a
 supported format, e.g. TIFF, JPEG or PNG, and to perform OCR on the image
 using the default settings (similar to both the \pkg{ocR} and
 \pkg{tesseract} packages).
+
 % FIX: The next 2 setences don't quite connect to this paragraph.
 % Perhaps lead with these and then introduce the basic text extraction - GetText() which comes
 % next anyway. Or else provide a brief overview of the different things we will discuss in this 
 % section, starting with simple text extraction.
 % It might also be good (and may already be here) to show what can go wrong with, e.g., 2 column
 % text with titles centered in the columns and being put/recovered in a line in the wrong column.
+
 For example, suppose we have an image from
 an older scientific publication from which we want to extract
 information, e.g., Fig. \ref{fig:base}. We will use this image to
@@ -483,10 +429,10 @@ And then calculate the median confidence inside each group,
 <<out.lines=8>>=
 tapply(bbox[,"confidence"], lrGroups, function(x) round(median(x),1))
 @
-% Perhaps explicitly interpret the results, i.e. point out to the reader that
-% most intervals have a median confidence of approximately 91, except the last one
-% which is 57.
-Doing this verifies our suspicion that there are issues with the right
+
+Most intervals have a median confidence of approximately 91, except the last one
+which is 57.
+This verifies our suspicion that there are issues with the right
 side of the page. Looking at the image (Fig. \ref{fig:base}), we can
 see there is rotated text in the margin that identifies when and where
 the PDF was downloaded. This text is not being recognized well by the
