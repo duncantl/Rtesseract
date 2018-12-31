@@ -47,10 +47,10 @@ function(words, distThreshold = 3)
 spellFix =
 function(wrong, words = character())
 {
-    ok = aspell(wrong)
+    ok = Aspell::aspell(wrong)
     wrong = wrong[!ok]
     if(length(wrong)) {
-        alt = aspell(wrong, TRUE)
+        alt = Aspell::aspell(wrong, TRUE)
         if(length(words)) {
             freq = table(words)
             lapply(alt, function(a) {
