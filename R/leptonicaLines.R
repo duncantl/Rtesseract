@@ -126,7 +126,7 @@ function(pos, gap)
 findLines =
     # This returns a Pix object, either the one with the lines
     # or <....????>
-function(pix, hor = dims[2]*.1,
+function(pix, hor = dims[2]*.02,
          vert = 5, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210,
          convertTo8 = GetImageDims(pix)[3] > 8, dims = dim(pix))
 {
