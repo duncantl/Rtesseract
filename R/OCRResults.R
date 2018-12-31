@@ -36,10 +36,42 @@ setMethod("[", "OCRResults",
           })
 
 showPoints =
-function(x, top = par()$usr[4], radii = 30, fg = "red", ...)
+function(x, top = par()$usr[4], radii = top*.05, fg = "red", inches = FALSE, addGuides = !inches, ...)
 {
+   x0 = (x$left + x$right)/2
+   y0 = top - (x$top + x$bottom)/2
    radii = rep(radii, nrow(x))
-   symbols((x$left + x$right)/2, top - (x$top + x$bottom)/2, circles = radii, add = TRUE, fg = fg, ... )
+   symbols(x0, y0, circles = radii, add = TRUE, fg = fg, inches = inches, ... )
+   if(addGuides) {
+       # draw dashed lines from the center
+       ang = c(60, 150, 270)
+#       ang = c(0, 180, 270)
+ #      ang = c(90, 60, 270)       
+       ang = 2*pi*ang/360
+       
+       x1 = rep(x0, each = 3)
+       y1 = rep(y0, each = 3)
+       x2 = x1 + radii[1]*cos(ang)
+       y2 = y1 + radii[1]*sin(ang)
+
+       xx = yy = rep(NA, (length(x0)+1)*3)
+       i = seq(1, by = 3, length = (length(x0))*3)
+#       browser()       
+       xx[i] = x1
+       yy[i] = y1
+       xx[i+1] = x2
+       yy[i+1] = y2       
+
+       #  c(x0[1], x1[1] , NA,
+       #    x0[1], x1[2] , NA,
+       #    x0[1], x1[3], NA,
+       #
+       #    x0[2], x1[], NA
+       
+       lines(xx, yy, col = fg, lty = 3, ...)
+
+     #  lines(c(x0[1], x0[1] + radii[1]), c(y0[1], y0[1]), col = "blue", lwd = 4)
+   }
 }
 
 
