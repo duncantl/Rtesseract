@@ -6,9 +6,14 @@ getLines =
     #
     #
     # 
-function(pix, hor, vert, lineThreshold = .1, fraction = .5, gap = .02, asDataFrame = FALSE,
-          ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
+function(pix,
+         hor = dims[2]*.02,
+         vert = 5,
+         lineThreshold = .1, fraction = .5, gap = .02, asDataFrame = FALSE,
+         ..., asIs = is(pix, "AsIs"), horizontal = hor > vert, dims = dim(pix))
 {
+  pix = as(pix, "Pix")
+    
   if(!asIs)
      pix = findLines(pix, hor, vert, ...)
 
@@ -72,12 +77,13 @@ function(x, coord, horizontal = TRUE, fraction = .5, gap = .02)
         i = which(r$values)
         if(length(i) > 1) {
             pos = cumsum(r$length)
-            ans = cbind(pos[i-1], pos[i])
+               # if i contains 1, then i - 1 contains 0 and we will get unequal lengths in the cbind()
+            ans = if(1 %in% i) cbind(pos[c(1, i[-1] -1)], pos[i]) else   cbind(pos[i-1], pos[i])
             ans = connectGap(ans, gap)
         } else
             ans = matrix(c(min(which(on)), max(which(on))), 1, 2)
     } else {
-       ans = c(1, length(on))
+       ans = matrix(c(1, length(on)), 1, 2)
     }
 
     m = matrix(0, nrow(ans), 4, dimnames = list(NULL, c("x0", "y0", "x1", "y1")))
@@ -106,8 +112,9 @@ function(pos, gap)
 findLines =
     # This returns a Pix object, either the one with the lines
     # or <....????>
-function(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210,
-         convertTo8 = GetImageDims(pix)[3] > 8)
+function(pix, hor = dims[2]*.1,
+         vert = 5, asLines = TRUE, invert = !asLines, erode = c(3, 5), threshold = 210,
+         convertTo8 = GetImageDims(pix)[3] > 8, dims = dim(pix))
 {
     pix = as(pix, "Pix")
     
