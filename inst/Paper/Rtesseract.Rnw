@@ -974,6 +974,7 @@ scanning and image processing.
 We can add these lines to the display of the image to verify they
 appear where we expect (Fig. \ref{fig:lines_id}).
 
+%FIX: See the lines() method now available/added. See lineSegments.R
 \begin{figure}[H]
 <<fig = TRUE, results = "hide">>=
 plot(p2)
