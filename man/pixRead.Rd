@@ -41,7 +41,7 @@
   for optical character recognition.
 }
 \usage{
-pixRead(filename, addFinalizer = TRUE, ...)
+pixRead(filename, addFinalizer = TRUE, multi = FALSE, ...)
 pixCreate(x, ...)
 }
 \arguments{
@@ -56,6 +56,12 @@ pixCreate(x, ...)
       the image when/if it is garbage collected. So we have to avoid two
       attempts to free the same Pix.
     }
+  \item{multi}{a logical value. If \code{TRUE} and the file is a TIFF
+    file, we read it as a multipage TIFF file. If there are multiple
+    images,   we return these as a list.  If not, i.e. there is only one image, we
+    return that single image. If \code{FALSE}, we return the first image
+    in the file.
+  }
   \item{\dots}{additional arguments, currently ignored for
     \code{pixRead} and passed to the methods for \code{pixCreate}.}
 }

@@ -67,13 +67,20 @@ function(api, ..., opts = list(...))
 }
 
 pixRead = 
-function(filename, addFinalizer = TRUE, ...)
+function(filename, addFinalizer = TRUE, multi = FALSE, ...)
 {
    filename = path.expand(filename)
    if(!file.exists(filename))
       stop("no such file ",  filename)
 
-   .Call("R_pixRead", filename, as.logical(addFinalizer))
+   if(multi && grepl("TIFF", names(readImageInfo(filename)$format))) {
+       ans = readMultipageTiff(filename)
+       if(length(ans) == 1)
+           ans[[1]]
+       else
+           ans
+   } else
+      .Call("R_pixRead", filename, as.logical(addFinalizer))
 }
 
 SetImage = 
