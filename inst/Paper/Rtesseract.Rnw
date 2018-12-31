@@ -895,6 +895,17 @@ We start by reading the image:
 p1 = pixRead(filename = smithburn)
 @
 
+%NOTE: getLines() and findLines() now take the name of the file containing the image
+% and does the conversion to 8-bit and then binary thresholding. 
+% So we could drop some of this. However, it is also good to show that this is possible
+% when the defaults don't work or we need more control over the preprocessing.
+%
+% We should  probably talk about thresholding and color manipulation earlier and as a separate
+% example, e.g. the wine images where the titles of some of the sections are in a light color and
+% can be omitted if we leave it to tesseract to do the thresholding for us. We need a lower
+% thresholding.
+
+
 We immediately convert the image to gray-scale with \code{pixConvertTo8()}:
 
 <<>>=
@@ -955,8 +966,10 @@ We describe this box with the width (horizontal) and height (vertical) dimension
 hlines = getLines(pix = p2, hor = 51, vert = 3)
 hlines
 @
-
-This returns a list with each element identifying the (x0, y0) and (x1, y1) coordinates describing a single line.
+This returns a list with each element being a matrix identifying the (x0, y0) and (x1, y1) coordinates describing 
+the segments that are considered as a single line.
+This allows small gaps between the segments. These gaps may be structural or due to errors in the
+scanning and image processing.
 
 We can add these lines to the display of the image to verify they
 appear where we expect (Fig. \ref{fig:lines_id}).
@@ -966,19 +979,23 @@ appear where we expect (Fig. \ref{fig:lines_id}).
 plot(p2)
 lapply(hlines,
        function(tmp) {
-           lines(tmp[c(1, 3)], nrow(p2) - tmp[c(2, 4)], col = "red",
+           lines(tmp[, c(1, 3)], nrow(p2) - tmp[, c(2, 4)], col = "red",
                  lty = 3, lwd = 2)
        })
 @
 \caption{The result of identifying lines using the \code{getLines} function colored in red over the original image.}
 \label{fig:lines_id}
 \end{figure}
+%@MATT: I changed the code here to treat tmp as a matrix, i.e., add the , to indicate all rows.
+% In this case, the lines are all single segments, but in general they may be multi-row matrices
 
 Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
 lines are relative to row 1 and go down.
+%FIX: We should make this observation much earlier.
 
 For those intersted, we include a vignette with \pkg{Rtesseract} which illustrates how the \code{GetLines()} function leverages several lower-level functions in \pkg{Rtesseract} to identify lines on the image.
+
 
 \begin{comment}
 
@@ -1220,22 +1237,26 @@ We can follow the same process to identify the locations of the
 vertical lines.  We've already deskewed the original image, so we don't
 have to do that.  We can call \code{findLines()} and this time specify
 a window that is tall and narrow to capture the vertical parts.  We
-should experiment with these values.  One thing to note is that
-characters have vertical components more than horizontal components,
-e.g. 1, L, M.  If we make the height of the window too small, we'll
-pick up more false positives.
+should experiment with these values for the \code{hor} and \code{vert} parameters
+defining a vertical line segment.  One thing to note is that
+some characters have vertical components more than horizontal components,
+e.g., 1, L, M.  If we make the height of the window too small, we'll
+identify some of these as vertical lines, i.e.,  false positives.
 
 <<>>=
 v = findLines(pix = p2, hor = 3, vert = 101)
 @
 
 Again, we can plot this and see where the lines are.
+%FIX: Should we do this?
 
 \subsubsection{Removing the Lines}
 
 We don't have to remove the lines before we pass the image to
 Tesseract as Tesseract will remove them for us.  However, it is
-interesting to see how well we can do.  Instead of finding the
+interesting to see how well we can do.
+%FIX: This is unclear. 
+Instead of finding the
 locations of the lines (with \code{getLines()}), we'll remove them
 from the image.  The initial steps use the same basic approach as finding the lines
 
@@ -1251,6 +1272,7 @@ However, rather than extract the line coordinates, we use
 \code{pixAddGray()} to overlay the images with the horizontal and then
 the vertical lines onto the original image.
 This removes the lines from the original image.
+% FIX: Perhaps we need more of an explanation here.
 
 <<>>=
 p = pixAddGray(p2, p3)
@@ -1263,7 +1285,7 @@ We can plot the resulting image (Fig. \ref{fig:remove_lines}) and compare it to 
 <<>>=
 plot(p)
 @
-\caption{An example of removing lines from an image using the \code{pixAddGray()} function in ]pkg{Rtesseract}.}
+\caption{An example of removing lines from an image using the \code{pixAddGray()} function in \pkg{Rtesseract}.}
 \label{fig:remove_lines}
 \end{figure}
 
@@ -1300,7 +1322,7 @@ Fortunately, we don't care about this text for our
 application.
 
 We can compare the image we created with the lines removed to the one
-tesseract creates by passing the option \code{textord\_tabfind\_show\_vlines}.
+Tesseract creates by passing the option \code{textord\_tabfind\_show\_vlines}.
 We do this with
 
 <<>>=
@@ -1309,6 +1331,20 @@ tesseract(smithburn, pageSegMode = "psm_auto",
 @
 
 This creates a separate PDF file, by default named ``vhlinefinding.pdf'', which displays the vertical lines as detected by Tesseract.
+%FIX: Need to discuss what this displays. It is 12 pages. Which pages are relevant.
+
+%FIX: Does this still work in tesseract 4.0?
+% It doesn't seem to be set when we query the resulting api object.
+%   GetVariables(ts, "textord_tabfind_show_vlines")
+% The following does work:
+%
+% ts = tesseract(smithburn, pageSegMode = "psm_auto")
+% SetVariables(ts, textord_tabfind_show_vlines = 1)
+% GetVariables(ts, "textord_tabfind_show_vlines")
+% bb = GetBoxes(ts)
+%  This writes:  Image resolution = 600, max line width = 30, min length=150
+%
+%
 
 \begin{comment}
   
