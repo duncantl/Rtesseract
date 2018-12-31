@@ -9,6 +9,18 @@
 
 ## Important
 
+1. *** In plot.OCR, use red-green color map/scale. Deal with color-blind issues.
+    + [DOCUMENT] allow user to specify the end points of the color ramp via an option OCRConfidenceColors with 
+	   two values - low and high.
+
+1. In plot.OCR, add a legend.
+
+1. In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
+   smithburn image.  
+   + Is it that it puts a box covering the entire plotting region!!!
+      + This is the word Uganda that has a box that is the entire image.
+   + Draw in reverse order of area of each box so the big ones go at the back
+
 1. [done] Class and methods for drawing the lines returned by getLines().
    + See tests/lineSegments.R for an example.
    + Take code from paper.
@@ -69,22 +81,13 @@ GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
    + If we use OEM_TESSERACT_ONLY as the engineMode in the call to tesseract(), then this does work.
      But not with the default engineMode - OEM_DEFAULT.
 
-1. *** In plot.OCR, use red-green color map/scale. Deal with color-blind issues.
-    + [DOCUMENT] allow user to specify the end points of the color ramp via an option OCRConfidenceColors with 
-	   two values - low and high.
-
-1. In plot.OCR, add a legend.
-
-1. In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
-   smithburn image.  
-   + Is it that it puts a box covering the entire plotting region!!!
-      + This is the word Uganda that has a box that is the entire image.
-
 1. [see inst/bin/pdf2png] Rewrite the script that converts a scanned PDF document with multiple pages to 
  a series of independent files each containing a page. (Lost on my previous laptop.)
     + Consider renaming pdf2images
  
 1. See if tesseract can read a multi-page document. Has to be in TIFF? PNG? ..., not PDF.
+   + Yes. See readMultipageTiff() function. Get back a list of the Pix object for each of the pages.
+   + Also added readPixHeader/readImageInfo to get the format information from each image.
 
 1. Check the character encoding under the following setup:
      + do OCR on a foreign page with words that have accents or different characters
@@ -100,27 +103,6 @@ GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
   - cpp: readImage.cpp
   - notes: Note findLines_notes
 
-1. [fixed] getLines() for UCD_Lehmann_0377.jpg fails. Error occurs.
-```
-'/Users/duncan/Data/Lehmann_catalogs/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg'
-#f = "inst/images/SMITHBURN_1952_p3.png"
-library(Rtesseract)
-f = '../UCD_Lehmann_0377.jpg'
-ll = findLines(f, 201, 7, TRUE, erode = integer())
-getLines(ll, asIs = TRUE, horizontal = TRUE)
-```
-<!--
-```
-pp = pixRead(f)
-pp8 = pixConvertTo8(pp)
-ll = findLines(pp8, 201, 7, TRUE, erode = integer())
-```
--->
-
-1. [fixed] Had a crash with some code after a while in inst/images/readPlot.R (inside the if(FALSE)..)
-   + Several calls to GetImage(). So this may be fixed now?
-     + See the parse/eval code at the top of the file to run.
-
 1. [verify] findLines() and getLines() functions.
 
 1. [fixed] Options
@@ -131,7 +113,7 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
    + [TODO] e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
-     Not needed -  pixRotate{90,180},
+     + Not needed -  pixRotate{90,180},
 
 1. [IGNORE/not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
   Is there a GetDims? no - just pixGetDims and GetImageDims.
@@ -143,6 +125,7 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
     If it is, we can collect all the tesseract objects in a linked list within the package
 	and remove them when they are freed. Then, when the package is detached, any API objects left in
    the list can be removed and freed.
+    + The package is not unloaded or detached except via a user-level .Last, not in the package's code.
    
 1. See if we can trap tprintf() calls in tesseract and redirect to R console.
    + On linux with DSOs for libtesseract, we can slide ours in. See ext.cpp.
@@ -153,21 +136,6 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
           and clears the collection.
 
 1. Catch errors due to wrong version of tessdata, i.e. using 3.0 data with 4.0 tesseract and vice versa.
-
-1. [done] tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
-    + The first segment to extract text from the rotated image
-	```
-ts = tesseract(p1)
-#XXX This gives nonsensical values for 
-SetRectangle(ts, dims = c(500, 4900, 3000, 100))
-bb = GetBoxes(ts)	
-	```
-	 gives a single row of a data frame and the coordinates are way beyond the dimensions of the
-	image.
-	   + They appear to be somewhat random and suggest uninitialized values.
-	   + This was the problem. The iterator had nothing in it, but for some reason we were starting
-         the count at 1 and so we were filling in the values with garbage.
-	+ But the next code segment where we focus on the correct region gives proper results.
 
 1. detect and deal with the "dev" string in the tesseract version if that is being used, e.g. tesseractVersion()
 
@@ -490,6 +458,41 @@ Warning: Auto orientation and script detection requested, but osd language faile
 ```
 
 ## DONE
+1. [fixed] getLines() for UCD_Lehmann_0377.jpg fails. Error occurs.
+```
+'/Users/duncan/Data/Lehmann_catalogs/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg'
+#f = "inst/images/SMITHBURN_1952_p3.png"
+library(Rtesseract)
+f = '../UCD_Lehmann_0377.jpg'
+ll = findLines(f, 201, 7, TRUE, erode = integer())
+getLines(ll, asIs = TRUE, horizontal = TRUE)
+```
+<!--
+```
+pp = pixRead(f)
+pp8 = pixConvertTo8(pp)
+ll = findLines(pp8, 201, 7, TRUE, erode = integer())
+```
+-->
+
+1. [fixed] Had a crash with some code after a while in inst/images/readPlot.R (inside the if(FALSE)..)
+   + Several calls to GetImage(). So this may be fixed now?
+     + See the parse/eval code at the top of the file to run.
+
+1. [done] tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
+    + The first segment to extract text from the rotated image
+	```
+ts = tesseract(p1)
+#XXX This gives nonsensical values for 
+SetRectangle(ts, dims = c(500, 4900, 3000, 100))
+bb = GetBoxes(ts)	
+	```
+	 gives a single row of a data frame and the coordinates are way beyond the dimensions of the
+	image.
+	   + They appear to be somewhat random and suggest uninitialized values.
+	   + This was the problem. The iterator had nothing in it, but for some reason we were starting
+         the count at 1 and so we were filling in the values with garbage.
+	+ But the next code segment where we focus on the correct region gives proper results.
 
 1. [done] nrow, ncol, dim methods for the tesseract object itself?
     + have a dim() method

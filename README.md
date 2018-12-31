@@ -32,11 +32,55 @@ rows or columns
  use and flexible programmatic access.
 3. We can set and query many variables controlling tesseract's behavior.
 3. We can query details about the image.
+3. We can manipulate an image as an array of pixels
+3. We interface to numerous leptonica routines to process images, e.g., convert to gray scale or
+   binary images, rotate and transpose images
+3. Functionality to read images and their metadata to determine their formats
+3. Read multi-page TIFF documents.
 3. We can query the metadata about the version of tesseract, the supported image formats, etc.
-
+3. 
 
 
 We can machine generate the interface to the other methods and classes in the tesseract API/library.
+
+## Converting Documents to Images
+
+Often we will start with a scanned document already as a single image.
+Assuming leptonica was installed with support for that image format, we can read the image directly.
+
+
+### Multipage PDF
+In many of our use cases, we start with a PDF document that consists of multiple scanned pages.
+Each page is a scanned image.  Tesseract/leptonica does not read this directly.
+Instead, we need to convert the PDF document into a different format.
+We ue ImageMagick, and specifically its very general and powerful convert command, to convert
+between image formats. 
+
+#### Separate Image File for each Page
+If we want to create a separate image for each page in the original PDF, 
+we can use the script pdf2png in this package (inst/scripts/pdf2png). This hides some of the
+details of convert. (This can convert to JPEG and other formats, in spite of what the name
+suggests.)
+```
+pdf2png SMITHBURN_1952.pdf
+```
+This will generate png files with names SMITHBURN_1952_0000.png, ...
+We can specify the filename format.
+
+We can also specify the density (points per pixel), the quality/level of compression, and any other
+command line arguments `convert` supports.
+
+#### Multipage Image Format
+Alternatively, we can convert the PDF document to a multi-page/image TIFF file, i.e. a single TIFF
+file that contains multiple images.  We then read this into R using the `readMultipageTiff()`
+function and then access each page from the resulting list.
+
+
+To convert a multipage PDF document to a multipage TIFF file, use, e.g.,
+```
+convert SMITHBURN_1952.pdf SMITHBURN_1952.tiff
+```
+
 
 
 ## History

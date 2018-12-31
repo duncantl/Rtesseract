@@ -145,3 +145,7 @@ export(showPoints)
 
 
 export(getAvailableLanguages)
+
+
+export(readMultipageTiff)
+export(readPixHeader, readImageInfo)

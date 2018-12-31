@@ -121,3 +121,58 @@ retPixaBoxa(Pixa *pix, Boxa *boxes)
 }
 
 
+
+// https://www.nightprogrammer.org/development/multipage-tiff-example-download-test-image-file/
+extern "C"
+SEXP
+R_Leptonica_readMultipageTiff(SEXP r_file)
+{    
+
+    PIXA *ans;
+    ans = pixaReadMultipageTiff (CHAR(STRING_ELT(r_file, 0)));
+
+    if(!ans) {
+        PROBLEM "failed to read multipage TIFF file %s", CHAR(STRING_ELT(r_file, 0))
+            ERROR;
+    }
+
+    int n = ans->n, i;
+    Pix *pix;
+    SEXP r_ans;
+    PROTECT(r_ans = NEW_LIST(n));
+    for(i = 0; i < n ; i++) {
+        pix = ans->pix[i];
+        pixClone(pix); 
+        SET_VECTOR_ELT(r_ans, i, createRef(pix, "Pix", R_pixDestroy));
+    }
+    UNPROTECT(1);
+    // Free the PIXA ans ??
+    return(r_ans);
+}
+
+
+extern "C"
+SEXP
+R_Leptonica_pixReadHeader(SEXP r_file)
+{
+    l_ok status;
+
+//    l_int32 format, w, h, bps, spp, iscmap;
+    l_int32 vals[6];
+    
+    status = pixReadHeader(CHAR(STRING_ELT(r_file, 0)), vals, vals+1, vals+2, vals+3, vals+4, vals+5); //&format, &w, &h, &bps, &spp, &iscmap);
+    
+    if(status) {
+        PROBLEM "failed to read header of image file %s", CHAR(STRING_ELT(r_file, 0))
+            ERROR;
+    }
+
+    SEXP r_ans = NEW_LIST(6);
+    PROTECT(r_ans);
+    for(int i = 0; i < 6; i++)
+        SET_VECTOR_ELT(r_ans, i, ScalarInteger(vals[i]));
+    UNPROTECT(1);
+
+    return(r_ans);
+}
+

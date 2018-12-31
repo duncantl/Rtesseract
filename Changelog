@@ -1,4 +1,10 @@
 0.4-0
+	* readMultipageTiff() function to read all pages of a TIFF file. Can pass each page to
+	  tesseract() or use as a Pix object directly.
+
+	* readImageInfo() function to read metadata from an image file, i.e., format, dimensions,
+	  pixels per sampler, has a color map.
+
         * getAvailableLanguages() function.
 
 	* Enhancements related to garbage collection and copying of Pix objects.
@@ -22,7 +28,9 @@
 
 	* R global option "OCRConfidenceColors" controls the range of colors used in plot.OCR for displaying
 	  the confidences.
-	
+
+	* lines() method for drawing object returned by getLines().
+
 0.3-1
 	* Set the locale for each .Call() invocation to handle tesseract 4.0.
 
