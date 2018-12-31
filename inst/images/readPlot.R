@@ -1,3 +1,10 @@
+# e = parse("readPlot.R")
+# Assignments
+# lapply(e[sapply(e, is, "=")], eval, globalenv())
+# Eval the if(FALSE)
+# lapply(e[sapply(e, is, "if")], function(x) eval(x[[3]], globalenv()))
+#
+
 if(FALSE) {
 
     # examples - West\ Causcasian\ Bat\ Virus/Wright-2010.pdf
