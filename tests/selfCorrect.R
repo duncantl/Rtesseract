@@ -4,9 +4,9 @@ words = c("giving", "give", "giving", "gave", "giver", "govern")
 
 if(require(Aspell)) {
 
-spellFix("giviag", words) # from the corpus, 'sdagiving'
+Rtesseract:::spellFix("giviag", words) # from the corpus, 'sdagiving'
 
-spellFix("giviag") # from the aspell alternatives
+Rtesseract:::spellFix("giviag") # from the aspell alternatives
 }
 
 
