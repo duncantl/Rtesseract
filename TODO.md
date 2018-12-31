@@ -1,15 +1,65 @@
 # Todo Items
 
-1. Add showPoints() like the one in ReadPDF.
-    + There is a function in OCRResults.R
+## New Features
+1. LRTResultIterator to get font informationitalics, etc.
 
-1. LRTResultIterator to get italics, etc.
+1. Add functionality to find columns. To extract tabular data.
+
+1. Allow plotSubImage() to work from the Pix rather than requiring png::readPNG() or equivalent.
+
+## Important
+
+1. [mostly done] Make getLines() more robust.
+    + Not sure what else to check other than A LOT OF EXAMPLES!
+	  + The UCD_Lehmann_0377.jpg one doesn't give good results.
+
+1. Seg fault
+  + Running in inst/images/
+```
+  library(Rtesseract)
+  a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
+  Recognize(a)
+```
+  + If we remove the configs = config, this doesn't segfault.
+    So looks like a tesseract issue, but something we need to deal with.
+	+ Remove `tessedit_timing_debug 1` from config and it works in R.
+	  + But why does it work in stand-alone tesseract with this option.
+
+1. In the following code, we don't generate the vhlinefinding.pdf file:
+```
+  library(Rtesseract)
+  a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
+  Recognize(a)
+```
+
+1. What are the names of the init variables,  versus the non-init variables.
+   And what are the ones we set in config and vars
+
+1. [fixed but needs more investigation] Are variables being set? in the Init()?
+See the textord_tabfind_show_vlines
+```
+library(Rtesseract);smithburn = system.file("images", "SMITHBURN_1952_p3.png", package = "Rtesseract")          
+ts = tesseract(smithburn, pageSegMode = "psm_auto", textord_tabfind_show_vlines = 1)
+GetVariables(ts, "textord_tabfind_show_vlines") # FALSE
+SetVariables(ts, textord_tabfind_show_vlines = 1)
+GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
+```
+  Seem to call SetVariables() before Init().
+  I changed this in Oct 2018. Reverted it now so the above actually works.
+
+
+1. [finalize fixes] Add showPoints() like the one in ReadPDF.
+    + There is a function in OCRResults.R
+	+ Added guidelines within the circle
+	   + but they don't connect to circle contour. Most likely aspect ratio issues. (Works for 0 and 180 degrees.)
 
 1. SVG view.
+    + Scale properly.
+	+ Use colors from GetConfidenceColors ??
 
 1. user dictionary option. See inst/Paper/dictTest.R
    
-1. Does IsValidWord() actually work? Seems to always say FALSE???
+1. [ok, but explore tesseract 4 lstm setting] Does IsValidWord() actually work? Seems to always say FALSE???
    + If we use OEM_TESSERACT_ONLY as the engineMode in the call to tesseract(), then this does work.
      But not with the default engineMode - OEM_DEFAULT.
 
@@ -20,18 +70,9 @@
 1. In plot.OCR, add a legend.
 
 1. In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
-   smithburn image.  Is it that it puts a box covering the entire plotting region!!!
-
-1. Cleanup getLines() to not need both hor and vert - just one, or default for both,
-   +  methods to deal with a Pix or an API object and 
-      + coerce to a Pix handles this for both TesseractBaseAPI and character/file name.
-   + [Done] do the binary/8-bit conversion - pixConvertTo8().
-
-1. [done] Put the correct row and column numbers on plotSubImage axes if we are going to talk about it in the paper.
-
-1. [done] Make plotSubImage handle multiple rows.
-
-1. [done] Method for plotSubImage() for data.frame of OCRResults.
+   smithburn image.  
+   + Is it that it puts a box covering the entire plotting region!!!
+      + This is the word Uganda that has a box that is the entire image.
 
 1. [see inst/bin/pdf2png] Rewrite the script that converts a scanned PDF document with multiple pages to 
  a series of independent files each containing a page. (Lost on my previous laptop.)
@@ -53,25 +94,34 @@
   - cpp: readImage.cpp
   - notes: Note findLines_notes
 
-1. getLines() for UCD_Lehmann_0377.jpg fails.
+1. [fixed] getLines() for UCD_Lehmann_0377.jpg fails. Error occurs.
 ```
 '/Users/duncan/Data/Lehmann_catalogs/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg'
-f = "inst/images/SMITHBURN_1952_p3.png"
+#f = "inst/images/SMITHBURN_1952_p3.png"
+library(Rtesseract)
+f = '../UCD_Lehmann_0377.jpg'
+ll = findLines(f, 201, 7, TRUE, erode = integer())
+getLines(ll, asIs = TRUE, horizontal = TRUE)
+```
+<!--
+```
 pp = pixRead(f)
 pp8 = pixConvertTo8(pp)
 ll = findLines(pp8, 201, 7, TRUE, erode = integer())
-getLines(ll, asIs = TRUE, horizontal = TRUE)
 ```
+-->
 
-1. Had a crash with some code after a while in inst/images/readPlot.R (inside the if(FALSE)..)
+1. [fixed] Had a crash with some code after a while in inst/images/readPlot.R (inside the if(FALSE)..)
+   + Several calls to GetImage(). So this may be fixed now?
+     + See the parse/eval code at the top of the file to run.
 
-1. Make getLines() more robust.
+1. [verify] findLines() and getLines() functions.
 
-
-1. Options
+1. [fixed] Options
 ```
 a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 ```
+    + Move the SetVariables call in tesseract() to after the Init()
 
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
    + [TODO] e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
@@ -102,8 +152,6 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 
 1. detect and deal with the "dev" string in the tesseract version if that is being used, e.g. tesseractVersion()
 
-1. [verify] findLines() and getLines() functions.
-
 1. [works] plot.OCR that takes a Pix as the value if img, or uses the Pix rather than the external file.
    If GetInputName() returns an empty file, then we need to use the Pix directly as it didn't come
    from a file.
@@ -121,12 +169,10 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 	+ Fast versions now implemented, except for matrix.
     + [no longer true for most cases.] For now, Implementations using pixGetPixels(), so they do not take advantage of efficencies in wanting less than the full matrix. 
 
-1. [low] nrow, ncol, dim methods for the tesseract object itself?
-
 1. [low] remove dependencies on readPNG() from plot.OCR()
     Not necessary. They are just suggests. May be faster than plotting from the Pix??
 
-1. Methods for pixOrientDetect", pixUpDownDetect, pixUpDownDetectGeneral
+1. Methods for pixOrientDetect, pixUpDownDetect, pixUpDownDetectGeneral
 
 1. [test] pixZero
 1. [low] pixWrite() & guessImageFormatByExt(): Maps tiff to tiff_lzw. May want to do better.
@@ -144,49 +190,7 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
  command-line too.  (Or pngcrush apparently.)
   (See
  https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile)
- 
-1. [done] Add method for tesseract() to be called with a Pix, 
-```
-p = pixRead("inst/images/sampleImage.jpg")
-a = tesseract(p)
-bb = GetBoxes(a)
-```
-   (otherwise,
-	   tess = tesseract()
-	   SetImage(tess, pix)
-   )
-1. [done] Method for plot for Pix, i.e. plot(pix). So equivalent to showPix but in R.
-	Not necessarily going to a file. But may want this so that we don't have to deal with color issue. 
-    Deal with colors for rasterImage().
-1. [done] Make nrow and ncol generics and export??
-1. [done] Add webp, jp2, etc. to the image formats supported (TRUE/FALSE)
-     Do this by adding examples to the configuration that calls the readImage application we compile.
-1. [done] pixGetInputFormat(), pixGetDepth()
-1. [done] nrow, ncol, dim method for PIX/Pix	
-1. [done] Check if a Pix is already in 8bpp
-    pixGetDims(pix)[3] or pixGetDepth()
-1. [done] Check plot.OCR(, cropToBoxes = TRUE)   
-1. [done] Add IFF_ prefix to asEnumValue() for InputFileFormat so can do pixWrite(,, "PNG") w/o the IFF_
-    But of course can use IFF_PNG w/o the quotes.
-1. [fixed] Segfault for pixGetRGBPixels()
-  ```
-  library(Rtesseract)
-  p = pixRead("inst/images/SMITHBURN_1952_p3.png")
-  pixGetRGBPixels(p)
-  ```
-   Wrong indexing into the R matrix!
 
-1. [Yes] Check tesseract(config = ...) and tesseract(vars = ...) are working correctly.
-  Calling tesseract on the command line creates vhlinfinding.pdf in 
-  ```
-  tesseract SMITHBURN_1952_p3.png foo   config 
-  ```
-  but not tesseract("", configs = "config")
-  Need pageSegMode = "psm_auto".
-
-1. [no] GetInputName is taking a long time - Seems fine.
-1. [done] don't use LIB_R_EXIT - commented out from configure.ac now
-   
 
 ## A. Required to get package on CRAN
 
@@ -275,8 +279,6 @@ bb = GetBoxes(a)
 	If we manually add that to the setAs() method for  setAs("character", "PageIteratorLevel",..
     it works.  So we need to compute the prefix in the TU/tu.R code. Look at RCodeGen (and other
     "original" code)
-
-
 
 ## B. Required to submit paper (assumes all A resolved)
 
@@ -439,9 +441,97 @@ Clean up ocr() so that the bounding box is returned, is consistent with that fro
    Is this in the ocr() routine? e.g. ocr(, alternatives = TRUE)
 
 
-_______________________________________
 
-# Done
+# Other
+
++ Session generating error about not being able to read osd.traineddata.
+
+ ```r
+16> api = tesseract("inst/trainingSample/eng.tables.exp0.png")
+17> .Call("R_TessBaseAPI_SetPageSegMode", api, 0L)
+[1] TRUE
+19> Recognize(api)
+Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
+Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+Failed loading language 'osd'
+Tesseract couldn't load any languages!
+Warning: Auto orientation and script detection requested, but osd language failed to load
+[1] TRUE
+20> .Call("R_TessBaseAPI_SetPageSegMode", api, 1L)
+[1] TRUE
+21> Recognize(api)
+Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
+Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
+Failed loading language 'osd'
+Tesseract couldn't load any languages!
+Warning: Auto orientation and script detection requested, but osd language failed to load
+[1] TRUE
+22> .Call("R_TessBaseAPI_SetPageSegMode", api, 2L)
+[1] TRUE
+```
+
+## DONE
+
+1. [done] nrow, ncol, dim methods for the tesseract object itself?
+    + have a dim() method
+
+1. [done] Add method for tesseract() to be called with a Pix, 
+```
+p = pixRead("inst/images/sampleImage.jpg")
+a = tesseract(p)
+bb = GetBoxes(a)
+```
+   (otherwise,
+	   tess = tesseract()
+	   SetImage(tess, pix)
+   )
+1. [done] Method for plot for Pix, i.e. plot(pix). So equivalent to showPix but in R.
+	Not necessarily going to a file. But may want this so that we don't have to deal with color issue. 
+    Deal with colors for rasterImage().
+1. [done] Make nrow and ncol generics and export??
+1. [done] Add webp, jp2, etc. to the image formats supported (TRUE/FALSE)
+     Do this by adding examples to the configuration that calls the readImage application we compile.
+1. [done] pixGetInputFormat(), pixGetDepth()
+1. [done] nrow, ncol, dim method for PIX/Pix	
+1. [done] Check if a Pix is already in 8bpp
+    pixGetDims(pix)[3] or pixGetDepth()
+1. [done] Check plot.OCR(, cropToBoxes = TRUE)   
+1. [done] Add IFF_ prefix to asEnumValue() for InputFileFormat so can do pixWrite(,, "PNG") w/o the IFF_
+    But of course can use IFF_PNG w/o the quotes.
+1. [fixed] Segfault for pixGetRGBPixels()
+  ```
+  library(Rtesseract)
+  p = pixRead("inst/images/SMITHBURN_1952_p3.png")
+  pixGetRGBPixels(p)
+  ```
+   Wrong indexing into the R matrix!
+
+1. [Yes] Check tesseract(config = ...) and tesseract(vars = ...) are working correctly.
+  Calling tesseract on the command line creates vhlinfinding.pdf in 
+  ```
+  tesseract SMITHBURN_1952_p3.png foo   config 
+  ```
+  but not 
+```
+  library(Rtesseract)
+  a = tesseract("SMITHBURN_1952_p3.png", configs = "config", pageSegMode = "psm_auto")
+  Recognize(a)
+```  
+  Need pageSegMode = "psm_auto".
+
+1. [no] GetInputName is taking a long time - Seems fine.
+1. [done] don't use LIB_R_EXIT - commented out from configure.ac now
+
+1. [done] Put the correct row and column numbers on plotSubImage axes if we are going to talk about it in the paper.
+
+1. [done] Make plotSubImage handle multiple rows.
+
+1. [done] Method for plotSubImage() for data.frame of OCRResults.
+
+1. [done] Cleanup getLines() to not need both hor and vert - just one, or default for both,
+   +  [done] methods to deal with a Pix or an API object and 
+      + coerce to a Pix handles this for both TesseractBaseAPI and character/file name.
+   + [Done] do the binary/8-bit conversion - pixConvertTo8().
 
 + [yes] Does the ResultIterator get released?
 
@@ -466,14 +556,12 @@ _______________________________________
     + Segfaults.
     + Look at the R_ocr_alternatives and see if we can reuse that code.
     + Note that ocr(alternatives = TRUE) works.
-   
 
 + [done] create searchable pdf - use their renderer
   want to be able to fix the errors and then create it.
   Started in example in pdf.R and code in render.cpp.
      It generates a pdf but it cannot be opened.  
    Needed a finalizer on the R object to call the destructor to close the file.
-
 
 + [resolved - ocr removed] Test that output is the same and correct between ocr and getXXX functions.
 
@@ -488,9 +576,11 @@ _______________________________________
 + [done] Remove GetIterator.Rd
 
 + [fixed] Segfaults if Recognize hasn't been called.
+```
  library(Rtesseract)
  ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
  a = getAlternatives(ts)
+```
 
 + [Fixed now] Investigate  "Calling Recognize again"
  ```r
@@ -498,7 +588,6 @@ _______________________________________
   ts = tesseract(system.file("trainingSample", "eng.tables.exp0.png", package = "Rtesseract"))
   b = getBoxes(ts)
  ```
-
 
 + [done] SetInputName - if no api, warn don't treat file name as api.
 
@@ -512,7 +601,6 @@ _______________________________________
     ts = tesseract(fs)
     getConfidences(ts)
     The PageSegMode was being reset in the API::Init() method and we were setting it before calling that.
-
 
 + [done] get information about the current image - dimensions, other info. See getImageInfo() & getImageDims()
 
@@ -549,37 +637,6 @@ _______________________________________
 + [fixed] If the file doesn't exist, get a weird  error message.
 
 + [Done] Make getCharWidth/Height ignore text with no content & just one space.
-
-
-# Other
-
-+ Session generating error about not being able to read osd.traineddata.
-
- ```r
-16> api = tesseract("inst/trainingSample/eng.tables.exp0.png")
-17> .Call("R_TessBaseAPI_SetPageSegMode", api, 0L)
-[1] TRUE
-18> Recognize
-*** output flushed ***
-19> Recognize(api)
-Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
-Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
-Failed loading language 'osd'
-Tesseract couldn't load any languages!
-Warning: Auto orientation and script detection requested, but osd language failed to load
-[1] TRUE
-20> .Call("R_TessBaseAPI_SetPageSegMode", api, 1L)
-[1] TRUE
-21> Recognize(api)
-Error opening data file /Users/duncan/Projects/OCR/tesseract-ocr/tessdata/osd.traineddata
-Please make sure the TESSDATA_PREFIX environment variable is set to the parent directory of your "tessdata" directory.
-Failed loading language 'osd'
-Tesseract couldn't load any languages!
-Warning: Auto orientation and script detection requested, but osd language failed to load
-[1] TRUE
-22> .Call("R_TessBaseAPI_SetPageSegMode", api, 2L)
-[1] TRUE
-```
 
 
 
