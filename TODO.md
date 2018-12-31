@@ -9,6 +9,9 @@
 
 ## Important
 
+1. Class and methods for drawing the lines returned by getLines().
+   + Take code from paper.
+
 1. [mostly done] Make getLines() more robust.
     + Not sure what else to check other than A LOT OF EXAMPLES!
 	  + The UCD_Lehmann_0377.jpg one doesn't give good results.
@@ -31,6 +34,7 @@
   a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
   Recognize(a)
 ```
+   but the stand-alone tesseract does.
 
 1. What are the names of the init variables,  versus the non-init variables.
    And what are the ones we set in config and vars
