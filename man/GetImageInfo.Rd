@@ -4,6 +4,7 @@
 \alias{GetImageInfo,Pix-method}
 \alias{GetImageDims}
 \alias{GetImageDims,Pix-method}
+\alias{GetImageDims,OCRResults-method}
 \alias{GetImageDims,TesseractBaseAPI-method}
 
 \title{Get Information about the Current Tesseract Image}

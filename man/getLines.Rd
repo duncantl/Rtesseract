@@ -12,10 +12,12 @@
   and getLines() uses this to the line coordinates.
 }
 \usage{
-getLines(pix, hor, vert, lineThreshold = 0.1, fraction = 0.5,
-         gap = 0.02, asDataFrame = FALSE, ..., asIs = is(pix, "AsIs"), horizontal = hor > vert)
-findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5),
-           threshold = 210, convertTo8 = GetImageDims(pix)[3] > 8)
+getLines(pix, hor = dims[2]* 0.02, vert = 5, lineThreshold = 0.1, fraction = 0.5,
+         gap = 0.02, asDataFrame = FALSE, ..., asIs = is(pix, "AsIs"),
+         horizontal = hor > vert, dims = dim(pix))
+findLines(pix, hor = dims[2]* 0.02, vert = 5, asLines = TRUE, invert = !asLines,
+          erode = c(3, 5), threshold = 210, convertTo8 = GetImageDims(pix)[3] > 8,
+           dims = dim(pix))
 }
 \arguments{
   \item{pix}{the image, as a \code{\link{Pix-class}} object, or
@@ -57,7 +59,8 @@ findLines(pix, hor, vert, asLines = TRUE, invert = !asLines, erode = c(3, 5),
   \item{threshold}{an integer value used for thresholding the gray-scale
     pixels to create a binary, black and white image.}
   \item{convertTo8}{controls whether the Pix is automatically converted
-   to 8 bit, if it is not already in that format.}
+    to 8 bit, if it is not already in that format.}
+  \item{dims}{the dimensions of the image - rows and columns}
 }
 \value{
  a list of matrices, each containing 4 columns giving x0, y0, x1, y1

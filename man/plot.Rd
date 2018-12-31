@@ -17,7 +17,8 @@
   visually on the original image.
 }
 \usage{
-showPoints(x, top = par()$usr[4], radii = 30, fg = "red", ...)
+showPoints(x, top = par()$usr[4], radii = top* 0.05, fg = "red",
+            inches = FALSE, addGuides = !inches, ...)
 }
 \arguments{
 \item{x}{the subset of the matrix or data.frame of results from the OCR
@@ -31,6 +32,10 @@ showPoints(x, top = par()$usr[4], radii = 30, fg = "red", ...)
    This value is passed to  in the call to \code{\link[graphics]{symbols}} as the
    argument for \code{radii}.}
  \item{fg}{the color for drawing the circles}
+ \item{inches}{a logical value.  See \code{inches} in the help for \code{\link[graphics]{symbols}}}
+ \item{addGuides}{a logical value that controls whether we add 3 lines
+   from the center of each point being shown/highlighted to help
+   visually identify the circle and the corresponding text.}
  \item{\dots}{additional arguments passed to \code{\link[graphics]{symbols}}}
 }
 \value{

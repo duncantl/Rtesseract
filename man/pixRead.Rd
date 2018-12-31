@@ -1,5 +1,6 @@
 \name{pixRead}
 \alias{pixRead}
+\alias{readMultipageTiff}
 \alias{Pix-class}
 \alias{nrow,Pix-method}
 \alias{ncol,Pix-method}
@@ -34,6 +35,11 @@
 \alias{pixClone}
 \alias{pixCreate}
 \alias{pixCreate,numeric-method}
+\alias{readImageInfo}
+\alias{readPixHeader}
+\alias{coerce,character,ImageFormat-method}
+\alias{coerce,integer,ImageFormat-method}
+\alias{coerce,numeric,ImageFormat-method}
 \title{Read an Image for use with Tesseract}
 \description{
   This function reads an image, determining what format it is

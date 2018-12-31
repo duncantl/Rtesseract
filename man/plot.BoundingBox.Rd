@@ -17,14 +17,16 @@
   for examining the region of the image in R.
 }
 \usage{
-plotSubImage(box, img, ...)
+plotSubImage(box, img, text = character(), ...)
 }
 \arguments{
   \item{box}{ a vector of length 4 giving the x1, y1, and x2, y2
     coordinates of the sub-region.}
   \item{img}{the image object read using the appropriate function in
   the appropriate package for the image type. See \code{png},
-    \code{rjpeg}, or \code{tiff}.}
+  \code{rjpeg}, or \code{tiff}.}
+  \item{text}{a character vector providing the recovered text for each
+  row in \code{box}, or the empty character vector.}
   \item{\dots}{additional arguments passed to the inherited \code{plot} methods.}
 }
 \value{

@@ -14,6 +14,7 @@
 \alias{GetInputImage}
 \alias{Init}
 \alias{dim,TesseractBaseAPI-method}
+\alias{coerce,TesseractBaseAPI,Pix-method}
 
 \title{Creating a Tesseract Object}
 \description{
