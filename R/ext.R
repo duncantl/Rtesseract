@@ -299,7 +299,11 @@ setMethod("GetBoxes",
                  Recognize(obj)
               
               ans = .Call("R_TesseractBaseAPI_getBoundingBoxes", obj, as(level, "PageIteratorLevel"))
-              m = do.call(rbind, ans)
+              if(length(ans) == 0) {
+                 m = data.frame(confidence = numeric(), left = integer(), bottom = integer(), right = integer(), top = integer())
+              } else
+                 m = do.call(rbind, ans)
+              
               colnames(m) = c("confidence", "left", "bottom", "right", "top") #XXXX
               if(asMatrix) {
                   rownames(m) = names(ans)
@@ -307,7 +311,7 @@ setMethod("GetBoxes",
               } else {
                   m = as.data.frame(m)
 #                  class(m) = c("OCRPositionResults", class(m))
-                  m$text = names(ans)
+                  m$text = if(length(ans)) names(ans) else character()
                   rownames(m) = NULL
                   cols = 2:6
               }

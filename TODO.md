@@ -154,7 +154,20 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 
 1. Catch errors due to wrong version of tessdata, i.e. using 3.0 data with 4.0 tesseract and vice versa.
 
-1. tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
+1. [done] tests/vertText.R and erroneous single row bounding box for rotated and SetRectangle text.
+    + The first segment to extract text from the rotated image
+	```
+ts = tesseract(p1)
+#XXX This gives nonsensical values for 
+SetRectangle(ts, dims = c(500, 4900, 3000, 100))
+bb = GetBoxes(ts)	
+	```
+	 gives a single row of a data frame and the coordinates are way beyond the dimensions of the
+	image.
+	   + They appear to be somewhat random and suggest uninitialized values.
+	   + This was the problem. The iterator had nothing in it, but for some reason we were starting
+         the count at 1 and so we were filling in the values with garbage.
+	+ But the next code segment where we focus on the correct region gives proper results.
 
 1. detect and deal with the "dev" string in the tesseract version if that is being used, e.g. tesseractVersion()
 
