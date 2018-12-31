@@ -80,6 +80,8 @@ exportMethods("GetConfidences", "GetBoxes", "GetAlternatives")
 export(GetImageDims, GetImageInfo)
 exportMethods(GetImageDims)
 
+S3method(lines, ListOfLineSegments)
+
 if(FALSE) {
      # Don't export yet.
 export(GetImage)

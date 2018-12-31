@@ -9,8 +9,10 @@
 
 ## Important
 
-1. Class and methods for drawing the lines returned by getLines().
+1. [done] Class and methods for drawing the lines returned by getLines().
+   + See tests/lineSegments.R for an example.
    + Take code from paper.
+   
 
 1. [mostly done] Make getLines() more robust.
     + Not sure what else to check other than A LOT OF EXAMPLES!

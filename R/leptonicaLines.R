@@ -48,10 +48,24 @@ function(pix,
              MoreArgs = list(horizontal = horizontal, fraction = fraction, gap = gap),
              SIMPLIFY = FALSE)
   
-  if(asDataFrame)
-      as.data.frame(do.call(rbind, z))
-  else
-      z
+  if(asDataFrame) {
+      z = as.data.frame(do.call(rbind, z))
+      class(z) = c("DataFrameOfLineSegments", "data.frame")
+  } else {
+      class(z) = c("ListOfLineSegments", "list")  
+  }
+
+  class(z) = c(if(horizontal) "Horizontal" else "Vertical", class(z))
+  z
+}
+
+lines.ListOfLineSegments =
+function(x, top, col = "red", lty = 3, lwd = 2, ...)
+{
+  invisible(lapply(x,
+             function(tmp) {
+               lines(tmp[, c(1, 3)], top - tmp[, c(2, 4)], col = col,lty = lty, lwd = lwd, ...)
+       }))    
 }
 
 getHLine =
