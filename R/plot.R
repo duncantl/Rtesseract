@@ -79,6 +79,13 @@ function(x, y = "word",
     if(!is.null(img)) # && !is.na(img))
        rasterImage(as.raster(img), mx[1], my[1], mx[2], my[2])    
 
+
+    
+    if(fillBoxes)
+           # plot the boxes in decreasing order of area so that very large boxes are on the bottom and don't occlude others.
+        m = m[ order( (m$right - m$left) * (m$bottom - m$top), decreasing = TRUE), ]
+
+    
         # Draw the bounding boxes for the detected elements.
     rect(m[,1],  m[,2], m[,3],  m[,4], border = border,
          col = if(fillBoxes) toAlpha(border, alpha = alpha) else NULL,
