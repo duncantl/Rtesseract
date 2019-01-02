@@ -155,7 +155,7 @@ extern "C"
 SEXP
 R_Leptonica_pixReadHeader(SEXP r_file)
 {
-    l_ok status;
+    l_int32 status;  // for 1.77 this is l_ok.
 
 //    l_int32 format, w, h, bps, spp, iscmap;
     l_int32 vals[6];
