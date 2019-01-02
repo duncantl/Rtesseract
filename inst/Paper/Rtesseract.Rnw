@@ -270,7 +270,7 @@ using the default settings (similar to both the \pkg{ocR} and
 
 For example, suppose we have an image from
 an older scientific publication from which we want to extract
-information, e.g., Fig. \ref{fig:base}. We will use this image to
+information, e.g., Fig.~\ref{fig:base}. We will use this image to
 highlight the functionality and common use-cases of the
 \pkg{Rtesseract} package. % AWK
 
@@ -783,6 +783,12 @@ w0 = GetText(t0, level = "textline")
 grep("Drs. Dick and Haddow", w0, value = TRUE)
 @
 
+%@MATT  have we explained the engineMode value tesseract_only? and why we would use this.
+% Also, we can use GetThresholdedImage() after Recognize() to look at the contents of the image 
+% from which Tesseract will extract the words.  This clearly shows the large band/rectangle over these
+% words and why they are not extracted. Then we can play with the thresholding level.
+
+
 %% Tesseract 4.00-beta does get this!!
 It seems not. In this case, the text under the highlighted area is
 being lost. We need to pre-process the image before we pass it to Tesseract,
@@ -816,6 +822,7 @@ modified image:
 <<>>=
 t1 = tesseract(pix1)
 @
+%@MATT: Note the engineMode is different than above.
 
 Then we call, e.g., \code{GetText()} as before, e.g.,
 
