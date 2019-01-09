@@ -221,30 +221,6 @@ Tesseract, leptonica, and image libraries.
 
 @ 
 
-%@MATT: Here is a hastily written segment that we want to reword and integrate
-% to outline the distinction between Rtesseract and other packages.
-% It connects with the previous paragraphs, but I have written it independently for now.
-The \pkg{Rtesseract} provides 
-\begin{itemize}
-\item high-level functions to extract data from images,
-\item functions for evaluating the OCR results,
-\item infrastructure for reconstructing the extracted elements into meaningful
-higher-level data structures (e.g. columns of text, paragraphs, columns and rows of tables)  
-% Need to make this so if we want to include it. May want to drop this.
-\item functionality for pre-processing images to improve them for OCR and to 
-   do related non-OCR extraction, e.g., finding horizontal and vertical lines.
-\item programmatic interface that enables querying functionality and sound error handling
-and recovery that enables the development of robust programmatic workflows.
-
-More image processing packages for \R{} have become available
-and one can use these pre-process images before OCR or to extract
-additional elements such as lines.  However, the \pkg{Rtesseract}
-functionality also makes this possible with a workflow
-that combines leptonica and tesseract.
-By providing access to the leptonica functionality,
-the \pkg{Rtesseract} package allows us to manipulate and process images in the same format
-that tesseract operate on and to work with images directly before and after
-the OCR. 
 
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
