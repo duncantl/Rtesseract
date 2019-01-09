@@ -1,0 +1,62 @@
+ 
+We have not been alone in recognizing the utility of Tesseract. Prior
+to our creation of the \pkg{Rtesseract} in April 2015, the \pkg{ocR}
+package~\citep{Hagmann2014} provided an interface in \proglang{R} to Tesseract
+via calling the Tesseract command line executable. Using the \pkg{ocR}
+package, the \proglang{R} user specifies the image file and command-line options,
+Tesseract is called and writes the results to a file which is then
+read back into \proglang{R}. Following the creation of our \pkg{Rtesseract},
+the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
+similar approach to our \pkg{Rtesseract} package by interfacing to the
+Tesseract C\texttt{++} library. However, by design, \pkg{tesseract}
+provides only limited functionality to get the text results from the OCR
+process. %%FIX: Check this. I think it now gets the location information.
+
+For example, retrieving text results using the \pkg{tesseract} package is conducted with
+
+<<>>=
+tesseract::ocr(smithburn)
+@ 
+
+Likewise similar to \pkg{Rtesseract}, the text, bounding boxes, and confidences can be retreived with the \code{ocr_data} function,
+
+<<>>=
+tesseract::ocr_data(smithburn)
+@
+
+which returns a \code{tibble}, with the bounding boxes represented as comma separated values in a string.
+
+The \pkg{tesseract} packages also includes the \code{tesseract} function, which creates an API object of class ``tesseract.'' Currently there are no methods registered for objects of class ``tesseract.''
+Other similarities between \pkg{Rtesseract} and \pkg{tesseract} include the ability to retreive and set Tesseract variables (called ``parameters'' in \pkg{tesseract}).
+
+However, the \pkg{tesseract} package does not include functions to manipulate the input image, extract meaningful elements on the page such as lines and boxes, etc.
+
+%@MATT: Here is a hastily written segment that we want to reword and integrate
+% to outline the distinction between Rtesseract and other packages.
+% It connects with the previous paragraphs, but I have written it independently for now.
+By contrast, we have demonstrated the \pkg{Rtesseract} provides 
+\begin{itemize}
+\item high-level functions to extract data from images,
+\item functions for evaluating the OCR results,
+\item infrastructure for reconstructing the extracted elements into meaningful
+higher-level data structures (e.g. columns of text, paragraphs, columns and rows of tables)  
+% Need to make this so if we want to include it. May want to drop this.
+\item functionality for pre-processing images to improve them for OCR and to 
+   do related non-OCR extraction, e.g., finding horizontal and vertical lines.
+\item programmatic interface that enables querying functionality and sound error handling
+and recovery that enables the development of robust programmatic workflows.
+\end{itemize}
+
+More image processing packages for \proglang{R} have become available
+and one can use these pre-process images before OCR or to extract
+additional elements such as lines.  However, the \pkg{Rtesseract}
+functionality also makes this possible with a workflow
+that combines leptonica and Tesseract.
+By providing access to the leptonica functionality,
+the \pkg{Rtesseract} package allows us to manipulate and process images in the same format
+that tesseract operate on and to work with images directly before and after
+the OCR. 
+
+\subsubsection{Bindings in other Programming Languages}
+
+Bindings to the Tesseract API exist in \proglang{Python}, \proglang{Ruby}, \proglang{Go}, etc. (see \url{https://github.com/tesseract-ocr/tesseract/wiki/AddOns} for additional details on these interfaces to Tesseract), though these typically only provide limited functionality.
