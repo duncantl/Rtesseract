@@ -10,3 +10,5 @@ Rexit-old
 inst/Paper/figure/
 *.brf
 *.tex
+src/*.o
+src/*.so
