@@ -216,12 +216,6 @@ Tesseract, leptonica, and image libraries.
 % customization, post-processing based on the results. It comes next in the paragraph, so adding a
 % "including ... below".
 
-\subsubsection{Comparison to other packages}
-<<child = "comparison.Rnw">>=
-
-@ 
-
-
 
 \section{Optical Character Recognition using Rtesseract}\label{desc}
 
@@ -1610,6 +1604,13 @@ about training Tesseract, please see
 including \code{ReadBoxFile()}.  Finally, the \pkg{Rtesseract} package
 itself can be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
+
+
+\subsubsection{Comparison to other packages}
+<<child = "comparison.Rnw">>=
+
+@ 
+
 
 % Different section title
 \section{Future directions}
