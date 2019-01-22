@@ -53,8 +53,13 @@ However, the \pkg{Rtesseract} makes this possible with a workflow that combines 
 By providing access to the leptonica functionality,
 the \pkg{Rtesseract} package allows us to manipulate and process images in the same format
 that tesseract operates on and to work with images directly before and after
-the OCR. Hence, the results of the image processing can be handed directly to the OCR engine for recognition, without the need to write intermediate files. 
+the OCR.
+Hence, the results of the image processing can be handed directly to the OCR engine for recognition, without the need to write intermediate files. 
 
 \subsubsection{Bindings in other Programming Languages}
 
-Bindings to the Tesseract API exist in \proglang{Python}, \proglang{Ruby}, \proglang{Go}, etc. (see \url{https://github.com/tesseract-ocr/tesseract/wiki/AddOns} for additional details on these interfaces to Tesseract), though these typically only provide limited functionality.
+Bindings to the Tesseract API exist in many other programming languages,
+including \proglang{Python}, \proglang{Ruby}, \proglang{Go}, etc.
+For a more comprehensive listing of interfaces, see \url{https://github.com/tesseract-ocr/tesseract/wiki/AddOns}.
+Most of these interfaces are similar to the \pkg{tesseract} R package, and provide basic functionality for OCR via the Tesseract API. For example, the \proglang{Python} package \pkg{pytesseract}~\citep{pytess} can recognize text from an input image, can can additionally return bounding boxes, confidences, line and page numbers. Additionally, \pkg{pytesseract}, like \pkg{Rtesseract} provides support for providing the input image directly from image manipulation libraries.
+However unlike \pkg{Rtesseract} which provides support for leptonica, \pkg{pytesseract} provides support for image formats of OpenCV images and Numpy arrays.
