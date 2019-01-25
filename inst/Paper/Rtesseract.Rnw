@@ -39,23 +39,22 @@
   
   Across disciplines, we increasingly desire to recover text and numeric data from scanned documents and images.
   The \pkg{Rtesseract} provides flexible and comprehensive functionality for
-  this using optical character recognition (OCR) from within \proglang{R} by interfacing to the Open Source \proglang{C++} OCR library tesseract.
-  At its simplest, \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image
-  as lines, individual words or separate characters.  Importantly, we can also obtain the
-  location of text elements, possible alternatives for characters, and the estimated
-  ``confidence'' for each.  These metadata are often essential for interpreting
-  and reconstructing the text, e.g., for multi-column layout, tables, or even section titles.  The package provides access to much of the Tesseract C++ API, allowing full
-  customization of the OCR behavior, and exporting the results in
-  various formats (e.g. PDF), and also visualizing them within R
-  itself.  The package also provides access to leptonica's image manipulation
-  functionality for pre-processing images to enhance the recognition, and also
-  high-level functionality for recovering horizontal and vertical lines often vital
+  this using optical character recognition (OCR) from within \proglang{R} by interfacing to the Open Source \proglang{C++} OCR library Tesseract.
+  At its simplest, \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image.
+  \pkg{Rtesseract} can also obtain the
+  location and size of text elements, possible alternatives for characters, and the estimated  ``confidence'' for each.
+  These metadata are often essential for interpreting and reconstructing the text, e.g., for multi-column layout, tables, or even section titles.
+  Additionally, the \pkg{Rtesseract} package provides access to much of the Tesseract C++ API, allowing full customization of the OCR behavior.
+  Furthermore, \pkg{Rtesseract} includes functionality to visualize OCR results within \proglang{R} itself.
+  To further support an OCR workflow from entirely within \proglang{R}, the \pkg{Rtesseract} package also provides access to the leptonica C++ library, adding image manipulation functionality for pre-processing images to enhance the recognition.
+  Lastly, \pkg{Rtesseract} includes high-level functionality for recovering structural elements from the page, such as horizontal and vertical lines which are often vital
   for reconstructing data from tables.
   With the \pkg{Rtesseract} package, users are able to create
   a fully programmatic workflow to extract text data into \proglang{R} for
-  subsequent analysis.  }
+  subsequent analysis.
+}
 
-\Keywords{Optical Character Recognition, OCR, R}
+\Keywords{Optical Character Recognition (OCR), R}
 \Plainkeywords{}
 \Address{
   Matthew Espe, Duncan Temple Lang\\
@@ -154,14 +153,12 @@ In some cases there are obvious issues, such as nonsense words or text,
 but in other cases we might want to focus our attention on the
 areas where the OCR engine had the least certainty.
 When we have prior contextual knowledge about the correct matches, such as only
-numbers or certain characters or words occur in the text, we can
+numbers or a fixed set of characters or words occur in the text, we can
 leverage this information to correct errors in the post-processing
 steps.
-When the text is arranged in columns or blocks, we will want to
-rearrange the text into the correct order or even recover structural elements such as columns in a table or section titles.
-The presence of elements such as lines or
-other dividers, or even the relative size of the text can all be used
-to make sense of the resulting text.
+When the text is arranged in columns or blocks, recovery of a ``line'' of text will group text together incorrectly.
+In these cases, we will want to rearrange the text into the correct order or even recover structural elements such as columns in a table or section titles.
+The presence of elements such as lines or other dividers or even the relative size of the text can all be used to make sense of the resulting text.
 Diagnostic pieces of information
 such as the certainty in the matches, alternative matches, etc., can
 be essential in assessing certainty, iteratively improving OCR accuracy or reconstructing
@@ -169,7 +166,7 @@ the high-level structure from the individual data values.
 
 When the OCR software does not provide additional information from the OCR process, e.g. location of text or confidence in recognized text,
 these steps may be difficult or impossible to conduct.
-Our full OCR workflow using OCR software which only returns text results involves 1)
+Using OCR software which only returns text results, our full OCR workflow involves 1)
 multiple platforms to perform pre-processing, OCR, post-processing,
 and analysis, 2) leveraging pre- and post-processing steps to overcome
 limited control over the OCR process itself, 3) limited options to
@@ -1606,7 +1603,7 @@ itself can be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
 
 
-\subsubsection{Comparison to other packages}
+\subsection{Comparison to other packages}
 <<child = "comparison.Rnw">>=
 
 @ 

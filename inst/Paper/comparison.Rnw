@@ -1,10 +1,12 @@
- 
+
+\subsubsection{R packages}
+
 We have not been alone in recognizing the utility of Tesseract. Prior
 to our creation of the \pkg{Rtesseract} in April 2015, the \pkg{ocR}
 package~\citep{Hagmann2014} provided an interface in \proglang{R} to Tesseract
 via calling the Tesseract command line executable. Using the \pkg{ocR}
 package, the \proglang{R} user specifies the image file and command-line options,
-Tesseract is called and writes the results to a file which is then
+Tesseract is called via \code{system()} and writes the results to a file which is then
 read back into \proglang{R}. Following the creation of our \pkg{Rtesseract},
 the \pkg{tesseract} package~\citep{ooms2016} was created and takes a
 similar approach to our \pkg{Rtesseract} package by interfacing to the
@@ -24,8 +26,7 @@ tesseract::ocr_data(smithburn)
 @
 
 which returns a \code{tibble}, with the bounding boxes represented as comma separated values in a string.
-
-Also similar to \pkg{Rtesseract}, the \pkg{tesseract} packages also includes a means to create an API object.
+Also similar to \pkg{Rtesseract}, the \pkg{tesseract} package also includes a means to create an API object.
 Other similarities between \pkg{Rtesseract} and \pkg{tesseract} include the ability to retreive and set Tesseract variables (called ``parameters'' in \pkg{tesseract}).
 
 However, unlike our \pkg{Rtesseract} the \pkg{tesseract} package does not include functions to manipulate the input image,
@@ -33,7 +34,8 @@ conduct OCR on subregions of the image,
 extract meaningful elements on the page such as lines and boxes,
 visualize the OCR results complete with confidences, etc. 
 
-By contrast, we have demonstrated the \pkg{Rtesseract} provides 
+By contrast, we have demonstrated that the \pkg{Rtesseract} package provides 
+
 \begin{itemize}
 \item high-level functions to extract data from images,
 \item functions for evaluating the OCR results,
