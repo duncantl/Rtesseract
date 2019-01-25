@@ -178,8 +178,8 @@ either simple or well-covered by the default configuration.
 
 In our work extracting and analyzing text data present in images from
 \proglang{R}, we required a tool which would overcome the limitations above. 
-In our search for solutions, we found Tesseract, a long-standing open
-source OCR library originally created in 1985 and currently under resurgent
+In our search for solutions, we found Tesseract, a long-standing Open
+Source C\texttt{++} library for OCR originally created in 1985 and currently under resurgent
 development. We created \pkg{Rtesseract} to access the Tesseract API from \proglang{R} and allows us to tightly integrate pre- and
 post-processing steps with the actual OCR and analysis under complete programmatic control within \proglang{R}.
 This tight integration simplifies workflows that
@@ -1603,7 +1603,7 @@ itself can be installed from source at
 \url{https://github.com/duncantl/Rtesseract}.
 
 
-\subsection{Comparison to other packages}
+\section{Comparison to other packages}
 <<child = "comparison.Rnw">>=
 
 @ 
