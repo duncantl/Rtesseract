@@ -7,7 +7,7 @@ KNIT = Rscript -e "library(knitr); render_sweave(); knit('$<')"
 # 	pdflatex RJwrapper.tex
 # 	mv RJwrapper.pdf Rtesseract.pdf
 
-Rtesseract.pdf: Rtesseract.tex Rtesseract.bib
+Rtesseract.pdf: Rtesseract.tex Rtesseract.bib comparison.Rnw rotateZoom.Rnw
 	pdflatex Rtesseract.tex
 	bibtex Rtesseract
 	pdflatex Rtesseract.tex
