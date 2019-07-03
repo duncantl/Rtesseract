@@ -69,9 +69,15 @@ GetAlternatives(obj, ...)
   \item{text}{the recognized text}
   \item{confidence}{the accuracy/credibility (as a percentage) reported by tesseract}
 
-  The class of this data frame is \code{OCRResults} and there
+  The basic class of this data frame is \code{OCRResults} and there
   is a plot() method for this to display the recovered words as they
   appear on the image, and also.
+  The specific class now identifies the level used to compute the
+  bounding boxes, e.g. Symbol, Word, Textline, Para, Block.
+  These class names are SymbolOCRResults, WordOCResults, ...
+  Methods are currently only defined for the common base class
+  OCRResults.
+  
 
   Alternatively, \code{GetBoxes} can return a matrix with 4 columns
   giving the lower-left corner and upper right corner,
