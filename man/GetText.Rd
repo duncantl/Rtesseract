@@ -77,7 +77,9 @@ GetAlternatives(obj, ...)
   These class names are SymbolOCRResults, WordOCResults, ...
   Methods are currently only defined for the common base class
   OCRResults.
-  
+
+  Additionally, if \code{keepConfindence} is \code{TRUE},
+  an additional S3 class name is inserted - \code{OCRResultsConfidence}.
 
   Alternatively, \code{GetBoxes} can return a matrix with 4 columns
   giving the lower-left corner and upper right corner,
