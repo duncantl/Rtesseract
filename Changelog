@@ -1,3 +1,7 @@
+	* Added level name to class of OCRResults, e.g. WordOCRResults.
+
+	* Added OCRResultsConfidences class to OCRResults when Confidence column is included.
+
 0.4-0
 	* readMultipageTiff() function to read all pages of a TIFF file. Can pass each page to
 	  tesseract() or use as a Pix object directly.
