@@ -326,9 +326,21 @@ setMethod("GetBoxes",
               ans = m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
               class(ans) = c("OCRResults", class(ans))
               attr(ans, "imageDims") = GetImageDims(obj) # was dim(GetImage(obj)) which causes seg faults due to image being released twice or corrupted at least. Once by ~TessBaseAPI and once elsewhere.
+
+              if(keepConfidence)
+                 class(ans) = c("OCRResultsConfidences", class(ans))
+
+              k = sprintf("%sOCRResults", capitalize(gsub("RIL_", "", names(as(level, "PageIteratorLevel")))))
+              class(ans) = c(k, class(ans))
               
               ans
           })
+
+capitalize =
+function(x)
+{
+  paste0(toupper(substring(x, 1, 1)), tolower(substring(x, 2)))
+}
 
 setMethod("GetBoxes",
            "character",
