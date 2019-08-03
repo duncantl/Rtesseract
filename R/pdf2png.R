@@ -54,7 +54,7 @@ function(file, dir = dirname(file),
   list.files(dir, pattern = pattern, full.names = TRUE)
 }
 
-getExt =
+getExt = getExtension =
 function(filename)
 {
     gsub(".*\\.", "", filename)
