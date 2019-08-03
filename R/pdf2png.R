@@ -46,15 +46,12 @@ function(file, ...,
 }
 
 getConvertedFilenames =
-function(file, dir = dirname(file), base = rmExt(basename(file), ext),
+function(file, dir = dirname(file),
+         base = rmExt(basename(file)),
          suffix = "_p[0-9]+\\.png",
-         ext = getExt(basename(file)))
-    # Originally, I thought we needed the extension of the original file to put it back
-    # onto the numbered files. But of course these are png, not pdf files.
-    # So we don't need ext and so we should just leave base = rmExt(basename(file))
-    # and omit ext = 
+         pattern = sprintf("%s%s", base, suffix))
 {
-  list.files(dir, pattern = sprintf("%s%s", base, suffix), full.names = TRUE)
+  list.files(dir, pattern = pattern, full.names = TRUE)
 }
 
 getExt =
