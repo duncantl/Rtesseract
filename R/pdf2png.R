@@ -45,7 +45,7 @@ function(file, ...,
     structure(file.path(cur, files), class = "Filenames")
 }
 
-getConvertedFilenames =
+getOCRPageFiles =getConvertedFilenames =
 function(file, dir = dirname(file),
          base = rmExt(basename(file)),
          suffix = "_p[0-9]+\\.png",
@@ -61,7 +61,7 @@ function(filename)
 }
 
 rmExt =
-function(filename, ext)
+function(filename, ext = getExt(filename))
 {
    gsub("\\.$", "", gsub(ext, "", filename, fixed = TRUE))
 }
