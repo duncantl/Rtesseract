@@ -6,6 +6,8 @@ setClass("OCRDocumentSubset", contains = c("OCRDocument"))
 setClass("OCRPage", contains = "character")
 # example
 # doc = new("OCRDocument", list.files("ScannedEgs", pattern = "Shope-1970_.*.png", full = TRUE))
+# OCRDocument("ScannedEgs/Mebatsion-1992.pdf")
+
 
 setMethod("[[", "OCRDocument",
            function(x,i, j, ..., exact = TRUE) {
@@ -58,3 +60,19 @@ setMethod("getTextBBox", "OCRPage",
 		   GetBoxes(as.character(obj), ...)
 		 })
 }
+
+
+setMethod("GetBoxes", "OCRDocument",
+          function (obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, collapse = TRUE, ...)  {
+
+              ans = lapply(obj, GetBoxes, level, keepConfidence, asMatrix)
+              if(collapse) {
+                  n = sapply(ans, nrow)
+                  k = class(ans[[1]])
+                  ans = do.call(rbind, ans)
+                  ans = cbind(ans, page = rep(seq(along = obj), n))
+                  class(ans) = c("MultiPage", k) 
+              }
+              
+              ans
+          })
