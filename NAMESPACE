@@ -1,7 +1,9 @@
+
 useDynLib(Rtesseract)
 # , R_ResultIterator_Confidence)
 
 import(methods)
+import(Dociface)
 
 importFrom("utils", read.table, adist, aspell)
 import(graphics)
@@ -149,3 +151,9 @@ export(getAvailableLanguages)
 
 export(readMultipageTiff)
 export(readPixHeader, readImageInfo)
+
+
+
+exportClasses("OCRDocument", "OCRDocumentSubset", "OCRPage")
+export(OCRDocument)
+exportMethods(getPages, getNumPages)

@@ -16,6 +16,42 @@ License: Apache License
 SystemRequirements: tesseract_3.0.3 release candidate or higher
       https://code.google.com/p/tesseract-ocr/
       tesseract requires leptonica.
-Imports: methods, grDevices, utils
+Imports: Dociface, methods, grDevices, utils, 
 Suggests: png, tiff, jpeg, Aspell, XML, RJSONIO
 Others: rjpeg
+Collate: AclassesEnums.R
+  AutogenClasses.R
+  call.R
+  classes.R
+  compareWords.R
+  config.R
+  deskew.R
+  exit.R
+  ext.R
+  IFF.R
+  imageCapabilities.R
+  imageFuns.R
+  leptonica.R
+  leptonicaLines.R
+  misc.R
+  ocr.R
+  OCRResults.R
+  onAttach.R
+  pdf2png.R
+  pix.R
+  pixEnums.R
+  pixRead.R
+  plot.R
+  plotPix.R
+  readBox.R
+  Rrender.R
+  selfCorrect.R
+  svg.R
+  tables.R
+  toPDF.R
+  version.R
+  z_enumDefs_3.05.R
+  z_enumDefs_4.0.R
+  z_enumDefs_999999.R
+  zlocaleDotCall.R
+  OCRDocument.R
