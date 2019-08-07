@@ -24,7 +24,7 @@ function(x, ...)
     else
         ans
 }
-setOldClass(c("OCRResults", "data.frame"))
+#setOldClass(c("OCRResults", "data.frame"))
 setMethod("plot", "OCRResults", plot.OCRResults)
 
 setMethod("[", "OCRResults",
