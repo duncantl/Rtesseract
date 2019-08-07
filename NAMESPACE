@@ -157,3 +157,5 @@ export(readPixHeader, readImageInfo)
 exportClasses("OCRDocument", "OCRDocumentSubset", "OCRPage")
 export(OCRDocument)
 exportMethods(getPages, getNumPages)
+
+exportMethods(left, right)
