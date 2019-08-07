@@ -324,7 +324,7 @@ setMethod("GetBoxes",
               }
 
               ans = m[, c(cols, if(keepConfidence) 1)]  # still numeric! Change to integer.  Or leave the confidence in.
-              class(ans) = c("OCRResults", class(ans))
+              class(ans) = c("OCRResults", "TextBoundingBox", class(ans))
               attr(ans, "imageDims") = GetImageDims(obj) # was dim(GetImage(obj)) which causes seg faults due to image being released twice or corrupted at least. Once by ~TessBaseAPI and once elsewhere.
 
               if(keepConfidence)
