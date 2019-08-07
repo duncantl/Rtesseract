@@ -1,14 +1,18 @@
-setClass("Document", contains = "VIRTUAL")
-
 # Could have OCRDocument be a list of OCRPage objects.
-setClass("OCRDocument", contains = c("character", "Document"))
+# or a character vector of file names.
+#setClass("OCRDocument", contains = c("character", "Document"))
+setClass("OCRDocument", contains = c("list", "Document"))
+setValidity("OCRDocument", function(object) all(sapply(object, is, "DocumentPage")))
+
 setClass("OCRDocumentSubset", contains = c("OCRDocument"))
-setClass("OCRPage", contains = "character")
+setClass("OCRPage", contains = c("character", "DocumentPage"))
+
 # example
 # doc = new("OCRDocument", list.files("ScannedEgs", pattern = "Shope-1970_.*.png", full = TRUE))
 # OCRDocument("ScannedEgs/Mebatsion-1992.pdf")
 
 
+if(FALSE) # not needed if OCRDocument is a list of OCRPage objects.
 setMethod("[[", "OCRDocument",
            function(x,i, j, ..., exact = TRUE) {
 		      new("OCRPage", x[i])
@@ -29,7 +33,7 @@ function(filename, pages = getOCRPageFiles(filename))
   if(length(pages) == 0)
       pages = pdf2png(filename)
 
-  new("OCRDocument", pages)
+  new("OCRDocument", structure(lapply(pages, function(x) new("OCRPage", x)), names = pages))
 }
 
 if(FALSE) {
@@ -47,11 +51,6 @@ if(FALSE) {
 if(FALSE) {
 
     # Get signature correct.
-    
-if(!isGeneric("getTextBBox"))
- setGeneric("getTextBBox",
-            function(obj, ...)
-             standardGeneric("getTextBBox"))
 
 
 setMethod("getTextBBox", "OCRPage",
@@ -76,3 +75,43 @@ setMethod("GetBoxes", "OCRDocument",
               
               ans
           })
+
+# Need to define the generics for these somewhere.
+# Do we need a separate "VIRTUAL" package from which these are inherited.
+#
+
+setMethod("getNumPages", "OCRDocument",
+          function(doc)
+          length(doc))
+
+setMethod("getPages", "OCRDocument",
+          function(doc)
+            unclass(doc))
+# No need for lapply(doc, function(x) new("OCRPage", x)))
+
+
+
+setMethod("dim", "OCRPage",
+          function(x)
+             dim(pixRead(x)))
+
+# XXX reconcile this with the idea of returning a matrix with a row for each page of the document.
+if(FALSE)
+setMethod("dim", "OCRDocument",
+          function(x) {
+              tmp = sapply(x, dim) #  since now OCRDocument is a list of OCRPage, don't need function(x) dim(pixRead(x)))
+              c(min(tmp[1,]), max(tmp[2,]))
+          })
+
+
+
+
+setAs("OCRPage", "TextBoundingBox",
+         function(from) {
+              GetBoxes(from)
+          })
+
+
+setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
+setMethod("left", "OCRResults", function(x, ...) x$left)
+setMethod("right", "OCRResults", function(x, ...) x$right)
