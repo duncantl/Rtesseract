@@ -6,6 +6,8 @@ setClass("EnumValue", contains = "SymbolicConstant", prototype = as.integer(NA))
 setClass("BitwiseValue", contains = "SymbolicConstant", prototype = as.integer(NA))
 
 
+setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
+
 
 ##################################
 # IGNORE
