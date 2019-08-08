@@ -158,4 +158,6 @@ exportClasses("OCRDocument", "OCRDocumentSubset", "OCRPage")
 export(OCRDocument)
 exportMethods(getPages, getNumPages)
 
-exportMethods(left, right)
+# Not needed
+#    exportMethods(left, right)
+exportMethods(right, bottom, width, height)

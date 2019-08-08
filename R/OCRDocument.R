@@ -113,5 +113,10 @@ setAs("OCRPage", "TextBoundingBox",
 
 
 setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
-setMethod("left", "OCRResults", function(x, ...) x$left)
+#setMethod("left", "OCRResults", function(x, ...) x$left)
+#setMethod("right", "OCRResults", function(x, ...) x$right)
+
 setMethod("right", "OCRResults", function(x, ...) x$right)
+setMethod("bottom", "OCRResults", function(x, ...) x$bottom)
+setMethod("width", "OCRResults", function(x, ...) x$right - x$left)
+setMethod("height", "OCRResults", function(x, ...) x$top  - x$bottom)
