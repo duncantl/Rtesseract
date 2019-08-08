@@ -48,19 +48,16 @@ if(FALSE) {
 
 
 
-if(FALSE) {
+getShapesBBox.OCRPage =
+function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = TRUE, ...)    
+   getLines(pixRead(obj), asDataFrame = asDataFrame)
 
-    # Get signature correct.
-
-
-setMethod("getTextBBox", "OCRPage",
-         function(obj, ...) {
-  		    # Should be getTextBBox()?
-		   GetBoxes(as.character(obj), ...)
-		 })
-}
+getTextBBox.OCRPage =
+function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = TRUE, ...)
+    GetBoxes(obj, asMatrix = !asDataFrame, ...)
 
 
+# Isn't this in Dociface now but for getTextBBox().
 setMethod("GetBoxes", "OCRDocument",
           function (obj, level = 3L, keepConfidence = TRUE, asMatrix = FALSE, collapse = TRUE, ...)  {
 

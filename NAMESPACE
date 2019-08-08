@@ -3,12 +3,13 @@ useDynLib(Rtesseract)
 # , R_ResultIterator_Confidence)
 
 import(methods)
-import(Dociface)
 
 importFrom("utils", read.table, adist, aspell)
 import(graphics)
 importFrom("grDevices", "rgb", "colorRampPalette", "col2rgb", "as.raster")
 importFrom("stats", dist, median, quantile, density)
+
+import(Dociface)
 
 #import(RAutoGenRunTime)
 
@@ -161,3 +162,7 @@ exportMethods(getPages, getNumPages)
 # Not needed
 #    exportMethods(left, right)
 exportMethods(right, bottom, width, height)
+
+S3method("getTextBBox", "OCRPage")
+S3method("getShapesBBox", "OCRPage")
+
