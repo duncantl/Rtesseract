@@ -1,14 +1,19 @@
 plot.OCRResults =
-function(x, y, cex = .5, col = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
+function(x, y, cex = .5, colors = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
          #!!! instead of accessing imageDims[1], have an accessor function that returns NA
          # or something if not present.
-         ylim = c(0, imageDims(x)["rows"]), # range(c(x$top, x$bottom))*c(.95, 1.05)
+         ylim = c(0, pageHeight), # range(c(x$top, x$bottom))*c(.95, 1.05) #XXX  would prefer not to use 1 for imageDims(x)[1] but it could be rows or height.
+         axes = FALSE,
+         pageHeight = imageDims(x)[1],
          ...)
+#XXX Deal with pageHeight being passed down in plot(doc)
 {
-    plot(0, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", ...)
-
+    plot(0, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", axes = axes, ...)
+    if(!axes)
+        box()
+    
     h = max(ylim)
-    text(x$left, h - x$bottom, x$text, adj = c(0, 0), cex = cex, col = col)
+    text(x$left, h - x$bottom, x$text, adj = c(0, 0), cex = cex, col = colors)
 }
 
 imageDims =
