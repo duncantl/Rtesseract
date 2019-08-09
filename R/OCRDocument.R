@@ -2,10 +2,21 @@
 # or a character vector of file names.
 #setClass("OCRDocument", contains = c("character", "Document"))
 setClass("OCRDocument", contains = c("list", "Document"))
-setValidity("OCRDocument", function(object) all(sapply(object, is, "DocumentPage")))
+#XXX Turned this off for ProcessedOCRDocument.
+setClass("OCRDocumentFiles", contains = "OCRDocument")
+setValidity("OCRDocumentFiles", function(object) all(sapply(object, is, "DocumentPage")))
 
 setClass("OCRDocumentSubset", contains = c("OCRDocument"))
+
 setClass("OCRPage", contains = c("character", "DocumentPage"))
+
+#XXX
+setClass("ProcessedOCRDocument", contains = "OCRDocument")
+# Validity
+
+setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
+# Note the DocumentPage addition.
+# Doesn't work - setIs("OCRResults", "DocumentPage")
 
 # example
 # doc = new("OCRDocument", list.files("ScannedEgs", pattern = "Shope-1970_.*.png", full = TRUE))
@@ -34,6 +45,13 @@ function(filename, pages = getOCRPageFiles(filename))
       pages = pdf2png(filename)
 
   new("OCRDocument", structure(lapply(pages, function(x) new("OCRPage", x)), names = pages))
+}
+
+
+ProcessedOCRDocument =
+function(filename, pages = getOCRPageFiles(filename), bboxes = lapply(pages, GetBoxes, ...),  ...)
+{
+   new("ProcessOCRDocument", bboxes)
 }
 
 if(FALSE) {
@@ -101,17 +119,14 @@ setMethod("dim", "OCRDocument",
           })
 
 
-
-
 setAs("OCRPage", "TextBoundingBox",
          function(from) {
               GetBoxes(from)
           })
 
 
-setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
-#setMethod("left", "OCRResults", function(x, ...) x$left)
-#setMethod("right", "OCRResults", function(x, ...) x$right)
+
+# left and right are in Dociface.
 
 setMethod("right", "OCRResults", function(x, ...) x$right)
 setMethod("bottom", "OCRResults", function(x, ...) x$bottom)
