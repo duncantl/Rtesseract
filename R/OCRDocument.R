@@ -49,9 +49,17 @@ function(filename, pages = getOCRPageFiles(filename))
 
 
 ProcessedOCRDocument =
-function(filename, pages = getOCRPageFiles(filename), bboxes = lapply(pages, GetBoxes, ...),  ...)
+    #
+    # could also define this as 
+    #   function(filename, doc = OCRDocument(filename),
+    #              boxes = getTextBBox(doc, asDataFrame = TRUE, combinePages = FALSE, ...), ...)
+    # That would work for XML documents also. XXX
+    #
+function(filename, pages = getOCRPageFiles(filename),
+         bboxes = structure(lapply(pages, GetBoxes, ...), names = sapply(pages, as.character)),
+         ...)
 {
-   new("ProcessOCRDocument", bboxes)
+   new("ProcessedOCRDocument", bboxes)
 }
 
 if(FALSE) {
@@ -72,7 +80,19 @@ function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = T
 
 getTextBBox.OCRPage =
 function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = TRUE, ...)
-    GetBoxes(obj, asMatrix = !asDataFrame, ...)
+{
+    ans = GetBoxes(obj, asMatrix = !asDataFrame, ...)
+    attributes(ans) = append(attributes(ans), list(file = obj)) #, pageDimensions = dim(obj)))
+    ans
+}
+
+getPageHeight.OCRResults =
+function(obj, ...)
+   attr(obj, "imageDims")[1]
+
+getPageWidth.OCRResults =
+function(obj, ...)
+   attr(obj, "imageDims")[1]
 
 
 # Isn't this in Dociface now but for getTextBBox().

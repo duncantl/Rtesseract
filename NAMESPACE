@@ -155,8 +155,8 @@ export(readPixHeader, readImageInfo)
 
 
 
-exportClasses("OCRDocument", "OCRDocumentSubset", "OCRPage")
-export(OCRDocument)
+exportClasses("OCRDocument", "OCRDocumentSubset", "OCRPage", "ProcessedOCRDocument")
+export(OCRDocument, ProcessedOCRDocument)
 exportMethods(getPages, getNumPages)
 
 # Not needed
@@ -166,3 +166,5 @@ exportMethods(right, bottom, width, height)
 S3method("getTextBBox", "OCRPage")
 S3method("getShapesBBox", "OCRPage")
 
+
+S3method(getPageHeight, OCRResults)
