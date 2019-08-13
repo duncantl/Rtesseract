@@ -146,7 +146,7 @@ setMethod("dim", "OCRDocument",
 
 setAs("OCRPage", "TextBoundingBox",
          function(from) {
-              GetBoxes(from)
+              getTextBBox(from)
           })
 
 
