@@ -54,6 +54,7 @@ export(GetDatapath, GetSourceYResolution, GetInputName, SetInputName)
 
 exportMethods(coerce)
 exportMethods(plot)
+S3method(plot, ListOfLineSegments)
 
 export(leptonicaImageFormats)
 
@@ -73,7 +74,7 @@ exportClasses(PolyBlockType, Orientation, WritingDirection, TextlineOrder, PageS
 
 # Note seen. S4 method.
 S3method(plot, TesseractBoxdata)
-S3method(plot, OCRResults)
+#XXX   S3method(plot, OCRResults)
 
 export(GetSmudges, GetCharWidth, GetCharHeight, bboxToDF, orderBBox)
 
@@ -168,3 +169,6 @@ S3method("getShapesBBox", "OCRPage")
 
 
 S3method(getPageHeight, OCRResults)
+
+
+exportMethods(fontName, rotation)

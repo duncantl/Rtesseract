@@ -1,4 +1,4 @@
-getLines =
+getOCRLines = getLines =
     # fi
     #
     # We could identify the margins and ignore those, i.e. those columns that have not black pixels.
@@ -67,6 +67,13 @@ function(x, top, col = "red", lty = 3, lwd = 2, ...)
                lines(tmp[, c(1, 3)], top - tmp[, c(2, 4)], col = col,lty = lty, lwd = lwd, ...)
        }))    
 }
+
+setOldClass(c("ListOfLineSegments", "list"))
+setMethod("plot", "ListOfLineSegments",
+          plot.ListOfLineSegments <- function(x, y, pageHeight = max(sapply(x, function(x) max(x$y1))), ...) {
+            lines(x, pageHeight, ...)
+        })
+
 
 getHLine =
     #  x is a matrix of (in the horizontal case) rows that are close together that make up a single line on the image but consist of multiple lines in the matrix.
