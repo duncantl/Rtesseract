@@ -11,7 +11,7 @@ setClass("OCRDocumentSubset", contains = c("OCRDocument"))
 setClass("OCRPage", contains = c("character", "DocumentPage"))
 
 #XXX
-setClass("ProcessedOCRDocument", contains = "OCRDocument")
+setClass("ProcessedOCRDocument", contains = "ProcessedDocument")
 # Validity
 
 setOldClass(c("WordOCRResults", "OCRResults", "TextBoundingBox", "BoundingBox", "data.frame"))
@@ -79,9 +79,14 @@ function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = T
    getLines(pixRead(obj), asDataFrame = asDataFrame)
 
 getTextBBox.OCRPage =
-function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = TRUE, ...)
+function(obj, asDataFrame = TRUE, color = TRUE, diffs = FALSE, dropCropMarks = TRUE, discardFullPage = TRUE, ...)
 {
     ans = GetBoxes(obj, asMatrix = !asDataFrame, ...)
+    if(discardFullPage) {
+        h = getPageHeight(obj)
+        w = height(ans) == h
+        ans = ans[!w, ]
+    }
     attributes(ans) = append(attributes(ans), list(file = obj)) #, pageDimensions = dim(obj)))
     ans
 }
@@ -152,3 +157,18 @@ setMethod("right", "OCRResults", function(x, ...) x$right)
 setMethod("bottom", "OCRResults", function(x, ...) x$bottom)
 setMethod("width", "OCRResults", function(x, ...) x$right - x$left)
 setMethod("height", "OCRResults", function(x, ...) x$top  - x$bottom)
+
+
+
+
+
+setMethod("fontName", "OCRResults",
+function(doc, minPercent = .01, bw = 1, minInRun = nrow(doc)*minPercent, minDelta = 0,  ...)
+{
+    h = height(doc)
+    h2 = rep(h, width(doc))
+    g = getGroupings(h2, bw, minInRun, minDelta)
+    h2 = split(h, cut(h, c(g, Inf)))
+    data.frame(fontName = names(h2), fontSize = sapply(h2, median), isBold = rep(NA, length(h2)), isItalic = rep(NA, length(h2)), stringsAsFactors = FALSE)
+}
+)
