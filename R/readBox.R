@@ -36,7 +36,7 @@ function(file, imgDim = integer(), ...)
 #  d[,4] = r- d[,4]    
    
    if(is.character(file))
-      attr(d, "file") = file
+      attr(d, "filename") = file
    
    d
 }
