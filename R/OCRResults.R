@@ -1,3 +1,4 @@
+if(FALSE) 
 plot.OCRResults =
 function(x, y, cex = .5, colors = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
          #!!! instead of accessing imageDims[1], have an accessor function that returns NA
@@ -30,6 +31,7 @@ function(x, ...)
         ans
 }
 #setOldClass(c("OCRResults", "data.frame"))
+if(FALSE)
 setMethod("plot", "OCRResults", plot.OCRResults)
 
 setMethod("[", "OCRResults",
