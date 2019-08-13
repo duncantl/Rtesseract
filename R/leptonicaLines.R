@@ -8,7 +8,7 @@ getOCRLines = getLines =
     # 
 function(pix,
          hor = dims[2]*.02,
-         vert = 5,
+         vert = 3, # was 5,
          lineThreshold = .1, fraction = .5, gap = .02, asDataFrame = FALSE,
          ..., asIs = is(pix, "AsIs"), horizontal = hor > vert, dims = dim(pix))
 {
@@ -50,7 +50,9 @@ function(pix,
   
   if(asDataFrame) {
       z = as.data.frame(do.call(rbind, z))
-      class(z) = c("DataFrameOfLineSegments", "data.frame")
+      z$stroke = "black"
+      z$lineWidth = 1
+      class(z) = c("DataFrameOfLineSegments", "ShapeBoundingBox", "data.frame")
   } else {
       class(z) = c("ListOfLineSegments", "list")  
   }
