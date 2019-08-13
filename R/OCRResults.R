@@ -31,8 +31,8 @@ function(x, ...)
         ans
 }
 #setOldClass(c("OCRResults", "data.frame"))
-if(FALSE)
-setMethod("plot", "OCRResults", plot.OCRResults)
+#if(FALSE)
+#setMethod("plot", "OCRResults", plot.OCRResults)
 
 setMethod("[", "OCRResults",
           function(x, i, j, ...) {
