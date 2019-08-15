@@ -52,6 +52,7 @@ function(pix,
       z = as.data.frame(do.call(rbind, z))
       z$stroke = "black"
       z$lineWidth = 1
+      z$nodeType = "line"
       class(z) = c("DataFrameOfLineSegments", "ShapeBoundingBox", "data.frame")
   } else {
       class(z) = c("ListOfLineSegments", "list")  
@@ -60,6 +61,10 @@ function(pix,
   class(z) = c(if(horizontal) "Horizontal" else "Vertical", class(z))
   z
 }
+
+setOldClass(c("DataFrameOfLineSegments", "ShapeBoundingBox", "data.frame"))
+setOldClass(c("Horizontal", "DataFrameOfLineSegments"))
+setOldClass(c("Vertical", "DataFrameOfLineSegments"))
 
 lines.ListOfLineSegments =
 function(x, top, col = "red", lty = 3, lwd = 2, ...)
