@@ -171,4 +171,6 @@ S3method("getShapesBBox", "OCRPage")
 S3method(getPageHeight, OCRResults)
 
 
-exportMethods(fontName, rotation)
+exportMethods(fontName, rotation, getFontInfo, getDocFont)
+
+

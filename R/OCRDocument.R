@@ -161,14 +161,37 @@ setMethod("height", "OCRResults", function(x, ...) x$top  - x$bottom)
 
 
 
-
-setMethod("fontName", "OCRResults",
-function(doc, minPercent = .01, bw = 1, minInRun = nrow(doc)*minPercent, minDelta = 0,  ...)
+groupTextByFont =
+function(x, minPercent = .01, bw = 1, minInRun = nrow(x)*minPercent, minDelta = 0,  ...)
 {
-    h = height(doc)
-    h2 = rep(h, width(doc))
+    h = height(x)
+    # this weights the heights based on the width of the text element so that we take into account long and short words differently.
+    # Could use nchar(x$text) if we wanted.
+    h2 = rep(h, width(x))
     g = getGroupings(h2, bw, minInRun, minDelta)
-    h2 = split(h, cut(h, c(g, Inf)))
-    data.frame(fontName = names(h2), fontSize = sapply(h2, median), isBold = rep(NA, length(h2)), isItalic = rep(NA, length(h2)), stringsAsFactors = FALSE)
+    split(x, cut(h, c(g, Inf)))
 }
-)
+
+
+
+getFontInfo2 <- function(x, minPercent = .01, bw = 1, minInRun = nrow(x)*minPercent, minDelta = 0,
+         byFont = groupTextByFont(x, minPercent, bw, minInRun, minDelta = 0,  ...), ...)
+{
+    h2 = byFont              
+    # Summarize each group.
+    structure(data.frame(fontName = names(h2), fontSize = sapply(h2, function(x) median(height(x))), fontIsBold = rep(NA, length(h2)), fontIsItalic = rep(NA, length(h2)), stringsAsFactors = FALSE),
+              class = c("FontSpecInfo", "data.frame"))
+}
+
+setMethod("getFontInfo", "OCRDocumentPage", function(x, ...) getFontInfo(getTextBBox(x), ...))
+setMethod("getFontInfo", "OCRResults", getFontInfo2)
+
+setMethod("getDocFont", "OCRResults",
+function(x, ...) {
+    # Not sure this makes a lot of sense if we are really grouping only by font.
+    # So be careful.
+    byFont = groupTextByFont(x, ...)
+    info = getFontInfo2( byFont = byFont )
+    i = which.max(sapply(byFont, nrow))
+    info[ names(byFont)[i], ]
+})
