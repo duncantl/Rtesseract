@@ -1,5 +1,7 @@
+#include "Rtesseract.h"
 #include "RConverters.h"
-#include "Rdefines.h"
+#include <Rdefines.h>
+
 
 #include <stdio.h>
 
