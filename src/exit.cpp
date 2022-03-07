@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <Rdefines.h>
+#include "Rtesseract.h"
 
 
 static int interceptExit = 0;
