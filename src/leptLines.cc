@@ -375,7 +375,7 @@ R_pixCountRGBColors(SEXP r_pixs)
 {
    PIX *pixs = GET_REF(r_pixs, PIX);
    int result;
-#if 0   
+#ifdef LEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM   
    pixCountRGBColors(pixs, 1, &result);
 #else
    result = pixCountRGBColors(pixs);
