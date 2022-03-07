@@ -184,6 +184,20 @@ AC_TRY_COMPILE(
  )
 
 
+
+AC_TRY_COMPILE(
+ [
+#include <leptonica/allheaders.h> 
+ ],
+ [
+    PIX *pix;
+    int ans = pixCountRGBColors(pix);
+ ],
+ [CPPDEFS="$CPPDEFS -DLEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM=1"],
+ [echo "leptonica pixCountRGBColors has more than one parameter"]
+ )
+
+
 PNG_FILES="NA"
 JPG_FILES="NA"
 TIFF_FILES="NA"
