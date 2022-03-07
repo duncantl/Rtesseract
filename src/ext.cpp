@@ -13,7 +13,7 @@ using std::string;
 
 #include <stdarg.h>
 
-using namespace tesseract;
+// using namespace tesseract;
 
 #define MAX_MSG_LEN 100000
 #if 0
@@ -1054,7 +1054,8 @@ R_TessBaseAPI_DetectOS(SEXP r_api)
       PROBLEM "NULL value for api reference"
       ERROR;
   }
-  OSResults res;
+  
+  tesseract::OSResults res;
   bool ans = api->DetectOS(&res);
   if(!ans) {
       return(R_NilValue);
@@ -1069,9 +1070,9 @@ R_TessBaseAPI_DetectOS(SEXP r_api)
   for(i = 0; i < 4; i++) 
       REAL(el)[i] = res.orientations[i];
 
-  SET_VECTOR_ELT(r_ans, 1, el = NEW_NUMERIC(4*kMaxNumberOfScripts));
+  SET_VECTOR_ELT(r_ans, 1, el = NEW_NUMERIC(4* tesseract::kMaxNumberOfScripts));
   for(i = 0; i < 4; i++) {
-      for(j = 0; j < kMaxNumberOfScripts; j++)
+      for(j = 0; j < tesseract::kMaxNumberOfScripts; j++)
           REAL(el)[i + j*3] = res.scripts_na[i][j];
   }
   UNPROTECT(1);
