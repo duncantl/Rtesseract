@@ -11,8 +11,9 @@ using std::string;
 
 #include "Rtesseract.h"
 
-
 #include <stdarg.h>
+
+using namespace tesseract;
 
 #define MAX_MSG_LEN 100000
 #if 0
@@ -142,12 +143,20 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 #endif
 
 
-#ifndef ADD_TESSERACT_DIR 
+/*#ifndef ADD_TESSERACT_DIR 
 #include <genericvector.h>
 #else
 #include <tesseract/genericvector.h> 
+#endif*/
+/*
+#ifndef ADD_TESSERACT_DIR 
+#include <baseapi.h>
+#else
+#include <tesseract/baseapi.h> 
 #endif
 
+using namespace tesseract;
+*/
 #define error Rf_error
 
 
@@ -175,7 +184,7 @@ R_TessBaseAPI_Init2(SEXP r_api, SEXP r_lang, SEXP r_datapath,
           configs[i] = (char *) CHAR(STRING_ELT(r_configs, i));
   }
 
-  GenericVector<STRING> vars_vec, vars_values;
+  std::vector<std::string> vars_vec, vars_values;
 
   int ok = api->Init(datapath, lang, engMode, configs, numConfigs, &vars_vec, &vars_values, INTEGER(r_debugOnly)[0]); 
 
@@ -590,12 +599,12 @@ R_tesseract_ClearPersistentCache()
 
 #if 1
 
-#ifndef ADD_TESSERACT_DIR 
+/*#ifndef ADD_TESSERACT_DIR 
 #include <strngs.h>
 #else
 #include <tesseract/strngs.h> 
 #endif
-
+*/
 #include <R_ext/Arith.h>
 
 SEXP
@@ -605,7 +614,7 @@ getVariable(tesseract::TessBaseAPI * api, const char *varname, int type)
     double d;
     bool b;
     
-    STRING str;
+    std::string str;
 
 #if 0
  Rprintf("var: %s\n", varname);
@@ -623,7 +632,8 @@ getVariable(tesseract::TessBaseAPI * api, const char *varname, int type)
     if(api->GetBoolVariable(varname, &b))
         return(ScalarLogical(b));
     if(api->GetVariableAsString(varname, &str))
-        return(ScalarString( mkChar(str.string/* was c_str*/() ) ) );
+        //return(ScalarString( mkChar(str.string/* was c_str*/() ) ) );
+        return(ScalarString( mkChar(str.c_str() ) ) );
     
     return(R_NilValue);
 }
@@ -1092,14 +1102,15 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
       ERROR;
   }
 
-  GenericVector<STRING> langs;
+  std::vector<std::string> langs;
   api->GetAvailableLanguagesAsVector(&langs);
 
   int i = 0, len = langs.size(); // length();
   SEXP r_ans;
   PROTECT(r_ans = NEW_CHARACTER(len));
   for(i = 0; i < len; i++) {
-      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
+      //SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
+      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.at(i).c_str()));
   }
   UNPROTECT(1);
 

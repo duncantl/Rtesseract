@@ -12,7 +12,7 @@
 
 // Already done: pixRead, pixWrite
 
-#include <allheaders.h>
+#include <leptonica/allheaders.h>
 // #include <Rdefines.h>
 
 #include "Rtesseract.h"
@@ -374,7 +374,9 @@ SEXP
 R_pixCountRGBColors(SEXP r_pixs)
 {
    PIX *pixs = GET_REF(r_pixs, PIX);
-   return ( ScalarInteger( pixCountRGBColors(pixs)    ));
+   int result;
+   pixCountRGBColors(pixs, 1, &result);
+   return ( ScalarInteger(   result  ));
 }
 
 

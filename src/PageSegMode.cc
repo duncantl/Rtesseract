@@ -1,6 +1,7 @@
 #include "Rtesseract.h"
 #include "RConverters.h"
 
+using namespace tesseract;
 
 SEXP
 Renum_convert_PolyBlockType(PolyBlockType val)
