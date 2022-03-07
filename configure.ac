@@ -43,6 +43,10 @@ echo "Tesseract CFLAGS = $TESS_CFLAGS"
 
 AC_LANG(C++)
 
+
+AC_CHECK_HEADERS(tesseract/genericvector.h, [export CXXFLAGS="$CXXFLAGS -DUSE_TESSERACT_VECTORS"])
+AC_CHECK_HEADERS(tesseract/strngs.h, [export CXXFLAGS="$CXXFLAGS -DUSE_TESSERACT_STRINGS"])
+
 AC_TRY_COMPILE(
  [
    #include <baseapi.h> 
@@ -193,7 +197,7 @@ AC_TRY_COMPILE(
     PIX *pix;
     int ans = pixCountRGBColors(pix);
  ],
- [CPPDEFS="$CPPDEFS -DLEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM=1"],
+ [CPPDEFS="$CPPDEFS -DLEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM=1"; echo "pixCountRGBColors() has only one parameter"],
  [echo "leptonica pixCountRGBColors has more than one parameter"]
  )
 
