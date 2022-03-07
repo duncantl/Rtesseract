@@ -1,60 +1,58 @@
 #include "Rtesseract.h"
 #include "RConverters.h"
 
-using namespace tesseract;
-
 SEXP
-Renum_convert_PolyBlockType(PolyBlockType val)
+Renum_convert_PolyBlockType(tesseract::PolyBlockType val)
 {
 const char *elName;
 switch(val) {
-   case PT_UNKNOWN:
-	elName = "PT_UNKNOWN";
+   case tesseract::PT_UNKNOWN:
+	elName = "tesseract::PT_UNKNOWN";
 	break;
-   case PT_FLOWING_TEXT:
-	elName = "PT_FLOWING_TEXT";
+   case tesseract::PT_FLOWING_TEXT:
+	elName = "tesseract::PT_FLOWING_TEXT";
 	break;
-   case PT_HEADING_TEXT:
-	elName = "PT_HEADING_TEXT";
+   case tesseract::PT_HEADING_TEXT:
+	elName = "tesseract::PT_HEADING_TEXT";
 	break;
-   case PT_PULLOUT_TEXT:
-	elName = "PT_PULLOUT_TEXT";
+   case tesseract::PT_PULLOUT_TEXT:
+	elName = "tesseract::PT_PULLOUT_TEXT";
 	break;
-   case PT_EQUATION:
-	elName = "PT_EQUATION";
+   case tesseract::PT_EQUATION:
+	elName = "tesseract::PT_EQUATION";
 	break;
-   case PT_INLINE_EQUATION:
-	elName = "PT_INLINE_EQUATION";
+   case tesseract::PT_INLINE_EQUATION:
+	elName = "tesseract::PT_INLINE_EQUATION";
 	break;
-   case PT_TABLE:
-	elName = "PT_TABLE";
+   case tesseract::PT_TABLE:
+	elName = "tesseract::PT_TABLE";
 	break;
-   case PT_VERTICAL_TEXT:
-	elName = "PT_VERTICAL_TEXT";
+   case tesseract::PT_VERTICAL_TEXT:
+	elName = "tesseract::PT_VERTICAL_TEXT";
 	break;
-   case PT_CAPTION_TEXT:
-	elName = "PT_CAPTION_TEXT";
+   case tesseract::PT_CAPTION_TEXT:
+	elName = "tesseract::PT_CAPTION_TEXT";
 	break;
-   case PT_FLOWING_IMAGE:
-	elName = "PT_FLOWING_IMAGE";
+   case tesseract::PT_FLOWING_IMAGE:
+	elName = "tesseract::PT_FLOWING_IMAGE";
 	break;
-   case PT_HEADING_IMAGE:
-	elName = "PT_HEADING_IMAGE";
+   case tesseract::PT_HEADING_IMAGE:
+	elName = "tesseract::PT_HEADING_IMAGE";
 	break;
-   case PT_PULLOUT_IMAGE:
-	elName = "PT_PULLOUT_IMAGE";
+   case tesseract::PT_PULLOUT_IMAGE:
+	elName = "tesseract::PT_PULLOUT_IMAGE";
 	break;
-   case PT_HORZ_LINE:
-	elName = "PT_HORZ_LINE";
+   case tesseract::PT_HORZ_LINE:
+	elName = "tesseract::PT_HORZ_LINE";
 	break;
-   case PT_VERT_LINE:
-	elName = "PT_VERT_LINE";
+   case tesseract::PT_VERT_LINE:
+	elName = "tesseract::PT_VERT_LINE";
 	break;
-   case PT_NOISE:
-	elName = "PT_NOISE";
+   case tesseract::PT_NOISE:
+	elName = "tesseract::PT_NOISE";
 	break;
-   case PT_COUNT:
-	elName = "PT_COUNT";
+   case tesseract::PT_COUNT:
+	elName = "tesseract::PT_COUNT";
 	break;
    default:
 	elName = "?";
@@ -165,11 +163,9 @@ switch(val) {
    case tesseract::PSM_SPARSE_TEXT_OSD:
 	elName = "tesseract::PSM_SPARSE_TEXT_OSD";
 	break;
-#ifdef HAVE_PSM_RAW_LINE        
    case tesseract::PSM_RAW_LINE:
 	elName = "tesseract::PSM_RAW_LINE";
 	break;
-#endif
    case tesseract::PSM_COUNT:
 	elName = "tesseract::PSM_COUNT";
 	break;
@@ -233,51 +229,42 @@ switch(val) {
    case tesseract::OEM_TESSERACT_ONLY:
 	elName = "tesseract::OEM_TESSERACT_ONLY";
 	break;
-#ifdef HAS_OEM_CUBE
-   case tesseract::OEM_CUBE_ONLY:
-	elName = "tesseract::OEM_CUBE_ONLY";
-	break;
-   case tesseract::OEM_TESSERACT_CUBE_COMBINED:
-	elName = "tesseract::OEM_TESSERACT_CUBE_COMBINED";
-	break;
-#endif
-   case tesseract::OEM_DEFAULT:
-	elName = "tesseract::OEM_DEFAULT";
-	break;
-#ifdef HAS_OEM_LSTM
    case tesseract::OEM_LSTM_ONLY:
 	elName = "tesseract::OEM_LSTM_ONLY";
 	break;
    case tesseract::OEM_TESSERACT_LSTM_COMBINED:
 	elName = "tesseract::OEM_TESSERACT_LSTM_COMBINED";
 	break;
-#endif
+   case tesseract::OEM_DEFAULT:
+	elName = "tesseract::OEM_DEFAULT";
+	break;
+   case tesseract::OEM_COUNT:
+	elName = "tesseract::OEM_COUNT";
+	break;
    default:
 	elName = "?";
 }
 return(R_makeEnumValue(val, elName, "OcrEngineMode"));
 }
 SEXP
-Renum_convert_StrongScriptDirection(StrongScriptDirection val)
+Renum_convert_StrongScriptDirection(tesseract::StrongScriptDirection val)
 {
 const char *elName;
 switch(val) {
-   case DIR_NEUTRAL:
-	elName = "DIR_NEUTRAL";
+   case tesseract::DIR_NEUTRAL:
+	elName = "tesseract::DIR_NEUTRAL";
 	break;
-   case DIR_LEFT_TO_RIGHT:
-	elName = "DIR_LEFT_TO_RIGHT";
+   case tesseract::DIR_LEFT_TO_RIGHT:
+	elName = "tesseract::DIR_LEFT_TO_RIGHT";
 	break;
-   case DIR_RIGHT_TO_LEFT:
-	elName = "DIR_RIGHT_TO_LEFT";
+   case tesseract::DIR_RIGHT_TO_LEFT:
+	elName = "tesseract::DIR_RIGHT_TO_LEFT";
 	break;
-   case DIR_MIX:
-	elName = "DIR_MIX";
+   case tesseract::DIR_MIX:
+	elName = "tesseract::DIR_MIX";
 	break;
    default:
 	elName = "?";
 }
 return(R_makeEnumValue(val, elName, "StrongScriptDirection"));
 }
-
-
