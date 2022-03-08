@@ -1,6 +1,8 @@
 #include "Rtesseract.h"
 #include "RConverters.h"
 
+
+#ifdef POLYBLOCKTYPE_IN_TESSERACT_NAMESPACE
 SEXP
 Renum_convert_PolyBlockType(tesseract::PolyBlockType val)
 {
@@ -59,6 +61,71 @@ switch(val) {
 }
 return(R_makeEnumValue(val, elName, "PolyBlockType"));
 }
+
+#else
+
+SEXP
+Renum_convert_PolyBlockType(PolyBlockType val)
+{
+const char *elName;
+switch(val) {
+   case PT_UNKNOWN:
+	elName = "PT_UNKNOWN";
+	break;
+   case PT_FLOWING_TEXT:
+	elName = "PT_FLOWING_TEXT";
+	break;
+   case PT_HEADING_TEXT:
+	elName = "PT_HEADING_TEXT";
+	break;
+   case PT_PULLOUT_TEXT:
+	elName = "PT_PULLOUT_TEXT";
+	break;
+   case PT_EQUATION:
+	elName = "PT_EQUATION";
+	break;
+   case PT_INLINE_EQUATION:
+	elName = "PT_INLINE_EQUATION";
+	break;
+   case PT_TABLE:
+	elName = "PT_TABLE";
+	break;
+   case PT_VERTICAL_TEXT:
+	elName = "PT_VERTICAL_TEXT";
+	break;
+   case PT_CAPTION_TEXT:
+	elName = "PT_CAPTION_TEXT";
+	break;
+   case PT_FLOWING_IMAGE:
+	elName = "PT_FLOWING_IMAGE";
+	break;
+   case PT_HEADING_IMAGE:
+	elName = "PT_HEADING_IMAGE";
+	break;
+   case PT_PULLOUT_IMAGE:
+	elName = "PT_PULLOUT_IMAGE";
+	break;
+   case PT_HORZ_LINE:
+	elName = "PT_HORZ_LINE";
+	break;
+   case PT_VERT_LINE:
+	elName = "PT_VERT_LINE";
+	break;
+   case PT_NOISE:
+	elName = "PT_NOISE";
+	break;
+   case PT_COUNT:
+	elName = "PT_COUNT";
+	break;
+   default:
+	elName = "?";
+}
+return(R_makeEnumValue(val, elName, "PolyBlockType"));
+}
+
+#endif
+
+
 SEXP
 Renum_convert_Orientation(tesseract::Orientation val)
 {
@@ -246,6 +313,9 @@ switch(val) {
 }
 return(R_makeEnumValue(val, elName, "OcrEngineMode"));
 }
+
+
+#ifdef STRONGSCRIPTDIRECTION_IN_TESSERACT_NAMESPACE
 SEXP
 Renum_convert_StrongScriptDirection(tesseract::StrongScriptDirection val)
 {
@@ -268,3 +338,31 @@ switch(val) {
 }
 return(R_makeEnumValue(val, elName, "StrongScriptDirection"));
 }
+
+#else
+
+
+SEXP
+Renum_convert_StrongScriptDirection(StrongScriptDirection val)
+{
+const char *elName;
+switch(val) {
+   case DIR_NEUTRAL:
+	elName = "DIR_NEUTRAL";
+	break;
+   case DIR_LEFT_TO_RIGHT:
+	elName = "DIR_LEFT_TO_RIGHT";
+	break;
+   case DIR_RIGHT_TO_LEFT:
+	elName = "DIR_RIGHT_TO_LEFT";
+	break;
+   case DIR_MIX:
+	elName = "DIR_MIX";
+	break;
+   default:
+	elName = "?";
+}
+return(R_makeEnumValue(val, elName, "StrongScriptDirection"));
+}
+
+#endif
