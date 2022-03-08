@@ -89,16 +89,16 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ],[echo "StrongScriptDirection not in tesseract:: namespace"])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-   #include <baseapi.h> 
+   #include <tesseract/osdetect.h> 
  ]], [[
-    tesseract::OSResult val;
- ]])],[CPPDEFS="$CPPDEFS -DOSRESULT_IN_TESSERACT_NAMESPACE=1"
+    tesseract::OSResults val;
+ ]])],[CPPDEFS="$CPPDEFS -DOSRESULTS_IN_TESSERACT_NAMESPACE=1"
 ],[])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-   #include <baseapi.h> 
+   #include <tesseract/osdetect.h> 
  ]], [[
-    tesseract::kMaxNumberOfScripts val;
+    int x = tesseract::kMaxNumberOfScripts;
  ]])],[CPPDEFS="$CPPDEFS -DMAXNUMSCRIPTS_IN_TESSERACT_NAMESPACE=1"
 ],[])
 
@@ -111,7 +111,8 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <baseapi.h> 
  ]], [[
     tesseract::TessBaseAPI api;
- ]])],[CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],[ export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],
+ [ export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"
 ])
 
 

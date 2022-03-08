@@ -2854,13 +2854,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-   #include <baseapi.h>
+   #include <tesseract/osdetect.h>
 
 int
 main (void)
 {
 
-    tesseract::OSResult val;
+    tesseract::OSResults val;
 
   ;
   return 0;
@@ -2868,7 +2868,7 @@ main (void)
 _ACEOF
 if ac_fn_cxx_try_compile "$LINENO"
 then :
-  CPPDEFS="$CPPDEFS -DOSRESULT_IN_TESSERACT_NAMESPACE=1"
+  CPPDEFS="$CPPDEFS -DOSRESULTS_IN_TESSERACT_NAMESPACE=1"
 
 fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
@@ -2876,13 +2876,13 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
 
-   #include <baseapi.h>
+   #include <tesseract/osdetect.h>
 
 int
 main (void)
 {
 
-    tesseract::kMaxNumberOfScripts val;
+    int x = tesseract::kMaxNumberOfScripts;
 
   ;
   return 0;
