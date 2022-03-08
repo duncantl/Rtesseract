@@ -621,8 +621,8 @@ guessImageFormatByExt =
 function(filename, values = InputFileFormatValues)
 {
     ext = gsub(".*\\.", "", filename)
-       #XXX  May want to determine most appropriate/supported version for tiff.
-    ext = switch(ext, pdf = "lpdf", jpg=, jpeg = "jp2", tiff = "tiff_lzw", ext)
+    #XXX  May want to determine most appropriate/supported version for tiff.
+    ext = switch(tolower(ext), pdf = "lpdf", jpg=, jpeg = "jp2", tif=, tiff = "tiff_lzw", ext)    
     i = pmatch(tolower(ext), gsub("^iff_", "", tolower(names(values))))
     values[i]
 }
