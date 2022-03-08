@@ -1,4 +1,5 @@
-AC_INIT(src/ext.cpp)
+AC_INIT
+AC_CONFIG_SRCDIR([src/ext.cpp])
 
 # find leptonica, tesseract
 
@@ -44,25 +45,79 @@ echo "Tesseract CFLAGS = $TESS_CFLAGS"
 AC_LANG(C++)
 
 
-AC_CHECK_HEADERS(tesseract/genericvector.h, [export CXXFLAGS="$CXXFLAGS -DUSE_TESSERACT_VECTORS"])
-AC_CHECK_HEADERS(tesseract/strngs.h, [export CXXFLAGS="$CXXFLAGS -DUSE_TESSERACT_STRINGS"])
+dnl AC_CHECK_HEADERS(tesseract/genericvector.h, [export CPPDEFS="$CPPDEFS -DUSE_TESSERACT_VECTORS=1"; echo "using tesseract GenericVector"])
+dnl AC_CHECK_HEADERS(tesseract/strngs.h, [export CPPDEFS="$CPPDEFS -DUSE_TESSERACT_STRINGS=1"])
 
-AC_TRY_COMPILE(
- [
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <tesseract/baseapi.h> 
+ ]], [[
+   std::string val;
+   tesseract::TessBaseAPI tess;
+   tess.GetVariableAsString("foo", &val);
+ ]])], [ echo "Using std::string, not tesseract's old STRING type"],
+ [CPPDEFS="$CPPDEFS -DUSE_TESSERACT_STRINGS=1"; echo "Using tesseract's STRING type"] )
+
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <tesseract/baseapi.h> 
+ ]], [[
+   std::vector<std::string> val;
+   tesseract::TessBaseAPI tess;
+   tess.GetLoadedLanguagesAsVector(&val);
+ ]])], [ echo "Using std::vector, not tesseract's old GenericVector type"],
+ [CPPDEFS="$CPPDEFS -DUSE_TESSERACT_VECTORS=1"; echo "Using tesseract's GenericVector type"] )
+
+
+
+
+
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <tesseract/baseapi.h> 
+ ]], [[
+    int x = tesseract::PT_COUNT;
+ ]])],[CPPDEFS="$CPPDEFS -DPOLYBLOCKTYPE_IN_TESSERACT_NAMESPACE=1"
+],[ echo "PolyBlockType not in tesseract:: namespace"])
+
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <tesseract/baseapi.h> 
+ ]], [[
+    int x = tesseract::DIR_NEUTRAL;
+ ]])],[CPPDEFS="$CPPDEFS -DSTRONGSCRIPTDIRECTION_IN_TESSERACT_NAMESPACE=1"
+],[echo "StrongScriptDirection not in tesseract:: namespace"])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <baseapi.h> 
- ],
- [
+ ]], [[
+    tesseract::OSResult val;
+ ]])],[CPPDEFS="$CPPDEFS -DOSRESULT_IN_TESSERACT_NAMESPACE=1"
+],[])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <baseapi.h> 
+ ]], [[
+    tesseract::kMaxNumberOfScripts val;
+ ]])],[CPPDEFS="$CPPDEFS -DMAXNUMSCRIPTS_IN_TESSERACT_NAMESPACE=1"
+],[])
+
+
+
+
+
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+   #include <baseapi.h> 
+ ]], [[
     tesseract::TessBaseAPI api;
- ],
- [CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],
- [ export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"]
-)
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],[ export CXXFLAGS="$CXXFLAGS -DADD_TESSERACT_DIR=1"; export TESS_CFLAGS="$TESS_CFLAGS -DADD_TESSERACT_DIR=1" ; echo "Did not find baseapi.h directly. Need to look for <tesseract/baseapi.h> or add tesseract to include flags $TESS_CFLAGS"
+])
 
 
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <string>
    using std::string;
 #ifndef ADD_TESSERACT_DIR
@@ -70,18 +125,14 @@ AC_TRY_COMPILE(
 #else
    #include <tesseract/baseapi.h>
 #endif
- ],
- [
+ ]], [[
     tesseract::TessBaseAPI api;
     api.GetInputName();
- ],
- [CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],
- [echo "No GetInputName() method for the TessBaseAPI"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_GETINPUT_NAME=1"],[echo "No GetInputName() method for the TessBaseAPI"
+ ])
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <string>
    using std::string; 
 #ifndef ADD_TESSERACT_DIR
@@ -89,17 +140,13 @@ AC_TRY_COMPILE(
 #else
    #include <tesseract/baseapi.h>
 #endif   
- ],
- [
+ ]], [[
     tesseract::TessBaseAPI * api;
     api->GetDatapath();
- ],
- [CPPDEFS="$CPPDEFS -DHAS_GETDATAPATH=1"],
- [echo "No GetDatapath() method for the TessBaseAPI"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_GETDATAPATH=1"],[echo "No GetDatapath() method for the TessBaseAPI"
+ ])
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
   #include <string>
   using std::string; 
 #ifndef ADD_TESSERACT_DIR
@@ -107,19 +154,15 @@ AC_TRY_COMPILE(
 #else
    #include <tesseract/baseapi.h>
 #endif
- ],
- [
+ ]], [[
     tesseract::TessBaseAPI * api;
     api->GetSourceYResolution();
- ],
- [CPPDEFS="$CPPDEFS -DHAS_GETSOURCEYRESOLUTION=1"],
- [echo "No GetSourceYResolution() method for the TessBaseAPI"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_GETSOURCEYRESOLUTION=1"],[echo "No GetSourceYResolution() method for the TessBaseAPI"
+ ])
 
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <string>
    using std::string;
 #ifndef ADD_TESSERACT_DIR
@@ -129,17 +172,13 @@ AC_TRY_COMPILE(
    #include <tesseract/baseapi.h>
    #include <tesseract/renderer.h>
 #endif   
- ],
- [
+ ]], [[
     tesseract::TessPDFRenderer render("", "", true);
- ],
- [CPPDEFS="$CPPDEFS -DPDF_RENDER_HAS_TEXT_ONLY=1"; echo "Has textonly parameter"],
- [echo "TessPDFRender constructor has no textonly parameter"]
-)
+ ]])],[CPPDEFS="$CPPDEFS -DPDF_RENDER_HAS_TEXT_ONLY=1"; echo "Has textonly parameter"],[echo "TessPDFRender constructor has no textonly parameter"
+])
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
    #include <string>
    using std::string;
 #ifndef ADD_TESSERACT_DIR
@@ -147,59 +186,44 @@ AC_TRY_COMPILE(
 #else
    #include <tesseract/baseapi.h>
 #endif   
- ],
- [
+ ]], [[
     tesseract::DetectOrientationScript;
- ],
- [CPPDEFS="$CPPDEFS -DHAS_DETECT_ORIENTATION_SCRIPT=1"; echo "Has DetectOrientatinScript() method"],
- [echo "NO DetectOrientationScript() method"]
-)
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_DETECT_ORIENTATION_SCRIPT=1"; echo "Has DetectOrientatinScript() method"],[echo "NO DetectOrientationScript() method"
+])
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifndef ADD_TESSERACT_DIR 
    #include <publictypes.h>
 #else
    #include <tesseract/publictypes.h> 
 #endif
- ],
- [
+ ]], [[
     tesseract::OEM_LSTM_ONLY;
- ],
- [CPPDEFS="$CPPDEFS -DHAS_OEM_LSTM=1"],
- [echo "No OEM_LSTM_ONLY enumeration value for the TessBaseAPI"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_OEM_LSTM=1"],[echo "No OEM_LSTM_ONLY enumeration value for the TessBaseAPI"
+ ])
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #ifndef ADD_TESSERACT_DIR 
    #include <publictypes.h>
 #else
    #include <tesseract/publictypes.h> 
 #endif
- ],
- [
+ ]], [[
     tesseract::OEM_CUBE_ONLY;
- ],
- [CPPDEFS="$CPPDEFS -DHAS_CUBE_ONLY=1"],
- [echo "No OEM_CUBE_ONLY enumeration value for the TessBaseAPI"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DHAS_CUBE_ONLY=1"],[echo "No OEM_CUBE_ONLY enumeration value for the TessBaseAPI"
+ ])
 
 
 
-AC_TRY_COMPILE(
- [
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <leptonica/allheaders.h> 
- ],
- [
+ ]], [[
     PIX *pix;
     int ans = pixCountRGBColors(pix);
- ],
- [CPPDEFS="$CPPDEFS -DLEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM=1"; echo "pixCountRGBColors() has only one parameter"],
- [echo "leptonica pixCountRGBColors has more than one parameter"]
- )
+ ]])],[CPPDEFS="$CPPDEFS -DLEPT_PIX_COUNT_RGB_COLORS_HAS_ONE_PARAM=1"; echo "pixCountRGBColors() has only one parameter"],[echo "leptonica pixCountRGBColors has more than one parameter"
+ ])
 
 
 PNG_FILES="NA"
@@ -329,7 +353,8 @@ echo "Building libRexit.a"
 (cd src/Rexit; make)
 if test $? = 0 ; then
 
-   AC_OUTPUT(testRexit/Makevars)
+   AC_CONFIG_FILES([testRexit/Makevars])
+AC_OUTPUT
 
    echo "Compiling testRexit/tmp.so"
    (cd testRexit; R CMD SHLIB -o tmp.so main.cc)
@@ -354,4 +379,5 @@ fi
 AC_SUBST(USE_REXIT)
 AC_SUBST(REXIT_LIB)
 
-AC_OUTPUT(src/Makevars R/imageCapabilities.R R/config.R)
+AC_CONFIG_FILES([src/Makevars R/imageCapabilities.R R/config.R])
+AC_OUTPUT
