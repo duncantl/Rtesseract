@@ -1,13 +1,28 @@
 # Todo Items
 
 ## New Features
-1. LRTResultIterator to get font informationitalics, etc.
+
+1. [implemented] LRTResultIterator to get font informationitalics, etc.
+     + Results don't seem interesting. See if it works in tesseract 3.05
 
 1. Add functionality to find columns. To extract tabular data.
 
 1. Allow plotSubImage() to work from the Pix rather than requiring png::readPNG() or equivalent.
+   + Will accept a pix but problems with values of cells if not thresholded. See tests/subImage.R
+
+1. Speed up conversion of Pix to R ??
+   + Is this a bottleneck. Profile it.
 
 ## Important
+1. Should pix[r, c, ] get the RGB.
+    + and pix[,,] give an array.
+
+1. Get color of a pixel
+
+1. How to access the preprocessed images before the OCR is actually done, i.e. after the
+   preprocessing Tesseract and Leptonica perform ?  
+    + GetThresholdedImage().
+	+ What about the rotation/deskew? Can we recover the amount it was rotated?
 
 1. *** In plot.OCR, use red-green color map/scale. Deal with color-blind issues.
     + [DOCUMENT] allow user to specify the end points of the color ramp via an option OCRConfidenceColors with 
@@ -15,40 +30,10 @@
 
 1. In plot.OCR, add a legend.
 
-1. In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
-   smithburn image.  
-   + Is it that it puts a box covering the entire plotting region!!!
-      + This is the word Uganda that has a box that is the entire image.
-   + Draw in reverse order of area of each box so the big ones go at the back
-
-1. [done] Class and methods for drawing the lines returned by getLines().
-   + See tests/lineSegments.R for an example.
-   + Take code from paper.
-   
-
 1. [mostly done] Make getLines() more robust.
     + Not sure what else to check other than A LOT OF EXAMPLES!
+    + verify results from findLines() and getLines() functions.	
 	  + The UCD_Lehmann_0377.jpg one doesn't give good results.
-
-1. Seg fault
-  + Running in inst/images/
-```
-  library(Rtesseract)
-  a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
-  Recognize(a)
-```
-  + If we remove the configs = config, this doesn't segfault.
-    So looks like a tesseract issue, but something we need to deal with.
-	+ Remove `tessedit_timing_debug 1` from config and it works in R.
-	  + But why does it work in stand-alone tesseract with this option.
-
-1. In the following code, we don't generate the vhlinefinding.pdf file:
-```
-  library(Rtesseract)
-  a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
-  Recognize(a)
-```
-   but the stand-alone tesseract does.
 
 1. What are the names of the init variables,  versus the non-init variables.
    And what are the ones we set in config and vars
@@ -65,15 +50,17 @@ GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
   Seem to call SetVariables() before Init().
   I changed this in Oct 2018. Reverted it now so the above actually works.
 
-
 1. [finalize fixes] Add showPoints() like the one in ReadPDF.
     + There is a function in OCRResults.R
 	+ Added guidelines within the circle
 	   + but they don't connect to circle contour. Most likely aspect ratio issues. (Works for 0 and 180 degrees.)
 
-1. SVG view.
+1. SVG view. - mkSVG() and mkSVG2()
     + Scale properly.
-	+ Use colors from GetConfidenceColors ??
+	+ [already done] Use colors from GetConfidenceColors ??
+    + Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.	
+	+ [done] mkSVG2(): Show the image underneath and then the boxes and allow the viewer to see the "truth" and
+      what was recognized via a tooltip.  
 
 1. user dictionary option. See inst/Paper/dictTest.R
    
@@ -85,13 +72,9 @@ GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
  a series of independent files each containing a page. (Lost on my previous laptop.)
     + Consider renaming pdf2images
  
-1. See if tesseract can read a multi-page document. Has to be in TIFF? PNG? ..., not PDF.
-   + Yes. See readMultipageTiff() function. Get back a list of the Pix object for each of the pages.
-   + Also added readPixHeader/readImageInfo to get the format information from each image.
-
 1. Check the character encoding under the following setup:
-     + do OCR on a foreign page with words that have accents or different characters
-	   + Done - see RussianDoc.png, French.png and Sanscrit.png
+     + [Done] do OCR on a foreign page with words that have accents or different characters
+	   + see RussianDoc.png, French.png and Sanscrit.png
 	 + use a different language setting for TESSDATA_PREFIX
 
 1. Test under a different locale.
@@ -103,20 +86,9 @@ GetVariables(ts, "textord_tabfind_show_vlines") # TRUE
   - cpp: readImage.cpp
   - notes: Note findLines_notes
 
-1. [verify] findLines() and getLines() functions.
-
-1. [fixed] Options
-```
-a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
-```
-    + Move the SetVariables call in tesseract() to after the Init()
-
 1. [pixRotate done] Add general pixRotate() functions, not just pixRotateAMGray().
    + [TODO] e.g. pixRotate(), pixRotateOrth(), pixRotateAMColor(), pixRotateShear/Center
      + Not needed -  pixRotate{90,180},
-
-1. [IGNORE/not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
-  Is there a GetDims? no - just pixGetDims and GetImageDims.
 
 1. Memory Leak notifications when quit from R.
    If we rm() any api object and then explicitly gc(), no problem. W/o the gc(), we get the
@@ -167,16 +139,12 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
 1. [low] pixConnComp - need?
 1. [low] pixSeedfill
 
-1. [okay - could do more] pixWrite should guess the format from the extension.	
-    Can guess png, webp, jp2, jpeg, jpg, lpdf
-	
 1. [test] pixOr, pixAnd, pixXor, 
 
 1. get rid of "libpng warning iCCP: known incorrect sRGB profile"
- This is due to content in the PNG file. To remove it, one can use ImageMagick's mogrifgy
- command-line too.  (Or pngcrush apparently.)
-  (See
- https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile)
+     This is due to content in the PNG file. 
+   + To remove it, one can use ImageMagick's mogrifgy  command-line too.  (Or pngcrush apparently.)
+     +  (See https://stackoverflow.com/questions/22745076/libpng-warning-iccp-known-incorrect-srgb-profile)
 
 
 ## A. Required to get package on CRAN
@@ -302,8 +270,6 @@ a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
    See GetRegions(), GetStrips() to et the Boxa and Pixa. Not exported yet. 
    <br/>
    How about identifying lines.  Done in bounding box if we use psm_auto for PageSegmentationMode
-
-1. Annotate an SVG plot of this so that we can see the confidence levels and alternatives for a bbox.
 
 ## Misc
 
@@ -457,7 +423,64 @@ Warning: Auto orientation and script detection requested, but osd language faile
 [1] TRUE
 ```
 
+## Tesseract Bugs
+
+1. [tesseract bug] Seg fault
+  + Running in inst/images/
+```
+  library(Rtesseract)
+  a = tesseract("SMITHBURN_1952_p3.png", configs = "config")
+  Recognize(a)
+```
+  + If we remove the configs = config, this doesn't segfault.
+    So looks like a tesseract issue, but something we need to deal with.
+	+ Remove `tessedit_timing_debug 1` from config and it works in R.
+	  + But why does it work in stand-alone tesseract with this option.
+	  + The error occurrs in 
+```
+    tprintf("%s (ocr took %.2f sec)\n",
+-> 1409	            word->best_choice->unichar_string().string(),
+   1410	            static_cast<double>(ocr_t-start_t)/CLOCKS_PER_SEC);
+```
+
+
 ## DONE
+
+1. [mostly fixed] In plot.OCR - fillBoxes doesn't seem to do the right thing. Only shows boxes below the table in
+   smithburn image.  
+   + Is it that it puts a box covering the entire plotting region!!! Yes.
+      + This is the word Uganda that has a box that is the entire image.
+	  + And several others. These are the words that are under the yellow highlighted text.
+   	     + The boxes for these are very large.
+   + [DONE] Draw in reverse order of area of each box so the big ones go at the back
+
+1. [solved] In the following code, we don't generate the vhlinefinding.pdf file:
+  + Answer: Need pageSegMode = PSM_AUTO
+```
+  library(Rtesseract)
+  a = tesseract("SMITHBURN_1952_p3.png", configs = "config1")
+  Recognize(a)
+```
+   but the stand-alone tesseract does.
+   + The stand-alone run also generates a lot more output.
+   
+1. [fixed] Options
+```
+a = tesseract( opts = list(tessedit_char_whitelist = letters[1:3]))
+```
+    + Move the SetVariables call in tesseract() to after the Init()
+	
+1. [done/okay] pixWrite should guess the format from the extension.	
+    Can guess png, webp, jp2, jpeg, jpg, lpdf
+	
+1. [done] Class and methods for drawing the lines returned by getLines().
+   + See tests/lineSegments.R for an example.
+   + Take code from paper.
+   
+1. [done] See if tesseract can read a multi-page document. Has to be in TIFF? PNG? ..., not PDF.
+   + Yes. See readMultipageTiff() function. Get back a list of the Pix object for each of the pages.
+   + Also added readPixHeader/readImageInfo to get the format information from each image.
+
 1. [fixed] getLines() for UCD_Lehmann_0377.jpg fails. Error occurs.
 ```
 '/Users/duncan/Data/Lehmann_catalogs/UCD_Lehman JPEGs/UCD_Lehmann_0377.jpg'
@@ -660,5 +683,7 @@ bb = GetBoxes(a)
 
 + [Done] Make getCharWidth/Height ignore text with no content & just one space.
 
+1. [IGNORE/not an issue] Make GetImageDims a method for GetDims() so can use the latter on a TessBaseAPI object.
+  Is there a GetDims? no - just pixGetDims and GetImageDims.
 
 
