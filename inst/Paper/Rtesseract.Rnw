@@ -40,11 +40,12 @@
   Across disciplines, we increasingly desire to recover text and numeric data from scanned documents and images.
   The \pkg{Rtesseract} provides flexible and comprehensive functionality for
   this using optical character recognition (OCR) from within \proglang{R} by interfacing to the Open Source \proglang{C++} OCR library Tesseract.
-  At its simplest, \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image.
-  \pkg{Rtesseract} can also obtain the
+  At its simplest, \pkg{Rtesseract} allows an \proglang{R} user to recover text from an image as lines, individual words or separate characters..
+  Importantly, \pkg{Rtesseract} can also obtain the
   location and size of text elements, possible alternatives for characters, and the estimated  ``confidence'' for each.
   These metadata are often essential for interpreting and reconstructing the text, e.g., for multi-column layout, tables, or even section titles.
-  Additionally, the \pkg{Rtesseract} package provides access to much of the Tesseract C++ API, allowing full customization of the OCR behavior.
+  Additionally, the \pkg{Rtesseract} package provides access to much of the Tesseract C++ API, allowing full customization of the OCR behavior,
+   and exporting the results in various formats (e.g. PDF).
   Furthermore, \pkg{Rtesseract} includes functionality to visualize OCR results within \proglang{R} itself.
   To further support an OCR workflow from entirely within \proglang{R}, the \pkg{Rtesseract} package also provides access to the leptonica C++ library, adding image manipulation functionality for pre-processing images to enhance the recognition.
   Lastly, \pkg{Rtesseract} includes high-level functionality for recovering structural elements from the page, such as horizontal and vertical lines which are often vital
@@ -54,7 +55,7 @@
   subsequent analysis.
 }
 
-\Keywords{Optical Character Recognition (OCR), R}
+\Keywords{Optical Character Recognition, OCR, R}
 \Plainkeywords{}
 \Address{
   Matthew Espe, Duncan Temple Lang\\
@@ -963,11 +964,15 @@ lapply(hlines,
 \end{figure}
 %@MATT: I changed the code here to treat tmp as a matrix, i.e., add the , to indicate all rows.
 % In this case, the lines are all single segments, but in general they may be multi-row matrices
+% I also added a class and a method for showing the lines so that people don't have to do this computation
+% directly. So we may want to remove it from the text, or show it and say that it is done via the method
+% showLines()
 
 Note that we had to subtract the y coordinates from the number of rows
 of the image as \proglang{R} plots from bottom up and the coordinates for the
 lines are relative to row 1 and go down.
-%FIX: We should make this observation much earlier.
+%FIX: We should make this observation much earlier in the text and discuss the tesseract image model in
+% relation to the results in GetBoxes().
 
 For those intersted, we include a vignette with \pkg{Rtesseract} which illustrates how the \code{GetLines()} function leverages several lower-level functions in \pkg{Rtesseract} to identify lines on the image.
 
@@ -1605,6 +1610,36 @@ itself can be installed from source at
 
 \section{Comparison to other packages}
 <<child = "comparison.Rnw">>=
+
+
+%@MATT: Here is a hastily written segment that we want to reword and integrate
+% to outline the distinction between Rtesseract and other packages.
+% It connects with the previous paragraphs, but I have written it independently for now.
+The \pkg{Rtesseract} provides 
+\begin{itemize}
+\item high-level functions to extract data from images,
+\item functions for evaluating the OCR results,
+\item infrastructure for reconstructing the extracted elements into meaningful
+higher-level data structures (e.g. columns of text, paragraphs, columns and rows of tables)  
+% Need to make this so if we want to include it. May want to drop this.
+\item functionality for pre-processing images to improve them for OCR and to 
+   do related non-OCR extraction, e.g., finding horizontal and vertical lines.
+\item programmatic interface that enables querying functionality and sound error handling
+and recovery that enables the development of robust programmatic workflows.
+\end{itemize}
+
+
+More image processing packages for \R{} have become available
+and one can use these pre-process images before OCR or to extract
+additional elements such as lines.  However, the \pkg{Rtesseract}
+functionality also makes this possible with a workflow
+that combines leptonica and tesseract.
+By providing access to the leptonica functionality,
+the \pkg{Rtesseract} package allows us to manipulate and process images in the same format
+that tesseract operate on and to work with images directly before and after
+the OCR. 
+
+
 
 @ 
 
