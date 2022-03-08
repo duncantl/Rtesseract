@@ -14,6 +14,6 @@ findColumns =
 function(api, bbox = GetBoxes(api, level = level), level = 3, ncols, side = "left")
 {
     dens <- density(bbox[,side], adjust = 0.001)
-    i <- order(dens$y, decreasing=TRUE)
+    i <- order(dens$y, decreasing = TRUE)
     dens$x[i][1:ncols]
 }
