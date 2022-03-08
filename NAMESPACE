@@ -90,7 +90,7 @@ export(GetStrips, GetRegions)
 
 export(GetImage)
 #, GetImage, GetInputImage)
-#export(GetThresholdedImage)
+export(GetThresholdedImage)
 
 export(hasRecognized) # rename!
 
@@ -149,3 +149,7 @@ export(getAvailableLanguages)
 
 export(readMultipageTiff)
 export(readPixHeader, readImageInfo)
+
+
+export(GetFontInfo)
+exportMethods(GetFontInfo)
