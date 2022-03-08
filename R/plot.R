@@ -6,7 +6,7 @@
 plot.OCR =
 function(x, y = "word",
          filename = if(!missing(x)) GetInputName(x) else "",         
-         img = readImage(filename),
+         img = if(!missing(x)) GetImage(x) else readImage(filename) ,
          bbox = GetBoxes(x),
          border = if(confidence) GetConfidenceColors(bbox) else "red",
          outer.border = border,
@@ -157,7 +157,7 @@ function(box, img, text = character(), ...)
   k = img[ box[2]:box[4],  box[1]:box[3], ]
   plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", axes = FALSE, ...)
      # Draw the part of the image.
-  rasterImage(k, 0, 0, ncol(k), nrow(k))
+  rasterImage(as.raster(k), 0, 0, ncol(k), nrow(k))
   
    # Put the tick marks corresponding to the column and row positions in the images.
   ax2 = axTicks(2)
