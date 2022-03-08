@@ -3,6 +3,8 @@ library(RCodeGen)
 inc = "/usr/local/include/tesseract"
 version = "3.05"
 
+# For 5.1 on my machine with clang setup.
+# inc = c("/Users/duncan/TEMP/include", "/Users/duncan/local/include/c++/v1", "/Users/duncan/local/lib/clang/12.0.0/include")
 
 #inc = "~/Projects/OCR/tess4/api"
 #version = "4.0"
