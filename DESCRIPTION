@@ -9,7 +9,7 @@ Description: This provides a flexible Optical Character Recognition (OCR)
   It also provides some functionality from the leptonica library for
   performing image processing. This allows us, for example, to detect
   lines in an image, important for interpreting tables.
-Version: 0.4-0
+Version: 0.5-0
 Author: Duncan Temple Lang, Matt Espe
 Maintainer: Duncan Temple Lang <duncan@r-project.org>
 License: Apache License

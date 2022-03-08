@@ -1,3 +1,8 @@
+0.5-0
+	* Compatible with tesseract 5.0 thanks to work and a pull request from Wesley Brooks
+
+
+
 	* Added level name to class of OCRResults, e.g. WordOCRResults.
 
 	* Added OCRResultsConfidences class to OCRResults when Confidence column is included.
