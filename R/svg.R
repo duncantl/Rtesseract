@@ -1,5 +1,15 @@
 # Very simple SVG output from our OCR.
 #
+#
+# For mkSVG2
+#   central button that shows all the extracted text on top of the image
+#   When click on that text, it disappears and shows the image.
+#
+#  Mark the words that are not "regular" words, i.e. misspelled  according to aspell.
+#
+#
+#
+#
 #  Add
 #
 #    + Detect skew
@@ -22,7 +32,7 @@
 #   + Undo facilities
 
 mkSVG =
-function(bbox, dims,  alt = NULL, col = GetConfidenceColors(bbox), alpha = .8, confThreshold = 0.0)
+function(bbox, dims, alt = NULL, col = GetConfidenceColors(bbox), alpha = .8, confThreshold = 0.0)
 {
     w = bbox$confidence >= confThreshold
     bbox = bbox[w,]
@@ -114,3 +124,26 @@ if(FALSE) {
         "</body></html>",
         file = "Moore.html", sep = "\n")    
 }    
+
+
+
+mkSVG2 =
+function(bbox, img, col = GetConfidenceColors(bbox), alpha = .8, confThreshold = 0.0)
+{
+    dims = readImageInfo(img)$dim
+
+    bbox$height = bbox$top - bbox$bottom
+    idx = seq(length = nrow(bbox))
+    txt =  c(sprintf('<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="%f" height="%f">', dims[1], dims[2]),
+             "<g>",
+             sprintf('<image xlink:href="%s" width="%d" height="%d" />', path.expand(img), dims[1], dims[2]),
+             "<g>",
+        sprintf('<rect id="%d" index="%d" x="%f" y="%f" width="%f" height="%f" stroke="%s" fill-opacity="0.1" title="%s"><title>%s</title></rect>',
+                idx, idx,
+                bbox$left, bbox$top - bbox$height,
+                bbox$right - bbox$left,
+                bbox$height,
+                col, gsub("&", "&amp;", bbox$text),
+                gsub("&", "&amp;", bbox$text)),
+             sprintf('</g></g></svg>'))    
+}
