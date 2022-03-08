@@ -1,4 +1,6 @@
 library(Rtesseract)
+# The following avoids the 5 warnings messages about the memory leak in ObjectCache::~ObjectCache about the dawgs
+.Last = function() gc()
 f = system.file("images", "OCRSample2.png", package = "Rtesseract")
 
 alts = GetAlternatives(f)
