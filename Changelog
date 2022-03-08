@@ -40,6 +40,8 @@
 
 	* lines() method for drawing object returned by getLines().
 
+	* GetFontInfo() function.
+
 0.3-1
 	* Set the locale for each .Call() invocation to handle tesseract 4.0.
 
