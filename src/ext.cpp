@@ -521,6 +521,19 @@ R_ResultIterator_Confidence(SEXP r_it, SEXP r_level)
    return(ScalarReal(ri->Confidence(level)));
 }
 
+
+
+extern "C"
+SEXP
+R_ResultIterator_BlockType(SEXP r_it)
+{
+
+   tesseract::ResultIterator *ri = GET_REF(r_it, tesseract::ResultIterator);
+   return(ScalarInteger(ri->BlockType()));
+}
+
+
+
 extern "C"
 SEXP
 R_ResultIterator_GetUTF8Text(SEXP r_it, SEXP r_level)
@@ -1238,3 +1251,61 @@ R_check()
 #endif
 
 
+
+
+
+
+
+
+extern "C"
+SEXP
+R_TessBaseAPI_GetFontInfo(SEXP r_api, SEXP r_level)
+{
+  tesseract::TessBaseAPI * api = GET_REF(r_api, tesseract::TessBaseAPI);
+  if(!api) {
+      PROBLEM "NULL value for api reference"
+      ERROR;
+  }
+  tesseract::ResultIterator* ri = api->GetIterator();
+  if(!ri) {
+      return(R_NilValue);
+      PROBLEM "ResultIterator is NULL. Did you call Recognize" 
+      ERROR;
+  }
+
+
+  ri->Begin();
+  int n = 1, i;
+  tesseract::PageIteratorLevel level = (tesseract::PageIteratorLevel) INTEGER(r_level)[0];
+  while(ri->Next(level)) n++;
+
+  delete ri;  
+  if(n == 1)
+     return(R_NilValue);
+ 
+  bool vals[6];
+  int size, id, k;
+  SEXP tmp, fontNames, r_ans;
+  ri = api->GetIterator();  
+//  ri->Begin();  
+  PROTECT(r_ans = NEW_LIST(n));  
+  PROTECT(fontNames = NEW_CHARACTER(n));
+  for(i = 0; i < n; i++) {
+      size = id = 0;
+      const char *fn = ri->WordFontAttributes(vals, vals+1, vals+2, vals+3, vals+4, vals+5, &size, &id);
+      PROTECT(tmp = NEW_INTEGER(8));
+      for(k = 0; k < 6; k++) INTEGER(tmp)[k] = vals[k];
+      INTEGER(tmp)[k++] = size;
+      INTEGER(tmp)[k++] = id;                                           
+      SET_VECTOR_ELT(r_ans, i, tmp);
+      SET_STRING_ELT(fontNames, i, mkChar(fn ? fn : ""));
+//      Rprintf("%s\n", ri->GetUTF8Text(level));
+      UNPROTECT(1);
+  }
+  SET_NAMES(r_ans, fontNames);
+  UNPROTECT(2);
+
+  delete ri;
+
+  return(r_ans);
+}
