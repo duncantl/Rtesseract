@@ -15,8 +15,10 @@ function(pix, threshold, newValue, target = NULL)
 }
 
 pixThresholdToBinary =
-function(pix, threshold)
+function(pix, threshold, dims = GetImageDims(pix))
 {
+    if(dims[3] >  8)
+       pix = pixConvertTo8(pix)
   .Call("R_pixThresholdToBinary", pix, as.integer(threshold))
 }
 
@@ -220,6 +222,17 @@ function(x, i, j, ...)
         if(any(j < 0))
             j = seq(1, d[2])[j]
     }
+
+    # Check for third dimension being requested via the ...
+    # Could be specified x[i, j, k]  or missing but in query x[i, j, ]
+    kall = match.call()
+    if(!missing(...) || (length(kall) >= 5 && "" %in% setdiff(names(kall)[-1],  c("x", "i", "j")) && is.name(kall[[5]]) && kall[[5]] == "")) {
+        tmp = pixGetRGBPixels(x)
+        return(if(is.name(..1) && as.character(..1) == "")
+                  tmp[i,j, ]
+               else
+                  tmp[i, j, ..1])
+    }
     
     ans = .Call("R_pixGetSubsetPixels", x, i, j)
 
@@ -227,6 +240,7 @@ function(x, i, j, ...)
     ans
 }
 setMethod("[", c("Pix", "numeric", "numeric"), pixNumericSubset)
+
 
 setMethod("[", c("Pix", "logical", "logical"),
           function(x, i, j, ...) {
