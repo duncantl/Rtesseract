@@ -15,6 +15,22 @@ using std::string;
 
 // using namespace tesseract;
 
+
+#ifdef USE_TESSERACT_STRINGS
+#ifndef ADD_TESSERACT_DIR
+#include <strngs.h>
+#else
+#include <tesseract/strngs.h> 
+#endif
+
+#define tstringtype  STRING
+
+#else
+#define tstringtype  std::string
+#endif
+
+
+
 #define MAX_MSG_LEN 100000
 #if 0
 void tprintf_internal(const char *fmt, ...)
@@ -143,20 +159,24 @@ R_TessBaseAPI_Init(SEXP r_api, SEXP r_lang, SEXP r_datapath)
 #endif
 
 
-/*#ifndef ADD_TESSERACT_DIR 
+#ifdef USE_TESSERACT_VECTORS
+#ifndef ADD_TESSERACT_DIR 
 #include <genericvector.h>
 #else
 #include <tesseract/genericvector.h> 
-#endif*/
-/*
+#endif
+#endif
+
 #ifndef ADD_TESSERACT_DIR 
 #include <baseapi.h>
 #else
 #include <tesseract/baseapi.h> 
 #endif
 
-using namespace tesseract;
-*/
+
+
+//using namespace tesseract;
+
 #define error Rf_error
 
 
@@ -602,20 +622,8 @@ R_tesseract_ClearPersistentCache()
 
 
 
-#if 1
 
-#ifdef USE_TESSERACT_STRINGS
-#ifndef ADD_TESSERACT_DIR 
-#include <strngs.h>
-#else
-#include <tesseract/strngs.h> 
-#endif
 
-#define tstringtype  STRING
-
-#else
-#define tstringtype  std::string
-#endif
 
 #include <R_ext/Arith.h>
 
@@ -667,9 +675,6 @@ R_tesseract_GetVariable(SEXP r_api, SEXP r_var, SEXP r_type)
 
   return(ans);
 }
-
-#endif
-
 
 
 extern "C"
@@ -1066,8 +1071,14 @@ R_TessBaseAPI_DetectOS(SEXP r_api)
       PROBLEM "NULL value for api reference"
       ERROR;
   }
-  
+
+#ifdef OSRESULTS_IN_TESSERACT_NAMESPACE  
   tesseract::OSResults res;
+#else
+  OSResults
+#endif      
+  res;
+      
   bool ans = api->DetectOS(&res);
   if(!ans) {
       return(R_NilValue);
@@ -1076,15 +1087,22 @@ R_TessBaseAPI_DetectOS(SEXP r_api)
 //  int w = res.get_best_script();
   SEXP r_ans, el;
   PROTECT(r_ans = NEW_LIST(2));
-//  SET_VECTOR_ELT(r_ans, 0, ScalarInteger(w));
   SET_VECTOR_ELT(r_ans, 0, el = NEW_NUMERIC(4));
   int i, j;
   for(i = 0; i < 4; i++) 
       REAL(el)[i] = res.orientations[i];
 
-  SET_VECTOR_ELT(r_ans, 1, el = NEW_NUMERIC(4* tesseract::kMaxNumberOfScripts));
+  int kMaxNumScripts =
+#ifdef MAXNUMSCRIPTS_IN_TESSERACT_NAMESPACE      
+   tesseract::kMaxNumberOfScripts
+#else  
+   kMaxNumberOfScripts  
+#endif
+      ;
+   
+  SET_VECTOR_ELT(r_ans, 1, el = NEW_NUMERIC(4 *kMaxNumScripts));
   for(i = 0; i < 4; i++) {
-      for(j = 0; j < tesseract::kMaxNumberOfScripts; j++)
+      for(j = 0; j < kMaxNumScripts; j++)
           REAL(el)[i + j*3] = res.scripts_na[i][j];
   }
   UNPROTECT(1);
@@ -1129,7 +1147,13 @@ R_TessBaseAPI_GetAvailableLanguagesAsVector(SEXP r_api)
   PROTECT(r_ans = NEW_CHARACTER(len));
   for(i = 0; i < len; i++) {
       //SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.get(i).string()));
-      SET_STRING_ELT(r_ans, i, Rf_mkChar(langs.at(i).c_str()));
+      SET_STRING_ELT(r_ans, i, Rf_mkChar(
+#if USE_TESSERACT_VECTORS
+                          langs.get(i).string()                         
+#else
+                          langs.at(i).c_str()
+#endif                          
+                         ));
   }
   UNPROTECT(1);
 
