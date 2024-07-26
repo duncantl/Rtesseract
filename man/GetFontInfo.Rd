@@ -15,7 +15,19 @@ GetFontInfo(obj, level = 3L, ...)
   \item{level}{process the elements at the character, word, line, block level}
   \item{\dots}{additional arguments for the methods}
 }
-\value{}
+\value{
+  A data.frame with a row for each recognized element recognied in the page
+  and colums
+  \item{bold}{logical}
+  \item{italic}{logical}
+  \item{underlined}{logical}
+  \item{monospace}{logical}
+  \item{serif}{logical}
+  \item{smallcaps}{logical}
+  \item{pointsize}{integer}
+  \item{fontId}{integer}
+  \item{font}{character}    
+}
 %\references{}
 \author{
   Duncan Temple Lang
