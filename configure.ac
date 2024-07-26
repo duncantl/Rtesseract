@@ -241,7 +241,8 @@ SPIX_FILES="NA"
 
 echo "Compiling readImage"
 dnl echo "$CXX -o readImage readImg.cpp $LEPT_CFLAGS $TESS_CFLAGS $CXXFLAGS $CPPFLAGS  $LEPT_LIBS $TESS_LIBS"
-$CXX -o readImage readImg.cpp $LEPT_CFLAGS $TESS_CFLAGS $CXXFLAGS $CPPFLAGS $LEPT_LIBS  $TESS_LIBS
+RLDFLAGS=`R CMD config LDFLAGS`
+$CXX -o readImage readImg.cpp $LEPT_CFLAGS $TESS_CFLAGS $CXXFLAGS $CPPFLAGS $LEPT_LIBS  $TESS_LIBS $RLDFLAGS
 
 if test "$?" = "0" ; then
   echo "testing leptonica can read different image formats"
@@ -268,6 +269,8 @@ if test "$?" = "0" ; then
   if test $? -eq 0 ; then
     echo "webp support"
     WEBP_FILES="TRUE"
+  else
+    echo "** no webp suppport"  
   fi
   JP2_FILES="FALSE"
   ./readImage sampleImage.jp2
@@ -282,30 +285,40 @@ if test "$?" = "0" ; then
   if test $? -eq 0 ; then
     echo "gif support"
     GIF_FILES="TRUE"
+  else
+    echo "** no gif suppport"    
   fi  
   BMP_FILES="FALSE"
   ./readImage sampleImage.bmp
   if test $? -eq 0 ; then
     echo "bmp support"
     BMP_FILES="TRUE"
+  else
+    echo "** no bmp suppport"    
   fi
   PNM_FILES="FALSE"
   ./readImage sampleImage.pnm
   if test $? -eq 0 ; then
     echo "pnm support"
     PNM_FILES="TRUE"
+  else
+    echo "** no pnm suppport"    
   fi
   PS_FILES="FALSE"
   ./readImage sampleImage.ps
   if test $? -eq 0 ; then
     echo "ps support"
     PS_FILES="TRUE"
+  else
+    echo "** no ps suppport"    
   fi
   SPIX_FILES="FALSE"
   ./readImage sampleImage.spix
   if test $? -eq 0 ; then
     echo "spix support"
     SPIX_FILES="TRUE"
+  else
+    echo "** no spix suppport"    
   fi            
 else
   echo "Failed to create readImage.  Problems with compilation and/or linking."
