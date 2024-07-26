@@ -9,7 +9,7 @@
   horizontal lines in an image and then extract the coordinates of these
   segments, combining close segments as appropriate.
   findLines(), by default, processes the image to leave only the lines
-  and getLines() uses this to the line coordinates.
+  and getLines() uses this to get the line coordinates.
 }
 \usage{
 getLines(pix, hor = dims[2]* 0.02, vert = 5, lineThreshold = 0.1, fraction = 0.5,
@@ -42,7 +42,7 @@ findLines(pix, hor = dims[2]* 0.02, vert = 5, asLines = TRUE, invert = !asLines,
   returned as a data.frame or a matrix.}
   \item{\dots}{additional arguments passed to \code{findLines}}
   \item{asIs}{indicates if the image passed via \code{pix} has already been
-  processed to contain only the images (\code{TRUE}).  Otherwise,
+  processed to contain only the lines (\code{TRUE}).  Otherwise,
   \code{pix} is passed to \code{findLines} and we extract the lines from
   the resulting image.}
   \item{horizontal}{a logical value indicating whether we are looking
@@ -51,7 +51,7 @@ findLines(pix, hor = dims[2]* 0.02, vert = 5, asLines = TRUE, invert = !asLines,
     In this case, we don't have to specify \code{horiz} and \code{vert}
     but just \code{horizontal}.
   }
-  \item{asLines}{a logical value that controls ....}
+  \item{asLines}{a logical value that controls ....??}
   \item{invert}{a logical value that controls whether we invert the
      resulting binary image, turning black to white and vice versa, only
    used if \code{asLines} is \code{TRUE}.}
