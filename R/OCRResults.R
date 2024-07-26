@@ -2,7 +2,7 @@ plot.OCRResults =
 function(x, y, cex = .5, col = "black", xlim = range(c(x$left, x$right)) * c(.95, 1.05),
          #!!! instead of accessing imageDims[1], have an accessor function that returns NA
          # or something if not present.
-         ylim = c(0, imageDims(x)["rows"]), # range(c(x$top, x$bottom))*c(.95, 1.05)
+         ylim = c(0, imageDims(x)["height"]),  # was "rows" rather than "height".  # range(c(x$top, x$bottom))*c(.95, 1.05)
          ...)
 {
     plot(0, type = "n", xlim = xlim, ylim = ylim, xlab = "", ylab = "", ...)
