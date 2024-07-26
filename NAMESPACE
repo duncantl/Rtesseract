@@ -110,7 +110,9 @@ export(PSM_OSD_ONLY, PSM_AUTO_OSD, PSM_AUTO_ONLY, PSM_AUTO, PSM_SINGLE_COLUMN, P
 
 export(RIL_BLOCK, RIL_PARA, RIL_TEXTLINE, RIL_WORD, RIL_SYMBOL)
 
-export(OEM_TESSERACT_ONLY, OEM_LSTM_ONLY, OEM_TESSERACT_LSTM_COMBINED, OEM_DEFAULT)
+export(OEM_TESSERACT_ONLY,
+#       OEM_LSTM_ONLY, OEM_TESSERACT_LSTM_COMBINED,
+       OEM_DEFAULT)
 
 
 exportMethods("$", "$<-", "[[", "[", "names")
@@ -153,3 +155,6 @@ export(readPixHeader, readImageInfo)
 
 export(GetFontInfo)
 exportMethods(GetFontInfo)
+
+
+export(getLSTMSymbolChoices)
