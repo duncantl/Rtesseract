@@ -61,13 +61,15 @@ function(file)
     ok = sup[ext]
   
   if(!ok) 
-    stop( mkError(paste("we don't support this image format. The installed leptonica supports ", paste(names(sup)[sup], collapse = ", ")),
+      stop( mkError(paste("image format", ext, "not supported. The installed leptonica supports ",
+                          paste(names(sup)[sup], collapse = ", ")),
                   "UnsupportedImageFormat", filename = file))
 
   ok
 }
 
 getExtension =
+    # See tools::file_ext
     #  getExtension(list.files(system.file("images", package = "Rtesseract")))
     #  getExtension(getwd())
 function(file, default = "")
