@@ -1,4 +1,4 @@
-#!/bin/sh 
+#!/bin/sh
 
 # e.g.
 # Basic
@@ -47,5 +47,5 @@ fi
 
 shift
 
-convert -density $DENSITY  "$FILE" -quality 100 "$@" "${BASE}" 
+convert -density $DENSITY  "$FILE" -quality 100 -background white -alpha remove -alpha off "$@" "${BASE}" 
 
