@@ -154,7 +154,10 @@ function(box, img, text = character(), ...)
 plotSubImage.numeric = 
 function(box, img, text = character(), ...)
 {
-  k = img[ box[2]:box[4],  box[1]:box[3], ]
+    i = box[2]:box[4]
+    j = box[1]:box[3]
+    k = if(length(dim(img)) > 2)  img[ i, j , ] else img[i, j]
+    
   plot(0, type = "n", xlim = c(0, ncol(k)), ylim = c(0, nrow(k)), xlab = "", ylab = "", axes = FALSE, ...)
      # Draw the part of the image.
   rasterImage(as.raster(k), 0, 0, ncol(k), nrow(k))
