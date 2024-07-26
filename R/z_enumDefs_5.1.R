@@ -1,4 +1,4 @@
-if(tesseractVersion(runTime = FALSE) %in% c('5.0', '5.1')) {
+if(tesseractVersion(runTime = FALSE) %in% c('5.0', '5.1', '5.2')) {
 
 setClass("PolyBlockType", contains = "EnumValue")
 
