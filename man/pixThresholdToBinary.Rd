@@ -25,12 +25,13 @@
   
 }
 \usage{
-pixThresholdToBinary(pix, threshold)
+pixThresholdToBinary(pix, threshold, dims = GetImageDims(pix))
 pixThresholdToValue(pix, threshold, newValue, target = NULL) 
 }
 \arguments{
   \item{pix}{a \code{\link{Pix-class}} image object}
   \item{threshold}{the threshold value which identifies which pixels to change}
+  \item{dims}{an integer vector providing the dimensions of the image.}
   \item{newValue}{the new value for the pixels to take}
   \item{target}{either a \code{\link{Pix-class}} object or NULL.
           If a \code{Pix} is specified, this is used to store the
