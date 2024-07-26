@@ -26,7 +26,7 @@ void *
 getVariableReference(SEXP arg, SEXP el, const char *type, const char *tag)
 {
     char tmp[256];
-    sprintf(tmp, "%sRef", tag);
+    snprintf(tmp, sizeof(tmp)/sizeof(tmp[0]), "%sRef", tag);
     return(R_getNativeReference(el, type, tmp));
 }
 
