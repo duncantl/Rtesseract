@@ -158,3 +158,8 @@ exportMethods(GetFontInfo)
 
 
 export(getLSTMSymbolChoices)
+
+
+export(mkSVG2)
+
+export(mkPages)
