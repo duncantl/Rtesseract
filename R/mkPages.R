@@ -7,8 +7,15 @@ function(filename, dir = dirname(filename), fmt = "_p%04d.png", density = 300, c
 {
     base = tools::file_path_sans_ext(basename(filename))
     out = paste0(file.path(dir, base), fmt)
-    system2(cmd, c("-d", density, "-o", out, filename))
-    pat = sprintf("%s_p[0-9]+\\.png$", base) # ...
+    system2(cmd, c("-d", density, "-o", shQuote(out), shQuote(filename)))
+
+
+    # Can get the relevant components - prefix, extension and replace the %... with [0-9]
+    # Or more simply can just replace the %[0-9]+d with [0-9]+
+    # And escape any .'s
+    #
+    pat0 = gsub("\\.", "\\\\.", gsub("%[0-9]+d", "[0-9]+", fmt))
+    pat = paste0(base, pat0) # "%s%s", base) 
     list.files(dir, pattern = pat, full.names = TRUE)
 }
 
